@@ -251,8 +251,11 @@ export default {
     computed: {
         getPlayerShared: function () {
             return {
-                sharedUrl: window.location.origin + '/#/play/wasm/' + encodeURIComponent(this.videoUrl),
-                sharedIframe: '<iframe src="' + window.location.origin + '/#/play/wasm/' + encodeURIComponent(this.videoUrl) + '"></iframe>',
+                // sharedUrl: window.location.origin + '/#/play/wasm/' + encodeURIComponent(this.videoUrl),
+                // sharedIframe: '<iframe src="' + window.location.origin + '/#/play/wasm/' + encodeURIComponent(this.videoUrl) + '"></iframe>',
+                // sharedRtmp: this.videoUrl
+                sharedUrl: window.location.origin + encodeURIComponent(this.videoUrl),
+                sharedIframe: '<iframe src="' + window.location.origin + encodeURIComponent(this.videoUrl) + '"></iframe>',
                 sharedRtmp: this.videoUrl
             };
         }
@@ -339,7 +342,7 @@ export default {
             console.log(this.player[tab.name][0])
             this.activePlayer = tab.name;
             this.videoUrl = this.getUrlByStreamInfo()
-            console.log(this.videoUrl)
+            console.log("播放地址："+this.videoUrl)
         },
         openDialog: function (tab, deviceId, channelId, param) {
             if (this.showVideoDialog) {
@@ -387,6 +390,8 @@ export default {
             }else {
               this.videoUrl = this.streamInfo[this.player[this.activePlayer][0]]
             }
+            // this.videoUrl = "http://192.168.1.110:80/rtp/31010500002000000002_31010500002000000002.live.flv";
+            console.log("getUrlByStreamInfo播放地址："+this.videoUrl)
             return this.videoUrl;
 
         },
