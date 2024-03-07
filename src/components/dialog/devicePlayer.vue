@@ -4,9 +4,9 @@
     <el-dialog title="视频播放" top="0" :close-on-click-modal="false" :visible.sync="showVideoDialog" @close="close()" v-if="showVideoDialog">
       <div style="width: 100%; height: 100%">
         <el-tabs type="card" :stretch="true" v-model="activePlayer" @tab-click="changePlayer" v-if="Object.keys(this.player).length > 1">
-<!--          <el-tab-pane label="LivePlayer" name="livePlayer">-->
-<!--            <LivePlayer v-if="showVideoDialog" ref="livePlayer" :visible.sync="showVideoDialog" :videoUrl="videoUrl" :error="videoError" :message="videoError" :hasaudio="hasAudio" fluent autoplay live></LivePlayer>-->
-<!--          </el-tab-pane>-->
+          <el-tab-pane label="LivePlayer" name="livePlayer">
+            <LivePlayer v-if="showVideoDialog" ref="livePlayer" :visible.sync="showVideoDialog" :videoUrl="videoUrl" :error="videoError" :message="videoError" :hasaudio="hasAudio" fluent autoplay live></LivePlayer>
+          </el-tab-pane>
           <el-tab-pane label="Jessibuca" name="jessibuca">
             <jessibucaPlayer v-if="activePlayer === 'jessibuca'" ref="jessibuca" :visible.sync="showVideoDialog" :videoUrl="videoUrl" :error="videoError" :message="videoError" height="100px" :hasAudio="hasAudio" fluent autoplay live ></jessibucaPlayer>
           </el-tab-pane>
