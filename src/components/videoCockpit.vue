@@ -38,6 +38,9 @@
 <script>
 import headerTop from "./cockpit/header-top.vue";
 import player from "./common/jessibuca.vue";
+
+import LivePlayer from '@liveqing/liveplayer'
+
 import deviceTree from "./cockpit/deviceTree.vue";
 import deviceCount from "./cockpit/deviceCount.vue";
 import deviceOnlineRate from "./cockpit/deviceOnlineRate.vue";
@@ -52,7 +55,8 @@ export default {
   name: "videoCockpit",
   components: {
     headerTop,
-    player,
+    // player,
+    LivePlayer,
     deviceTree,
     deviceCount,
     deviceOnlineRate,
@@ -240,8 +244,25 @@ export default {
       };
     });
     this.$nextTick(_ => {
-      const player = this.$refs.player;
-      player && player.updatePlayerDomSize();
+      // const player = this.$refs.player;
+      const LivePlayer = this.$refs.livePlayer;
+
+      // player && player.updatePlayerDomSize();
+
+      // let dom = this.$refs.container;
+      // let width = dom.parentNode.clientWidth
+      // let height = (9 / 16) * width
+      //
+      // const clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
+      // if (height > clientHeight) {
+      //   height = clientHeight
+      //   width = (16 / 9) * height
+      // }
+      // if (width > 0 && height > 0) {
+      //   dom.style.width = width + 'px';
+      //   dom.style.height = height + "px";
+      // }
+
     });
   },
   methods: {

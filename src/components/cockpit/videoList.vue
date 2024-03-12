@@ -3,7 +3,7 @@
     <div class="video-box" v-for="i in 4" :key="i">
       <div class="video-content">
         <div class="player-content">
-          <player ref="player" :videoUrl="videoUrl" fluent autoplay />
+          <LivePlayer  ref="livePlayer"  :videoUrl="videoUrl" :hasaudio="false" fluent autoplay live></LivePlayer>
         </div>
         <dv-border-box-12 class="player-border"></dv-border-box-12>
       </div>
@@ -16,10 +16,14 @@
 //"ws://192.168.1.110:80/rtp/31010500002000000002_31010500002000000002.live.flv"
 //"ws://192.168.1.110:80/rtp/31010500002000000002_31010500002000000002.live.mp4"
 //"ws://183.239.58.24:20001/rtp/44010200491330000001_34020000001340000001.live.flv"
+// rtsp://183.239.58.24:554/rtp/44010200491330000001_44010200491330000001
 import player from "../common/jessibuca.vue";
+
+import LivePlayer from '@liveqing/liveplayer'
+
 export default {
   name: "videoList",
-  components: { player },
+  components: { LivePlayer },
   data() {
     return {
       videoUrl:
