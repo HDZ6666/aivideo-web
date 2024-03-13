@@ -7,6 +7,7 @@
         :hasaudio="false"
         aspect="fullscreen"
         fluent
+        stretch
         autoplay
         hide-big-play-button
         live
