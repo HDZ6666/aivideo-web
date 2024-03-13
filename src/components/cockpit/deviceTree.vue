@@ -14,20 +14,21 @@
 
 <script>
 export default {
-    name:'deviceTree',
-    props:['deviceList'],
-    methods:{
-      handleDeviceClick(data){
-          this.$emit('deviceClick',data)
-        }
+  name: "deviceTree",
+  props: ["deviceList"],
+  methods: {
+    handleDeviceClick(data) {
+      this.$emit("deviceClick", data);
     }
+  }
 };
 </script>
 
 <style>
 .device-box {
   position: relative;
-  height: 340px;
+  height: 30%;
+  flex: 1;
   padding: 60px 10px 10px;
   box-sizing: border-box;
 }
@@ -52,7 +53,7 @@ export default {
   background: transparent;
   color: #000;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 20px;
 }
 #deviceList .el-tree-node__expand-icon {
   color: #000;

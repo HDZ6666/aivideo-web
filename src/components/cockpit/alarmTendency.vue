@@ -22,4 +22,14 @@ export default {
 </script>
 
 <style>
+.alarmTendency-container {
+  display: flex;
+  width: 100%;
+  height: 32%;
+  flex-direction: column;
+}
+.alarm {
+  width: 100%;
+  flex: 1;
+}
 </style>

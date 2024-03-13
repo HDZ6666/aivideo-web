@@ -6,6 +6,7 @@
 
 <script>
 import  userService from './components/service/UserService'
+// import autofit from "autofit.js";
 export default {
   name: 'app',
   data(){
@@ -43,6 +44,15 @@ export default {
   mounted(){
     //组件开始挂载时获取用户信息
     // this.getUserInfo();
+    // autofit.init(
+    //   {
+    //     designHeight: 960,
+    //     designWidth:  1440,
+    //     renderDom: "#app",
+    //     resize: true
+    //   },
+    //   true
+    // );
   },
   methods: {
   },
