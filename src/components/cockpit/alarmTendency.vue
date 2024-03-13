@@ -1,7 +1,7 @@
 <template>
   <div class="alarmTendency-container">
     <dv-decoration-7 class="module-title">告警趋势</dv-decoration-7>
-    <div class="alarm">
+    <div class="alarmTendency-line">
       <ve-line
         width="350px"
         height="180px"
@@ -26,7 +26,7 @@ export default {
   width: 100%;
   height: 230px;
 }
-.alarm {
+.alarmTendency-line {
   width: 100%;
   /* height: calc(100% - 50px); */
   /* flex: 1; */
