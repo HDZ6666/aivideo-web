@@ -324,7 +324,8 @@ export default {
   display: flex;
   flex-direction: column;
   /* min-width: 300px; */
-  width: 20%;
+  width: 280px;
+  height: 100%;
   /* background: #000; */
 }
 
@@ -340,7 +341,8 @@ export default {
   display: flex;
   flex-direction: column;
   /* min-width: 400px; */
-  width: 25%;
+  width: 350px;
+  height: 100%;
   /* background: #ad1919; */
 }
 

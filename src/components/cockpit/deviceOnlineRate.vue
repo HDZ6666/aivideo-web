@@ -48,14 +48,14 @@ export default {
 <style scoped>
 .deviceOnlineRate-container {
   width: 100%;
-  height: 30%;
+  height: 210px;
   /* display: flex; */
   /* flex-direction: column; */
 }
 .ring-box {
-  position: relative;
+  /* position: relative;
   flex: 1;
-  display: flex;
+  display: flex; */
   /* width: 100%; */
   /* flex: 1; */
   /* width: 250px;

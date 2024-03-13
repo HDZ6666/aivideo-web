@@ -14,13 +14,11 @@ export default {
 
 <style scoped>
 .alarmList-container {
-  height: 36%;
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  height: 225px;
 }
 .alarm-list {
-  flex: 1;
   width: 100%;
-  /* height: 100%; */
+  height: 175px;
 }
 </style>>
