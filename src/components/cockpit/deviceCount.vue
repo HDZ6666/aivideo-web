@@ -15,12 +15,10 @@ export default {
 <style scoped>
 .deviceCount-container {
   width: 100%;
-  height: 40%;
-  display: flex;
-  flex-direction: column;
+  height: 260px;
 }
 .count-content {
   width: 100%;
-  flex: 1;
+  height: 210px;
 }
 </style>

@@ -5,8 +5,8 @@
       <ve-histogram
         :extend="alarmCountData.extend"
         :data="alarmCountData"
-        width="100%"
-        height="100%"
+        width="350px"
+        height="180px"
       ></ve-histogram>
     </div>
   </div>
@@ -21,13 +21,10 @@ export default {
 
 <style>
 .alarmCount-container {
-  display: flex;
   width: 100%;
-  height: 32%;
-  flex-direction: column;
+  height: 230px;
 }
 .alarmCount-line {
   width: 100%;
-  flex: 1;
 }
 </style>
