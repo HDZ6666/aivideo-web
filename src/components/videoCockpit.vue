@@ -1,24 +1,24 @@
 <template>
-  <div class="container">
-    <dv-full-screen-container>
-      <header-top />
-      <div class="container-content">
-        <div class="content-left">
-          <device-tree :deviceList="deviceList" @deviceClick="handleDeviceClick"></device-tree>
-          <device-count :deviceCountData="deviceCountData"></device-count>
-          <device-online-rate :deviceOnlineData="deviceOnlineData"></device-online-rate>
-        </div>
-        <div class="content-main">
-          <indicator-list :indicatorListData="indicatorListData"></indicator-list>
-          <videoList></videoList>
-          <dv-decoration-3 style="width:300px;height:50px;" />
-          <alarm-carousel></alarm-carousel>
-        </div>
-        <div class="content-right">
-          <alarm-list :alarmListData="alarmListData"></alarm-list>
-          <alarm-tendency :alarmTendencyData="alarmTendencyData"></alarm-tendency>
-          <alarm-count :alarmCountData="alarmCountData"></alarm-count>
-          <!-- <dv-decoration-7 style="width:150px;height:50px;">处理情况</dv-decoration-7>
+  <div class="container" id="container">
+    <!-- <dv-full-screen-container> -->
+    <header-top />
+    <div class="container-content">
+      <div class="content-left">
+        <device-tree :deviceList="deviceList" @deviceClick="handleDeviceClick"></device-tree>
+        <device-count :deviceCountData="deviceCountData"></device-count>
+        <device-online-rate :deviceOnlineData="deviceOnlineData"></device-online-rate>
+      </div>
+      <div class="content-main">
+        <indicator-list :indicatorListData="indicatorListData"></indicator-list>
+        <videoList></videoList>
+        <!-- <dv-decoration-3 style="width:300px;height:50px;" /> -->
+        <alarm-carousel></alarm-carousel>
+      </div>
+      <div class="content-right">
+        <alarm-list :alarmListData="alarmListData"></alarm-list>
+        <alarm-tendency :alarmTendencyData="alarmTendencyData"></alarm-tendency>
+        <alarm-count :alarmCountData="alarmCountData"></alarm-count>
+        <!-- <dv-decoration-7 style="width:150px;height:50px;">处理情况</dv-decoration-7>
           <div class="handle-box">
             <div class="handle-itme">
               <dv-percent-pond :config="handleconfig1" style="width:120px;height:50px;" />
@@ -28,19 +28,18 @@
               <dv-percent-pond :config="handleconfig2" style="width:120px;height:50px;" />
               <span class="handle-label">历史未处理</span>
             </div>
-          </div>-->
-        </div>
+        </div>-->
       </div>
-    </dv-full-screen-container>
+    </div>
+    <!-- </dv-full-screen-container> -->
   </div>
 </template>
 
 <script>
+import autofit from "autofit.js";
 import headerTop from "./cockpit/header-top.vue";
 import player from "./common/jessibuca.vue";
-
-import LivePlayer from '@liveqing/liveplayer'
-
+import LivePlayer from "@liveqing/liveplayer";
 import deviceTree from "./cockpit/deviceTree.vue";
 import deviceCount from "./cockpit/deviceCount.vue";
 import deviceOnlineRate from "./cockpit/deviceOnlineRate.vue";
@@ -69,7 +68,8 @@ export default {
   },
   data() {
     return {
-      videoUrl: "ws://183.239.58.24:20001/rtp/44010200491330000001_34020000001340000001.live.flv",
+      videoUrl:
+        "ws://183.239.58.24:20001/rtp/44010200491330000001_34020000001340000001.live.flv",
       deviceList: [
         {
           label: "移动信息大厦",
@@ -87,7 +87,7 @@ export default {
         }
       ],
       deviceCountData: {
-        rowNum: 5,
+        rowNum: 8,
         data: []
       },
       deviceOnlineData: {
@@ -132,6 +132,7 @@ export default {
       ],
       alarmListData: {
         header: ["时间", "事件", "状态"],
+        rowNum: 6,
         data: [
           ["2024/1/19 10:20:33", "区域入侵", "未处理"],
           ["2024/1/19 10:20:33", "人脸识别", "未处理"],
@@ -243,6 +244,15 @@ export default {
         value: 2 * i + 10
       };
     });
+    // autofit.init(
+    //   {
+    //     designHeight: 1080,
+    //     designWidth: 1920,
+    //     renderDom: "#container",
+    //     resize: true
+    //   },
+    //   true
+    // );
     this.$nextTick(_ => {
       // const player = this.$refs.player;
       const LivePlayer = this.$refs.livePlayer;
@@ -262,7 +272,6 @@ export default {
       //   dom.style.width = width + 'px';
       //   dom.style.height = height + "px";
       // }
-
     });
   },
   methods: {
@@ -280,7 +289,7 @@ export default {
   height: 100%;
   background-color: #646a8a;
   color: #fff;
-  /* background-image: url("/static/images/cockpitbg.jpg"); */
+  background-image: url("/static/images/cockpitbg.jpg");
   filter: brightness(90%);
   background-size: 100% 100%;
   box-shadow: 0 0 3px blue;
@@ -300,8 +309,9 @@ export default {
   display: flex;
   flex-direction: row;
   width: 100%;
-  padding: 0 20px 20px;
+  padding: 0 10px 10px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .module-title {
@@ -310,16 +320,27 @@ export default {
 }
 
 .content-left {
-  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  /* min-width: 300px; */
+  width: 20%;
+  /* background: #000; */
 }
 
 .content-main {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   margin: 0 30px;
+  /* background: #c18585; */
 }
 
 .content-right {
-  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  /* min-width: 400px; */
+  width: 25%;
+  /* background: #ad1919; */
 }
 
 .alarm {

@@ -1,6 +1,6 @@
 <template>
   <div class="alarmCarousel-container">
-    <el-carousel :interval="3000" type="card" height="200px">
+    <el-carousel :interval="3000" type="card" height="180px" indicator-position="none">
       <el-carousel-item v-for="item in 6" :key="item">
         <div class="medium">
           <div class="img-box"></div>
@@ -31,6 +31,9 @@ export default {
 
 <style scoped>
 .alarmCarousel-container {
+  width: 100%;
+  height: 180px;
+  /* background: #000; */
 }
 .medium {
   width: 100%;

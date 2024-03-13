@@ -20,7 +20,7 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  margin-bottom: 10px;
+  /* margin-bottom: 7px; */
 }
 .indicator-content {
   position: relative;
