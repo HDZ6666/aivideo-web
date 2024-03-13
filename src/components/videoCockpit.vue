@@ -244,15 +244,16 @@ export default {
         value: 2 * i + 10
       };
     });
-    // autofit.init(
-    //   {
-    //     designHeight: 1080,
-    //     designWidth: 1920,
-    //     renderDom: "#container",
-    //     resize: true
-    //   },
-    //   true
-    // );
+    autofit.init(
+      {
+        dh: 779,
+        dw: 1440,
+        el: "#container",
+        resize: true
+      },
+      true
+    );
+
     this.$nextTick(_ => {
       // const player = this.$refs.player;
       const LivePlayer = this.$refs.livePlayer;
