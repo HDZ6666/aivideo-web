@@ -12,12 +12,15 @@
         <indicator-list :indicatorListData="indicatorListData"></indicator-list>
         <videoList></videoList>
         <!-- <dv-decoration-3 style="width:300px;height:50px;" /> -->
-        <alarm-carousel></alarm-carousel>
+        <!-- <alarm-carousel></alarm-carousel> -->
       </div>
       <div class="content-right">
         <alarm-list :alarmListData="alarmListData"></alarm-list>
-        <alarm-tendency :alarmTendencyData="alarmTendencyData"></alarm-tendency>
-        <alarm-count :alarmCountData="alarmCountData"></alarm-count>
+        <alarm-tendency
+          :alarmTendencyData="alarmTendencyData"
+          :alarmTendencyExtend="alarmTendencyExtend"
+        ></alarm-tendency>
+        <alarm-count :alarmCountData="alarmCountData" :alarmCountExtend="alarmCountExtend"></alarm-count>
         <!-- <dv-decoration-7 style="width:150px;height:50px;">处理情况</dv-decoration-7>
           <div class="handle-box">
             <div class="handle-itme">
@@ -32,10 +35,76 @@
       </div>
     </div>
     <!-- </dv-full-screen-container> -->
+    <!-- <button style="position: absolute;left:0" @click=" showDialog = !showDialog;">切换</button> -->
+    <transition
+      enter-active-class="animate__animated animate__fadeInTopRight"
+      leave-active-class="animate__animated animate__fadeOutBottomLeft"
+    >
+      <div v-if="dialogObj.showDialog" class="alarm-dialog">
+        <dv-border-box-11
+          class="dialog-border"
+          :title="dialogObj.showAlarmObj.modelname"
+          backgroundColor="rgba(67,79,103,0.9)"
+        ></dv-border-box-11>
+        <div class="dialog-content">
+          <div class="close-box">{{ dialogObj.count }}</div>
+          <div class="img-box">
+            <el-image
+              style="width: 100%; height: 100%"
+              :src="dialogObj.showAlarmObj.alarmImg"
+              fit="contain"
+            ></el-image>
+          </div>
+          <!-- <dv-decoration-2 style="width:5px;height:150px;" /> -->
+          <dv-decoration-2 :reverse="true" style="width:5px;height:300px;" />
+          <div class="medium-content">
+            <!-- <dv-border-box-10 style="width:150px;height:40px;line-height:40px;text-align:center">人脸识别检测</dv-border-box-10> -->
+            <!-- <dv-decoration-5 style="width:300px;height:40px;" /> -->
+            <dv-decoration-3 style="width:250px;height:30px;" />
+            <el-descriptions :column="1" size="medium">
+              <el-descriptions-item label="告警时间">{{ dialogObj.showAlarmObj.alarmTime || '' }}</el-descriptions-item>
+              <el-descriptions-item label="告警地点">信息大厦</el-descriptions-item>
+              <el-descriptions-item label="设备名称">信息大厦-华为枪机#1</el-descriptions-item>
+              <el-descriptions-item label="告警类型">人脸识别</el-descriptions-item>
+              <el-descriptions-item label="置信度">58%</el-descriptions-item>
+              <el-descriptions-item label="处理情况">
+                <el-tag size="small" color="#2db7f5" class="handleStatus">待处理</el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="通知人员">
+                <div class="notifePeople-box">
+                  <el-tag size="small" class="notifePeople">黄总</el-tag>
+                  <el-tag size="small" class="notifePeople">李总</el-tag>
+                  <el-tag size="small" class="notifePeople">何总</el-tag>
+                  <el-tag size="small" class="notifePeople">何总</el-tag>
+                  <el-tag size="small" class="notifePeople">何总</el-tag>
+                  <el-tag size="small" class="notifePeople">何总</el-tag>
+                  <el-tag size="small" class="notifePeople">何总</el-tag>
+                </div>
+              </el-descriptions-item>
+              <!-- <el-descriptions-item label="置信度">58%</el-d/escriptions-item> -->
+            </el-descriptions>
+            <div class="handleButtons">
+              <dv-border-box-8 class="handleButton">处理</dv-border-box-8>
+              <dv-border-box-8 class="handleButton" :reverse="true">误报</dv-border-box-8>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="dialog-content"></div> -->
+        <!-- <dv-border-box-5 style="width:300px;height:100px">电瓶车检测</dv-border-box-5> -->
+
+        <!-- <dv-border-box-1></dv-border-box-1> -->
+
+        <!-- <dv-decoration-5 style="width:300px;height:40px;" /> -->
+        <!-- <dv-border-box-11 class="dialog-border" title="dv-border-box-11"></dv-border-box-11> -->
+
+        <!-- <dv-border-box-1 style="width:300px;height:400px;">dv-border-box-1</dv-border-box-1> -->
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
+import "animate.css";
 import autofit from "autofit.js";
 import headerTop from "./cockpit/header-top.vue";
 import player from "./common/jessibuca.vue";
@@ -49,6 +118,7 @@ import alarmCarousel from "./cockpit/alarmCarousel.vue";
 import alarmList from "./cockpit/alarmList.vue";
 import alarmTendency from "./cockpit/alarmTendency.vue";
 import alarmCount from "./cockpit/alarmCount.vue";
+// import img  from "/static/images/catch.jpg"
 
 export default {
   name: "videoCockpit",
@@ -68,6 +138,25 @@ export default {
   },
   data() {
     return {
+      dialogObj: {
+        requestTimer: null,
+        domTimer: null,
+        alarmShowList: [],
+        alarmMap: {},
+        showTime: 10,
+        hideTime: 3,
+        showDialog: false,
+        canshow: false,
+        showAlarmObj: {},
+        page: 1,
+        pageSize: 10,
+        total: 0,
+        getAllData: false,
+        count: 0,
+        countDownTimer: null
+      },
+      // timer: null,
+      // showDialog: true,
       videoUrl:
         "ws://183.239.58.24:20001/rtp/44010200491330000001_34020000001340000001.live.flv",
       deviceList: [
@@ -156,22 +245,21 @@ export default {
           { date: "1-04", 告警: 50 },
           { date: "1-05", 告警: 100 },
           { date: "1-06", 告警: 10 }
-        ],
-        extend: {
-          grid: { x: 10, y: 10, x2: 15, y2: 10 },
-          yAxis: {
-            axisLabel: {
-              color: "#fff"
-            }
-          },
-          xAxis: {
-            axisLabel: {
-              color: "#fff"
-            }
+        ]
+      },
+      alarmTendencyExtend: {
+        grid: { x: 10, y: 10, x2: 15, y2: 10 },
+        yAxis: {
+          axisLabel: {
+            color: "#fff"
+          }
+        },
+        xAxis: {
+          axisLabel: {
+            color: "#fff"
           }
         }
       },
-
       handleconfig1: {
         value: 66,
         borderWidth: 5,
@@ -193,23 +281,23 @@ export default {
           { date: "1-04", 提醒: 10, 普通: 20, 严重: 30 },
           { date: "1-05", 提醒: 20, 普通: 20, 严重: 30 },
           { date: "1-06", 提醒: 30, 普通: 20, 严重: 30 }
-        ],
-        extend: {
-          grid: { x: 10, y: 40, x2: 15, y2: 10 },
-          legend: {
-            textStyle: {
-              color: "#fff"
-            }
-          },
-          yAxis: {
-            axisLabel: {
-              color: "#fff"
-            }
-          },
-          xAxis: {
-            axisLabel: {
-              color: "#fff"
-            }
+        ]
+      },
+      alarmCountExtend: {
+        grid: { x: 10, y: 40, x2: 15, y2: 10 },
+        legend: {
+          textStyle: {
+            color: "#fff"
+          }
+        },
+        yAxis: {
+          axisLabel: {
+            color: "#fff"
+          }
+        },
+        xAxis: {
+          axisLabel: {
+            color: "#fff"
           }
         }
       }
@@ -254,6 +342,9 @@ export default {
       true
     );
 
+    this.getAlarmList();
+    this.handleShowDialog();
+
     this.$nextTick(_ => {
       // const player = this.$refs.player;
       const LivePlayer = this.$refs.livePlayer;
@@ -274,10 +365,109 @@ export default {
       //   dom.style.height = height + "px";
       // }
     });
+
+    // this.timer = setInterval(() => {
+    //   this.showDialog = !this.showDialog;
+    // }, 3000);
   },
   methods: {
     handleDeviceClick(data) {
       console.log(data);
+    },
+    handleShowDialog() {
+      const dialogObj = this.dialogObj;
+      let _timeout = 2;
+      if (dialogObj.alarmShowList.length === 0) {
+        dialogObj.showDialog = false; //展示的长度没有就关闭弹窗
+        _timeout = 2; //没有数组的话 2秒检测一次
+      } else {
+        console.log(dialogObj.showDialog);
+        if (dialogObj.showDialog) {
+          dialogObj.alarmShowList.shift(); // 开始展示并删除展示列表的第一位
+        } else {
+          dialogObj.showAlarmObj =
+            dialogObj.alarmMap[dialogObj.alarmShowList[0]]; //关闭状态赋值展示页面取第一个
+          // console.log(dialogObj.showAlarmObj.alarmId);
+        }
+        _timeout = dialogObj.showDialog
+          ? dialogObj.hideTime
+          : dialogObj.showTime;
+        this.dialogObj.showDialog = !this.dialogObj.showDialog; // 取反
+      }
+      if (dialogObj.domTimer) clearTimeout(dialogObj.domTimer);
+      dialogObj.domTimer = setTimeout(() => {
+        this.handleShowDialog();
+        this.countDown(
+          dialogObj.showDialog ? dialogObj.showTime : dialogObj.hideTime
+        );
+      }, _timeout * 1000);
+    },
+    countDown(time) {
+      console.log(time);
+      const dialogObj = this.dialogObj;
+      dialogObj.count = time;
+      if (dialogObj.countDownTimer) clearTimeout(dialogObj.countDownTimer);
+      dialogObj.countDownTimer = setInterval(() => {
+        dialogObj.count--;
+      }, 1000);
+    },
+    getAlarmList() {
+      const dialogObj = this.dialogObj;
+      if (dialogObj.requestTimer) clearInterval(this.dialogObj.requestTimer);
+      dialogObj.requestTimer = setInterval(() => {
+        this.$axios({
+          method: "get",
+          url: `/ai/api/alarm/alarmCameraListAll`,
+          params: {
+            page: dialogObj.page,
+            pageSize: dialogObj.pageSize
+          }
+        }).then(res => {
+          if (res.data.code === 0) {
+            const { list, total } = res.data.data;
+            const page_s = Math.ceil(total / dialogObj.pageSize);
+            if (total !== dialogObj.total) {
+              dialogObj.page = 1;
+              dialogObj.getAllData = false;
+            } else {
+              if (!dialogObj.getAllData) {
+                dialogObj.page++;
+                dialogObj.getAllData = dialogObj.page === page_s;
+              } else {
+                dialogObj.page = 1;
+              }
+            }
+            dialogObj.total = total;
+            dialogObj.pages = page_s;
+            const _list = [];
+            list.forEach(item => {
+              if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
+                dialogObj.alarmMap[item.id] = item;
+                _list.push(item.id);
+              }
+            });
+            dialogObj.alarmShowList = [..._list, ...dialogObj.alarmShowList];
+            // if (!dialogObj.canshow) {
+            //   this.handleShowDialog();
+            // }
+            // dialogObj.canshow = true;
+            // console.log(dialogObj);
+          }
+        });
+      }, 5000);
+
+      // function request() {
+      //   this.$axios({
+      //     method: "get",
+      //     url: `/video/alarm/alarmCameraListAll`,
+      //     params: {
+      //       page,
+      //       pageSize
+      //     }
+      //   }).then(res => {
+      //     console.log(res);
+      //   });
+      // }
     }
   }
 };
@@ -296,6 +486,7 @@ export default {
   box-shadow: 0 0 3px blue;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 #dv-full-screen-container {
@@ -378,5 +569,88 @@ export default {
 .el-descriptions__body {
   color: #fff;
   background: transparent;
+}
+
+.alarm-dialog {
+  position: absolute;
+  width: 800px;
+  height: 500px;
+  inset: 0;
+  margin: auto;
+  z-index: 9999;
+  /* border-radius: 10px; */
+}
+
+.dialog-border {
+  width: 100%;
+  height: 100%;
+}
+.dialog-content {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 80px 30px 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  /* align-items: center; */
+}
+.close-box {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  right: 21px;
+  top: 37px;
+  text-align: center;
+  line-height: 40px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.img-box {
+  width: 400px;
+  height: 350px;
+  background: #000;
+  margin-right: 30px;
+}
+
+.medium-content {
+  flex: 1;
+  display: inline-block;
+  margin-left: 30px;
+}
+.handleStatus {
+  color: #fff;
+}
+
+.notifePeople-box {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+.notifePeople {
+  margin-right: 5px;
+  margin-bottom: 5px;
+  color: #000;
+}
+
+.handleButtons {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+}
+
+.handleButton {
+  width: 100px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  margin-left: 20px;
+  cursor: pointer;
 }
 </style>

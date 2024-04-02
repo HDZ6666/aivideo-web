@@ -39,7 +39,8 @@ export default {
   data() {
     return {
       videoUrl:
-        "ws://183.239.58.24:20001/rtp/44010200491330000001_34020000001340000001.live.flv"
+        // http://183.239.58.24:20001/rtp/44010200491330000001_44010200491330000001.live.flv
+        "ws://183.239.58.24:20001/rtp/44010200491330000001_44010200491330000001.live.flv"
     };
   },
   mounted() {
@@ -53,8 +54,9 @@ export default {
 
 <style scoped>
 .videoList-container {
-  flex: 1;
+  /* flex: 1; */
   width: 100%;
+  height: 450px;
   /* height: 60%; */
   /* height: 540px; */
   display: flex;

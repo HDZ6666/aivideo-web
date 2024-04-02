@@ -2,12 +2,7 @@
   <div class="alarmCount-container">
     <dv-decoration-7 class="module-title">告警统计</dv-decoration-7>
     <div class="alarmCount-line">
-      <ve-histogram
-        :extend="alarmCountData.extend"
-        :data="alarmCountData"
-        width="350px"
-        height="180px"
-      ></ve-histogram>
+      <ve-histogram :extend="alarmCountExtend" :data="alarmCountData" width="350px" height="180px"></ve-histogram>
     </div>
   </div>
 </template>
@@ -15,7 +10,7 @@
 <script>
 export default {
   name: "alarmCount",
-  props: ["alarmCountData"]
+  props: ["alarmCountData", "alarmCountExtend"]
 };
 </script>
 
