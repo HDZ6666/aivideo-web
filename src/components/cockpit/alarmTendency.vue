@@ -7,7 +7,7 @@
         height="180px"
         ref="ConsoleNet1"
         :data="alarmTendencyData"
-        :extend="alarmTendencyData.extend"
+        :extend="alarmTendencyExtend"
         :legend-visible="false"
       ></ve-line>
     </div>
@@ -17,7 +17,7 @@
 <script>
 export default {
   name: "alarmTendency",
-  props: ["alarmTendencyData"]
+  props: ["alarmTendencyData", "alarmTendencyExtend"]
 };
 </script>
 
