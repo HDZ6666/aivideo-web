@@ -12,9 +12,8 @@ module.exports = {
     proxyTable: {
       "/debug": {
         // target: 'http://localhost:18080',
-        target: "http://183.239.58.24:18080",
-        // target: 'http://172.16.1.106:18080',
-        // target: 'http://192.168.1.110:18080',
+        target: 'http://172.16.1.106:18080',
+        // target: 'http://192.168.1.105:18080',
         changeOrigin: true,
         pathRewrite: {
           "^/debug": "/"
@@ -22,9 +21,9 @@ module.exports = {
       },
       "/static/snap": {
         // target: 'http://localhost:18080',
-        target: "http://172.16.1.106:18080",
-        // target: 'http://192.168.1.110:18080',
-        changeOrigin: true
+        target: 'http://172.16.1.106:18080',
+        // target: 'http://192.168.1.105:18080',
+        changeOrigin: true,
         // pathRewrite: {
         //   '^/static/snap': '/static/snap'
         // }
@@ -41,9 +40,8 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    // host:"172.16.1.106",
-    host: "127.0.0.1",
-    // host:"192.168.1.110",
+    host:"172.16.1.106",
+    // host:"192.168.1.105",
     useLocalIp: false, // can be overwritten by process.env.HOST
     // port: 8088, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
