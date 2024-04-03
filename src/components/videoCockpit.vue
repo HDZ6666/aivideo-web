@@ -84,8 +84,8 @@
               <!-- <el-descriptions-item label="置信度">58%</el-d/escriptions-item> -->
             </el-descriptions>
             <div class="handleButtons">
-              <dv-border-box-8 class="handleButton">处理</dv-border-box-8>
-              <dv-border-box-8 class="handleButton" :reverse="true">误报</dv-border-box-8>
+              <dv-border-box-8 class="handleButton" @click="handleState(0)">处理</dv-border-box-8>
+              <dv-border-box-8 class="handleButton" :reverse="true" @click="handleState(1)">误报</dv-border-box-8>
             </div>
           </div>
         </div>
@@ -118,6 +118,7 @@ import alarmCarousel from "./cockpit/alarmCarousel.vue";
 import alarmList from "./cockpit/alarmList.vue";
 import alarmTendency from "./cockpit/alarmTendency.vue";
 import alarmCount from "./cockpit/alarmCount.vue";
+import moment from "moment";
 // import img  from "/static/images/catch.jpg"
 
 export default {
@@ -342,6 +343,11 @@ export default {
       true
     );
 
+    const a = moment("2024-4-3 06:32:10.373532").format("YYYY-MM-DD");
+    const b = moment(new Date()).format("YYYY-MM-DD");
+    console.log(a === b);
+    console.log(b);
+
     this.getAlarmList();
     this.handleShowDialog();
 
@@ -374,6 +380,10 @@ export default {
     handleDeviceClick(data) {
       console.log(data);
     },
+    handleState(state) {
+      dialogObj.showAlarmObj.statue = state; // 修改状态
+      // handleShowDialog()
+    },
     handleShowDialog() {
       const dialogObj = this.dialogObj;
       let _timeout = 2;
@@ -381,12 +391,14 @@ export default {
         dialogObj.showDialog = false; //展示的长度没有就关闭弹窗
         _timeout = 2; //没有数组的话 2秒检测一次
       } else {
-        console.log(dialogObj.showDialog);
         if (dialogObj.showDialog) {
           dialogObj.alarmShowList.shift(); // 开始展示并删除展示列表的第一位
         } else {
           dialogObj.showAlarmObj =
             dialogObj.alarmMap[dialogObj.alarmShowList[0]]; //关闭状态赋值展示页面取第一个
+          this.countDown(
+            dialogObj.showDialog ? dialogObj.showTime : dialogObj.hideTime
+          );
           // console.log(dialogObj.showAlarmObj.alarmId);
         }
         _timeout = dialogObj.showDialog
@@ -397,11 +409,36 @@ export default {
       if (dialogObj.domTimer) clearTimeout(dialogObj.domTimer);
       dialogObj.domTimer = setTimeout(() => {
         this.handleShowDialog();
-        this.countDown(
-          dialogObj.showDialog ? dialogObj.showTime : dialogObj.hideTime
-        );
       }, _timeout * 1000);
     },
+    // 循环全部告警列表，最新的排前面告警，每个告警只展示10秒，同时关闭3秒
+    // handleShowDialog() {
+    //   const dialogObj = this.dialogObj;
+    //   let _timeout = 2;
+    //   if (dialogObj.alarmShowList.length === 0) {
+    //     dialogObj.showDialog = false; //展示的长度没有就关闭弹窗
+    //     _timeout = 2; //没有数组的话 2秒检测一次
+    //   } else {
+    //     if (dialogObj.showDialog) {
+    //       dialogObj.alarmShowList.shift(); // 开始展示并删除展示列表的第一位
+    //     } else {
+    //       dialogObj.showAlarmObj =
+    //         dialogObj.alarmMap[dialogObj.alarmShowList[0]]; //关闭状态赋值展示页面取第一个
+    //       // console.log(dialogObj.showAlarmObj.alarmId);
+    //     }
+    //     _timeout = dialogObj.showDialog
+    //       ? dialogObj.hideTime
+    //       : dialogObj.showTime;
+    //     this.dialogObj.showDialog = !this.dialogObj.showDialog; // 取反
+    //   }
+    //   if (dialogObj.domTimer) clearTimeout(dialogObj.domTimer);
+    //   dialogObj.domTimer = setTimeout(() => {
+    //     this.handleShowDialog();
+    //     this.countDown(
+    //       dialogObj.showDialog ? dialogObj.showTime : dialogObj.hideTime
+    //     );
+    //   }, _timeout * 1000);
+    // },
     countDown(time) {
       console.log(time);
       const dialogObj = this.dialogObj;
@@ -411,6 +448,46 @@ export default {
         dialogObj.count--;
       }, 1000);
     },
+    // getAlarmList() {
+    //   const dialogObj = this.dialogObj;
+    //   if (dialogObj.requestTimer) clearInterval(this.dialogObj.requestTimer);
+    //   dialogObj.requestTimer = setInterval(() => {
+    //     this.$axios({
+    //       method: "get",
+    //       url: `/ai/api/alarm/alarmCameraListAll`,
+    //       params: {
+    //         page: dialogObj.page,
+    //         pageSize: dialogObj.pageSize
+    //       }
+    //     }).then(res => {
+    //       if (res.data.code === 0) {
+    //         const { list, total } = res.data.data;
+    //         const page_s = Math.ceil(total / dialogObj.pageSize);
+    //         if (total !== dialogObj.total) {
+    //           dialogObj.page = 1;
+    //           dialogObj.getAllData = false;
+    //         } else {
+    //           if (!dialogObj.getAllData) {
+    //             dialogObj.page++;
+    //             dialogObj.getAllData = dialogObj.page === page_s;
+    //           } else {
+    //             dialogObj.page = 1;
+    //           }
+    //         }
+    //         dialogObj.total = total;
+    //         dialogObj.pages = page_s;
+    //         const _list = [];
+    //         list.forEach(item => {
+    //           if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
+    //             dialogObj.alarmMap[item.id] = item;
+    //             _list.push(item.id);
+    //           }
+    //         });
+    //         dialogObj.alarmShowList = [..._list, ...dialogObj.alarmShowList];
+    //       }
+    //     });
+    //   }, 5000);
+    // },
     getAlarmList() {
       const dialogObj = this.dialogObj;
       if (dialogObj.requestTimer) clearInterval(this.dialogObj.requestTimer);
@@ -419,55 +496,30 @@ export default {
           method: "get",
           url: `/ai/api/alarm/alarmCameraListAll`,
           params: {
-            page: dialogObj.page,
-            pageSize: dialogObj.pageSize
+            page: 1,
+            pageSize: 9999
           }
         }).then(res => {
           if (res.data.code === 0) {
-            const { list, total } = res.data.data;
-            const page_s = Math.ceil(total / dialogObj.pageSize);
-            if (total !== dialogObj.total) {
-              dialogObj.page = 1;
-              dialogObj.getAllData = false;
-            } else {
-              if (!dialogObj.getAllData) {
-                dialogObj.page++;
-                dialogObj.getAllData = dialogObj.page === page_s;
-              } else {
-                dialogObj.page = 1;
-              }
-            }
-            dialogObj.total = total;
-            dialogObj.pages = page_s;
+            const { list } = res.data.data;
             const _list = [];
-            list.forEach(item => {
-              if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
-                dialogObj.alarmMap[item.id] = item;
-                _list.push(item.id);
-              }
-            });
+            list
+              .filter(
+                item =>
+                  item.status === 0 &&
+                  moment(item.alarmTime).format("YYYY-MM-DD") ===
+                    moment(new Date()).format("YYYY-MM-DD")
+              )
+              .forEach(item => {
+                if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
+                  dialogObj.alarmMap[item.id] = item;
+                  _list.push(item.id);
+                }
+              });
             dialogObj.alarmShowList = [..._list, ...dialogObj.alarmShowList];
-            // if (!dialogObj.canshow) {
-            //   this.handleShowDialog();
-            // }
-            // dialogObj.canshow = true;
-            // console.log(dialogObj);
           }
         });
       }, 5000);
-
-      // function request() {
-      //   this.$axios({
-      //     method: "get",
-      //     url: `/video/alarm/alarmCameraListAll`,
-      //     params: {
-      //       page,
-      //       pageSize
-      //     }
-      //   }).then(res => {
-      //     console.log(res);
-      //   });
-      // }
     }
   }
 };

@@ -14,6 +14,7 @@ module.exports = {
         // target: 'http://localhost:18080',
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         target: "http://183.239.58.24:18080",
         // target: 'http://172.16.1.106:18080',
         // target: 'http://192.168.1.110:18080',
@@ -25,6 +26,10 @@ module.exports = {
         target: 'http://172.16.1.106:18080',
         // target: 'http://192.168.1.105:18080',
 >>>>>>> 9f085ca... 优化登录页，允许域名访问
+=======
+        // target: 'http://172.16.1.106:18080',
+        target: "http://192.168.1.105:18080",
+>>>>>>> cf4d871... feat 修改弹窗样式
         changeOrigin: true,
         pathRewrite: {
           "^/debug": "/"
@@ -32,6 +37,7 @@ module.exports = {
       },
       "/static/snap": {
         // target: 'http://localhost:18080',
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         target: "http://172.16.1.106:18080",
@@ -46,22 +52,19 @@ module.exports = {
 >>>>>>> 9f085ca... 优化登录页，允许域名访问
         changeOrigin: true,
 >>>>>>> 155fd1d... 允许域名访问
+=======
+        target: "http://172.16.1.106:18080",
+        // target: 'http://192.168.1.105:18080',
+        changeOrigin: true
+>>>>>>> cf4d871... feat 修改弹窗样式
         // pathRewrite: {
         //   '^/static/snap': '/static/snap'
         // }
-      },
-      "/debug/video": {
-        // target: 'http://localhost:18080',
-        target: "http://183.239.58.24:18080/ai/api",
-        // target: 'http://192.168.1.110:18080',
-        changeOrigin: true,
-        pathRewrite: {
-          "^/debug/video": ""
-        }
       }
     },
 
     // Various Dev Server settings
+<<<<<<< HEAD
 <<<<<<< HEAD
     // host:"172.16.1.106",
 <<<<<<< HEAD
@@ -74,9 +77,13 @@ module.exports = {
     host:"172.16.1.106",
     // host:"192.168.1.105",
 >>>>>>> 9f085ca... 优化登录页，允许域名访问
+=======
+    // host:"172.16.1.106",
+    host: "192.168.1.106",
+>>>>>>> cf4d871... feat 修改弹窗样式
     useLocalIp: false, // can be overwritten by process.env.HOST
     // port: 8088, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
-    port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 8077, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
