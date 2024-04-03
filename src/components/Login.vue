@@ -3,7 +3,7 @@
   <div class="limiter">
     <div class="container-login100">
       <div class="wrap-login100">
-					<span class="login100-form-title p-b-26">佛山移动AI+视频管理平台</span>
+					<span class="login100-form-title p-b-26">视频+AI管理平台</span>
           <span class="login100-form-title p-b-48">
 						<i class="fa fa-video-camera"></i>
 					</span>
