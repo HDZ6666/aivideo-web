@@ -65,7 +65,7 @@
               <el-descriptions-item label="告警时间">{{ dialogObj.showAlarmObj.alarmTime || '' }}</el-descriptions-item>
               <el-descriptions-item label="告警地点">信息大厦</el-descriptions-item>
               <el-descriptions-item label="设备名称">信息大厦-华为枪机#1</el-descriptions-item>
-              <el-descriptions-item label="告警类型">人脸识别</el-descriptions-item>
+              <el-descriptions-item label="告警ID">{{ dialogObj.showAlarmObj.alarmId }}</el-descriptions-item>
               <el-descriptions-item label="置信度">58%</el-descriptions-item>
               <el-descriptions-item label="处理情况">
                 <el-tag size="small" color="#2db7f5" class="handleStatus">待处理</el-tag>
@@ -84,8 +84,12 @@
               <!-- <el-descriptions-item label="置信度">58%</el-d/escriptions-item> -->
             </el-descriptions>
             <div class="handleButtons">
-              <dv-border-box-8 class="handleButton" @click="handleState(0)">处理</dv-border-box-8>
-              <dv-border-box-8 class="handleButton" :reverse="true" @click="handleState(1)">误报</dv-border-box-8>
+              <dv-border-box-8 class="handleButton">
+                <div @click="handleState(0)">处理</div>
+              </dv-border-box-8>
+              <dv-border-box-8 class="handleButton" :reverse="true">
+                <div @click="handleState(1)">误报</div>
+              </dv-border-box-8>
             </div>
           </div>
         </div>
@@ -155,6 +159,7 @@ export default {
         getAllData: false,
         count: 0,
         countDownTimer: null
+        // showTimes: 0
       },
       // timer: null,
       // showDialog: true,
@@ -343,11 +348,6 @@ export default {
       true
     );
 
-    const a = moment("2024-4-3 06:32:10.373532").format("YYYY-MM-DD");
-    const b = moment(new Date()).format("YYYY-MM-DD");
-    console.log(a === b);
-    console.log(b);
-
     this.getAlarmList();
     this.handleShowDialog();
 
@@ -381,7 +381,29 @@ export default {
       console.log(data);
     },
     handleState(state) {
-      dialogObj.showAlarmObj.statue = state; // 修改状态
+      // console.log(state);
+      const dialogObj = this.dialogObj;
+      const ID = dialogObj.showAlarmObj.id;
+      if (dialogObj.domTimer) clearTimeout(dialogObj.domTimer); //清除当前的定时器
+      if (dialogObj.countDownTimer) clearInterval(dialogObj.countDownTimer); //清除当前的定时器
+      this.$axios({
+        method: "get",
+        url: `/ai/api/alarm/alarmCameraListAll`,
+        params: {
+          page: 1,
+          pageSize: 9999,
+          state: state
+        }
+      }).then(res => {
+        if (res.data.code === 0) {
+          const list = dialogObj.alarmShowList.filter(item => item.id !== ID);
+          dialogObj.alarmShowList = [...list];
+          delete dialogObj.alarmMap[ID];
+          this.handleShowDialog();
+        }
+      });
+
+      // dialogObj.showAlarmObj.statue = state; // 修改状态
       // handleShowDialog()
     },
     handleShowDialog() {
@@ -391,20 +413,26 @@ export default {
         dialogObj.showDialog = false; //展示的长度没有就关闭弹窗
         _timeout = 2; //没有数组的话 2秒检测一次
       } else {
+        console.log(dialogObj.alarmShowList);
         if (dialogObj.showDialog) {
-          dialogObj.alarmShowList.shift(); // 开始展示并删除展示列表的第一位
+          if (dialogObj.countDownTimer) clearInterval(dialogObj.countDownTimer);
+          if (dialogObj.alarmShowList.every(item => item.showDialog)) {
+            // 全部都展示过就重置
+            dialogObj.alarmShowList.map(item => {
+              item.showDialog = false;
+              return item;
+            });
+          }
+          _timeout = dialogObj.hideTime;
         } else {
-          dialogObj.showAlarmObj =
-            dialogObj.alarmMap[dialogObj.alarmShowList[0]]; //关闭状态赋值展示页面取第一个
-          this.countDown(
-            dialogObj.showDialog ? dialogObj.showTime : dialogObj.hideTime
-          );
-          // console.log(dialogObj.showAlarmObj.alarmId);
+          dialogObj.showAlarmObj = dialogObj.alarmShowList.filter(
+            item => !item.showDialog
+          )[0]; // 拿第一个没有展示的值
+          dialogObj.showAlarmObj.showDialog = true; // 开始展示
+          _timeout = dialogObj.showTime;
+          this.countDown(_timeout);
         }
-        _timeout = dialogObj.showDialog
-          ? dialogObj.hideTime
-          : dialogObj.showTime;
-        this.dialogObj.showDialog = !this.dialogObj.showDialog; // 取反
+        this.dialogObj.showDialog = !this.dialogObj.showDialog; //取反
       }
       if (dialogObj.domTimer) clearTimeout(dialogObj.domTimer);
       dialogObj.domTimer = setTimeout(() => {
@@ -440,10 +468,9 @@ export default {
     //   }, _timeout * 1000);
     // },
     countDown(time) {
-      console.log(time);
       const dialogObj = this.dialogObj;
       dialogObj.count = time;
-      if (dialogObj.countDownTimer) clearTimeout(dialogObj.countDownTimer);
+      if (dialogObj.countDownTimer) clearInterval(dialogObj.countDownTimer);
       dialogObj.countDownTimer = setInterval(() => {
         dialogObj.count--;
       }, 1000);
@@ -490,35 +517,37 @@ export default {
     // },
     getAlarmList() {
       const dialogObj = this.dialogObj;
+      this.$axios({
+        method: "get",
+        url: `/ai/api/alarm/alarmCameraListAll`,
+        params: {
+          page: 1,
+          pageSize: 9999
+        }
+      }).then(res => {
+        if (res.data.code === 0) {
+          const { list } = res.data.data;
+          const _list = [];
+          list
+            .filter(
+              item =>
+                item.status === 0 &&
+                moment(item.alarmTime).format("YYYY-MM-DD") ===
+                  moment(new Date()).format("YYYY-MM-DD")
+            )
+            .forEach(item => {
+              if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
+                item.showDialog = false;
+                dialogObj.alarmMap[item.id] = item;
+                _list.push(item);
+              }
+            });
+          dialogObj.alarmShowList = [..._list, ...dialogObj.alarmShowList];
+        }
+      });
       if (dialogObj.requestTimer) clearInterval(this.dialogObj.requestTimer);
       dialogObj.requestTimer = setInterval(() => {
-        this.$axios({
-          method: "get",
-          url: `/ai/api/alarm/alarmCameraListAll`,
-          params: {
-            page: 1,
-            pageSize: 9999
-          }
-        }).then(res => {
-          if (res.data.code === 0) {
-            const { list } = res.data.data;
-            const _list = [];
-            list
-              .filter(
-                item =>
-                  item.status === 0 &&
-                  moment(item.alarmTime).format("YYYY-MM-DD") ===
-                    moment(new Date()).format("YYYY-MM-DD")
-              )
-              .forEach(item => {
-                if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
-                  dialogObj.alarmMap[item.id] = item;
-                  _list.push(item.id);
-                }
-              });
-            dialogObj.alarmShowList = [..._list, ...dialogObj.alarmShowList];
-          }
-        });
+        this.getAlarmList();
       }, 5000);
     }
   }

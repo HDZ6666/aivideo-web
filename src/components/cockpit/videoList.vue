@@ -1,9 +1,22 @@
 <template>
   <div class="videoList-container">
-    <div class="video-box" v-for="i in 4" :key="i">
+    <div class="video-box" v-for="i in videoLists" :key="i">
+      <!-- <rtc-player
+        v-if="Object.keys(this.player).length == 1 && this.player.webRTC"
+        ref="jessibuca"
+        :visible.sync="showVideoDialog"
+        :videoUrl="videoUrl"
+        :error="videoError"
+        :message="videoError"
+        height="100%"
+        :hasAudio="hasAudio"
+        fluent
+        autoplay
+        live
+      ></rtc-player>-->
       <LivePlayer
         ref="livePlayer"
-        :videoUrl="videoUrl"
+        :videoUrl="i"
         :hasaudio="false"
         aspect="fullscreen"
         fluent
@@ -32,12 +45,20 @@
 import player from "../common/jessibuca.vue";
 
 import LivePlayer from "@liveqing/liveplayer";
+import rtcPlayer from "../dialog/rtcPlayer.vue";
 
 export default {
   name: "videoList",
-  components: { LivePlayer },
+  components: { LivePlayer, rtcPlayer },
   data() {
     return {
+      videoLists: [
+        // ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000010.live.flv
+        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000010.live.flv",
+        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000020.live.flv",
+        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000030.live.flv",
+        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000040.live.flv"
+      ],
       videoUrl:
         // http://183.239.58.24:20001/rtp/44010200491330000001_44010200491330000001.live.flv
         "ws://183.239.58.24:20001/rtp/44010200491330000001_44010200491330000001.live.flv"
@@ -48,6 +69,11 @@ export default {
     //   const player = this.$refs.player;
     //   player && player.updatePlayerDomSize();
     // });
+  },
+  methods: {
+    videoError: function(e) {
+      console.log("播放器错误：" + JSON.stringify(e));
+    }
   }
 };
 </script>
