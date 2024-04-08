@@ -16,6 +16,7 @@ module.exports = {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         target: "http://183.239.58.24:18080",
         // target: 'http://172.16.1.106:18080',
         // target: 'http://192.168.1.110:18080',
@@ -35,6 +36,11 @@ module.exports = {
         // target: 'http://172.16.1.106:18080',
         target: 'http://192.168.1.105:18080',
 >>>>>>> d24eced... 修复webrtc无法正常播放问题
+=======
+        target: 'http://172.16.1.106:18080',
+        // target: "http://192.168.1.105:18080",
+        // target: "http://183.239.58.24:18080",
+>>>>>>> 6421bc1... feat 优化弹窗逻辑
         changeOrigin: true,
         pathRewrite: {
           "^/debug": "/"
@@ -65,6 +71,7 @@ module.exports = {
 =======
         target: "http://172.16.1.106:18080",
         // target: 'http://192.168.1.105:18080',
+        // target: "http://183.239.58.24:18080",
         changeOrigin: true
 >>>>>>> cf4d871... feat 修改弹窗样式
         // pathRewrite: {
@@ -87,6 +94,7 @@ module.exports = {
     },
 
     // Various Dev Server settings
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -115,6 +123,13 @@ module.exports = {
     port: 8088, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     // port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
 >>>>>>> d24eced... 修复webrtc无法正常播放问题
+=======
+    host:"172.16.1.106",
+    // host: "192.168.1.106",
+    useLocalIp: false, // can be overwritten by process.env.HOST
+    // port: 8088, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+>>>>>>> 6421bc1... feat 优化弹窗逻辑
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
