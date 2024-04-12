@@ -52,7 +52,7 @@
           <el-form-item v-if="this.isEdit" label="目录订阅" title="0为取消订阅" prop="subscribeCycleForCatalog" >
             <el-input v-model="form.subscribeCycleForCatalog" clearable ></el-input>
           </el-form-item>
-          <el-form-item v-if="this.isEdit" label="移动位置订阅" title="0为取消订阅" prop="subscribeCycleForCatalog" >
+          <el-form-item v-if="this.isEdit" label="位置订阅" title="0为取消订阅" prop="subscribeCycleForCatalog" >
             <el-input v-model="form.subscribeCycleForMobilePosition" clearable ></el-input>
           </el-form-item>
           <el-form-item v-if="form.subscribeCycleForMobilePosition > 0" label="移动位置报送间隔" prop="subscribeCycleForCatalog" >
