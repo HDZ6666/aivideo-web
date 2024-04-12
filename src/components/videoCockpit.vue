@@ -46,8 +46,15 @@
           :title="dialogObj.showAlarmObj.modelname"
           backgroundColor="rgba(67,79,103,0.9)"
         ></dv-border-box-11>
-        <div class="dialog-content">
-          <div class="close-box">{{ dialogObj.count }}</div>
+        <div
+          class="dialog-content"
+          v-loading="dialogObj.handleLoading"
+          element-loading-background="rgba(0, 0, 0, 0.4)"
+        >
+          <div class="close-box">
+            <span v-if="!dialogObj.showClose">{{ dialogObj.count }}</span>
+            <i v-else class="el-icon-close" @click="handleClose"></i>
+          </div>
           <div class="img-box">
             <el-image
               style="width: 100%; height: 100%"
@@ -85,10 +92,10 @@
             </el-descriptions>
             <div class="handleButtons">
               <dv-border-box-8 class="handleButton">
-                <div @click="handleState(0)">处理</div>
+                <div @click="handleState(1)">处理</div>
               </dv-border-box-8>
               <dv-border-box-8 class="handleButton" :reverse="true">
-                <div @click="handleState(1)">误报</div>
+                <div @click="handleState(2)">误报</div>
               </dv-border-box-8>
             </div>
           </div>
@@ -104,6 +111,9 @@
         <!-- <dv-border-box-1 style="width:300px;height:400px;">dv-border-box-1</dv-border-box-1> -->
       </div>
     </transition>
+    <!-- <div v-show="false">
+      <img :src="item.alarmImg" alt v-for="item in dialogObj.alarmShowList" :key="item.id" />
+    </div>-->
   </div>
 </template>
 
@@ -158,7 +168,10 @@ export default {
         total: 0,
         getAllData: false,
         count: 0,
-        countDownTimer: null
+        countDownTimer: null,
+        getListLoading: false,
+        handleLoading: false,
+        showClose: false
         // showTimes: 0
       },
       // timer: null,
@@ -380,31 +393,36 @@ export default {
     handleDeviceClick(data) {
       console.log(data);
     },
+    handleClose() {
+      this.handleShowDialog();
+    },
     handleState(state) {
       // console.log(state);
       const dialogObj = this.dialogObj;
+      dialogObj.showClose = true;
       const ID = dialogObj.showAlarmObj.id;
       if (dialogObj.domTimer) clearTimeout(dialogObj.domTimer); //清除当前的定时器
       if (dialogObj.countDownTimer) clearInterval(dialogObj.countDownTimer); //清除当前的定时器
+      dialogObj.handleLoading = true;
       this.$axios({
         method: "get",
-        url: `/ai/api/alarm/alarmCameraListAll`,
+        url: `/ai/api/alarm/handle`,
         params: {
-          page: 1,
-          pageSize: 9999,
-          state: state
+          alarmId: ID,
+          status: state
         }
-      }).then(res => {
-        if (res.data.code === 0) {
-          const list = dialogObj.alarmShowList.filter(item => item.id !== ID);
-          dialogObj.alarmShowList = [...list];
-          delete dialogObj.alarmMap[ID];
-          this.handleShowDialog();
-        }
-      });
-
-      // dialogObj.showAlarmObj.statue = state; // 修改状态
-      // handleShowDialog()
+      })
+        .then(res => {
+          if (res.data.code === 0) {
+            const list = dialogObj.alarmShowList.filter(item => item.id !== ID);
+            dialogObj.alarmShowList = [...list];
+            delete dialogObj.alarmMap[ID];
+            this.handleShowDialog();
+          }
+        })
+        .finally(() => {
+          dialogObj.handleLoading = false;
+        });
     },
     handleShowDialog() {
       const dialogObj = this.dialogObj;
@@ -413,7 +431,8 @@ export default {
         dialogObj.showDialog = false; //展示的长度没有就关闭弹窗
         _timeout = 2; //没有数组的话 2秒检测一次
       } else {
-        console.log(dialogObj.alarmShowList);
+        // const imgLoad = dialogObj.alarmShowList.every(item => item.imgload);
+        // console.log(dialogObj.alarmShowList);
         if (dialogObj.showDialog) {
           if (dialogObj.countDownTimer) clearInterval(dialogObj.countDownTimer);
           if (dialogObj.alarmShowList.every(item => item.showDialog)) {
@@ -424,15 +443,22 @@ export default {
             });
           }
           _timeout = dialogObj.hideTime;
+          this.dialogObj.showDialog = false;
         } else {
-          dialogObj.showAlarmObj = dialogObj.alarmShowList.filter(
-            item => !item.showDialog
+          // console.log(dialogObj.alarmShowList)
+          const showItem = dialogObj.alarmShowList.filter(
+            item => !item.showDialog && item.imgload
           )[0]; // 拿第一个没有展示的值
-          dialogObj.showAlarmObj.showDialog = true; // 开始展示
-          _timeout = dialogObj.showTime;
-          this.countDown(_timeout);
+          _timeout = 0.5; // 500毫秒检测一次看图片加载完没有
+          // 图片已经加载了
+          if (showItem) {
+            _timeout = dialogObj.showTime;
+            showItem.showDialog = true; // 开始展示
+            dialogObj.showAlarmObj = showItem;
+            this.countDown(_timeout);
+            this.dialogObj.showDialog = true;
+          }
         }
-        this.dialogObj.showDialog = !this.dialogObj.showDialog; //取反
       }
       if (dialogObj.domTimer) clearTimeout(dialogObj.domTimer);
       dialogObj.domTimer = setTimeout(() => {
@@ -470,6 +496,7 @@ export default {
     countDown(time) {
       const dialogObj = this.dialogObj;
       dialogObj.count = time;
+      dialogObj.showClose = false;
       if (dialogObj.countDownTimer) clearInterval(dialogObj.countDownTimer);
       dialogObj.countDownTimer = setInterval(() => {
         dialogObj.count--;
@@ -517,34 +544,43 @@ export default {
     // },
     getAlarmList() {
       const dialogObj = this.dialogObj;
-      this.$axios({
-        method: "get",
-        url: `/ai/api/alarm/alarmCameraListAll`,
-        params: {
-          page: 1,
-          pageSize: 9999
-        }
-      }).then(res => {
-        if (res.data.code === 0) {
-          const { list } = res.data.data;
-          const _list = [];
-          list
-            .filter(
-              item =>
-                item.status === 0 &&
-                moment(item.alarmTime).format("YYYY-MM-DD") ===
-                  moment(new Date()).format("YYYY-MM-DD")
-            )
-            .forEach(item => {
-              if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
-                item.showDialog = false;
-                dialogObj.alarmMap[item.id] = item;
-                _list.push(item);
-              }
-            });
-          dialogObj.alarmShowList = [..._list, ...dialogObj.alarmShowList];
-        }
-      });
+      if (!dialogObj.getListLoading) {
+        dialogObj.getListLoading = true;
+        this.$axios({
+          method: "get",
+          url: `/ai/api/alarm/alarmCameraListAll`,
+          params: {
+            page: 1,
+            pageSize: 9999,
+            status: 0,
+            todayTime: moment(new Date()).format("YYYY-MM-DD")
+          }
+        })
+          .then(res => {
+            if (res.data.code === 0) {
+              const { list } = res.data.data;
+              const _list = [];
+              list.forEach(item => {
+                if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
+                  item.showDialog = false;
+                  dialogObj.alarmMap[item.id] = item;
+                  _list.push(item);
+                  if (!item.imgload && item.alarmImg) {
+                    const img = new Image();
+                    img.src = item.alarmImg;
+                    img.onload = function() {
+                      item.imgload = true;
+                    };
+                  }
+                }
+              });
+              dialogObj.alarmShowList = [..._list, ...dialogObj.alarmShowList];
+            }
+          })
+          .finally(() => {
+            dialogObj.getListLoading = false;
+          });
+      }
       if (dialogObj.requestTimer) clearInterval(this.dialogObj.requestTimer);
       dialogObj.requestTimer = setInterval(() => {
         this.getAlarmList();
@@ -690,6 +726,7 @@ export default {
   font-weight: bold;
   border-radius: 50%;
   border: 2px solid #fff;
+  cursor: pointer;
 }
 .img-box {
   width: 400px;

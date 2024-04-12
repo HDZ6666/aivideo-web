@@ -125,7 +125,7 @@ module.exports = {
 >>>>>>> d24eced... 修复webrtc无法正常播放问题
 =======
     host:"172.16.1.106",
-    // host: "192.168.1.106",
+    // host: "127.0.0.1",
     useLocalIp: false, // can be overwritten by process.env.HOST
     // port: 8088, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined

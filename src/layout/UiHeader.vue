@@ -3,7 +3,6 @@
     <el-menu
       router
       :default-active="activeIndex"
-      menu-trigger="click"
       background-color="#001529"
       text-color="#fff"
       active-text-color="#1890ff"
@@ -12,6 +11,11 @@
       <el-menu-item index="/console">控制台</el-menu-item>
 
       <el-menu-item index="/videoCockpit">数据大屏</el-menu-item>
+      <!-- <el-submenu index="2">
+        <template slot="title">AI卫士</template>
+        <el-menu-item index="alarmList">告警列表</el-menu-item>
+        <el-menu-item index="2-2">告警配置</el-menu-item>
+      </el-submenu> -->
       <el-menu-item @click="getAiWeb">AI卫士</el-menu-item>
       <el-menu-item index="/live">分屏监控</el-menu-item>
       <el-menu-item index="/deviceList">国标设备</el-menu-item>
@@ -21,7 +25,7 @@
       <el-menu-item index="/cloudRecord">云端录像</el-menu-item>
       <el-menu-item index="/mediaServerManger">节点管理</el-menu-item>
       <el-menu-item index="/parentPlatformList/15/1">国标级联</el-menu-item>
-      <el-menu-item v-if="editUser" index="/userManager">用户管理</el-menu-item>
+      <el-menu-item v-if="editUser" index="/userManager">系统管理</el-menu-item>
 
       <!--            <el-submenu index="/setting">-->
       <!--              <template slot="title">系统设置</template>-->
@@ -83,7 +87,7 @@ export default {
   },
   methods: {
     getAiWeb() {
-      this.window.open("https://www.example.com", "_blank");
+      this.window.open("http://183.239.58.24:10666/#/login", "_blank");
     },
     loginout() {
       this.$axios({
@@ -199,12 +203,12 @@ export default {
   color: white !important;
 }
 
-#UiHeader .el-switch__label.is-active {
+/* #UiHeader .el-switch__label.is-active {
   color: #409eff;
 }
 
 #UiHeader .el-menu-item.is-active {
   color: #fff !important;
   background-color: #1890ff !important;
-}
+} */
 </style>
