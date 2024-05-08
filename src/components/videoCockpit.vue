@@ -56,7 +56,14 @@
             <i v-else class="el-icon-close" @click="handleClose"></i>
           </div>
           <div class="img-box">
+            <!-- <img
+              :src="dialogObj.showAlarmObj.alarmImg"
+              alt
+              style="width: 100%; height: 100%"
+              fit="contain"
+            />-->
             <el-image
+              lazy
               style="width: 100%; height: 100%"
               :src="dialogObj.showAlarmObj.alarmImg"
               fit="contain"
@@ -111,9 +118,9 @@
         <!-- <dv-border-box-1 style="width:300px;height:400px;">dv-border-box-1</dv-border-box-1> -->
       </div>
     </transition>
-    <!-- <div v-show="false">
+    <div v-show="false">
       <img :src="item.alarmImg" alt v-for="item in dialogObj.alarmShowList" :key="item.id" />
-    </div>-->
+    </div>
   </div>
 </template>
 
@@ -389,6 +396,11 @@ export default {
     //   this.showDialog = !this.showDialog;
     // }, 3000);
   },
+  destroyed() {
+    clearTimeout(this.dialogObj.domTimer);
+    clearInterval(this.dialogObj.countDownTimer);
+    clearInterval(this.dialogObj.requestTimer);
+  },
   methods: {
     handleDeviceClick(data) {
       console.log(data);
@@ -570,6 +582,7 @@ export default {
                     img.src = item.alarmImg;
                     img.onload = function() {
                       item.imgload = true;
+                      item.img = img;
                     };
                   }
                 }

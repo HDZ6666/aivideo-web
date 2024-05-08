@@ -261,7 +261,7 @@ export default {
         }
     },
     created() {
-      console.log(this.player)
+      // console.log(this.player)
       if (Object.keys(this.player).length === 1) {
         this.activePlayer = Object.keys(this.player)[0]
       }

@@ -22,7 +22,7 @@
     <!--设备列表-->
     <div class="device-content">
       <div class="device-group">
-        <!-- <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree> -->
+        <deviceGroupList ref="deviceGroup" @changeGroup="changeGroup"></deviceGroupList>
       </div>
       <div class="device-table">
         <el-table
@@ -133,13 +133,15 @@
 import uiHeader from "../layout/UiHeader.vue";
 import deviceEdit from "./dialog/deviceEdit.vue";
 import syncChannelProgress from "./dialog/SyncChannelProgress.vue";
+import deviceGroupList from "./DeviceGroupList.vue";
 
 export default {
   name: "app",
   components: {
     uiHeader,
     deviceEdit,
-    syncChannelProgress
+    syncChannelProgress,
+    deviceGroupList
   },
   data() {
     return {
@@ -153,6 +155,7 @@ export default {
       currentPage: 1,
       count: 15,
       total: 0,
+      group_id: 0,
       getDeviceListLoading: false
     };
   },
@@ -189,6 +192,15 @@ export default {
       this.count = val;
       this.getDeviceList();
     },
+    handleNodeClick(data) {
+      console.log(data);
+    },
+    changeGroup(group) {
+      // console.log(group);
+      this.group_id = group.id;
+      this.getDeviceList();
+      // e.stopPropagation();
+    },
     getDeviceList: function() {
       this.getDeviceListLoading = true;
       this.$axios({
@@ -196,7 +208,8 @@ export default {
         url: `/api/device/query/devices`,
         params: {
           page: this.currentPage,
-          count: this.count
+          count: this.count,
+          groupId: this.group_id
         }
       })
         .then(res => {
@@ -396,15 +409,25 @@ export default {
   flex-direction: row;
   flex-wrap: nowrap;
   width: 100%;
+  position: relative;
 }
 
 .device-group {
-  width: 0;
+  position: absolute;
+  width: 250px;
+  height: 100%;
+  inset: 0;
+  overflow: auto;
+  background: #fff;
+  padding: 10px;
+  box-sizing: border-box;
+  /* margin-right: 20px; */
 }
 
 .device-table {
   flex: 1;
   overflow: hidden;
+  margin-left: 270px;
   /* width: 100%; */
 }
 </style>

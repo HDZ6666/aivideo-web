@@ -21,10 +21,12 @@ import live from "../components/live.vue";
 import deviceTree from "../components/common/DeviceTree.vue";
 import userManager from "../components/UserManager.vue";
 import alarmList from "../components/alarmList.vue";
+import fence from "../components/fence.vue";
 
 import wasmPlayer from "../components/common/jessibuca.vue";
 import rtcPlayer from "../components/dialog/rtcPlayer.vue";
 import videoCockpit from "../components/videoCockpit.vue";
+import deviceGroup from "../components/DeviceGroup.vue";
 
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
@@ -131,6 +133,16 @@ export default new VueRouter({
           path: "/alarmList",
           name: "alarmList",
           component: alarmList
+        },
+        {
+          path: "/fence",
+          name: "fence",
+          component: fence
+        },
+        {
+          path: "/deviceGroup",
+          name: "deviceGroup",
+          component: deviceGroup
         }
       ]
     },

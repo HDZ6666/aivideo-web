@@ -1,7 +1,17 @@
 <template>
   <!-- <div class="iframe-page"> -->
   <div id="app" :style="getWrapStyle" v-loading="loading">
-    <iframe :src="frameSrc" class="iframe" ref="frameRef" @load="hideLoading"></iframe>
+    <iframe
+      :src="frameSrc"
+      class="iframe"
+      ref="frameRef"
+      frameborder="no"
+      border="0"
+      marginwidth="0"
+      marginheight="0"
+      allowtransparency="yes"
+      @load="hideLoading"
+    ></iframe>
   </div>
 </template>
 
