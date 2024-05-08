@@ -56,18 +56,19 @@ export default {
   data() {
     return {
       loopPlayerTimeOut: null,
-      looptime: 5,
+      looptime: 10,
       splitNum: 3,
       videoLists: [],
       playList: []
     };
   },
   computed: {
-    // splitNum() {
-    //   return Math.sqrt(this.videoLists.length) || 1;
+    // playList() {
+    //   return new Array(Math.pow(this.splitNum, 2)).join({ ws_flv: "" });
     // }
   },
   mounted() {
+    // console.log(this.playList)
     this.getDeviceList();
     // this.changeVideo();
     // this.$nextTick(_ => {
@@ -127,7 +128,11 @@ export default {
       if (index > pageSize - 1) {
         index = 0;
       }
-      this.playList = this.videoLists.slice(index * num, index * num + num);
+      const list = this.videoLists.slice(index * num, index * num + num);
+      list.forEach((item, index) => {
+        this.playList[index] = item;
+      });
+      // this.playList = this.videoLists.slice(index * num, index * num + num);
       if (this.loopPlayerTimeOut) {
         clearTimeout(this.loopPlayerTimeOut);
       }
