@@ -46,103 +46,103 @@ export default new VueRouter({
       children: [
         {
           path: "/console",
-          component: console
+          component: () => import("../components/console.vue") // console
         },
         {
           path: "/live",
-          component: live
+          component: () => import("../components/live.vue") // live
         },
         {
           path: "/deviceList",
-          component: deviceList
+          component: () => import("../components/DeviceList.vue") // deviceList
         },
         {
           path: "/pushVideoList",
-          component: pushVideoList
+          component: () => import("../components/PushVideoList.vue") // pushVideoList
         },
         {
           path: "/streamProxyList",
-          component: streamProxyList
+          component: () => import("../components/StreamProxyList.vue") // streamProxyList
         },
         {
           path: "/channelList/:deviceId/:parentChannelId/",
           name: "channelList",
-          component: channelList
+          component: () => import("../components/channelList.vue") // channelList
         },
         {
           path: "/gbRecordDetail/:deviceId/:channelId/",
           name: "gbRecordDetail",
-          component: gbRecordDetail
+          component: () => import("../components/GBRecordDetail.vue") // gbRecordDetail
         },
         {
           path: "/parentPlatformList/:count/:page",
           name: "parentPlatformList",
-          component: parentPlatformList
+          component: () => import("../components/ParentPlatformList.vue") // parentPlatformList
         },
         {
           path: "/map/:deviceId/:parentChannelId/:count/:page",
           name: "map",
-          component: map
+          component: () => import("../components/map.vue") // map
         },
         {
           path: "/cloudRecord",
           name: "cloudRecord",
-          component: cloudRecord
+          component: () => import("../components/CloudRecord.vue") // cloudRecord
         },
         {
           path: "/cloudRecordDetail/:app/:stream",
           name: "cloudRecordDetail",
-          component: cloudRecordDetail
+          component: () => import("../components/CloudRecordDetail.vue") // cloudRecordDetail
         },
         {
           path: "/cloudRecordDetail/:mediaServerId/:app/:stream",
           name: "cloudRecordDetail",
-          component: cloudRecordDetail
+          component: () => import("../components/CloudRecordDetail.vue") // cloudRecordDetail
         },
         {
           path: "/mediaServerManger",
           name: "mediaServerManger",
-          component: mediaServerManger
+          component: () => import("../components/MediaServerManger.vue") // mediaServerManger
         },
         {
           path: "/setting/web",
           name: "web",
-          component: web
+          component: () => import("../components/setting/Web.vue") // web
         },
         {
           path: "/setting/sip",
           name: "sip",
-          component: sip
+          component: () => import("../components/setting/Sip.vue") // sip
         },
         {
           path: "/setting/media",
           name: "media",
-          component: media
+          component: () => import("../components/setting/Media.vue") // media
         },
         {
           path: "/map",
           name: "map",
-          component: map
+          component: () => import("../components/map.vue") // map
         },
         {
           path: "/userManager",
           name: "userManager",
-          component: userManager
+          component: () => import("../components/UserManager.vue") // userManager
         },
         {
           path: "/alarmList",
           name: "alarmList",
-          component: alarmList
+          component: () => import("../components/alarmList.vue") // alarmList
         },
         {
           path: "/fence",
           name: "fence",
-          component: fence
+          component: () => import("../components/fence.vue") // fence
         },
         {
           path: "/deviceGroup",
           name: "deviceGroup",
-          component: deviceGroup
+          component: () => import("../components/DeviceGroup.vue") // deviceGroup
         }
       ]
     },

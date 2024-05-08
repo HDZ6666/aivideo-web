@@ -477,34 +477,6 @@ export default {
         this.handleShowDialog();
       }, _timeout * 1000);
     },
-    // 循环全部告警列表，最新的排前面告警，每个告警只展示10秒，同时关闭3秒
-    // handleShowDialog() {
-    //   const dialogObj = this.dialogObj;
-    //   let _timeout = 2;
-    //   if (dialogObj.alarmShowList.length === 0) {
-    //     dialogObj.showDialog = false; //展示的长度没有就关闭弹窗
-    //     _timeout = 2; //没有数组的话 2秒检测一次
-    //   } else {
-    //     if (dialogObj.showDialog) {
-    //       dialogObj.alarmShowList.shift(); // 开始展示并删除展示列表的第一位
-    //     } else {
-    //       dialogObj.showAlarmObj =
-    //         dialogObj.alarmMap[dialogObj.alarmShowList[0]]; //关闭状态赋值展示页面取第一个
-    //       // console.log(dialogObj.showAlarmObj.alarmId);
-    //     }
-    //     _timeout = dialogObj.showDialog
-    //       ? dialogObj.hideTime
-    //       : dialogObj.showTime;
-    //     this.dialogObj.showDialog = !this.dialogObj.showDialog; // 取反
-    //   }
-    //   if (dialogObj.domTimer) clearTimeout(dialogObj.domTimer);
-    //   dialogObj.domTimer = setTimeout(() => {
-    //     this.handleShowDialog();
-    //     this.countDown(
-    //       dialogObj.showDialog ? dialogObj.showTime : dialogObj.hideTime
-    //     );
-    //   }, _timeout * 1000);
-    // },
     countDown(time) {
       const dialogObj = this.dialogObj;
       dialogObj.count = time;
@@ -514,46 +486,6 @@ export default {
         dialogObj.count--;
       }, 1000);
     },
-    // getAlarmList() {
-    //   const dialogObj = this.dialogObj;
-    //   if (dialogObj.requestTimer) clearInterval(this.dialogObj.requestTimer);
-    //   dialogObj.requestTimer = setInterval(() => {
-    //     this.$axios({
-    //       method: "get",
-    //       url: `/ai/api/alarm/alarmCameraListAll`,
-    //       params: {
-    //         page: dialogObj.page,
-    //         pageSize: dialogObj.pageSize
-    //       }
-    //     }).then(res => {
-    //       if (res.data.code === 0) {
-    //         const { list, total } = res.data.data;
-    //         const page_s = Math.ceil(total / dialogObj.pageSize);
-    //         if (total !== dialogObj.total) {
-    //           dialogObj.page = 1;
-    //           dialogObj.getAllData = false;
-    //         } else {
-    //           if (!dialogObj.getAllData) {
-    //             dialogObj.page++;
-    //             dialogObj.getAllData = dialogObj.page === page_s;
-    //           } else {
-    //             dialogObj.page = 1;
-    //           }
-    //         }
-    //         dialogObj.total = total;
-    //         dialogObj.pages = page_s;
-    //         const _list = [];
-    //         list.forEach(item => {
-    //           if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
-    //             dialogObj.alarmMap[item.id] = item;
-    //             _list.push(item.id);
-    //           }
-    //         });
-    //         dialogObj.alarmShowList = [..._list, ...dialogObj.alarmShowList];
-    //       }
-    //     });
-    //   }, 5000);
-    // },
     getAlarmList() {
       const dialogObj = this.dialogObj;
       if (!dialogObj.getListLoading) {
@@ -637,8 +569,8 @@ export default {
 }
 
 .module-title {
-  width: 150px;
-  height: 50px;
+  width: 150px !important;
+  height: 50px !important;
 }
 
 .content-left {
