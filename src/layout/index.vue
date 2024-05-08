@@ -1,6 +1,6 @@
 <template>
   <el-container style="height: 100%">
-    <el-header>
+    <el-header style="height: auto;">
       <ui-header/>
     </el-header>
     <el-main>
