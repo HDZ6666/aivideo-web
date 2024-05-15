@@ -4,7 +4,7 @@
       <!-- <el-col :span="24">{{`当前轮播:[${playList.map(item => item.deviceName).join(',')}]`}}</el-col> -->
       <el-col
         :span="24/splitNum"
-        v-for="index in Math.pow(splitNum,2)"
+        v-for="(player,index) in playList"
         :key="index"
         :style="{height: `calc(${Math.floor(100/splitNum)}% - 10px)`,marginBottom: '10px'}"
       >
@@ -12,31 +12,16 @@
           <div class="video-box">
             <LivePlayer
               ref="livePlayer"
-              :videoUrl="(playList[index-1] && playList[index-1].ws_flv) || '' "
+              :videoUrl="player.ws_flv"
               :hasaudio="false"
-              aspect="fullscreen"
-              fluent
+              :poster="img"
+              live
+              muted
               stretch
-              autoplay
               hide-big-play-button
               hide-stretch-button
-              live
-              alt="无视频源"
               :controls="false"
             ></LivePlayer>
-            <!-- <rtc-player
-              v-if="Object.keys(this.player).length == 1 && this.player.webRTC"
-              ref="jessibuca"
-              :visible.sync="showVideoDialog"
-              :videoUrl="videoUrl"
-              :error="videoError"
-              :message="videoError"
-              height="100%"
-              :hasAudio="hasAudio"
-              fluent
-              autoplay
-              live
-            ></rtc-player>-->
           </div>
         </dv-border-box-12>
       </el-col>
@@ -49,6 +34,7 @@ import player from "../common/jessibuca.vue";
 
 import LivePlayer from "@liveqing/liveplayer";
 import rtcPlayer from "../dialog/rtcPlayer.vue";
+import img from "../../assets/image.png";
 
 export default {
   name: "videoList",
@@ -56,10 +42,11 @@ export default {
   data() {
     return {
       loopPlayerTimeOut: null,
-      looptime: 10,
+      looptime: 20,
       splitNum: 3,
       videoLists: [],
-      playList: []
+      playList: [],
+      img: img
     };
   },
   computed: {
@@ -69,12 +56,16 @@ export default {
   },
   mounted() {
     // console.log(this.playList)
+    this.playList = new Array(Math.pow(this.splitNum, 2))
+      .fill(1)
+      .map((item, index) => {
+        return {
+          id: index,
+          ws_flv: ""
+        };
+      });
+
     this.getDeviceList();
-    // this.changeVideo();
-    // this.$nextTick(_ => {
-    //   const player = this.$refs.player;
-    //   player && player.updatePlayerDomSize();
-    // });
   },
   methods: {
     getDeviceList: function() {
@@ -89,28 +80,30 @@ export default {
         .then(res => {
           if (res.data.code === 0) {
             const list = res.data.data.list;
+            this.videoLists = list;
             list.forEach(item => {
               this.getVideoList(item);
             });
+            this.changeVideo();
           }
         })
         .finally(() => {
           // dialogObj.handleLoading = false;
         });
     },
-    getVideoList: function(params) {
+    getVideoList: function(player) {
       this.$axios({
         method: "get",
         url: `/cockpit/api/proxy/getPlayUrl`,
         params: {
-          app: params.app,
-          stream: params.stream
+          app: player.app,
+          stream: player.stream
         }
       })
         .then(res => {
           if (res.data.code === 0) {
-            this.videoLists.push(res.data.data);
-            this.changeVideo();
+            const data = res.data.data;
+            player.ws_flv = data.ws_flv;
           }
         })
         .finally(() => {
@@ -120,18 +113,16 @@ export default {
     // 轮播
     changeVideo: function(index = 0) {
       const num = Math.pow(this.splitNum, 2);
-      const pageSize = Math.ceil(this.videoLists.length / num); //2
-      if (this.videoLists.length <= num) {
-        this.playList = this.videoLists;
-        return;
-      }
+      const pageSize = Math.ceil(this.videoLists.length / num); // 总页数
       if (index > pageSize - 1) {
         index = 0;
       }
       const list = this.videoLists.slice(index * num, index * num + num);
+      // console.log(list);
       list.forEach((item, index) => {
-        this.playList[index] = item;
+        this.$set(this.playList, index, item);
       });
+      console.log(this.playList);
       // this.playList = this.videoLists.slice(index * num, index * num + num);
       if (this.loopPlayerTimeOut) {
         clearTimeout(this.loopPlayerTimeOut);

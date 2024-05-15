@@ -14,8 +14,8 @@ module.exports = {
         // target: 'http://localhost:18080',
         // target: 'http://172.16.1.106:18080',
         // target: "http://192.168.1.105:18080",
-        // target: "http://10.16.139.254:18080",
-        target: "http://183.239.58.24:18080",
+        target: "http://10.16.139.254:18080",
+        // target: "http://183.239.58.24:18080",
         changeOrigin: true,
         pathRewrite: {
           "^/debug": "/"
