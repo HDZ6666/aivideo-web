@@ -2,31 +2,31 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Layout from "../layout/index.vue";
 
-import console from "../components/console.vue";
-import deviceList from "../components/DeviceList.vue";
-import channelList from "../components/channelList.vue";
-import gbRecordDetail from "../components/GBRecordDetail.vue";
-import pushVideoList from "../components/PushVideoList.vue";
-import streamProxyList from "../components/StreamProxyList.vue";
-import map from "../components/map.vue";
+// import console from "../components/console.vue";
+// import deviceList from "../components/DeviceList.vue";
+// import channelList from "../components/channelList.vue";
+// import gbRecordDetail from "../components/GBRecordDetail.vue";
+// import pushVideoList from "../components/PushVideoList.vue";
+// import streamProxyList from "../components/StreamProxyList.vue";
+// import map from "../components/map.vue";
 import login from "../components/Login.vue";
-import parentPlatformList from "../components/ParentPlatformList.vue";
-import cloudRecord from "../components/CloudRecord.vue";
-import cloudRecordDetail from "../components/CloudRecordDetail.vue";
-import mediaServerManger from "../components/MediaServerManger.vue";
-import web from "../components/setting/Web.vue";
-import sip from "../components/setting/Sip.vue";
-import media from "../components/setting/Media.vue";
-import live from "../components/live.vue";
-import deviceTree from "../components/common/DeviceTree.vue";
-import userManager from "../components/UserManager.vue";
-import alarmList from "../components/alarmList.vue";
-import fence from "../components/fence.vue";
+// import parentPlatformList from "../components/ParentPlatformList.vue";
+// import cloudRecord from "../components/CloudRecord.vue";
+// import cloudRecordDetail from "../components/CloudRecordDetail.vue";
+// import mediaServerManger from "../components/MediaServerManger.vue";
+// import web from "../components/setting/Web.vue";
+// import sip from "../components/setting/Sip.vue";
+// import media from "../components/setting/Media.vue";
+// import live from "../components/live.vue";
+// import deviceTree from "../components/common/DeviceTree.vue";
+// import userManager from "../components/UserManager.vue";
+// import alarmList from "../components/alarmList.vue";
+// import fence from "../components/fence.vue";
 
-import wasmPlayer from "../components/common/jessibuca.vue";
-import rtcPlayer from "../components/dialog/rtcPlayer.vue";
-import videoCockpit from "../components/videoCockpit.vue";
-import deviceGroup from "../components/DeviceGroup.vue";
+// import wasmPlayer from "../components/common/jessibuca.vue";
+// import rtcPlayer from "../components/dialog/rtcPlayer.vue";
+// import videoCockpit from "../components/videoCockpit.vue";
+// import deviceGroup from "../components/DeviceGroup.vue";
 
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
@@ -154,23 +154,23 @@ export default new VueRouter({
     {
       path: "/test",
       name: "deviceTree",
-      component: deviceTree
+      component: () => import("../components/common/DeviceTree.vue") // deviceTree
     },
     {
       path: "/play/wasm/:url",
       name: "wasmPlayer",
-      component: wasmPlayer
+      component: () => import("../components/common/jessibuca.vue") // wasmPlayer
     },
     {
       path: "/play/rtc/:url",
       name: "rtcPlayer",
-      component: rtcPlayer
+      component: () => import("../components/dialog/rtcPlayer.vue") // rtcPlayer
     },
 
     {
       path: "/videoCockpit",
       name: "驾驶舱",
-      component: videoCockpit
+      component: () => import("../components/videoCockpit.vue") // videoCockpit
     }
   ]
 });

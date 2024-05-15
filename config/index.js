@@ -44,6 +44,7 @@ module.exports = {
 >>>>>>> 10ddb2f... 更新九宫格轮播模式
         // target: "http://192.168.1.105:18080",
 <<<<<<< HEAD
+<<<<<<< HEAD
         target: "http://10.16.139.254:18080",
         // target: "http://183.239.58.24:18080",
 >>>>>>> 6421bc1... feat 优化弹窗逻辑
@@ -51,6 +52,10 @@ module.exports = {
         // target: "http://10.16.139.254:18080",
         target: "http://183.239.58.24:18080",
 >>>>>>> 39abe74... feat 优化路由懒加载
+=======
+        target: "http://10.16.139.254:18080",
+        // target: "http://183.239.58.24:18080",
+>>>>>>> 3aaa675... feat：大屏优化新增封面
         changeOrigin: true,
         pathRewrite: {
           "^/debug": "/"
