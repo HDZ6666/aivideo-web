@@ -148,7 +148,6 @@ export default {
       });
     },
     showInfo: function (){
-
       this.$axios({
         method: 'get',
         url: `/api/server/system/configInfo`,

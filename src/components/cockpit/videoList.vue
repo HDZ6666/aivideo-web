@@ -12,7 +12,7 @@
           <div class="video-box">
             <LivePlayer
               ref="livePlayer"
-              :videoUrl="(playList[index-1] && playList[index-1].ws_flv) || '' "
+              :videoUrl="playList[index-1] "
               :hasaudio="false"
               aspect="fullscreen"
               fluent
@@ -57,9 +57,14 @@ export default {
     return {
       loopPlayerTimeOut: null,
       looptime: 5,
-      splitNum: 3,
+      splitNum: 2,
       videoLists: [],
-      playList: []
+      playList: [
+        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000010.live.flv",
+        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000020.live.flv",
+        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000030.live.flv",
+        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000040.live.flv"
+      ]
     };
   },
   computed: {
@@ -68,7 +73,7 @@ export default {
     // }
   },
   mounted() {
-    this.getDeviceList();
+    // this.getDeviceList();
     // this.changeVideo();
     // this.$nextTick(_ => {
     //   const player = this.$refs.player;
