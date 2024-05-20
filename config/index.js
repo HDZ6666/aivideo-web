@@ -46,6 +46,7 @@ module.exports = {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         target: "http://10.16.139.254:18080",
         // target: "http://183.239.58.24:18080",
 >>>>>>> 6421bc1... feat 优化弹窗逻辑
@@ -59,6 +60,10 @@ module.exports = {
         // target: "https://10.16.139.254:18080",
         target: "https://fyict.cn:18080",
 >>>>>>> 819b350... 接口更换https
+=======
+        target: "http://10.16.139.254:18080",
+        // target: "https://fyict.cn:18080",
+>>>>>>> 28c7da8... feat: videoList修改为获取播放url逻辑，取消https部署
         // target: "http://183.239.58.24:18080",
 >>>>>>> 3aaa675... feat：大屏优化新增封面
         changeOrigin: true,
