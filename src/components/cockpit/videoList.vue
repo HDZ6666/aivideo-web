@@ -18,6 +18,7 @@
               live
               muted
               stretch
+              aspect="fullscreen"
               hide-big-play-button
               hide-stretch-button
               :controls="false"
@@ -42,7 +43,7 @@ export default {
   data() {
     return {
       loopPlayerTimeOut: null,
-      looptime: 20,
+      looptime: 5 * 60,
       splitNum: 3,
       videoLists: [],
       playList: [],
@@ -56,15 +57,10 @@ export default {
   },
   mounted() {
     // console.log(this.playList)
-    this.playList = new Array(Math.pow(this.splitNum, 2))
-      .fill(1)
-      .map((item, index) => {
-        return {
-          id: index,
-          ws_flv: ""
-        };
-      });
-
+    this.playList = new Array(Math.pow(this.splitNum, 2)).fill({
+      id: "",
+      ws_flv: ""
+    });
     this.getDeviceList();
   },
   methods: {
@@ -74,16 +70,21 @@ export default {
         url: `/cockpit/api/proxy/list`,
         params: {
           page: 1,
-          pageSize: 99
+          pageSize: 9999
         }
       })
         .then(res => {
           if (res.data.code === 0) {
             const list = res.data.data.list;
-            this.videoLists = list;
-            list.forEach(item => {
-              this.getVideoList(item);
+            this.videoLists = list.map(item => {
+              return {
+                id: item.app + item.stream,
+                ws_flv: item.streamInfo.flv.url
+              };
             });
+            // list.forEach(item => {
+            //   this.getVideoList(item);
+            // });
             this.changeVideo();
           }
         })
@@ -118,11 +119,16 @@ export default {
         index = 0;
       }
       const list = this.videoLists.slice(index * num, index * num + num);
-      // console.log(list);
-      list.forEach((item, index) => {
-        this.$set(this.playList, index, item);
+      // console.log(`第${index}次轮播`, list);
+      const list2 = new Array(num - list.length).fill({
+        id: "",
+        ws_flv: ""
       });
-      console.log(this.playList);
+      this.playList = [...list, ...list2];
+      // [...list, ...list2].forEach((item, index) => {
+      //   this.$set(this.playList, index, item);
+      // });
+      // console.log(`第${index}次轮播`, this.playList);
       // this.playList = this.videoLists.slice(index * num, index * num + num);
       if (this.loopPlayerTimeOut) {
         clearTimeout(this.loopPlayerTimeOut);
