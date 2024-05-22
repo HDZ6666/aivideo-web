@@ -1,27 +1,27 @@
 <template>
-  <div class="container" id="container">
-    <!-- <dv-full-screen-container> -->
-    <header-top />
-    <div class="container-content">
-      <div class="content-left">
-        <device-tree :deviceList="deviceList" @deviceClick="handleDeviceClick"></device-tree>
-        <device-count :deviceCountData="deviceCountData"></device-count>
-        <device-online-rate :deviceOnlineData="deviceOnlineData"></device-online-rate>
-      </div>
-      <div class="content-main">
-        <indicator-list :indicatorListData="indicatorListData"></indicator-list>
-        <videoList></videoList>
-        <!-- <dv-decoration-3 style="width:300px;height:50px;" /> -->
-        <!-- <alarm-carousel></alarm-carousel> -->
-      </div>
-      <div class="content-right">
-        <alarm-list :alarmListData="alarmListData"></alarm-list>
-        <alarm-tendency
-          :alarmTendencyData="alarmTendencyData"
-          :alarmTendencyExtend="alarmTendencyExtend"
-        ></alarm-tendency>
-        <alarm-count :alarmCountData="alarmCountData" :alarmCountExtend="alarmCountExtend"></alarm-count>
-        <!-- <dv-decoration-7 style="width:150px;height:50px;">处理情况</dv-decoration-7>
+  <div class="container_bg" id="container">
+    <div class="container">
+      <header-top />
+      <div class="container-content">
+        <div class="content-left">
+          <device-tree :deviceList="deviceList" @deviceClick="handleDeviceClick"></device-tree>
+          <device-count :deviceCountData="deviceCountData"></device-count>
+          <device-online-rate :deviceOnlineData="deviceOnlineData"></device-online-rate>
+        </div>
+        <div class="content-main">
+          <indicator-list :indicatorListData="indicatorListData"></indicator-list>
+          <videoList></videoList>
+          <!-- <dv-decoration-3 style="width:300px;height:50px;" /> -->
+          <!-- <alarm-carousel></alarm-carousel> -->
+        </div>
+        <div class="content-right">
+          <alarm-list :alarmListData="alarmListData"></alarm-list>
+          <alarm-tendency
+            :alarmTendencyData="alarmTendencyData"
+            :alarmTendencyExtend="alarmTendencyExtend"
+          ></alarm-tendency>
+          <alarm-count :alarmCountData="alarmCountData" :alarmCountExtend="alarmCountExtend"></alarm-count>
+          <!-- <dv-decoration-7 style="width:150px;height:50px;">处理情况</dv-decoration-7>
           <div class="handle-box">
             <div class="handle-itme">
               <dv-percent-pond :config="handleconfig1" style="width:120px;height:50px;" />
@@ -31,9 +31,12 @@
               <dv-percent-pond :config="handleconfig2" style="width:120px;height:50px;" />
               <span class="handle-label">历史未处理</span>
             </div>
-        </div>-->
+          </div>-->
+        </div>
       </div>
     </div>
+    <!-- <dv-full-screen-container> -->
+
     <!-- </dv-full-screen-container> -->
     <!-- <button style="position: absolute;left:0" @click=" showDialog = !showDialog;">切换</button> -->
     <transition
@@ -118,9 +121,9 @@
         <!-- <dv-border-box-1 style="width:300px;height:400px;">dv-border-box-1</dv-border-box-1> -->
       </div>
     </transition>
-    <div v-show="false">
+    <!-- <div v-show="false">
       <img :src="item.alarmImg" alt v-for="item in dialogObj.alarmShowList" :key="item.id" />
-    </div>
+    </div>-->
   </div>
 </template>
 
@@ -536,23 +539,45 @@ export default {
 </script>
 
 <style>
-.container {
-  display: flex;
+.container_bg {
   width: 100%;
   height: 100%;
-  background-color: #646a8a;
-  color: #fff;
-  background-image: url("/static/images/cockpitbg.jpg");
-  filter: brightness(90%);
+  /* background-image: url("/static/images/cockpitbg.jpg"); */
+  background-image: url("/static/images/xinxidaxia.jpeg");
   background-size: 100% 100%;
-  box-shadow: 0 0 3px blue;
+  background-repeat: no-repeat;
+  position: relative;
+  /* background-color: #646a8a; */
+  background-color: #475664;
+  background-blend-mode: overlay;
+  /* backdrop-filter: blur(5px); */
+  /* filter: blur(5px); */
+}
+.container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   display: flex;
   flex-direction: column;
-  position: relative;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  backdrop-filter: brightness(0.9);
+  /* backdrop-filter: brightness(0.8) contrast(80%); */
+  /* box-shadow: 0 0 3px blue; */
+  /* background-color: #646a8a;
+  color: #fff; */
+  /* background-image: url("/static/images/cockpitbg.jpg"); */
+  /* filter: brightness(90%); */
+  /* background-size: 100% 100%; */
+  /* box-shadow: 0 0 3px blue; */
+
+  /* position: relative; */
+  /* backdrop-filter: blur(5px); */
 }
 
 #dv-full-screen-container {
-  background-image: url("/static/images/cockpitbg.jpg");
+  /* background-image: url("/static/images/cockpitbg.jpg"); */
   background-size: 100% 100%;
   box-shadow: 0 0 3px blue;
   display: flex;

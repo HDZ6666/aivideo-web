@@ -73,12 +73,12 @@ export default {
       pages: 1, //默认分页数
       total: -1, //默认总数
       loopPlayerIndex: 0, //当前轮播的屏数
-      requesttime: 10,
-      looptime: 20,
-      splitNum: 3,
-      videoLists: [],
-      playList: [],
-      img: img
+      requesttime: 3, // 请求数据时间
+      looptime: 5 * 60, //轮播间隔时间
+      splitNum: 3, //分屏数
+      videoLists: [], //视频列表
+      playList: [], //播放器列表
+      img: img //播放器封面
     };
   },
   computed: {
@@ -281,26 +281,24 @@ export default {
     // 自动轮播
     autoScreen: function() {
       // 已经请求了
-      if (this.total > -1) {
-        if (this.videoLists.length === 0) {
-          this.$message.error("当前没有播放资源");
-          return;
-        }
-        const num = Math.pow(this.splitNum, 2); //分屏数
-        if (this.total < num) {
-          //数据少于分屏数
-          this.$message.error(`可播放资源少于${num}个，无法自动轮播`);
-          return;
-        }
-        this.loopPlayer();
+      if (this.videoLists.length === 0) {
+        this.$message.error("当前没有播放资源");
+        return;
       }
-      const _loopTime = this.total > -1 ? this.looptime : 2; //默认获取数据时间
+      const num = Math.pow(this.splitNum, 2); //分屏数
+      if (this.total > -1 && this.total < num) {
+        //数据少于分屏数
+        this.$message.error(`可播放资源少于${num}个，无法自动轮播`);
+        return;
+      }
+      // this.$message.success(`开始轮播，轮播间隔${this.looptime}秒`);
+      this.loopPlayer();
       if (this.loopPlayerTimeOut) {
         clearTimeout(this.loopPlayerTimeOut);
       }
       this.loopPlayerTimeOut = setTimeout(() => {
         this.autoScreen();
-      }, _loopTime * 1000);
+      }, this.looptime * 1000);
     },
     // 播放器加载完成
     onPlayerPlay: function(e, palyer, index) {
