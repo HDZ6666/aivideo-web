@@ -1,42 +1,50 @@
 <template>
   <div class="videoList-container">
     <el-row style="width: 100%;height: 100%;" :gutter="10">
-      <!-- <el-col :span="24">{{`当前轮播:[${playList.map(item => item.deviceName).join(',')}]`}}</el-col> -->
+      <!-- <el-col :span="24">
+        <div class="control-box">
+          <div>
+            <span>
+              当前轮播:
+              <el-tag effect="dark">{{ `第${loopPlayerIndex}屏` }}</el-tag>
+            </span>
+          </div>
+          <div>
+            <el-button type="primary" style="background: #6c7797;" @click="nextScreen">手动轮播</el-button>
+            <el-button type="primary" style="background: #475998;" @click="autoScreen">自动轮播</el-button>
+          </div>
+        </div>
+      </el-col>-->
       <el-col
         :span="24/splitNum"
-        v-for="index in Math.pow(splitNum,2)"
+        v-for="(player,index) in playList"
         :key="index"
         :style="{height: `calc(${Math.floor(100/splitNum)}% - 10px)`,marginBottom: '10px'}"
       >
         <dv-border-box-12 class="player-border">
-          <div class="video-box">
+          <div
+            class="video-box"
+            v-loading="player.loading"
+            :loading.sync="player.loading"
+            element-loading-text="加载中..."
+            element-loading-background="#000"
+          >
             <LivePlayer
               ref="livePlayer"
-              :videoUrl="playList[index-1] "
+              :video-title="player.name"
+              :videoUrl="player.videoUrl"
               :hasaudio="false"
-              aspect="fullscreen"
-              fluent
+              :alt="player.error?'视频加载失败':'无信号'"
+              live
+              muted
               stretch
-              autoplay
+              aspect="fullscreen"
               hide-big-play-button
               hide-stretch-button
-              live
-              alt="无视频源"
               :controls="false"
+              @play="onPlayerPlay($event,player,index)"
+              @error="onPlayerError($event,player,index)"
             ></LivePlayer>
-            <!-- <rtc-player
-              v-if="Object.keys(this.player).length == 1 && this.player.webRTC"
-              ref="jessibuca"
-              :visible.sync="showVideoDialog"
-              :videoUrl="videoUrl"
-              :error="videoError"
-              :message="videoError"
-              height="100%"
-              :hasAudio="hasAudio"
-              fluent
-              autoplay
-              live
-            ></rtc-player>-->
           </div>
         </dv-border-box-12>
       </el-col>
@@ -55,93 +63,251 @@ export default {
   components: { LivePlayer, rtcPlayer },
   data() {
     return {
+      requestTimer: null,
       loopPlayerTimeOut: null,
-      looptime: 5,
-      splitNum: 2,
-      videoLists: [],
-      playList: [
-        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000010.live.flv",
-        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000020.live.flv",
-        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000030.live.flv",
-        "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000040.live.flv"
-      ]
+      getListLoading: false,
+      pages: 1, //默认分页数
+      total: -1, //默认总数
+      loopPlayerIndex: 0, //当前轮播的屏数
+      requesttime: 3, // 请求数据时间
+      looptime: 5 * 60, //轮播间隔时间
+      splitNum: 2, //分屏数
+      videoLists: [], //视频列表
+      playList: [] //播放器列表
     };
   },
   computed: {
-    // splitNum() {
-    //   return Math.sqrt(this.videoLists.length) || 1;
+    // playList() {
+    //   return new Array(Math.pow(this.splitNum, 2)).join({ ws_flv: "" });
     // }
   },
+
   mounted() {
+    // console.log(this.playList)
+    this.playList = new Array(Math.pow(this.splitNum, 2)).fill({
+      name: "",
+      id: "",
+      videoUrl: "",
+      loading: false,
+      error: false
+    });
+
+    const list = [
+      {
+        id: "华为摄像1",
+        name: "华为摄像1",
+        videoUrl:
+          "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000010.live.flv"
+      },
+      {
+        id: "华为摄像2",
+        name: "华为摄像2",
+        videoUrl:
+          "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000020.live.flv"
+      },
+      {
+        id: "华为摄像3",
+        name: "华为摄像3",
+        videoUrl:
+          "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000030.live.flv"
+      },
+      {
+        id: "华为摄像4",
+        name: "华为摄像4",
+        videoUrl:
+          "ws://183.239.58.24:20001/rtp/44060610091182000010_44060610091322000040.live.flv"
+      }
+    ];
+
+    this.videoLists = list;
+    this.total = 4;
+    this.loopPlayer();
+
+    // setTimeout(() => {
+    //   this.videoLists = list;
+    //   this.total = 10;
+    // }, 1000);
     // this.getDeviceList();
     // this.changeVideo();
-    // this.$nextTick(_ => {
-    //   const player = this.$refs.player;
-    //   player && player.updatePlayerDomSize();
-    // });
   },
   methods: {
-    getDeviceList: function() {
+    getDeviceList: function(page = 1) {
+      // 超过就不请求
+      const _page = this.total == -1 ? 1 : page; //初始化页
+      if (this.total == 0) return; //无数据
+      if (_page > this.pages) return; //最后一页
+      // console.log("第" + _page + "页", this.videoLists);
+      // this.getListLoading = true;
       this.$axios({
         method: "get",
         url: `/cockpit/api/proxy/list`,
         params: {
-          page: 1,
-          pageSize: 99
+          page: _page,
+          pageSize: 9
         }
       })
         .then(res => {
           if (res.data.code === 0) {
-            const list = res.data.data.list;
-            list.forEach(item => {
-              this.getVideoList(item);
+            const data = res.data.data;
+            const list = data.list.map(item => {
+              return {
+                name: item.name,
+                id: item.app + item.stream,
+                videoUrl: item.streamInfo.ws_flv.url,
+                loading: false,
+                error: false
+              };
             });
+            this.videoLists = [...this.videoLists, ...list];
+            this.pages = data.pages;
+            this.total = data.total;
+            if (this.videoLists.length === this.total) {
+              //全部加载完毕
+              this.getListLoading = true;
+            }
+            if (page === 1 && this.videoLists.length > 0) {
+              this.loopPlayer(); //首屏自动加载
+            }
           }
         })
         .finally(() => {
-          // dialogObj.handleLoading = false;
+          // this.getListLoading = false;
         });
+      if (this.requestTimer) clearTimeout(this.requestTimer);
+      this.requestTimer = setTimeout(() => {
+        this.getDeviceList(_page + 1);
+      }, this.requesttime * 1000);
     },
-    getVideoList: function(params) {
+    getVideoList: function(player) {
       this.$axios({
         method: "get",
         url: `/cockpit/api/proxy/getPlayUrl`,
         params: {
-          app: params.app,
-          stream: params.stream
+          app: player.app,
+          stream: player.stream
         }
       })
         .then(res => {
           if (res.data.code === 0) {
-            this.videoLists.push(res.data.data);
-            this.changeVideo();
+            const data = res.data.data;
+            player.ws_flv = data.ws_flv;
           }
         })
         .finally(() => {
           // dialogObj.handleLoading = false;
         });
     },
+    loopPlayer: function() {
+      const num = Math.pow(this.splitNum, 2); //分屏数
+      const pageSize = Math.ceil(this.videoLists.length / num); // 总页数
+      if (this.loopPlayerIndex > pageSize - 1) {
+        this.loopPlayerIndex = 0;
+      }
+      const list = this.videoLists.slice(
+        this.loopPlayerIndex * num,
+        this.loopPlayerIndex * num + num
+      );
+      const list2 = new Array(num - list.length).fill({
+        id: "",
+        name: "",
+        videoUrl: "",
+        loading: false,
+        error: false
+      });
+      this.playList = [...list, ...list2].map(item => {
+        if (item.videoUrl) {
+          item.loading = true;
+        }
+        return item;
+      });
+      this.loopPlayerIndex++;
+    },
     // 轮播
     changeVideo: function(index = 0) {
-      const num = Math.pow(this.splitNum, 2);
-      const pageSize = Math.ceil(this.videoLists.length / num); //2
-      if (this.videoLists.length <= num) {
-        this.playList = this.videoLists;
-        return;
+      const num = Math.pow(this.splitNum, 2); //9
+      const _loopTime = this.total === -1 ? 2 : this.looptime; //默认获取数据时间
+      let _index = this.total === -1 ? 0 : index; //默认轮播次数
+
+      if (this.videoLists.length > 0) {
+        const pageSize = Math.ceil(this.videoLists.length / num); // 总页数
+        if (_index > pageSize - 1) {
+          _index = 0;
+        }
+        const list = this.videoLists.slice(_index * num, _index * num + num);
+        const list2 = new Array(num - list.length).fill({
+          id: "",
+          videoUrl: "",
+          loading: false
+        });
+        this.playList = [...list, ...list2];
       }
-      if (index > pageSize - 1) {
-        index = 0;
-      }
-      this.playList = this.videoLists.slice(index * num, index * num + num);
+      if (this.total !== -1 && this.total < num) return; //数据少于分屏数不轮播
+
       if (this.loopPlayerTimeOut) {
         clearTimeout(this.loopPlayerTimeOut);
       }
       this.loopPlayerTimeOut = setTimeout(() => {
-        this.changeVideo(index + 1);
+        this.changeVideo(_index + 1);
+      }, _loopTime * 1000);
+    },
+    // 手动轮播
+    nextScreen: function() {
+      if (this.videoLists.length === 0) {
+        this.$message.error("当前没有播放资源");
+        return;
+      }
+      if (this.loopPlayerTimeOut) {
+        clearTimeout(this.loopPlayerTimeOut);
+      }
+      this.loopPlayer();
+    },
+    // 自动轮播
+    autoScreen: function() {
+      // 已经请求了
+      if (this.videoLists.length === 0) {
+        this.$message.error("当前没有播放资源");
+        return;
+      }
+      const num = Math.pow(this.splitNum, 2); //分屏数
+      if (this.total > -1 && this.total < num) {
+        //数据少于分屏数
+        this.$message.error(`可播放资源少于${num}个，无法自动轮播`);
+        return;
+      }
+      // this.$message.success(`开始轮播，轮播间隔${this.looptime}秒`);
+      this.loopPlayer();
+      if (this.loopPlayerTimeOut) {
+        clearTimeout(this.loopPlayerTimeOut);
+      }
+      this.loopPlayerTimeOut = setTimeout(() => {
+        this.autoScreen();
       }, this.looptime * 1000);
     },
-    videoError: function(e) {
-      console.log("播放器错误：" + JSON.stringify(e));
+    // 播放器加载完成
+    onPlayerPlay: function(e, palyer, index) {
+      if (palyer.loading) {
+        this.playList = [...this.playList].map((item, _index) => {
+          if (index === _index) {
+            item.loading = false;
+          }
+          return item;
+        });
+        console.log("播放器加载完成", palyer);
+      }
+    },
+    // 播放器错误
+    onPlayerError: function(e, palyer, index) {
+      if (palyer.loading) {
+        this.playList = [...this.playList].map((item, _index) => {
+          if (index === _index) {
+            item.videoUrl = ""; // 错误的话把URL置空
+            item.loading = false;
+            item.error = true;
+          }
+          return item;
+        });
+        console.log("播放器错误：", palyer);
+      }
     }
   }
 };
@@ -199,5 +365,12 @@ export default {
   top: -5px; */
   /* width: calc(100% + 10px);
   height: calc(100% + 10px); */
+}
+.control-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0px;
+  text-align: right;
 }
 </style>

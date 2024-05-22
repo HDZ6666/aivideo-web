@@ -637,8 +637,8 @@ export default {
 }
 
 .module-title {
-  width: 150px;
-  height: 50px;
+  width: 150px !important;
+  height: 50px !important;
 }
 
 .content-left {
