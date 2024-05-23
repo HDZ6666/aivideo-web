@@ -77,8 +77,8 @@
             <dv-decoration-3 style="width:250px;height:30px;" />
             <el-descriptions :column="1" size="medium">
               <el-descriptions-item label="告警时间">{{ dialogObj.showAlarmObj.alarmTime || '' }}</el-descriptions-item>
-              <el-descriptions-item label="告警地点">信息大厦</el-descriptions-item>
-              <el-descriptions-item label="设备名称">信息大厦-华为枪机#1</el-descriptions-item>
+              <el-descriptions-item label="告警地点">某大厦</el-descriptions-item>
+              <el-descriptions-item label="设备名称">某大厦-华为枪机#1</el-descriptions-item>
               <el-descriptions-item label="告警ID">{{ dialogObj.showAlarmObj.alarmId }}</el-descriptions-item>
               <el-descriptions-item label="置信度">58%</el-descriptions-item>
               <el-descriptions-item label="处理情况">
@@ -187,7 +187,7 @@ export default {
         "ws://183.239.58.24:20001/rtp/44010200491330000001_34020000001340000001.live.flv",
       deviceList: [
         {
-          label: "移动信息大厦",
+          label: "某大厦",
           children: [
             {
               label: "枪机1"
