@@ -6,7 +6,7 @@
         <div class="content-left">
           <device-tree :deviceList="deviceList" @deviceClick="handleDeviceClick"></device-tree>
           <device-count :deviceCountData="deviceCountData"></device-count>
-          <device-online-rate :deviceOnlineData="deviceOnlineData"></device-online-rate>
+          <!-- <device-online-rate :deviceOnlineData="deviceOnlineData"></device-online-rate> -->
         </div>
         <div class="content-main">
           <indicator-list :indicatorListData="indicatorListData"></indicator-list>
@@ -20,7 +20,7 @@
             :alarmTendencyData="alarmTendencyData"
             :alarmTendencyExtend="alarmTendencyExtend"
           ></alarm-tendency>
-          <alarm-count :alarmCountData="alarmCountData" :alarmCountExtend="alarmCountExtend"></alarm-count>
+          <!-- <alarm-count :alarmCountData="alarmCountData" :alarmCountExtend="alarmCountExtend"></alarm-count> -->
           <!-- <dv-decoration-7 style="width:150px;height:50px;">处理情况</dv-decoration-7>
           <div class="handle-box">
             <div class="handle-itme">

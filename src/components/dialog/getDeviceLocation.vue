@@ -25,7 +25,6 @@ export default {
     MapComponent
   },
   created() {
-    console.log(1);
   },
   data() {
     return {

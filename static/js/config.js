@@ -1,7 +1,7 @@
 
-window.baseUrl = "https://10.16.139.254:18080"
+window.baseUrl = "http://10.16.139.254:18080"
 // window.baseUrl = "https://fyict.cn:18080"
-window.iframeBaseUrl = "https://10.16.139.254:8066"
+window.iframeBaseUrl = "http://10.16.139.254:8066"
 // window.iframeBaseUrl = "https://fyict.cn:8066"
 // window.iframeBaseUrl = "http://192.168.1.106:8066"
 // map组件全局参数, 注释此内容可以关闭地图功能

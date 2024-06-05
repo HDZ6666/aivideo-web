@@ -1,7 +1,7 @@
 <template>
   <div id="DeviceTree" style="width: 100%;height: 100%; background-color: #FFFFFF; overflow: auto">
     <el-container>
-      <el-header>设备列表</el-header>
+      <el-header>设备列表1</el-header>
       <el-main style="background-color: #ffffff;">
         <div class="device-tree-main-box">
           <el-tree
@@ -127,6 +127,7 @@ export default {
   methods: {
     handleNodeClick(data, node, element) {
       let deviceNode = this.$refs.gdTree.getNode(data.userData.deviceId);
+      console.log(deviceNode)
       if (typeof this.clickEvent == "function") {
         this.clickEvent(
           deviceNode.data.userData,
@@ -191,6 +192,7 @@ export default {
           );
         }
       } else {
+        // return resolve([]);
         let channelArray = [];
 
         this.deviceService.getTree(
