@@ -1,5 +1,5 @@
 <template>
-  <div id="streamProxyList" style="width: 100%">
+  <div id="streamProxyList" style="width: 100%;height:100%">
     <div class="page-header">
       <div class="page-title">拉流代理列表</div>
       <div class="page-header-btn">
