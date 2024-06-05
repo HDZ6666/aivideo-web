@@ -30,7 +30,7 @@
       <div class="device-table">
         <el-table
           :data="streamProxyList"
-          style="width: 100%"
+          style="width: 100%;font-size: 12px;"
           :height="winHeight"
           v-loading="streamProxyListLoading"
         >
@@ -208,7 +208,7 @@ export default {
       currentPusher: {}, //当前操作设备对象
       updateLooper: 0, //数据刷新轮训标志
       currentDeviceChannelsLenth: 0,
-      winHeight: window.innerHeight - 250,
+      winHeight: window.innerHeight - 200,
       currentPage: 1,
       count: 15,
       total: 0,
