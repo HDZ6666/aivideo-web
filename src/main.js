@@ -64,7 +64,7 @@ axios.interceptors.response.use(
     if (axios.isCancel(error)) {
       return Promise.reject(error);
     }
-    Message.error(error.message || "请求错误");
+    // Message.error(error.message || "请求错误");
     console.log(error);
     // 对响应错误做点什么
     if (error.response.status === 401) {

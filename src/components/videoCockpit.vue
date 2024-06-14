@@ -10,7 +10,7 @@
         </div>
         <div class="content-main">
           <indicator-list :indicatorListData="indicatorListData"></indicator-list>
-          <videoList></videoList>
+          <!-- <videoList></videoList> -->
           <!-- <dv-decoration-3 style="width:300px;height:50px;" /> -->
           <!-- <alarm-carousel></alarm-carousel> -->
         </div>
@@ -58,19 +58,26 @@
             <span v-if="!dialogObj.showClose">{{ dialogObj.count }}</span>
             <i v-else class="el-icon-close" @click="handleClose"></i>
           </div>
-          <div class="img-box">
+          <div class="img-box" id="alarmImg">
             <!-- <img
+              :src="item.alarmImg"
+              alt
+              v-for="item in dialogObj.alarmShowList"
+              :key="item.id"
+              style="width: 100%; height: 100%;object-fit: contain;"
+              v-show="item.id === dialogObj.showAlarmObj.id"
+            />-->
+            <img
               :src="dialogObj.showAlarmObj.alarmImg"
               alt
-              style="width: 100%; height: 100%"
+              style="width: 100%; height: 100%;object-fit: contain;"
               fit="contain"
-            />-->
-            <el-image
-              lazy
+            />
+            <!-- <el-image
               style="width: 100%; height: 100%"
               :src="dialogObj.showAlarmObj.alarmImg"
               fit="contain"
-            ></el-image>
+            ></el-image>-->
           </div>
           <!-- <dv-decoration-2 style="width:5px;height:150px;" /> -->
           <dv-decoration-2 :reverse="true" style="width:5px;height:300px;" />
@@ -80,10 +87,10 @@
             <dv-decoration-3 style="width:250px;height:30px;" />
             <el-descriptions :column="1" size="medium">
               <el-descriptions-item label="告警时间">{{ dialogObj.showAlarmObj.alarmTime || '' }}</el-descriptions-item>
-              <el-descriptions-item label="告警地点">某大厦</el-descriptions-item>
-              <el-descriptions-item label="设备名称">某大厦-华为枪机#1</el-descriptions-item>
+              <el-descriptions-item label="分组名称">某大厦</el-descriptions-item>
+              <el-descriptions-item label="设备名称">{{ dialogObj.showAlarmObj.deviceName }}</el-descriptions-item>
               <el-descriptions-item label="告警ID">{{ dialogObj.showAlarmObj.alarmId }}</el-descriptions-item>
-              <el-descriptions-item label="置信度">58%</el-descriptions-item>
+              <!-- <el-descriptions-item label="置信度">58%</el-descriptions-item> -->
               <el-descriptions-item label="处理情况">
                 <el-tag size="small" color="#2db7f5" class="handleStatus">待处理</el-tag>
               </el-descriptions-item>
@@ -332,6 +339,9 @@ export default {
       }
     };
   },
+  created() {
+    this.getAlarmList();
+  },
   mounted() {
     // 设备列表
     for (let i = 0; i < 10; i++) {
@@ -371,7 +381,7 @@ export default {
       true
     );
 
-    this.getAlarmList();
+    // this.getAlarmList();
     this.handleShowDialog();
 
     this.$nextTick(_ => {
@@ -462,7 +472,7 @@ export default {
         } else {
           // console.log(dialogObj.alarmShowList)
           const showItem = dialogObj.alarmShowList.filter(
-            item => !item.showDialog && item.imgload
+            item => !item.showDialog
           )[0]; // 拿第一个没有展示的值
           _timeout = 0.5; // 500毫秒检测一次看图片加载完没有
           // 图片已经加载了
@@ -498,7 +508,7 @@ export default {
           url: `/ai/api/alarm/alarmCameraListAll`,
           params: {
             page: 1,
-            pageSize: 9999,
+            pageSize: 10,
             status: 0,
             todayTime: moment(new Date()).format("YYYY-MM-DD")
           }
@@ -507,19 +517,24 @@ export default {
             if (res.data.code === 0) {
               const { list } = res.data.data;
               const _list = [];
+              // console.log(list)
               list.forEach(item => {
                 if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
                   item.showDialog = false;
                   dialogObj.alarmMap[item.id] = item;
+                  // item.img = new Image();
+                  // item.img.src = item.alarmImg;
+
+                  // item.alarmImg = 'http://10.16.139.254:18080/imgs/Capture/2024-06-12/2024-06-14_10-03-45.jpg'
                   _list.push(item);
-                  if (!item.imgload && item.alarmImg) {
-                    const img = new Image();
-                    img.src = item.alarmImg;
-                    img.onload = function() {
-                      item.imgload = true;
-                      item.img = img;
-                    };
-                  }
+                  // if (!item.imgload && item.alarmImg) {
+                  //   item.img = new Image();
+                  //   item.img.onload = function() {
+                  //     console.log(item.img)
+                  //     item.imgload = true;
+                  //   };
+                  //   item.img.src = item.alarmImg;
+                  // }
                 }
               });
               dialogObj.alarmShowList = [..._list, ...dialogObj.alarmShowList];
@@ -532,7 +547,7 @@ export default {
       if (dialogObj.requestTimer) clearInterval(this.dialogObj.requestTimer);
       dialogObj.requestTimer = setInterval(() => {
         this.getAlarmList();
-      }, 5000);
+      }, 500000);
     }
   }
 };
@@ -671,6 +686,8 @@ export default {
 .dialog-border {
   width: 100%;
   height: 100%;
+  position: absolute;
+  inset: 0;
 }
 .dialog-content {
   position: absolute;

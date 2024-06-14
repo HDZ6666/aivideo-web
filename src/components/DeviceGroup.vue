@@ -32,6 +32,14 @@
           >{{scope.row.state === 1 ? '启用' : '禁用'}}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column prop="isScreen" label="大屏模板">
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.isScreen === 1 ? 'primary' : 'danger'"
+            disable-transitions
+          >{{scope.row.isScreen === 1 ? '是' : '否'}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <!-- <el-button
@@ -41,7 +49,7 @@
             type="text"
             @click="chooseDevice(scope.row)"
           >添加设备</el-button>
-          <el-divider direction="vertical"></el-divider> -->
+          <el-divider direction="vertical"></el-divider>-->
           <el-button size="medium" icon="el-icon-edit" type="text" @click="edit(scope.row)">修改分组</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-button

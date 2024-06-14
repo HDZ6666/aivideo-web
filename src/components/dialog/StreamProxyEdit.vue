@@ -15,24 +15,18 @@
             <el-input v-model="proxyParam.name" clearable></el-input>
           </el-form-item>
           <el-form-item label="分组" prop="categoryId">
-            <!-- <el-cascader
-              :options="options"
-              :show-all-levels="false"
-              v-model="proxyParam.categoryId"
-              clearable
-            ></el-cascader>-->
             <el-select
               v-model="proxyParam.categoryId"
               ref="groupTreeSelect"
               clearable
-              @clear="clearGroup"
+              @clear="clearCategory"
               style="width: 100%"
             >
               <el-option
                 hidden
-                :label="selectTree.label"
-                :value="selectTree.value"
-                :key="selectTree.value"
+                :label="groupTree.label"
+                :value="groupTree.value"
+                :key="groupTree.value"
               />
               <el-tree
                 ref="groupTree"
@@ -41,11 +35,36 @@
                 highlight-current
                 node-key="id"
                 check-on-click-node
-                :data="options"
-                @node-click="handleNodeClick"
+                :data="groupList"
+                @node-click="handleGroupTreeClick"
               />
             </el-select>
-            <!-- <el-input v-model="proxyParam.categoryId" clearable></el-input> -->
+          </el-form-item>
+          <el-form-item label="大屏模板" prop="screenId">
+            <el-select
+              v-model="proxyParam.screenId"
+              ref="screenTreeSelect"
+              clearable
+              @clear="clearScreen"
+              style="width: 100%"
+            >
+              <el-option
+                hidden
+                :label="screenTree.label"
+                :value="screenTree.value"
+                :key="screenTree.value"
+              />
+              <el-tree
+                ref="screenTree"
+                :props="treeProps"
+                default-expand-all
+                highlight-current
+                node-key="id"
+                check-on-click-node
+                :data="screenList"
+                @node-click="handleScreenTreeClick"
+              />
+            </el-select>
           </el-form-item>
           <div v-show="type=='add'">
             <el-form-item label="类型" prop="type">
@@ -225,12 +244,17 @@ export default {
           }
         ]
       },
-      options: [],
+      groupList: [],
       treeProps: {
         children: "children",
         label: "group_name"
       },
-      selectTree: {
+      groupTree: {
+        label: "",
+        value: ""
+      },
+      screenList: [],
+      screenTree: {
         label: "",
         value: ""
       }
@@ -241,26 +265,38 @@ export default {
       this.showDialog = true;
       this.listChangeCallback = callback;
       this.type = type;
-      this.options = list || [];
+      this.groupList = (list || []).filter(item => item.isScreen == 0);
+      this.screenList = (list || []).filter(item => item.isScreen == 1);
       if (proxyParam != null) {
         this.proxyParam = { ...this.proxyParam, ...proxyParam };
         this.proxyParam.noneReader = null;
         this.proxyParam.categoryId = null;
+        this.proxyParam.screenId = null;
       }
 
       // 设置树
       this.$nextTick(() => {
-        if (this.options.length > 0 && this.$refs.groupTree) {
+        // 分组
+        if (this.groupList.length > 0 && this.$refs.groupTree) {
           const node = this.$refs.groupTree.getNode(proxyParam.categoryId);
-          this.selectTree = {
+          this.groupTree = {
             label: node.data.group_name,
             value: node.data.id
           };
           this.proxyParam.categoryId = +proxyParam.categoryId;
           this.$refs.groupTree.setCurrentKey(this.proxyParam.categoryId);
         }
+        // 大屏
+        if (this.screenList.length > 0 && this.$refs.screenTree) {
+          const node = this.$refs.screenTree.getNode(proxyParam.screenId);
+          this.screenTree = {
+            label: node.data.group_name,
+            value: node.data.id
+          };
+          this.proxyParam.screenId = +proxyParam.screenId;
+          this.$refs.screenTree.setCurrentKey(this.proxyParam.screenId);
+        }
       });
-      f;
       let that = this;
       this.$axios({
         method: "get",
@@ -402,14 +438,19 @@ export default {
         platformGbId: null,
         mediaServerId: null
       };
-      this.selectTree = {
+      this.groupTree = {
+        label: "",
+        value: ""
+      };
+      this.screenTree = {
         label: "",
         value: ""
       };
     },
-    handleNodeClick(data, node) {
+    // f分组
+    handleGroupTreeClick(data, node) {
       if (node.isLeaf) {
-        this.selectTree = {
+        this.groupTree = {
           label: data.group_name,
           value: data.id
         };
@@ -417,12 +458,30 @@ export default {
         this.$refs.groupTreeSelect.blur();
       }
     },
-    clearGroup() {
-      this.selectTree = {
+    clearCategory() {
+      this.groupTree = {
         label: "",
         value: ""
       };
       this.$refs.groupTree.setCurrentKey(null);
+    },
+    // 大屏
+    handleScreenTreeClick(data, node) {
+      if (node.isLeaf) {
+        this.screentTree = {
+          label: data.group_name,
+          value: data.id
+        };
+        this.proxyParam.screenId = data.id;
+        this.$refs.screenTreeSelect.blur();
+      }
+    },
+    clearScreen() {
+      this.screentTree = {
+        label: "",
+        value: ""
+      };
+      this.$refs.screentTree.setCurrentKey(null);
     }
   }
 };

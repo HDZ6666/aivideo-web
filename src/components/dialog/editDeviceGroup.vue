@@ -36,6 +36,12 @@
               ></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="大屏模板" prop="isScreen">
+            <el-select v-model="editForm.isScreen" placeholder="请选择" style="width: 100%">
+              <el-option label="是" :value="1"></el-option>
+              <el-option label="否" :value="0"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item>
             <div style="float: right;">
               <el-button type="primary" @click="onSubmit">保存</el-button>
@@ -62,8 +68,9 @@ export default {
       },
       editForm: {
         groupName: null,
-        state: null,
-        parentId: null
+        state: 1,
+        parentId: null,
+        isScreen: 0
       },
       // groupObject: null,
       loading: false,
@@ -156,8 +163,9 @@ export default {
       this.options = null;
       this.editForm = {
         groupName: null,
-        state: null,
-        parentId: null
+        state: 1,
+        parentId: null,
+        isScreen: 0
       };
     }
   }

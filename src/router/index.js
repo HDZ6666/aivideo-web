@@ -130,6 +130,11 @@ export default new VueRouter({
           component: () => import("../components/UserManager.vue") // userManager
         },
         {
+          path: "/roleManager",
+          name: "roleManager",
+          component: () => import("../components/RoleManager.vue") // roleManager
+        },
+        {
           path: "/alarmList",
           name: "alarmList",
           component: () => import("../components/alarmList.vue") // alarmList
