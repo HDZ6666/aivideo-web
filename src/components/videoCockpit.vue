@@ -508,7 +508,7 @@ export default {
           url: `/ai/api/alarm/alarmCameraListAll`,
           params: {
             page: 1,
-            pageSize: 10,
+            pageSize: 9999,
             status: 0,
             todayTime: moment(new Date()).format("YYYY-MM-DD")
           }
@@ -547,7 +547,7 @@ export default {
       if (dialogObj.requestTimer) clearInterval(this.dialogObj.requestTimer);
       dialogObj.requestTimer = setInterval(() => {
         this.getAlarmList();
-      }, 500000);
+      }, 5000);
     }
   }
 };
@@ -747,7 +747,9 @@ export default {
   position: absolute;
   bottom: 20px;
   right: 20px;
+  width: 300px;
   display: flex;
+  justify-content: flex-end;
 }
 
 .handleButton {
