@@ -10,7 +10,7 @@
         </div>
         <div class="content-main">
           <indicator-list :indicatorListData="indicatorListData"></indicator-list>
-          <!-- <videoList></videoList> -->
+          <videoList></videoList>
           <!-- <dv-decoration-3 style="width:300px;height:50px;" /> -->
           <!-- <alarm-carousel></alarm-carousel> -->
         </div>
