@@ -1,24 +1,34 @@
 <template>
   <div class="device-box">
     <div class="device-content">
-      <el-tree
+      <CockputDeviceTree :clickEvent="clickEvent"></CockputDeviceTree>
+      <!-- <el-tree
         id="deviceList"
         :data="deviceList"
         :highlight-current="false"
         @node-click="handleDeviceClick"
-      ></el-tree>
+      ></el-tree>-->
     </div>
     <dv-border-box-11 title="设备列表" class="device-border"></dv-border-box-11>
   </div>
 </template>
 
 <script>
+import DeviceTree from "../common/DeviceTree3.vue";
 export default {
   name: "deviceTree",
   props: ["deviceList"],
+  components: {
+    CockputDeviceTree: DeviceTree
+  },
   methods: {
-    handleDeviceClick(data) {
-      this.$emit("deviceClick", data);
+    // handleDeviceClick(data) {
+    //   this.$emit("deviceClick", data);
+    // },
+    clickEvent: function(device) {
+      if (device.userData && device.userData.streamInfo) {
+        this.$emit("deviceClick", data);
+      }
     }
   }
 };
@@ -27,7 +37,7 @@ export default {
 <style>
 .device-box {
   position: relative;
-  height: 215px;
+  height: 500px;
   padding: 60px 10px 10px;
   box-sizing: border-box;
 }

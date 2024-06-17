@@ -5,7 +5,7 @@
       <div class="container-content">
         <div class="content-left">
           <device-tree :deviceList="deviceList" @deviceClick="handleDeviceClick"></device-tree>
-          <device-count :deviceCountData="deviceCountData"></device-count>
+          <!-- <device-count :deviceCountData="deviceCountData"></device-count> -->
           <!-- <device-online-rate :deviceOnlineData="deviceOnlineData"></device-online-rate> -->
         </div>
         <div class="content-main">
