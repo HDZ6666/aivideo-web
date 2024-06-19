@@ -4,7 +4,7 @@
     <div class="alarmTendency-line">
       <ve-line
         width="350px"
-        height="180px"
+        height="200px"
         ref="ConsoleNet1"
         :data="alarmTendencyData"
         :extend="alarmTendencyExtend"
@@ -52,7 +52,7 @@ export default {
 <style>
 .alarmTendency-container {
   width: 100%;
-  height: 230px;
+  height: 250px;
 }
 .alarmTendency-line {
   width: 100%;

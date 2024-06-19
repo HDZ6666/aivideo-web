@@ -8,23 +8,42 @@
       :color="['#180e64', '#180e64']"
     />
     <div class="center-title">监控驾驶舱</div>
-    <div class="back" @click="back()">
-      <dv-border-box-10>后台管理</dv-border-box-10>
+    <div class="right-btn">
+      <dv-border-box-10 class="backBtn">
+        <div @click="back()">后台管理</div>
+      </dv-border-box-10>
+      <div class="openAlarm">
+        <el-switch
+          v-model="acceptAlarm"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          @change="handleAcceptAlarm"
+        ></el-switch>
+        <span class="openAlarmText">{{acceptAlarm?'开启告警':'关闭告警'}}</span>
+      </div>
     </div>
   </div>
 </template>
-  
+
   <script>
 export default {
   name: "header-top",
+  data() {
+    return {
+      acceptAlarm: false
+    };
+  },
   methods: {
     back() {
       this.$router.push("/");
+    },
+    handleAcceptAlarm(value) {
+      this.$emit("handleAcceptAlarm", value);
     }
   }
 };
 </script>
-  
+
   <style>
 #top-header {
   position: relative;
@@ -55,14 +74,31 @@ export default {
   top: 15px;
   transform: translateX(-50%);
 }
-.back {
+.right-btn {
   position: absolute;
-  right: 220px;
-  top: 35px;
+  right: 90px;
+  top: 50px;
+  width: 250px;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.backBtn {
   width: 100px;
   height: 50px;
   line-height: 50px;
   text-align: center;
   cursor: pointer;
+}
+
+.openAlarm {
+  display: inline-flex;
+  align-items: center;
+}
+.openAlarmText {
+  font-size: 17px;
+  font-weight: bold;
+  margin-left: 5px;
 }
 </style>

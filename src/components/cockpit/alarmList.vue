@@ -36,10 +36,10 @@ export default {
 <style scoped>
 .alarmList-container {
   width: 100%;
-  height: 225px;
+  height: 350px;
 }
 .alarm-list {
   width: 100%;
-  height: 175px;
+  height: 280px;
 }
 </style>>

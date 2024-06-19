@@ -85,34 +85,48 @@
 import moment from "moment";
 export default {
   name: "alarmDialog",
+  props: ["acceptAlarm"],
   data() {
     return {
       dialogObj: {
-        requestTimer: null,
-        domTimer: null,
-        alarmShowList: [],
-        alarmMap: {},
-        showTime: 10,
-        hideTime: 3,
-        showDialog: false,
-        canshow: false,
-        showAlarmObj: {},
-        page: 1,
-        pageSize: 10,
-        total: 0,
-        getAllData: false,
-        count: 0,
-        countDownTimer: null,
-        getListLoading: false,
-        handleLoading: false,
-        showClose: false
+        showDialog: false, // 是否显示
+        // 告警数据
+        requestTimer: null, // 告警请求定时器
+        page: 1, // 当前页
+        pageSize: 9999, // 每页条数
+        total: 0, // 总条数
+        getListLoading: false, // 是否加载中
+        alarmShowList: [], // 远程加载全部告警列表
+        alarmMap: {}, // 告警数据对象,用于判断是否重复
+        // 弹窗
+        domTimer: null, // 弹窗定时器
+        showTime: 10, // 弹窗显示时间
+        hideTime: 3, // 弹窗隐藏时间
+        showAlarmObj: {}, // 当前显示的告警对象
+        // 倒计时
+        countDownTimer: null, // 倒计时定时器
+        count: 0, // 倒计时
+        handleLoading: false, // 处理中
+        showClose: false // 是否显示关闭
         // showTimes: 0
       }
     };
   },
-  mounted() {
-    this.getAlarmList();
-    this.handleShowDialog();
+  watch: {
+    acceptAlarm(value) {
+      if (value) {
+        this.getAlarmList();
+        this.handleShowDialog();
+        this.$message.success("开启订阅告警成功");
+      } else {
+        clearTimeout(this.dialogObj.domTimer);
+        clearInterval(this.dialogObj.countDownTimer);
+        clearInterval(this.dialogObj.requestTimer);
+        this.dialogObj.showDialog = false;
+        this.resetAlarmListState(); // 重置告警状态
+        this.$message.success("关闭订阅告警成功");
+      }
+    }
   },
   methods: {
     getAlarmList() {
@@ -123,25 +137,20 @@ export default {
           method: "get",
           url: `/ai/api/alarm/alarmCameraListAll`,
           params: {
-            page: 1,
-            pageSize: 9999,
-            status: 0,
-            todayTime: moment(new Date()).format("YYYY-MM-DD")
+            page: this.dialogObj.page,
+            pageSize: this.dialogObj.pageSize,
+            status: 0, // 未处理
+            todayTime: moment(new Date()).format("YYYY-MM-DD") // 今天
           }
         })
           .then(res => {
             if (res.data.code === 0) {
               const { list } = res.data.data;
               const _list = [];
-              // console.log(list)
               list.forEach(item => {
                 if (!dialogObj.alarmMap.hasOwnProperty(item.id)) {
                   item.showDialog = false;
                   dialogObj.alarmMap[item.id] = item;
-                  // item.img = new Image();
-                  // item.img.src = item.alarmImg;
-
-                  // item.alarmImg = 'http://10.16.139.254:18080/imgs/Capture/2024-06-12/2024-06-14_10-03-45.jpg'
                   _list.push(item);
                   // if (!item.imgload && item.alarmImg) {
                   //   item.img = new Image();
@@ -167,26 +176,20 @@ export default {
     },
     handleShowDialog() {
       const dialogObj = this.dialogObj;
-      let _timeout = 2;
+      let _timeout = 1; // 默认1秒检测一次
       if (dialogObj.alarmShowList.length === 0) {
         dialogObj.showDialog = false; //展示的长度没有就关闭弹窗
-        _timeout = 2; //没有数组的话 2秒检测一次
+        _timeout = 1; //没有数组的话 1秒检测一次
       } else {
-        // const imgLoad = dialogObj.alarmShowList.every(item => item.imgload);
-        // console.log(dialogObj.alarmShowList);
         if (dialogObj.showDialog) {
           if (dialogObj.countDownTimer) clearInterval(dialogObj.countDownTimer);
           if (dialogObj.alarmShowList.every(item => item.showDialog)) {
             // 全部都展示过就重置
-            dialogObj.alarmShowList.map(item => {
-              item.showDialog = false;
-              return item;
-            });
+            this.resetAlarmListState();
           }
           _timeout = dialogObj.hideTime;
           this.dialogObj.showDialog = false;
         } else {
-          // console.log(dialogObj.alarmShowList)
           const showItem = dialogObj.alarmShowList.filter(
             item => !item.showDialog
           )[0]; // 拿第一个没有展示的值
@@ -206,6 +209,12 @@ export default {
         this.handleShowDialog();
       }, _timeout * 1000);
     },
+    resetAlarmListState() {
+      this.dialogObj.alarmShowList.map(item => {
+        item.showDialog = false;
+        return item;
+      });
+    },
     countDown(time) {
       const dialogObj = this.dialogObj;
       dialogObj.count = time;
@@ -216,7 +225,11 @@ export default {
       }, 1000);
     },
     handleClose() {
-      this.handleShowDialog();
+      if (this.dialogObj.handleLoading) {
+        this.$message.info("请等待处理完成");
+      } else {
+        this.handleShowDialog();
+      }
     },
     handleState(state) {
       // console.log(state);
@@ -239,8 +252,14 @@ export default {
             const list = dialogObj.alarmShowList.filter(item => item.id !== ID);
             dialogObj.alarmShowList = [...list];
             delete dialogObj.alarmMap[ID];
+            this.$message.success("处理成功");
             this.handleShowDialog();
+          } else {
+            this.$message.error(e.msg || "处理失败");
           }
+        })
+        .catch(error => {
+          this.$message.error(error.message || "处理失败");
         })
         .finally(() => {
           dialogObj.handleLoading = false;

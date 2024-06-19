@@ -1,7 +1,7 @@
 <template>
   <div class="container_bg" id="container">
     <div class="container">
-      <header-top />
+      <header-top @handleAcceptAlarm="handleAcceptAlarm" />
       <div class="container-content">
         <div class="content-left">
           <device-tree @deviceClick="handleDeviceClick"></device-tree>
@@ -14,16 +14,16 @@
           <!-- <dv-decoration-3 style="width:300px;height:50px;" />
           <alarm-carousel></alarm-carousel>-->
         </div>
-        <!-- <div class="content-right">
+        <div class="content-right">
           <alarm-list></alarm-list>
           <alarm-tendency></alarm-tendency>
-          <alarm-count></alarm-count>
-          <alarm-handle-count></alarm-handle-count>
-        </div>-->
+          <!-- <alarm-count></alarm-count>
+          <alarm-handle-count></alarm-handle-count>-->
+        </div>
       </div>
     </div>
     <video-dialog ref="videoDialog"></video-dialog>
-    <!-- <alarm-dialog ref="alarmDialog"></alarm-dialog> -->
+    <alarm-dialog ref="alarmDialog" :acceptAlarm="acceptAlarm"></alarm-dialog>
   </div>
 </template>
 
@@ -62,7 +62,9 @@ export default {
     alarmDialog
   },
   data() {
-    return {};
+    return {
+      acceptAlarm: false
+    };
   },
   mounted() {
     autofit.init(
@@ -85,6 +87,9 @@ export default {
         };
         this.$refs.videoDialog.open(palyer);
       }
+    },
+    handleAcceptAlarm(value) {
+      this.acceptAlarm = value;
     }
   }
 };
