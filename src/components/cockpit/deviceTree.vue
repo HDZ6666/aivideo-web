@@ -2,12 +2,6 @@
   <div class="device-box">
     <div class="device-content">
       <CockputDeviceTree :clickEvent="clickEvent"></CockputDeviceTree>
-      <!-- <el-tree
-        id="deviceList"
-        :data="deviceList"
-        :highlight-current="false"
-        @node-click="handleDeviceClick"
-      ></el-tree>-->
     </div>
     <dv-border-box-11 title="设备列表" class="device-border"></dv-border-box-11>
   </div>
@@ -22,12 +16,9 @@ export default {
     CockputDeviceTree: DeviceTree
   },
   methods: {
-    // handleDeviceClick(data) {
-    //   this.$emit("deviceClick", data);
-    // },
     clickEvent: function(device) {
       if (device.userData && device.userData.streamInfo) {
-        this.$emit("deviceClick", data);
+        this.$emit("deviceClick", device.userData);
       }
     }
   }

@@ -164,6 +164,10 @@ export default {
   /* background-color: transparent; */
 }
 #deviceList .el-tree-node:focus > .el-tree-node__content {
-  background-color: transparent;
+  /* background-color: transparent; */
+  background-color: rgba(31, 51, 162, 0.6);
 }
+/* #deviceList .is-current > .el-tree-node__content {
+  background-color: rgba(31, 51, 162, 0.6);
+} */
 </style>

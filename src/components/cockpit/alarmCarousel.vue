@@ -33,8 +33,20 @@ export default {
 .alarmCarousel-container {
   width: 100%;
   height: 180px;
-  /* background: #000; */
 }
+
+.alarmCarousel-container /deep/.el-carousel__item h3 {
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+}
+.alarmCarousel-container /deep/ .el-descriptions__body {
+  color: #fff;
+  background: transparent;
+}
+
 .medium {
   width: 100%;
   height: 100%;

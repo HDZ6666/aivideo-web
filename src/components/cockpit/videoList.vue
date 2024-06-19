@@ -1,9 +1,6 @@
 <template>
   <div class="videoList-container">
-    <el-row style="width: 100%;height: 100%;" :gutter="10">
-      <!-- <el-col
-        :span="24"
-      >{{`当前轮播第${loopPlayerIndex}屏:[${playList.map(item => item.deviceName).join(',')}]`}}</el-col>-->
+    <el-row>
       <el-col :span="24">
         <div class="control-box">
           <div>
@@ -14,16 +11,14 @@
           </div>
           <div>
             <el-button type="primary" style="background: #6c7797;" @click="nextScreen">手动轮播</el-button>
-            <el-button type="primary" style="background: #475998;" @click="autoScreen">自动轮播</el-button>
+            <el-button type="danger" @click="stopScreen" v-if="isAutoScreen">停止轮播</el-button>
+            <el-button type="primary" style="background: #475998;" @click="autoScreen" v-else>自动轮播</el-button>
           </div>
         </div>
       </el-col>
-      <el-col
-        :span="24/splitNum"
-        v-for="(player,index) in playList"
-        :key="index"
-        :style="{height: `calc(${Math.floor(100/splitNum)}% - 10px)`,marginBottom: '10px'}"
-      >
+    </el-row>
+    <el-row>
+      <el-col :span="24/colSpan" v-for="(player,index) in playList" :key="index" class="palyer-box">
         <dv-border-box-12 class="player-border">
           <div
             class="video-box"
@@ -41,7 +36,6 @@
               live
               muted
               stretch
-              aspect="fullscreen"
               hide-big-play-button
               hide-stretch-button
               :controls="false"
@@ -75,92 +69,44 @@ export default {
       loopPlayerIndex: 0, //当前轮播的屏数
       requesttime: 3, // 请求数据时间
       looptime: 5 * 60, //轮播间隔时间
-      splitNum: 3, //分屏数
+      splitNum: 12, //分屏数
       videoLists: [], //视频列表
       playList: [], //播放器列表
-      img: img //播放器封面
+      img: img, //播放器封面
+      isAutoScreen: false //是否自动轮播
     };
   },
   computed: {
-    // playList() {
-    //   return new Array(Math.pow(this.splitNum, 2)).join({ ws_flv: "" });
-    // }
+    colSpan() {
+      return Math.ceil(Math.sqrt(this.splitNum));
+    }
   },
 
   mounted() {
-    // console.log(this.playList)
-    this.playList = new Array(Math.pow(this.splitNum, 2)).fill({
-      name: "",
+    this.playList = new Array(this.splitNum).fill({
       id: "",
+      name: "",
       videoUrl: "",
       loading: false,
       error: false
     });
-
-    const list = [
-      {
-        id: "app226-15",
-        videoUrl: "http://10.16.139.254:10005/app/10.16.147.226-152.live.flv"
-      },
-      {
-        id: "app226-14",
-        videoUrl: "http://10.16.139.254:10005/app/10.16.147.226-14.live.flv"
-      },
-      {
-        id: "app226-13",
-        videoUrl: "http://10.16.139.254:10005/app/10.16.147.226-13.live.flv"
-      },
-      {
-        id: "app226-12",
-        videoUrl: "http://10.16.139.254:10005/app/10.16.147.226-12.live.flv"
-      },
-      {
-        id: "app226-11",
-        videoUrl: "http://10.16.139.254:10005/app/10.16.147.226-11.live.flv"
-      },
-      {
-        id: "app226-10",
-        videoUrl: "http://10.16.139.254:10005/app/10.16.147.226-10.live.flv"
-      },
-      {
-        id: "app226-9",
-        videoUrl: "http://10.16.139.254:10005/app/10.16.147.226-9.live.flv"
-      },
-      {
-        id: "app226-8",
-        videoUrl: "http://10.16.139.254:10005/app/10.16.147.226-8.live.flv"
-      },
-      {
-        id: "app226-7",
-        videoUrl: "http://10.16.139.254:10005/app/10.16.147.226-7.live.flv"
-      },
-      {
-        id: "app226-6",
-        videoUrl: "http://10.16.139.254:10005/app/10.16.147.226-6.live.flv"
-      }
-    ];
-
-    // setTimeout(() => {
-    //   this.videoLists = list;
-    //   this.total = 10;
-    // }, 1000);
     this.getDeviceList();
-    // this.changeVideo();
   },
   methods: {
+    // 获取设备列表
     getDeviceList: function(page = 1) {
       // 超过就不请求
       const _page = this.total == -1 ? 1 : page; //初始化页
       if (this.total == 0) return; //无数据
       if (_page > this.pages) return; //最后一页
-      // console.log("第" + _page + "页", this.videoLists);
-      // this.getListLoading = true;
+
+      this.getListLoading = true;
       this.$axios({
         method: "get",
         url: `/cockpit/api/proxy/list`,
         params: {
           page: _page,
-          pageSize: 9
+          pageSize: this.splitNum
         }
       })
         .then(res => {
@@ -178,44 +124,21 @@ export default {
             this.videoLists = [...this.videoLists, ...list];
             this.pages = data.pages;
             this.total = data.total;
-            if (this.videoLists.length === this.total) {
-              //全部加载完毕
-              this.getListLoading = true;
-            }
-            if (page === 1 && this.videoLists.length > 0) {
+            if (_page === 1 && this.videoLists.length > 0) {
               this.loopPlayer(); //首屏自动加载
+              console.log("首屏自动加载");
             }
+            // 循环获取设备列表
+            this.getDeviceList(_page + 1);
           }
         })
         .finally(() => {
-          // this.getListLoading = false;
-        });
-      if (this.requestTimer) clearTimeout(this.requestTimer);
-      this.requestTimer = setTimeout(() => {
-        this.getDeviceList(_page + 1);
-      }, this.requesttime * 1000);
-    },
-    getVideoList: function(player) {
-      this.$axios({
-        method: "get",
-        url: `/cockpit/api/proxy/getPlayUrl`,
-        params: {
-          app: player.app,
-          stream: player.stream
-        }
-      })
-        .then(res => {
-          if (res.data.code === 0) {
-            const data = res.data.data;
-            player.ws_flv = data.ws_flv;
-          }
-        })
-        .finally(() => {
-          // dialogObj.handleLoading = false;
+          this.getListLoading = false;
         });
     },
+    // 播放一屏
     loopPlayer: function() {
-      const num = Math.pow(this.splitNum, 2); //分屏数
+      const num = this.splitNum; //分屏数
       const pageSize = Math.ceil(this.videoLists.length / num); // 总页数
       if (this.loopPlayerIndex > pageSize - 1) {
         this.loopPlayerIndex = 0;
@@ -239,34 +162,6 @@ export default {
       });
       this.loopPlayerIndex++;
     },
-    // 轮播
-    changeVideo: function(index = 0) {
-      const num = Math.pow(this.splitNum, 2); //9
-      const _loopTime = this.total === -1 ? 2 : this.looptime; //默认获取数据时间
-      let _index = this.total === -1 ? 0 : index; //默认轮播次数
-
-      if (this.videoLists.length > 0) {
-        const pageSize = Math.ceil(this.videoLists.length / num); // 总页数
-        if (_index > pageSize - 1) {
-          _index = 0;
-        }
-        const list = this.videoLists.slice(_index * num, _index * num + num);
-        const list2 = new Array(num - list.length).fill({
-          id: "",
-          videoUrl: "",
-          loading: false
-        });
-        this.playList = [...list, ...list2];
-      }
-      if (this.total !== -1 && this.total < num) return; //数据少于分屏数不轮播
-
-      if (this.loopPlayerTimeOut) {
-        clearTimeout(this.loopPlayerTimeOut);
-      }
-      this.loopPlayerTimeOut = setTimeout(() => {
-        this.changeVideo(_index + 1);
-      }, _loopTime * 1000);
-    },
     // 手动轮播
     nextScreen: function() {
       if (this.videoLists.length === 0) {
@@ -285,36 +180,43 @@ export default {
         this.$message.error("当前没有播放资源");
         return;
       }
-      const num = Math.pow(this.splitNum, 2); //分屏数
-      if (this.total > -1 && this.total < num) {
+      if (this.total > -1 && this.total < this.splitNum) {
         //数据少于分屏数
-        this.$message.error(`可播放资源少于${num}个，无法自动轮播`);
+        this.$message.error(`可播放资源少于${this.splitNum}个，无法自动轮播`);
         return;
       }
-      // this.$message.success(`开始轮播，轮播间隔${this.looptime}秒`);
+      this.$message.success(`开始轮播，轮播间隔${this.looptime}秒`);
+      this.isAutoScreen = true;
       this.loopPlayer();
       if (this.loopPlayerTimeOut) {
-        clearTimeout(this.loopPlayerTimeOut);
+        clearInterval(this.loopPlayerTimeOut);
       }
-      this.loopPlayerTimeOut = setTimeout(() => {
-        this.autoScreen();
+      this.loopPlayerTimeOut = setInterval(() => {
+        this.loopPlayer();
       }, this.looptime * 1000);
     },
+    // 停止轮播
+    stopScreen: function() {
+      if (this.loopPlayerTimeOut) {
+        clearInterval(this.loopPlayerTimeOut);
+      }
+      this.isAutoScreen = false;
+      this.$message.success(`停止轮播`);
+    },
     // 播放器加载完成
-    onPlayerPlay: function(e, palyer, index) {
-      if (palyer.loading) {
+    onPlayerPlay: function(e, player, index) {
+      if (player.loading) {
         this.playList = [...this.playList].map((item, _index) => {
           if (index === _index) {
             item.loading = false;
           }
           return item;
         });
-        console.log("播放器加载完成", palyer);
       }
     },
     // 播放器错误
-    onPlayerError: function(e, palyer, index) {
-      if (palyer.loading) {
+    onPlayerError: function(e, player, index) {
+      if (player.loading) {
         this.playList = [...this.playList].map((item, _index) => {
           if (index === _index) {
             item.videoUrl = ""; // 错误的话把URL置空
@@ -323,7 +225,6 @@ export default {
           }
           return item;
         });
-        console.log("播放器错误：", palyer);
       }
     }
   }
@@ -334,16 +235,23 @@ export default {
 .videoList-container {
   /* flex: 1; */
   width: 100%;
-  height: 450px;
+  /* height: 450px; */
   /* height: 60%; */
   /* height: 540px; */
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+  /* display: flex;
+  flex-direction: row; */
+  /* flex-wrap: wrap; */
+  /* justify-content: center;
+  align-items: center; */
   padding-bottom: 1%;
+  box-sizing: border-box;
 }
+.palyer-box {
+  padding: 2px;
+}
+/* .palyer-box:last-child {
+  margin-bottom: 0;
+} */
 
 .video-box {
   width: 100%;
@@ -377,6 +285,7 @@ export default {
   width: 100%;
   height: 100%;
   padding: 5px;
+  box-sizing: border-box;
   /* position: absolute; */
   /* left: -5px;
   top: -5px; */

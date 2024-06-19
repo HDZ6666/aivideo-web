@@ -32,14 +32,14 @@
           >{{scope.row.state === 1 ? '启用' : '禁用'}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="isScreen" label="大屏模板">
+      <!-- <el-table-column prop="isScreen" label="大屏模板">
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.isScreen === 1 ? 'primary' : 'danger'"
             disable-transitions
           >{{scope.row.isScreen === 1 ? '是' : '否'}}</el-tag>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column label="操作">
         <template slot-scope="scope">
           <!-- <el-button
@@ -80,16 +80,12 @@
 </template>
 
 <script>
-import changePasswordForAdmin from "./dialog/changePasswordForAdmin.vue";
-import changePushKey from "./dialog/changePushKey.vue";
 import editDeviceGroup from "../components/dialog/editDeviceGroup.vue";
 import ChooseDeviceForGroup from "./dialog/chooseDeviceForGroup.vue";
 
 export default {
   name: "userManager",
   components: {
-    changePasswordForAdmin,
-    changePushKey,
     editDeviceGroup,
     ChooseDeviceForGroup
   },

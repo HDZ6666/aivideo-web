@@ -42,7 +42,7 @@ export default new VueRouter({
       path: "/",
       name: "home",
       component: Layout,
-      redirect: "/console",
+      redirect: "/live",
       children: [
         {
           path: "/console",

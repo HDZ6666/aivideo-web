@@ -10,7 +10,29 @@
 <script>
 export default {
   name: "indicatorList",
-  props: ["indicatorListData"]
+  props: [],
+  data() {
+    return {
+      indicatorListData: [
+        {
+          label: "设备总数",
+          value: 5000
+        },
+        {
+          label: "在线数量",
+          value: 4500
+        },
+        {
+          label: "今日告警",
+          value: 30
+        },
+        {
+          label: "待处理",
+          value: 100
+        }
+      ]
+    };
+  }
 };
 </script>
 

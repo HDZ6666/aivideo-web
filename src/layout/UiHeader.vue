@@ -8,29 +8,32 @@
       active-text-color="#1890ff"
       mode="horizontal"
     >
-      <el-menu-item index="/console">控制台</el-menu-item>
-
       <el-menu-item index="/videoCockpit">数据大屏</el-menu-item>
-      <el-submenu index="2">
+      <!-- <el-submenu index="2">
         <template slot="title">AI卫士</template>
         <el-menu-item index="/alarmList">告警列表</el-menu-item>
         <el-menu-item index="/fence">告警配置</el-menu-item>
-      </el-submenu>
+      </el-submenu>-->
       <!-- <el-menu-item @click="getAiWeb">AI卫士</el-menu-item> -->
       <el-menu-item index="/live">分屏监控</el-menu-item>
       <el-submenu index="1">
-        <template slot="title">国标设备</template>
+        <template slot="title">国标对接</template>
         <el-menu-item index="/deviceList">设备列表</el-menu-item>
         <el-menu-item index="/deviceGroup">分组</el-menu-item>
       </el-submenu>
       <!-- <el-menu-item index="/deviceList">国标设备</el-menu-item> -->
-      <el-menu-item index="/map">电子地图</el-menu-item>
-      <el-menu-item index="/pushVideoList">推流列表</el-menu-item>
-      <el-menu-item index="/streamProxyList">拉流代理</el-menu-item>
-      <el-menu-item index="/cloudRecord">云端录像</el-menu-item>
-      <el-menu-item index="/mediaServerManger">节点管理</el-menu-item>
-      <el-menu-item index="/parentPlatformList/15/1">国标级联</el-menu-item>
-      <el-menu-item v-if="editUser" index="/userManager">系统管理</el-menu-item>
+      <!-- <el-menu-item index="/map">电子地图</el-menu-item> -->
+      <!-- <el-menu-item index="/pushVideoList">推流列表</el-menu-item> -->
+      <el-menu-item index="/streamProxyList">非国标对接</el-menu-item>
+      <el-submenu index="3">
+        <template slot="title">系统管理</template>
+        <el-menu-item index="/console">控制台</el-menu-item>
+        <el-menu-item index="/cloudRecord">云端录像</el-menu-item>
+        <el-menu-item index="/mediaServerManger">节点管理</el-menu-item>
+        <el-menu-item index="/parentPlatformList/15/1">国标级联</el-menu-item>
+        <el-menu-item v-if="editUser" index="/userManager">用户管理</el-menu-item>
+      </el-submenu>
+      <!-- <el-menu-item v-if="editUser" index="/userManager">系统管理</el-menu-item> -->
 
       <!--            <el-submenu index="/setting">-->
       <!--              <template slot="title">系统设置</template>-->

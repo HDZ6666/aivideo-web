@@ -1,6 +1,6 @@
 <template>
   <div class="deviceCount-container">
-    <dv-decoration-7 class="module-title">设备统计</dv-decoration-7>
+    <dv-decoration-7 style="width:150px;height:50px;">设备统计</dv-decoration-7>
     <dv-scroll-ranking-board :config="deviceCountData" class="count-content" />
   </div>
 </template>
@@ -8,7 +8,23 @@
 <script>
 export default {
   name: "deviceCount",
-  props: ["deviceCountData"]
+  props: [],
+  data() {
+    return {
+      deviceCountData: {
+        rowNum: 8,
+        data: []
+      }
+    };
+  },
+  mounted() {
+    this.deviceCountData.data = new Array(20).fill(1).map((item, index) => {
+      return {
+        name: `分组${index}`,
+        value: 2 * index + 10
+      };
+    });
+  }
 };
 </script>
 

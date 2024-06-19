@@ -40,7 +40,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="大屏模板" prop="screenId">
+          <!-- <el-form-item label="大屏模板" prop="screenId">
             <el-select
               v-model="proxyParam.screenId"
               ref="screenTreeSelect"
@@ -65,7 +65,7 @@
                 @node-click="handleScreenTreeClick"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item>-->
           <div v-show="type=='add'">
             <el-form-item label="类型" prop="type">
               <el-select v-model="proxyParam.type" style="width: 100%" placeholder="请选择代理类型">
@@ -265,7 +265,7 @@ export default {
       this.showDialog = true;
       this.listChangeCallback = callback;
       this.type = type;
-      this.groupList = (list || []).filter(item => item.isScreen == 0);
+      this.groupList = list || [];
       this.screenList = (list || []).filter(item => item.isScreen == 1);
       if (proxyParam != null) {
         this.proxyParam = { ...this.proxyParam, ...proxyParam };
