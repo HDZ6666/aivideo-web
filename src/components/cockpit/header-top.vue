@@ -9,9 +9,9 @@
     />
     <div class="center-title">监控驾驶舱</div>
     <div class="right-btn">
-      <dv-border-box-10 class="backBtn">
-        <div @click="back()">后台管理</div>
-      </dv-border-box-10>
+      <div class="backBtn" @click="back()">
+        <dv-border-box-10>后台管理</dv-border-box-10>
+      </div>
       <div class="openAlarm">
         <el-switch
           v-model="acceptAlarm"
