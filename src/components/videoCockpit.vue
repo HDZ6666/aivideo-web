@@ -1,7 +1,7 @@
 <template>
   <div class="container_bg" id="container">
     <div class="container">
-      <header-top @handleAcceptAlarm="handleAcceptAlarm" />
+      <header-top @handleAcceptAlarm="handleAcceptAlarm" :hasAI="hasAI" />
       <div class="container-content">
         <div class="content-left">
           <device-tree @deviceClick="handleDeviceClick"></device-tree>
@@ -63,6 +63,7 @@ export default {
   },
   data() {
     return {
+      hasAI: true,
       acceptAlarm: false
     };
   },

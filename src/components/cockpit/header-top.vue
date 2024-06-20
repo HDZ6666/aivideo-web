@@ -12,7 +12,7 @@
       <div class="backBtn" @click="back()">
         <dv-border-box-10>后台管理</dv-border-box-10>
       </div>
-      <div class="openAlarm">
+      <div class="openAlarm" v-if="hasAI">
         <el-switch
           v-model="acceptAlarm"
           active-color="#13ce66"
@@ -28,6 +28,7 @@
   <script>
 export default {
   name: "header-top",
+  props: ["hasAI"],
   data() {
     return {
       acceptAlarm: false
