@@ -14,12 +14,12 @@
           <!-- <dv-decoration-3 style="width:300px;height:50px;" />
           <alarm-carousel></alarm-carousel>-->
         </div>
-        <div class="content-right">
+        <!-- <div class="content-right">
           <alarm-list></alarm-list>
           <alarm-tendency></alarm-tendency>
-          <!-- <alarm-count></alarm-count>
-          <alarm-handle-count></alarm-handle-count>-->
-        </div>
+          <alarm-count></alarm-count>
+          <alarm-handle-count></alarm-handle-count>
+        </div>-->
       </div>
     </div>
     <video-dialog ref="videoDialog"></video-dialog>
@@ -41,7 +41,7 @@ import alarmList from "./cockpit/alarmList.vue";
 import alarmTendency from "./cockpit/alarmTendency.vue";
 import alarmCount from "./cockpit/alarmCount.vue";
 import alarmHandleCount from "./cockpit/alarmHandleCount.vue";
-import videoDialog from "./cockpit/videoDialog.vue";
+import videoDialog from "./cockpit/nationalVideoDialog.vue";
 import alarmDialog from "./cockpit/alarmDialog.vue";
 
 export default {
@@ -63,7 +63,7 @@ export default {
   },
   data() {
     return {
-      hasAI: true,
+      hasAI: false,
       acceptAlarm: false
     };
   },
@@ -80,13 +80,24 @@ export default {
   },
   destroyed() {},
   methods: {
+    // 代理
+    // handleDeviceClick(data) {
+    //   if (this.$refs.videoDialog) {
+    //     const palyer = {
+    //       name: data.name || data.channelName,
+    //       videoUrl: data.streamInfo.ws_flv.url
+    //     };
+    //     this.$refs.videoDialog.open(palyer);
+    //   }
+    // },
+    // 国标
     handleDeviceClick(data) {
       if (this.$refs.videoDialog) {
-        const palyer = {
-          name: data.name || data.channelName,
-          videoUrl: data.streamInfo.ws_flv.url
-        };
-        this.$refs.videoDialog.open(palyer);
+        // const palyer = {
+        //   name: data.name || data.channelName,
+        //   videoUrl: data.streamInfo.ws_flv.url
+        // };
+        this.$refs.videoDialog.open(data);
       }
     },
     handleAcceptAlarm(value) {

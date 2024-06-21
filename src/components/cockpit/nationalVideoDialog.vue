@@ -52,9 +52,47 @@ export default {
   },
   mounted() {},
   methods: {
-    open: function(player) {
-      this.showDetail = true;
-      this.player = { ...player, loading: true, error: false };
+    //通知设备上传媒体流
+    sendDevicePush: function(itemData) {
+      let deviceId = itemData.deviceId;
+      let channelId = itemData.channelId;
+      const that = this;
+      console.log("通知设备推流1：" + deviceId + " : " + channelId);
+      that
+        .$axios({
+          method: "get",
+          url: "/api/play/start/" + deviceId + "/" + channelId
+        })
+        .then(function(res) {
+          if (res.data.code === 0 && res.data.data) {
+            let videoUrl;
+            if (location.protocol === "https:") {
+              videoUrl = res.data.data.wss_flv;
+            } else {
+              videoUrl = res.data.data.ws_flv;
+            }
+
+            that.player.videoUrl = videoUrl;
+          } else {
+            that.$message.error(res.data.msg);
+          }
+        })
+        .catch(function(e) {})
+        .finally(() => {});
+    },
+    open: function(data) {
+      if (data.userData.deviceId && data.userData.channelId) {
+        this.showDetail = true;
+        this.player = {
+          name: data.name,
+          videoUrl: "",
+          loading: true,
+          error: false
+        };
+        this.sendDevicePush(data.userData);
+      } else {
+        this.$message.error("设备播放异常");
+      }
     },
     close: function() {
       this.player = {

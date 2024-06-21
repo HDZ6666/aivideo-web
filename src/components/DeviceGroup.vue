@@ -62,8 +62,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <changePasswordForAdmin ref="changePasswordForAdmin"></changePasswordForAdmin>
-    <changePushKey ref="changePushKey"></changePushKey>
     <editDeviceGroup ref="editDeviceGroup" @getDeviceGroup="getDeviceGroup"></editDeviceGroup>
     <ChooseDeviceForGroup ref="ChooseDeviceForGroup" @getDeviceGroup="getDeviceGroup"></ChooseDeviceForGroup>
     <el-pagination

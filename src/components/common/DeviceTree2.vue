@@ -223,7 +223,6 @@ export default {
               if (channelType === "215" || channelType === "216") {
                 type = 2;
               }
-              console.log(type);
               if (item.basicData.ptztype === 1) {
                 // 1-球机;2-半球;3-固定枪机;4-遥控枪机
                 type = 4;

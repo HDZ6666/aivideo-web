@@ -10,7 +10,7 @@
             <el-header>设备列表</el-header>
             <el-main style="background-color: #ffffff;">
               <div class="device-tree-main-box">
-                <DeviceTree :clickEvent="clickEvent" :contextMenuEvent="contextMenuEvent"></DeviceTree>
+                <DeviceTree :clickEvent="clickEvent"></DeviceTree>
               </div>
             </el-main>
           </el-container>
@@ -63,7 +63,7 @@
 <script>
 import uiHeader from "../layout/UiHeader.vue";
 import player from "./common/jessibuca.vue";
-import DeviceTree from "./common/DeviceTreeNational.vue";
+import DeviceTree from "./common/DeviceTreeProxy.vue";
 
 export default {
   name: "live",
@@ -144,7 +144,23 @@ export default {
       this.spilt = spilt;
     },
     clickEvent: function(device) {
-      this.sendDevicePush(device.userData);
+      if (device.userData && device.userData.streamInfo) {
+        this.save(device);
+        const streamInfo = device.userData.streamInfo;
+        const url =
+          location.protocol === "https:"
+            ? streamInfo.wss_flv.url
+            : streamInfo.ws_flv.url;
+        this.setPlayUrl(url, this.playerIdx);
+      }
+      // this.save()
+      // if (data.channelId && !isCatalog) {
+      //   if (device.online === 0) {
+      //     this.$message.error("设备离线!不允许点播");
+      //   } else {
+      //     this.sendDevicePush(data);
+      //   }
+      // }
     },
     contextMenuEvent: function(device, event, data, isCatalog) {},
     //通知设备上传媒体流
@@ -334,15 +350,5 @@ export default {
 
 .baidumap > .anchorBL {
   display: none !important;
-}
-
-.device-tree-main-box {
-  text-align: left;
-}
-.device-online {
-  color: #252525;
-}
-.device-offline {
-  color: #727272;
 }
 </style>

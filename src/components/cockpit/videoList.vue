@@ -69,7 +69,7 @@ export default {
       loopPlayerIndex: 0, //当前轮播的屏数
       requesttime: 3, // 请求数据时间
       looptime: 5 * 60, //轮播间隔时间
-      splitNum: 9, //分屏数
+      splitNum: 12, //分屏数
       videoLists: [], //视频列表
       playList: [], //播放器列表
       img: img, //播放器封面
@@ -170,6 +170,11 @@ export default {
       }
       if (this.loopPlayerTimeOut) {
         clearTimeout(this.loopPlayerTimeOut);
+      }
+      if (this.total > -1 && this.total < this.splitNum) {
+        //数据少于分屏数
+        this.$message.error(`可播放资源少于${this.splitNum}个，无法下一页`);
+        return;
       }
       this.loopPlayer();
     },

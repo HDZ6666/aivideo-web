@@ -1,14 +1,14 @@
 <template>
   <div class="device-box">
     <div class="device-content">
-      <CockputDeviceTree :clickEvent="clickEvent"></CockputDeviceTree>
+      <CockputDeviceTree :clickEvent="clickEvent" isScreen></CockputDeviceTree>
     </div>
     <dv-border-box-11 title="设备列表" class="device-border"></dv-border-box-11>
   </div>
 </template>
 
 <script>
-import DeviceTree from "../common/DeviceTree3.vue";
+import DeviceTree from "../common/DeviceTreeNational.vue";
 export default {
   name: "deviceTree",
   props: ["deviceList"],
@@ -17,9 +17,10 @@ export default {
   },
   methods: {
     clickEvent: function(device) {
-      if (device.userData && device.userData.streamInfo) {
-        this.$emit("deviceClick", device.userData);
-      }
+      this.$emit("deviceClick", device);
+      // if (device.userData && device.userData.streamInfo) {
+      //   this.$emit("deviceClick", device.userData);
+      // }
     }
   }
 };
@@ -64,5 +65,9 @@ export default {
 }
 #deviceList .el-tree-node:focus > .el-tree-node__content {
   background-color: transparent;
+}
+
+#deviceList .el-tree__empty-text {
+  color: #fff;
 }
 </style>
