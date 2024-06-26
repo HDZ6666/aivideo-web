@@ -72,6 +72,7 @@ export default {
       splitNum: 12, //分屏数
       videoLists: [], //视频列表
       playList: [], //播放器列表
+      deviceList: [], //设备列表
       img: img, //播放器封面
       isAutoScreen: false //是否自动轮播
     };
@@ -103,7 +104,7 @@ export default {
       this.getListLoading = true;
       this.$axios({
         method: "get",
-        url: `/cockpit/api/proxy/list`,
+        url: `/ai/api/device/query/cameraList`,
         params: {
           page: _page,
           pageSize: this.splitNum
@@ -114,8 +115,8 @@ export default {
             const data = res.data.data;
             const list = data.list.map(item => {
               return {
-                name: item.name,
-                id: item.app + item.stream,
+                name: item.device_name,
+                id: `${item.national_num}_${item.channel}`,
                 videoUrl: item.streamInfo.ws_flv.url,
                 loading: false,
                 error: false
@@ -136,6 +137,8 @@ export default {
           this.getListLoading = false;
         });
     },
+    // 获取通道列表
+    getChannelList: function(app, stream) {},
     // 播放一屏
     loopPlayer: function() {
       const num = this.splitNum; //分屏数

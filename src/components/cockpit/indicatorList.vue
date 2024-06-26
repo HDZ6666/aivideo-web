@@ -13,25 +13,46 @@ export default {
   props: [],
   data() {
     return {
-      indicatorListData: [
-        {
-          label: "设备总数",
-          value: 5000
-        },
-        {
-          label: "在线数量",
-          value: 4500
-        },
-        {
-          label: "今日告警",
-          value: 30
-        },
-        {
-          label: "待处理",
-          value: 100
-        }
-      ]
+      indicator: {},
+      indicatorListData: []
     };
+  },
+  mounted() {
+    this.getIndicatorList();
+  },
+  methods: {
+    getIndicatorList() {
+      this.$axios({
+        method: "get",
+        url: `/cockpit/api/proxy/resource/info`
+      })
+        .then(res => {
+          if (res.data.code === 0) {
+            this.indicator = res.data.data;
+            this.indicatorListData = [
+              {
+                label: "国标设备总数",
+                value: this.indicator.device.total
+              },
+              {
+                label: "通道总数量",
+                value: this.indicator.channel.total
+              },
+              {
+                label: "在线通道数量",
+                value: this.indicator.channel.online
+              },
+              {
+                label: "非国标设备数",
+                value: this.indicator.proxy.total
+              }
+            ];
+          }
+        })
+        .finally(() => {
+          this.getListLoading = false;
+        });
+    }
   }
 };
 </script>

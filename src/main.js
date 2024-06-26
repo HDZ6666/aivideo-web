@@ -86,6 +86,15 @@ axios.interceptors.request.use(
   }
 );
 
+router.beforeEach((to, from, next) => {
+  if (to.path === "/videoCockpit" && to.query && to.query.token) {
+    userService.setToken(to.query.token);
+    console.log(to.query)
+  } else {
+    next();
+  }
+});
+
 Vue.prototype.$axios = axios;
 Vue.prototype.$cookies.config(60 * 30);
 

@@ -22,14 +22,7 @@
                 <el-input v-model="form.name" clearable></el-input>
               </el-form-item>
               <el-form-item label="设备分组" prop="groupId">
-                <el-cascader
-                  :options="groupList"
-                  :show-all-levels="false"
-                  style="float: left; width: 100%"
-                  @change="handleChangeGroup"
-                  ref="groupSelect"
-                  :value="groupId"
-                ></el-cascader>
+                <tree-select v-model="form.groupId" :options="groupList" :treeProps="treeProps"></tree-select>
               </el-form-item>
               <el-form-item
                 v-if="this.isEdit"
@@ -112,11 +105,14 @@
 </template>
 
 <script>
-import { transform } from "ol/proj";
 import MediaServer from "../service/MediaServer";
+import TreeSelect from "../common/TreeSelect.vue";
 export default {
   name: "deviceEdit",
   props: {},
+  components: {
+    TreeSelect
+  },
   computed: {},
   mounted() {
     this.getGroupList();
@@ -137,51 +133,30 @@ export default {
         ]
       },
       groupList: [],
-      groupObj: {},
-      groupId: []
+      treeProps: {
+        children: "children",
+        label: "group_name",
+        value: "id"
+      }
     };
   },
   methods: {
     getGroupList() {
-      // this.getDeviceGroupLoading = true;
       this.$axios({
         method: "get",
         url: `/ai/api/device/group/cameraGroupList`
       })
         .then(res => {
           if (res.data.code === 0) {
-            this.groupList = this.transformGroup(res.data.data);
+            this.groupList = res.data.data;
           }
         })
         .catch(error => {
           console.error(error);
         });
     },
-    transformGroup: function(data, pidList = []) {
-      return data.map(item => {
-        const obj = {};
-        const level = [...pidList, item.id];
-        if (!this.groupObj.hasOwnProperty(item.id)) {
-          this.groupObj[item.id] = level;
-        }
-        obj.value = item.id;
-        obj.label = item.group_name;
-        if (item.children && item.children.length) {
-          obj.children = this.transformGroup(item.children, level);
-        }
-        return obj;
-      });
-    },
-    handleChangeGroup(value) {
-      // console.log(value);
-      // console.log(this.groupObj);
-      // console.log(this.groupObj);
-      this.groupId = value;
-      const len = this.groupId.length;
-      this.form.groupId = this.groupId[len - 1];
-    },
+
     openDialog: function(row, callback) {
-      // console.log(row);
       this.showDialog = true;
       this.isEdit = false;
       if (row) {
@@ -191,9 +166,7 @@ export default {
       this.listChangeCallback = callback;
       if (row != null) {
         this.form = row;
-        this.groupId = this.groupObj[row.groupId] || [];
-        // console.log(row);
-        // console.log(this.groupId);
+        this.form.groupId = !row.groupId ? "" : +row.groupId;
       }
       this.getMediaServerList();
     },
@@ -204,7 +177,6 @@ export default {
       });
     },
     onSubmit: function() {
-      console.log("onSubmit");
       this.form.subscribeCycleForCatalog =
         this.form.subscribeCycleForCatalog || 0;
       this.form.subscribeCycleForMobilePosition =

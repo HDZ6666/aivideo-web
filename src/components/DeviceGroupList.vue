@@ -84,7 +84,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .device-group-container {
   width: 100%;
   overflow: hidden;
