@@ -12,15 +12,6 @@
       <div class="backBtn" @click="back()">
         <dv-border-box-10>后台管理</dv-border-box-10>
       </div>
-      <div class="openAlarm" v-if="hasAI">
-        <el-switch
-          v-model="acceptAlarm"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          @change="handleAcceptAlarm"
-        ></el-switch>
-        <span class="openAlarmText">{{acceptAlarm?'开启告警':'关闭告警'}}</span>
-      </div>
     </div>
   </div>
 </template>
@@ -28,18 +19,12 @@
   <script>
 export default {
   name: "header-top",
-  props: ["hasAI"],
   data() {
-    return {
-      acceptAlarm: false
-    };
+    return {};
   },
   methods: {
     back() {
       this.$router.push("/");
-    },
-    handleAcceptAlarm(value) {
-      this.$emit("handleAcceptAlarm", value);
     }
   }
 };

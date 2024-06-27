@@ -13,6 +13,7 @@ import Fingerprint2 from "fingerprintjs2";
 import VueClipboards from "vue-clipboards";
 import Contextmenu from "vue-contextmenujs";
 import userService from "./components/service/UserService";
+import moment from "moment";
 
 Vue.config.productionTip = false;
 
@@ -88,8 +89,30 @@ axios.interceptors.request.use(
 
 router.beforeEach((to, from, next) => {
   if (to.path === "/videoCockpit" && to.query && to.query.token) {
-    userService.setToken(to.query.token);
-    console.log(to.query)
+    axios({
+      method: "get",
+      url: "/api/user/oneClickLogin",
+      params: {
+        authToken: decodeURIComponent(to.query.token),
+        timestamp: moment().valueOf(),
+        userName: "admin"
+      }
+    })
+      .then(function(res) {
+        if (res.data.code === 0) {
+          userService.setToken(res.data.data.accessToken);
+          userService.setUser(res.data.data);
+          //登录成功后
+          next();
+        } else {
+          Message.error("登录失败");
+          next("/login");
+        }
+      })
+      .catch(function(error) {
+        Message.error(error.response.data.msg);
+        next("/login");
+      });
   } else {
     next();
   }

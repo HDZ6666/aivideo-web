@@ -1,7 +1,7 @@
 <template>
   <div class="container_bg" id="container">
     <div class="container">
-      <header-top @handleAcceptAlarm="handleAcceptAlarm" :hasAI="hasAI" />
+      <header-top />
       <div class="container-content">
         <div class="content-left">
           <device-tree @deviceClick="handleDeviceClick"></device-tree>
@@ -23,7 +23,7 @@
       </div>
     </div>
     <video-dialog ref="videoDialog"></video-dialog>
-    <alarm-dialog ref="alarmDialog" :acceptAlarm="acceptAlarm"></alarm-dialog>
+    <alarm-dialog ref="alarmDialog"></alarm-dialog>
   </div>
 </template>
 
@@ -62,10 +62,7 @@ export default {
     alarmDialog
   },
   data() {
-    return {
-      hasAI: false,
-      acceptAlarm: false
-    };
+    return {};
   },
   mounted() {
     autofit.init(
@@ -95,13 +92,10 @@ export default {
       if (this.$refs.videoDialog) {
         // const palyer = {
         //   name: data.name || data.channelName,
-        //   videoUrl: data.streamInfo.ws_flv.url
+        //   videoUrl: data.streamInfo.ws_flv.urlF
         // };
         this.$refs.videoDialog.open(data);
       }
-    },
-    handleAcceptAlarm(value) {
-      this.acceptAlarm = value;
     }
   }
 };

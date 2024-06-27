@@ -10,9 +10,15 @@
             </span>
           </div>
           <div>
-            <el-button type="primary" style="background: #6c7797;" @click="nextScreen">手动轮播</el-button>
-            <el-button type="danger" @click="stopScreen" v-if="isAutoScreen">停止轮播</el-button>
-            <el-button type="primary" style="background: #475998;" @click="autoScreen" v-else>自动轮播</el-button>
+            <el-button type="primary" style="background: #6c7797;" @click="screenAction('prev')">上一屏</el-button>
+            <el-button type="primary" style="background: #6c7797;" @click="screenAction('next')">下一屏</el-button>
+            <el-button type="danger" @click="screenAction('stop')" v-if="isAutoScreen">停止轮播</el-button>
+            <el-button
+              type="primary"
+              style="background: #475998;"
+              @click="screenAction('auto')"
+              v-else
+            >自动轮播</el-button>
           </div>
         </div>
       </el-col>
@@ -68,7 +74,7 @@ export default {
       total: -1, //默认总数
       loopPlayerIndex: 0, //当前轮播的屏数
       requesttime: 3, // 请求数据时间
-      looptime: 5 * 60, //轮播间隔时间
+      looptime: 5, //轮播间隔时间
       splitNum: 12, //分屏数
       videoLists: [], //视频列表
       playList: [], //播放器列表
@@ -116,39 +122,115 @@ export default {
             const list = data.list.map(item => {
               return {
                 name: item.device_name,
-                id: `${item.national_num}_${item.channel}`,
-                videoUrl: item.streamInfo.ws_flv.url,
+                id: `${item.deviceId}_${item.channelId}`,
+                deviceId: item.deviceId,
+                channelId: item.channelId,
+                videoUrl: item.aiStreamInfo ? item.aiStreamInfo.WS_FLV : "",
+                getVideoUrl: false,
                 loading: false,
                 error: false
               };
             });
-            this.videoLists = [...this.videoLists, ...list];
             this.pages = data.pages;
             this.total = data.total;
+            this.videoLists = [...this.videoLists, ...list];
             if (_page === 1 && this.videoLists.length > 0) {
-              this.loopPlayer(); //首屏自动加载
+              this.screenAction("next"); //首屏自动加载
               console.log("首屏自动加载");
             }
             // 循环获取设备列表
             this.getDeviceList(_page + 1);
+            // this.deviceList = list;
+            // this.deviceList.forEach(item => {
+            //   this.sendDevicePush(item, _page);
+            // });
           }
         })
         .finally(() => {
           this.getListLoading = false;
         });
     },
+    sendDevicePush: function(itemData, page) {
+      let deviceId = itemData.deviceId;
+      let channelId = itemData.channelId;
+      const that = this;
+      that
+        .$axios({
+          method: "get",
+          url: "/api/play/start/" + deviceId + "/" + channelId
+        })
+        .then(function(res) {
+          if (res.data.code === 0 && res.data.data) {
+            let videoUrl;
+            if (location.protocol === "https:") {
+              videoUrl = res.data.data.wss_flv;
+            } else {
+              videoUrl = res.data.data.ws_flv;
+            }
+            itemData.videoUrl = videoUrl;
+          }
+        })
+        .finally(() => {
+          itemData.getVideoUrl = true;
+          console.log(itemData);
+          // 全部都获取一次url了
+          if (this.deviceList.every(item => item.getVideoUrl)) {
+            this.videoLists = [...this.videoLists, ...this.deviceList];
+            if (page === 1 && this.videoLists.length > 0) {
+              this.loopPlayer(); //首屏自动加载
+              console.log("首屏自动加载");
+            }
+            // 循环获取设备列表
+            this.getDeviceList(page + 1);
+          }
+        });
+    },
     // 获取通道列表
     getChannelList: function(app, stream) {},
+    screenAction(tyep) {
+      if (this.videoLists.length === 0) {
+        this.$message.error("当前没有播放资源");
+        return;
+      }
+      if (this.total > -1 && this.total < this.splitNum) {
+        //数据少于分屏数
+        this.$message.error(`可播放资源少于${this.splitNum}个`);
+        return;
+      }
+      if (this.loopPlayerTimeOut) {
+        clearInterval(this.loopPlayerTimeOut);
+      }
+      this.isAutoScreen = false;
+      switch (tyep) {
+        case "next":
+          this.nextScreen();
+          break;
+        case "prev":
+          this.prevScreen();
+          break;
+        case "auto":
+          this.autoScreen();
+          break;
+        case "stop":
+          this.$message.success(`停止轮播`);
+          break;
+      }
+    },
     // 播放一屏
     loopPlayer: function() {
       const num = this.splitNum; //分屏数
       const pageSize = Math.ceil(this.videoLists.length / num); // 总页数
-      if (this.loopPlayerIndex > pageSize - 1) {
-        this.loopPlayerIndex = 0;
+      if (this.loopPlayerIndex > pageSize) {
+        this.loopPlayerIndex = 1;
       }
+      if (this.loopPlayerIndex < 1) {
+        this.loopPlayerIndex = pageSize;
+      }
+
+      const playIndex = this.loopPlayerIndex - 1;
       const list = this.videoLists.slice(
-        this.loopPlayerIndex * num,
-        this.loopPlayerIndex * num + num
+        playIndex * num,
+        playIndex * num + num
       );
       const list2 = new Array(num - list.length).fill({
         id: "",
@@ -163,54 +245,35 @@ export default {
         }
         return item;
       });
-      this.loopPlayerIndex++;
     },
-    // 手动轮播
+    // 下一屏
     nextScreen: function() {
-      if (this.videoLists.length === 0) {
-        this.$message.error("当前没有播放资源");
-        return;
-      }
-      if (this.loopPlayerTimeOut) {
-        clearTimeout(this.loopPlayerTimeOut);
-      }
-      if (this.total > -1 && this.total < this.splitNum) {
-        //数据少于分屏数
-        this.$message.error(`可播放资源少于${this.splitNum}个，无法下一页`);
-        return;
-      }
+      //如果下一屏
+      this.loopPlayerIndex++;
+      this.loopPlayer();
+    },
+    // 上一屏
+    prevScreen: function() {
+      this.loopPlayerIndex--;
       this.loopPlayer();
     },
     // 自动轮播
     autoScreen: function() {
-      // 已经请求了
-      if (this.videoLists.length === 0) {
-        this.$message.error("当前没有播放资源");
-        return;
-      }
-      if (this.total > -1 && this.total < this.splitNum) {
-        //数据少于分屏数
-        this.$message.error(`可播放资源少于${this.splitNum}个，无法自动轮播`);
-        return;
-      }
       this.$message.success(`开始轮播，轮播间隔${this.looptime}秒`);
       this.isAutoScreen = true;
-      this.loopPlayer();
-      if (this.loopPlayerTimeOut) {
-        clearInterval(this.loopPlayerTimeOut);
-      }
       this.loopPlayerTimeOut = setInterval(() => {
+        this.loopPlayerIndex++;
         this.loopPlayer();
       }, this.looptime * 1000);
     },
     // 停止轮播
-    stopScreen: function() {
-      if (this.loopPlayerTimeOut) {
-        clearInterval(this.loopPlayerTimeOut);
-      }
-      this.isAutoScreen = false;
-      this.$message.success(`停止轮播`);
-    },
+    // stopScreen: function() {
+    //   if (this.loopPlayerTimeOut) {
+    //     clearInterval(this.loopPlayerTimeOut);
+    //   }
+    //   this.isAutoScreen = false;
+    //   this.$message.success(`停止轮播`);
+    // },
     // 播放器加载完成
     onPlayerPlay: function(e, player, index) {
       if (player.loading) {
@@ -234,6 +297,11 @@ export default {
           return item;
         });
       }
+    }
+  },
+  destroyed() {
+    if (this.loopPlayerTimeOut) {
+      clearInterval(this.loopPlayerTimeOut);
     }
   }
 };

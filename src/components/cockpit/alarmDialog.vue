@@ -83,9 +83,10 @@
 
 <script>
 import moment from "moment";
+import { mixin } from "../../utils/mixin";
 export default {
   name: "alarmDialog",
-  props: ["acceptAlarm"],
+  mixins: [mixin],
   data() {
     return {
       dialogObj: {
@@ -113,19 +114,20 @@ export default {
     };
   },
   watch: {
-    acceptAlarm(value) {
-      if (value) {
-        this.getAlarmList();
-        this.handleShowDialog();
-        this.$message.success("开启订阅告警成功");
-      } else {
-        clearTimeout(this.dialogObj.domTimer);
-        clearInterval(this.dialogObj.countDownTimer);
-        clearInterval(this.dialogObj.requestTimer);
-        this.dialogObj.showDialog = false;
-        this.resetAlarmListState(); // 重置告警状态
-        this.$message.success("关闭订阅告警成功");
-      }
+    alarmNotify: {
+      handler(newVal, oldVal) {
+        if (newVal) {
+          this.getAlarmList();
+          this.handleShowDialog();
+        } else {
+          clearTimeout(this.dialogObj.domTimer);
+          clearInterval(this.dialogObj.countDownTimer);
+          clearInterval(this.dialogObj.requestTimer);
+          this.dialogObj.showDialog = false;
+          this.resetAlarmListState(); // 重置告警状态
+        }
+      },
+      immediate: true
     }
   },
   methods: {
