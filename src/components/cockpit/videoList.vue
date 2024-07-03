@@ -39,6 +39,7 @@
               :videoUrl="player.videoUrl"
               :hasaudio="false"
               :alt="player.error?'视频加载失败':'无信号'"
+              aspect="fullscreen"
               live
               muted
               stretch
@@ -331,7 +332,7 @@ export default {
 
 .video-box {
   width: 100%;
-  height: 100%;
+  height: 150px;
   /* width: calc(100% - 10px);
   height: calc(100% - 10px); */
   /* width: 48%;
