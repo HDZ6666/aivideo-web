@@ -93,7 +93,11 @@ export default {
                 userData: item
               };
             });
-            resolve(list);
+            if (list.length > 0) {
+              resolve(list);
+            } else {
+              this.getDeviceTree(0, resolve);
+            }
           } else {
             resolve([]);
           }
