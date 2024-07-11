@@ -29,7 +29,7 @@ export default {
 <style>
 .device-box {
   position: relative;
-  height: 500px;
+  height: 600px;
   padding: 60px 10px 10px;
   box-sizing: border-box;
 }

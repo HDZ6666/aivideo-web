@@ -26,7 +26,7 @@
     <el-row>
       <el-col :span="24/colSpan" v-for="(player,index) in playList" :key="index" class="palyer-box">
         <dv-border-box-12 class="player-border">
-          <div
+          <!-- <div
             class="video-box"
             v-loading="player.loading"
             :loading.sync="player.loading"
@@ -49,6 +49,10 @@
               @play="onPlayerPlay($event,player,index)"
               @error="onPlayerError($event,player,index)"
             ></LivePlayer>
+          </div> -->
+          <!-- ws://fyict.cn:20001/rtp/44060610091182000010_44060610091322000010.live.flv -->
+          <div class="video-box">
+            <player v-if="player.videoUrl" ref="player" :videoUrl="player.videoUrl" fluent autoplay />
           </div>
         </dv-border-box-12>
       </el-col>
@@ -65,7 +69,7 @@ import img from "../../assets/image.png";
 
 export default {
   name: "videoList",
-  components: { LivePlayer, rtcPlayer },
+  components: { LivePlayer, rtcPlayer, player },
   data() {
     return {
       requestTimer: null,
@@ -76,7 +80,7 @@ export default {
       loopPlayerIndex: 0, //当前轮播的屏数
       requesttime: 3, // 请求数据时间
       looptime: 5, //轮播间隔时间
-      splitNum: 12, //分屏数
+      splitNum: 9, //分屏数
       videoLists: [], //视频列表
       playList: [], //播放器列表
       deviceList: [], //设备列表
@@ -343,6 +347,7 @@ export default {
   border-radius: 10px;
   position: relative;
   overflow: hidden;
+  background-color: #000;
   /* margin: 20px; */
 }
 .video-content {

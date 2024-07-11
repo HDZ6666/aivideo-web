@@ -141,13 +141,13 @@ export default {
 }
 
 .content-left {
-  width: 280px;
+  width: 350px;
   height: 100%;
 }
 
 .content-main {
   flex: 1;
-  margin: 0 30px;
+  margin: 0 70px;
 }
 
 .content-right {

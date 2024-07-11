@@ -8,7 +8,11 @@
         <i class="el-icon-close"></i>
       </div>
       <dv-border-box-11 class="dialog-border" title="监控详情" backgroundColor="rgba(67,79,103,1)">
-        <div
+        <div class="video-box">
+          <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
+          <player ref="player" :videoUrl="player.videoUrl" fluent autoplay />
+        </div>
+        <!-- <div
           class="video-box"
           v-loading="player.loading"
           :loading.sync="player.loading"
@@ -28,7 +32,7 @@
             @play="onPlayerPlay($event)"
             @error="onPlayerError($event)"
           ></LivePlayer>
-        </div>
+        </div>-->
       </dv-border-box-11>
     </div>
   </transition>
@@ -36,9 +40,10 @@
 
 <script>
 import LivePlayer from "@liveqing/liveplayer";
+import player from "../common/jessibuca.vue";
 export default {
   name: "videoDialog",
-  components: { LivePlayer },
+  components: { LivePlayer, player },
   data() {
     return {
       showDetail: false,
