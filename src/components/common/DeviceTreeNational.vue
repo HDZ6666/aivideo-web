@@ -9,7 +9,21 @@
     @node-click="handleNodeClick"
     node-key="id"
     style="min-width: 100%; display:inline-block !important;"
-  ></el-tree>
+  >
+    <span class="custom-tree-node" slot-scope="{ node, data }">
+      <span class="tree-node-label">{{ node.label }}</span>
+      <span
+        v-if="data.nodeType === 'channel' && data.online"
+        title="在线设备"
+        class="device-online el-icon-video-camera-solid"
+      ></span>
+      <span
+        v-if="data.nodeType === 'channel' && !data.online "
+        title="离线设备"
+        class="device-offline el-icon-video-camera-solid"
+      ></span>
+    </span>
+  </el-tree>
 </template>
 
 <script>
@@ -206,6 +220,7 @@ export default {
             hasGPS: item.basicData.longitude * item.basicData.latitude !== 0,
             userData: item.basicData
           };
+          console.log(node);
           nodeList.push(node);
         }
         resolve(nodeList);
@@ -233,11 +248,39 @@ export default {
 .screen-device-tree .el-tree-node__expand-icon.is-leaf {
   color: transparent;
 }
+.screen-device-tree .el-tree-node__content {
+  min-height: 26px;
+  height: auto;
+}
 .screen-device-tree .el-tree-node__content:hover {
   background-color: rgba(31, 51, 162, 0.6);
 }
 
 .screen-device-tree .el-tree-node:focus > .el-tree-node__content {
   background-color: rgba(31, 51, 162, 0.6);
+}
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+
+.device-online {
+  font-size: 18px;
+  color: #59c4e6;
+}
+.device-offline {
+  font-size: 18px;
+  color: #c6ced8;
+}
+
+.tree-node-label {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  white-space: normal;
 }
 </style>
