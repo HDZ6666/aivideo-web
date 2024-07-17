@@ -12,7 +12,7 @@ export default {
   data() {
     return {
       deviceCountData: {
-        rowNum: 4,
+        rowNum: 5,
         data: []
       }
     };

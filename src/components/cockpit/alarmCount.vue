@@ -1,8 +1,8 @@
 <template>
   <div class="alarmCount-container">
-    <dv-decoration-7 style="width:150px;height:50px;">告警统计</dv-decoration-7>
+    <dv-decoration-7 style="width:100%;height:40px;">告警统计</dv-decoration-7>
     <div class="alarmCount-line">
-      <ve-histogram :extend="alarmCountExtend" :data="alarmCountData" width="350px" height="180px"></ve-histogram>
+      <ve-histogram :extend="alarmCountExtend" :data="alarmCountData" width="100%" height="100%"></ve-histogram>
     </div>
   </div>
 </template>
@@ -49,10 +49,15 @@ export default {
 
 <style>
 .alarmCount-container {
+  position: relative;
   width: 100%;
-  height: 230px;
+  flex: 1 1 230px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .alarmCount-line {
   width: 100%;
+  flex: 1;
 }
 </style>

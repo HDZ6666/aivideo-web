@@ -44,7 +44,7 @@ export default {
 .deviceOnlineRate-container {
   position: relative;
   width: 100%;
-  flex: 1 1 189px;
+  flex: 0 0 190px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -52,10 +52,12 @@ export default {
 .ring-box {
   flex: 1;
   width: 100%;
+  display: flex;
+  justify-content: center;
   overflow: hidden;
 }
 .dv-ring {
-  width: 100%;
-  height: 100%;
+  min-height: 150px;
+  min-width: 150px;
 }
 </style>

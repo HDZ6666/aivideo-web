@@ -94,7 +94,7 @@ export default {
       loopPlayerIndex: 0, //当前轮播的屏数
       requesttime: 3, // 请求数据时间
       looptime: 5, //轮播间隔时间
-      splitNum: 9, //分屏数 [1,4,9,12,16]
+      splitNum: 12, //分屏数 [1,4,9,12,16]
       videoLists: [], //视频列表
       playList: [], //播放器列表
       deviceList: [], //设备列表

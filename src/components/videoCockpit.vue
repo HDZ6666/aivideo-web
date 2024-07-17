@@ -5,8 +5,8 @@
       <div class="container-content">
         <div class="content-left">
           <device-tree @deviceClick="handleDeviceClick"></device-tree>
-          <!-- <device-count></device-count>
-          <device-online-rate></device-online-rate> -->
+          <!-- <device-count></device-count> -->
+          <!-- <device-online-rate></device-online-rate> -->
         </div>
         <div class="content-main">
           <indicator-list></indicator-list>

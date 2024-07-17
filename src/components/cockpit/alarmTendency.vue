@@ -1,10 +1,10 @@
 <template>
   <div class="alarmTendency-container">
-    <dv-decoration-7 style="width:150px;height:50px;">告警趋势</dv-decoration-7>
+    <dv-decoration-7 style="width:100%;height:40px;">告警趋势</dv-decoration-7>
     <div class="alarmTendency-line">
       <ve-line
-        width="350px"
-        height="200px"
+        width="100%"
+        height="100%"
         ref="ConsoleNet1"
         :data="alarmTendencyData"
         :extend="alarmTendencyExtend"
@@ -51,10 +51,15 @@ export default {
 
 <style>
 .alarmTendency-container {
+  position: relative;
   width: 100%;
-  height: 250px;
+  flex: 1 1 230px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .alarmTendency-line {
   width: 100%;
+  flex: 1;
 }
 </style>
