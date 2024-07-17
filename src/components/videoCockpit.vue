@@ -6,7 +6,7 @@
         <div class="content-left">
           <device-tree @deviceClick="handleDeviceClick"></device-tree>
           <!-- <device-count></device-count>
-          <device-online-rate></device-online-rate>-->
+          <device-online-rate></device-online-rate> -->
         </div>
         <div class="content-main">
           <indicator-list></indicator-list>
@@ -19,10 +19,11 @@
           <alarm-tendency></alarm-tendency>
           <alarm-count></alarm-count>
           <alarm-handle-count></alarm-handle-count>
-        </div>-->
+        </div> -->
       </div>
     </div>
-    <video-dialog ref="videoDialog"></video-dialog>
+    <national-video-dialog ref="nationalVideoDialog" v-if="playerAction==='national'"></national-video-dialog>
+    <proxy-video-dialog ref="proxyVideoDialog" v-if="playerAction==='proxy'"></proxy-video-dialog>
     <alarm-dialog ref="alarmDialog"></alarm-dialog>
   </div>
 </template>
@@ -41,11 +42,15 @@ import alarmList from "./cockpit/alarmList.vue";
 import alarmTendency from "./cockpit/alarmTendency.vue";
 import alarmCount from "./cockpit/alarmCount.vue";
 import alarmHandleCount from "./cockpit/alarmHandleCount.vue";
-import videoDialog from "./cockpit/nationalVideoDialog.vue";
+import nationalVideoDialog from "./cockpit/nationalVideoDialog.vue";
+import proxyVideoDialog from "./cockpit/proxyVideoDialog.vue";
 import alarmDialog from "./cockpit/alarmDialog.vue";
+
+import { mixin } from "../utils/mixin";
 
 export default {
   name: "videoCockpit",
+  mixins: [mixin],
   components: {
     headerTop,
     deviceTree,
@@ -58,7 +63,8 @@ export default {
     alarmTendency,
     alarmCount,
     alarmHandleCount,
-    videoDialog,
+    nationalVideoDialog,
+    proxyVideoDialog,
     alarmDialog
   },
   data() {
@@ -77,25 +83,18 @@ export default {
   },
   destroyed() {},
   methods: {
-    // 代理
-    // handleDeviceClick(data) {
-    //   if (this.$refs.videoDialog) {
-    //     const palyer = {
-    //       name: data.name || data.channelName,
-    //       videoUrl: data.streamInfo.ws_flv.url
-    //     };
-    //     this.$refs.videoDialog.open(palyer);
-    //   }
-    // },
-    // 国标
     handleDeviceClick(data) {
-      if (this.$refs.videoDialog) {
-        // const palyer = {
-        //   name: data.name || data.channelName,
-        //   videoUrl: data.streamInfo.ws_flv.urlF
-        // };
-        this.$refs.videoDialog.open(data);
-      }
+      this.$refs[
+        this.playerAction === "national"
+          ? "nationalVideoDialog"
+          : "proxyVideoDialog"
+      ].open(data);
+      // if (this.playerAction === "national" && this.$refs.nationalVideoDialog) {
+      //   this.$refs.nationalVideoDialog.open(data);
+      // }
+      // if (this.playerAction === "proxy" && this.$refs.proxyVideoDialog) {
+      //   this.$refs.proxyVideoDialog.open(data);
+      // }
     }
   }
 };
@@ -141,17 +140,23 @@ export default {
 }
 
 .content-left {
-  width: 350px;
+  width: 250px;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-main {
   flex: 1;
-  margin: 0 70px;
+  margin: 0 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-right {
   width: 350px;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 </style>

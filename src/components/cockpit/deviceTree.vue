@@ -1,19 +1,26 @@
 <template>
   <div class="device-box">
-    <div class="device-content">
-      <CockputDeviceTree :clickEvent="clickEvent" isScreen></CockputDeviceTree>
-    </div>
-    <dv-border-box-11 title="设备列表" class="device-border"></dv-border-box-11>
+    <dv-border-box-11 title="设备列表" class="device-border">
+      <div class="device-content">
+        <DeviceTreeNational :clickEvent="clickEvent" isScreen v-if="playerAction === 'national'"></DeviceTreeNational>
+        <DeviceTreeProxy :clickEvent="clickEvent" isScreen v-if="playerAction === 'proxy'"></DeviceTreeProxy>
+      </div>
+    </dv-border-box-11>
   </div>
 </template>
 
 <script>
-import DeviceTree from "../common/DeviceTreeNational.vue";
+import DeviceTreeNational from "../common/DeviceTreeNational.vue";
+import DeviceTreeProxy from "../common/DeviceTreeProxy.vue";
+
+import { mixin } from "../../utils/mixin";
 export default {
   name: "deviceTree",
+  mixins: [mixin],
   props: ["deviceList"],
   components: {
-    CockputDeviceTree: DeviceTree
+    DeviceTreeNational,
+    DeviceTreeProxy
   },
   methods: {
     clickEvent: function(device) {
@@ -29,9 +36,26 @@ export default {
 <style>
 .device-box {
   position: relative;
-  height: 600px;
-  padding: 60px 10px 10px;
+  width: 100%;
+  /* height: 300px; */
+  flex: 1 1 300px;
+  overflow: hidden;
+  /* padding: 60px 10px 10px; */
+  /* box-sizing: border-box; */
+}
+
+.device-border {
+  width: 100%;
+  height: 100%;
+  padding: 60px 10px 20px;
   box-sizing: border-box;
+  overflow: hidden;
+  /* position: absolute !important;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: -1; */
 }
 
 .device-content {
@@ -40,17 +64,8 @@ export default {
   overflow: auto;
 }
 
-.device-border {
-  position: absolute !important;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  z-index: -1;
-}
-
 /* 下拉树的样式改变 */
-#deviceList {
+/* #deviceList {
   background: transparent;
   color: #000;
   font-weight: bold;
@@ -69,5 +84,5 @@ export default {
 
 #deviceList .el-tree__empty-text {
   color: #fff;
-}
+} */
 </style>

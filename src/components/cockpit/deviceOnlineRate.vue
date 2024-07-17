@@ -1,6 +1,6 @@
 <template>
   <div class="deviceOnlineRate-container">
-    <dv-decoration-7 style="width:150px;height:50px;">设备在线率</dv-decoration-7>
+    <dv-decoration-7 style="width:100%;height:40px;">设备在线率</dv-decoration-7>
     <div class="ring-box">
       <dv-active-ring-chart class="dv-ring" :config="deviceOnlineData" />
     </div>
@@ -42,13 +42,20 @@ export default {
 
 <style scoped>
 .deviceOnlineRate-container {
+  position: relative;
   width: 100%;
-  height: 210px;
+  flex: 1 1 189px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .ring-box {
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
 }
 .dv-ring {
-  width: 160px;
-  height: 160px;
+  width: 100%;
+  height: 100%;
 }
 </style>

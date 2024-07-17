@@ -10,7 +10,16 @@
             <el-header>设备列表</el-header>
             <el-main style="background-color: #ffffff;">
               <div class="device-tree-main-box">
-                <DeviceTree :clickEvent="clickEvent" :contextMenuEvent="contextMenuEvent"></DeviceTree>
+                <DeviceTreeNational
+                  :clickEvent="clickEvent"
+                  :contextMenuEvent="contextMenuEvent"
+                  v-if="playerAction === 'national'"
+                ></DeviceTreeNational>
+                <DeviceTreeProxy
+                  :clickEvent="clickEvent"
+                  :contextMenuEvent="contextMenuEvent"
+                  v-if="playerAction === 'proxy'"
+                ></DeviceTreeProxy>
               </div>
             </el-main>
           </el-container>
@@ -63,14 +72,19 @@
 <script>
 import uiHeader from "../layout/UiHeader.vue";
 import player from "./common/jessibuca.vue";
-import DeviceTree from "./common/DeviceTreeNational.vue";
+import DeviceTreeNational from "./common/DeviceTreeNational.vue";
+import DeviceTreeProxy from "./common/DeviceTreeProxy.vue";
+
+import { mixin } from "../utils/mixin";
 
 export default {
   name: "live",
+  mixins: [mixin],
   components: {
     uiHeader,
     player,
-    DeviceTree
+    DeviceTreeNational,
+    DeviceTreeProxy
   },
   data() {
     return {
@@ -144,7 +158,19 @@ export default {
       this.spilt = spilt;
     },
     clickEvent: function(device) {
-      this.sendDevicePush(device.userData);
+      if (this.playerAction === "national") {
+        this.sendDevicePush(device.userData);
+      } else {
+        if (device.userData && device.userData.streamInfo) {
+          this.save(device);
+          const streamInfo = device.userData.streamInfo;
+          const url =
+            location.protocol === "https:"
+              ? streamInfo.wss_flv.url
+              : streamInfo.ws_flv.url;
+          this.setPlayUrl(url, this.playerIdx);
+        }
+      }
     },
     contextMenuEvent: function(device, event, data, isCatalog) {},
     //通知设备上传媒体流
@@ -339,10 +365,10 @@ export default {
 .device-tree-main-box {
   text-align: left;
 }
-.device-online {
+/* .device-online {
   color: #252525;
 }
 .device-offline {
   color: #727272;
-}
+} */
 </style>

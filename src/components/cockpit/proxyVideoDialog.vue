@@ -14,6 +14,7 @@
           :loading.sync="player.loading"
           element-loading-text="加载中..."
           element-loading-background="#000"
+          v-if="playerType==='liveplayer'"
         >
           <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
           <LivePlayer
@@ -29,6 +30,10 @@
             @error="onPlayerError($event)"
           ></LivePlayer>
         </div>
+        <div class="video-box" v-else>
+          <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
+          <player ref="player" :videoUrl="player.videoUrl" fluent autoplay />
+        </div>
       </dv-border-box-11>
     </div>
   </transition>
@@ -36,9 +41,12 @@
 
 <script>
 import LivePlayer from "@liveqing/liveplayer";
+import player from "../common/jessibuca.vue";
+import { mixin } from "../../utils/mixin";
 export default {
   name: "videoDialog",
-  components: { LivePlayer },
+  mixins: [mixin],
+  components: { LivePlayer, player },
   data() {
     return {
       showDetail: false,

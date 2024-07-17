@@ -23,15 +23,22 @@
         </div>
       </el-col>
     </el-row>
-    <el-row>
-      <el-col :span="24/colSpan" v-for="(player,index) in playList" :key="index" class="palyer-box">
+    <el-row class="player-list">
+      <el-col
+        :span="24/colSpan"
+        v-for="(player,index) in playList"
+        :key="index"
+        class="palyer-box"
+        :style="{height:`${colSpanHeight}%`}"
+      >
         <dv-border-box-12 class="player-border">
-          <!-- <div
+          <div
             class="video-box"
             v-loading="player.loading"
             :loading.sync="player.loading"
             element-loading-text="加载中..."
             element-loading-background="#000"
+            v-if="playerType === 'liveplayer'"
           >
             <LivePlayer
               ref="livePlayer"
@@ -39,9 +46,9 @@
               :videoUrl="player.videoUrl"
               :hasaudio="false"
               :alt="player.error?'视频加载失败':'无信号'"
-              aspect="fullscreen"
               live
               muted
+              aspect="fullscreen"
               stretch
               hide-big-play-button
               hide-stretch-button
@@ -49,10 +56,15 @@
               @play="onPlayerPlay($event,player,index)"
               @error="onPlayerError($event,player,index)"
             ></LivePlayer>
-          </div> -->
-          <!-- ws://fyict.cn:20001/rtp/44060610091182000010_44060610091322000010.live.flv -->
-          <div class="video-box">
-            <player v-if="player.videoUrl" ref="player" :videoUrl="player.videoUrl" fluent autoplay />
+          </div>
+          <div class="video-box" v-else>
+            <player
+              v-if="player.videoUrl"
+              ref="player"
+              :videoUrl="player.videoUrl"
+              hideControls
+              fluent
+            />
           </div>
         </dv-border-box-12>
       </el-col>
@@ -66,10 +78,12 @@ import player from "../common/jessibuca.vue";
 import LivePlayer from "@liveqing/liveplayer";
 import rtcPlayer from "../dialog/rtcPlayer.vue";
 import img from "../../assets/image.png";
+import { mixin } from "../../utils/mixin";
 
 export default {
   name: "videoList",
   components: { LivePlayer, rtcPlayer, player },
+  mixins: [mixin],
   data() {
     return {
       requestTimer: null,
@@ -80,7 +94,7 @@ export default {
       loopPlayerIndex: 0, //当前轮播的屏数
       requesttime: 3, // 请求数据时间
       looptime: 5, //轮播间隔时间
-      splitNum: 9, //分屏数
+      splitNum: 9, //分屏数 [1,4,9,12,16]
       videoLists: [], //视频列表
       playList: [], //播放器列表
       deviceList: [], //设备列表
@@ -91,9 +105,11 @@ export default {
   computed: {
     colSpan() {
       return Math.ceil(Math.sqrt(this.splitNum));
+    },
+    colSpanHeight() {
+      return Math.floor(100 / (this.splitNum / this.colSpan));
     }
   },
-
   mounted() {
     this.playList = new Array(this.splitNum).fill({
       id: "",
@@ -109,6 +125,7 @@ export default {
     getDeviceList: function(page = 1) {
       // 超过就不请求
       const _page = this.total == -1 ? 1 : page; //初始化页
+      const _pageSize = this.splitNum > 10 ? this.splitNum : 10; //每页条数
       if (this.total == 0) return; //无数据
       if (_page > this.pages) return; //最后一页
 
@@ -118,7 +135,7 @@ export default {
         url: `/ai/api/device/query/cameraList`,
         params: {
           page: _page,
-          pageSize: this.splitNum
+          pageSize: _pageSize
         }
       })
         .then(res => {
@@ -314,18 +331,15 @@ export default {
 
 <style scoped>
 .videoList-container {
-  /* flex: 1; */
+  flex: 1;
   width: 100%;
-  /* height: 450px; */
-  /* height: 60%; */
-  /* height: 540px; */
-  /* display: flex;
-  flex-direction: row; */
-  /* flex-wrap: wrap; */
-  /* justify-content: center;
-  align-items: center; */
   padding-bottom: 1%;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.player-list {
+  flex: 1;
 }
 .palyer-box {
   padding: 2px;
@@ -336,7 +350,7 @@ export default {
 
 .video-box {
   width: 100%;
-  height: 150px;
+  height: 100%;
   /* width: calc(100% - 10px);
   height: calc(100% - 10px); */
   /* width: 48%;

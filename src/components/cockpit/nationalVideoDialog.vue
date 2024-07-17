@@ -8,16 +8,13 @@
         <i class="el-icon-close"></i>
       </div>
       <dv-border-box-11 class="dialog-border" title="监控详情" backgroundColor="rgba(67,79,103,1)">
-        <div class="video-box">
-          <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
-          <player ref="player" :videoUrl="player.videoUrl" fluent autoplay />
-        </div>
-        <!-- <div
+        <div
           class="video-box"
           v-loading="player.loading"
           :loading.sync="player.loading"
           element-loading-text="加载中..."
           element-loading-background="#000"
+          v-if="playerType==='liveplayer'"
         >
           <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
           <LivePlayer
@@ -32,7 +29,11 @@
             @play="onPlayerPlay($event)"
             @error="onPlayerError($event)"
           ></LivePlayer>
-        </div>-->
+        </div>
+        <div class="video-box" v-else>
+          <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
+          <player ref="player" :videoUrl="player.videoUrl" fluent autoplay />
+        </div>
       </dv-border-box-11>
     </div>
   </transition>
@@ -41,8 +42,11 @@
 <script>
 import LivePlayer from "@liveqing/liveplayer";
 import player from "../common/jessibuca.vue";
+import { mixin } from "../../utils/mixin";
+
 export default {
   name: "videoDialog",
+  mixins: [mixin],
   components: { LivePlayer, player },
   data() {
     return {

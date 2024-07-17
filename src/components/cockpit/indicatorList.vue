@@ -14,7 +14,24 @@ export default {
   data() {
     return {
       indicator: {},
-      indicatorListData: []
+      indicatorListData: [
+        {
+          label: "国标设备总数",
+          value: 0
+        },
+        {
+          label: "通道总数量",
+          value: 0
+        },
+        {
+          label: "在线通道数量",
+          value: 0
+        },
+        {
+          label: "非国标设备数",
+          value: 0
+        }
+      ]
     };
   },
   mounted() {

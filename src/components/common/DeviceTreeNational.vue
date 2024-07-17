@@ -8,10 +8,12 @@
     lazy
     @node-click="handleNodeClick"
     node-key="id"
-    style="min-width: 100%; display:inline-block !important;"
+    style="width: 100%; display:inline-block !important;"
   >
     <span class="custom-tree-node" slot-scope="{ node, data }">
-      <span class="tree-node-label">{{ node.label }}</span>
+      <div class="tree-node-label">
+        <span>{{ node.label }}</span>
+      </div>
       <span
         v-if="data.nodeType === 'channel' && data.online"
         title="在线设备"
@@ -107,11 +109,19 @@ export default {
                 userData: item
               };
             });
-            if (list.length > 0) {
-              resolve(list);
-            } else {
-              this.getDeviceTree(0, resolve);
+            if (parentId === 0) {
+              const all = {
+                name: "全部设备",
+                nodeType: "group", //类型
+                id: 0,
+                isLeaf: false,
+                online: false,
+                hasChildren: false,
+                userData: null
+              };
+              list.unshift(all); // 把全部添加到数组第一
             }
+            resolve(list);
           } else {
             resolve([]);
           }
@@ -278,9 +288,9 @@ export default {
 }
 
 .tree-node-label {
-  flex: 1;
-  display: flex;
-  flex-wrap: wrap;
+  width: 90%;
   white-space: normal;
+  word-wrap: break-word; /* 旧版浏览器支持 */
+  overflow-wrap: break-word; /* 标准属性 */
 }
 </style>

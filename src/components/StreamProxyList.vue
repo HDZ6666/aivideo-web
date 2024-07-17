@@ -3,6 +3,18 @@
     <div class="page-header">
       <div class="page-title">拉流代理列表</div>
       <div class="page-header-btn">
+        <el-select
+          size="mini"
+          style="margin-right: 1rem;"
+          @change="refresh()"
+          v-model="online"
+          placeholder="请选择"
+          default-first-option
+        >
+          <el-option label="全部" value></el-option>
+          <el-option label="在线" value="true"></el-option>
+          <el-option label="离线" value="false"></el-option>
+        </el-select>
         <el-button
           icon="el-icon-plus"
           size="mini"
@@ -216,7 +228,8 @@ export default {
       group_id: 0,
       streamProxyListLoading: false,
       cancelTokenSource: null,
-      changeGroupTimer: null
+      changeGroupTimer: null,
+      online: ""
     };
   },
   computed: {},
@@ -257,7 +270,8 @@ export default {
         params: {
           page: that.currentPage,
           pageSize: that.count,
-          categoryId: that.group_id
+          categoryId: that.group_id,
+          online: that.online
         },
         cancelToken: this.cancelTokenSource.token
       })

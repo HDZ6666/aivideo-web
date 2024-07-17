@@ -8,8 +8,22 @@
     lazy
     @node-click="handleNodeClick"
     node-key="id"
-    style="min-width: 100%; display:inline-block !important;"
-  ></el-tree>
+    style="width: 100%; display:inline-block !important;"
+  >
+    <span class="custom-tree-node" slot-scope="{ node, data }">
+      <div class="tree-node-label">{{ node.label }}</div>
+      <span
+        v-if="data.nodeType === 'device' && data.online"
+        title="在线设备"
+        class="device-online el-icon-video-camera-solid"
+      ></span>
+      <span
+        v-if="data.nodeType === 'device' && !data.online "
+        title="离线设备"
+        class="device-offline el-icon-video-camera-solid"
+      ></span>
+    </span>
+  </el-tree>
 </template>
 
 <script>
@@ -35,7 +49,11 @@ export default {
   methods: {
     handleNodeClick(data, node, element) {
       if (data.nodeType === "device") {
-        this.clickEvent(data);
+        if (!data.online) {
+          this.$message.error("设备离线!不允许点播");
+        } else {
+          this.clickEvent(data);
+        }
       }
     },
     getGroupTree: function(parentId, resolve) {
@@ -59,6 +77,18 @@ export default {
                 userData: item
               };
             });
+            if (parentId === 0) {
+              const all = {
+                name: "全部设备",
+                nodeType: "group", //类型
+                id: 0,
+                isLeaf: false,
+                online: false,
+                hasChildren: false,
+                userData: null
+              };
+              list.unshift(all); // 把全部添加到数组第一
+            }
             resolve(list);
           } else {
             resolve([]);
@@ -86,7 +116,7 @@ export default {
                 nodeType: "device",
                 id: item.streamKey,
                 isLeaf: true,
-                online: false,
+                online: item.status,
                 userData: item
               };
             });
@@ -142,5 +172,38 @@ export default {
 
 .screen-device-tree .el-tree-node:focus > .el-tree-node__content {
   background-color: rgba(31, 51, 162, 0.6);
+}
+
+.screen-device-tree .el-tree-node__content {
+  min-height: 26px;
+  height: auto;
+}
+
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+  overflow: hidden;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
+
+.device-online {
+  font-size: 18px;
+  color: #59c4e6;
+}
+.device-offline {
+  font-size: 18px;
+  color: #c6ced8;
+}
+
+.tree-node-label {
+  width: 90%;
+  white-space: normal;
+  word-wrap: break-word; /* 旧版浏览器支持 */
+  overflow-wrap: break-word; /* 标准属性 */
 }
 </style>
