@@ -9,19 +9,19 @@
       mode="horizontal"
     >
       <el-menu-item index="/videoCockpit">数据大屏</el-menu-item>
-      <el-submenu index="2" v-if="username!=='huigu'">
+      <!-- <el-submenu index="2">
         <template slot="title">AI卫士</template>
         <el-menu-item index="/alarmList">告警列表</el-menu-item>
         <el-menu-item index="/fence">告警配置</el-menu-item>
-      </el-submenu>
+      </el-submenu>-->
       <el-menu-item index="/live">分屏监控</el-menu-item>
       <el-submenu index="1">
         <template slot="title">国标对接</template>
         <el-menu-item index="/deviceList">设备列表</el-menu-item>
         <el-menu-item index="/deviceGroup">分组</el-menu-item>
       </el-submenu>
-      <el-menu-item index="/map" v-if="username==='admin'">电子地图</el-menu-item>
-      <el-menu-item index="/pushVideoList" v-if="username==='admin'">推流列表</el-menu-item>
+      <!-- <el-menu-item index="/map">电子地图</el-menu-item>
+      <el-menu-item index="/pushVideoList">推流列表</el-menu-item>-->
       <el-menu-item index="/streamProxyList">非国标对接</el-menu-item>
       <el-submenu index="3">
         <template slot="title">系统管理</template>
@@ -42,7 +42,7 @@
         <template slot="title">欢迎，{{ username }}</template>
         <el-menu-item @click="openDoc">在线文档</el-menu-item>
         <el-menu-item>
-          <el-switch v-model="alarmNotify" inactive-text="报警信息推送" @change="alarmNotifyChannge"></el-switch>
+          <!-- <el-switch v-model="alarmNotify" inactive-text="报警信息推送" @change="alarmNotifyChannge"></el-switch> -->
           <!-- <el-switch v-model="alarmNotify" inactive-text="报警信息推送" @change="alarmNotifyChannge"></el-switch> -->
         </el-menu-item>
         <el-menu-item @click="changePassword">修改密码</el-menu-item>

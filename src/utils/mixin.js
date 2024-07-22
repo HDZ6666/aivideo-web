@@ -4,7 +4,7 @@ export const mixin = {
       alarmNotify: !localStorage.getItem("alarmSwitchStatus")
         ? false
         : JSON.parse(localStorage.getItem("alarmSwitchStatus")),
-      playerType: "liveplayer", // liveplayer|jessibuca
+      playerType: "jessibuca", // liveplayer|jessibuca
       playerAction: "national" // national|proxy
     };
   }
