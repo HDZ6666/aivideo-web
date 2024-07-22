@@ -5,8 +5,8 @@
       <div class="container-content">
         <div class="content-left">
           <device-tree @deviceClick="handleDeviceClick"></device-tree>
-          <!-- <device-count></device-count> -->
-          <!-- <device-online-rate></device-online-rate> -->
+          <device-count></device-count>
+          <device-online-rate></device-online-rate>
         </div>
         <div class="content-main">
           <indicator-list></indicator-list>
@@ -14,12 +14,12 @@
           <!-- <dv-decoration-3 style="width:300px;height:50px;" />
           <alarm-carousel></alarm-carousel>-->
         </div>
-        <!-- <div class="content-right">
+        <div class="content-right">
           <alarm-list></alarm-list>
           <alarm-tendency></alarm-tendency>
           <alarm-count></alarm-count>
           <alarm-handle-count></alarm-handle-count>
-        </div> -->
+        </div>
       </div>
     </div>
     <national-video-dialog ref="nationalVideoDialog" v-if="playerAction==='national'"></national-video-dialog>

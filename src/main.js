@@ -14,6 +14,7 @@ import VueClipboards from "vue-clipboards";
 import Contextmenu from "vue-contextmenujs";
 import userService from "./components/service/UserService";
 import moment from "moment";
+import Qs from "qs";
 
 Vue.config.productionTip = false;
 
@@ -80,6 +81,7 @@ axios.interceptors.request.use(
     if (userService.getToken() != null && config.url !== "/api/user/login") {
       config.headers["access-token"] = `${userService.getToken()}`;
     }
+    console.log(config);
     return config;
   },
   error => {
@@ -90,12 +92,10 @@ axios.interceptors.request.use(
 router.beforeEach((to, from, next) => {
   if (to.path === "/videoCockpit" && to.query && to.query.token) {
     axios({
-      method: "get",
+      method: "post",
       url: "/api/user/oneClickLogin",
-      params: {
-        authToken: decodeURIComponent(to.query.token),
-        timestamp: moment().valueOf(),
-        userName: "admin"
+      data: {
+        authorization: decodeURIComponent(to.query.token)
       }
     })
       .then(function(res) {
