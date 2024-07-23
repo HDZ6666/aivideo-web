@@ -63,7 +63,7 @@
               ref="player"
               :videoUrl="player.videoUrl"
               hideControls
-              fluent
+              screen
             />
           </div>
         </dv-border-box-12>

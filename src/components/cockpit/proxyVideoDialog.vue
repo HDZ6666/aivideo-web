@@ -32,7 +32,7 @@
         </div>
         <div class="video-box" v-else>
           <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
-          <player ref="player" :videoUrl="player.videoUrl" fluent autoplay />
+          <player ref="player" :videoUrl="player.videoUrl" screen autoplay />
         </div>
       </dv-border-box-11>
     </div>

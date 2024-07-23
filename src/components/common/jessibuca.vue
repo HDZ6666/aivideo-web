@@ -2,7 +2,7 @@
   <div
     ref="container"
     @dblclick="fullscreenSwich"
-    style="height: 100%;background-color: #000000;margin:0 auto;position: relative;"
+    style="background-color: #000000;margin:0 auto;position: relative;"
   >
     <div class="buttons-box" id="buttonsBox" v-if="!hideControls">
       <div class="buttons-box-left">
@@ -65,17 +65,17 @@ export default {
     hideControls: Boolean,
     fluent: Boolean,
     height: Number | String,
-    error: Function
+    error: Function,
+    screen: Boolean
   },
   mounted() {
     let paramUrl = decodeURIComponent(this.$route.params.url);
+    console.log(this.screen);
     this.$nextTick(() => {
-      if (!this.fluent) {
+      this.updatePlayerDomSize();
+      window.onresize = () => {
         this.updatePlayerDomSize();
-        window.onresize = () => {
-          this.updatePlayerDomSize();
-        };
-      }
+      };
       if (typeof this.videoUrl == "undefined") {
         this.videoUrl = paramUrl;
       }
@@ -95,6 +95,11 @@ export default {
   methods: {
     updatePlayerDomSize() {
       let dom = this.$refs.container;
+      if (this.screen) {
+        dom.style.width = width + "%";
+        dom.style.height = height + "%";
+        return;
+      }
       let width = dom.parentNode.clientWidth;
       let height = (9 / 16) * width;
 
