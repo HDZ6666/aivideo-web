@@ -140,7 +140,7 @@ export default {
 }
 
 .content-left {
-  width: 350px;
+  width: 300px;
   height: 100%;
   display: flex;
   flex-direction: column;
