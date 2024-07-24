@@ -261,7 +261,7 @@ export default {
       if (jessibucaPlayer[this._uid]) {
         jessibucaPlayer[this._uid].destroy();
       }
-      if (document.getElementById("buttonsBox") == null) {
+      if (!this.hideControls && document.getElementById("buttonsBox") == null) {
         this.$refs.container.appendChild(this.btnDom);
       }
       jessibucaPlayer[this._uid] = null;
