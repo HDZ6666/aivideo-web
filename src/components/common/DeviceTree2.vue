@@ -279,10 +279,10 @@ export default {
 .device-tree-main-box {
   text-align: left;
 }
-.device-online {
+/* .device-online {
   color: #252525;
 }
 .device-offline {
   color: #727272;
-}
+} */
 </style>
