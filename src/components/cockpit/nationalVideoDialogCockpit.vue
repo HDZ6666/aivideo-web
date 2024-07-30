@@ -93,8 +93,8 @@ export default {
       if (data.userData && data.userData.aiStreamInfo) {
         const url =
           location.protocol === "https:"
-            ? data.userData.aiStreamInfo.wss_flv.url
-            : data.userData.aiStreamInfo.ws_flv.url;
+            ? data.userData.aiStreamInfo.wss_flv
+            : data.userData.aiStreamInfo.ws_flv;
         this.showDetail = true;
         this.player = {
           name: data.name,
