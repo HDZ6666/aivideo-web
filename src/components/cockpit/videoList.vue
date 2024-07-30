@@ -10,6 +10,11 @@
             </span>
           </div>
           <div>
+            <el-select v-model="splitNum" @change="changeSplitNum">
+              <el-option :value="9" label="9宫格"></el-option>
+              <el-option :value="12" label="12宫格"></el-option>
+              <el-option :value="16" label="16宫格"></el-option>
+            </el-select>
             <el-button type="primary" style="background: #6c7797;" @click="screenAction('prev')">上一屏</el-button>
             <el-button type="primary" style="background: #6c7797;" @click="screenAction('next')">下一屏</el-button>
             <el-button type="danger" @click="screenAction('stop')" v-if="isAutoScreen">停止轮播</el-button>
@@ -27,13 +32,16 @@
       <el-col
         :span="24/colSpan"
         v-for="(player,index) in playList"
-        :key="index"
+        :key="`${splitNum}宫格_${index}`"
         class="palyer-box"
-        :style="{height:`${colSpanHeight}%`}"
       >
-        <dv-border-box-12 class="player-border">
+        <dv-border-box-12
+          class="player-border"
+          :style="{height:`${videoHeightPX}px`,width:`${videoWidthPX}px`}"
+        >
           <div
             class="video-box"
+            :style="{height:`${videoHeightPX}px`,width:`${videoWidthPX}px`}"
             v-loading="player.loading"
             :loading.sync="player.loading"
             element-loading-text="加载中..."
@@ -86,7 +94,6 @@ export default {
   mixins: [mixin],
   data() {
     return {
-      requestTimer: null,
       loopPlayerTimeOut: null,
       getListLoading: false,
       pages: 1, //默认分页数
@@ -108,19 +115,42 @@ export default {
     },
     colSpanHeight() {
       return Math.floor(100 / (this.splitNum / this.colSpan));
+    },
+    videoHeightPX() {
+      return Math.floor(500 / (this.splitNum / this.colSpan));
+    },
+    videoWidthPX() {
+      return Math.floor(this.videoHeightPX * (16 / 9));
     }
   },
   mounted() {
-    this.playList = new Array(this.splitNum).fill({
-      id: "",
-      name: "",
-      videoUrl: "",
-      loading: false,
-      error: false
-    });
-    this.getDeviceList();
+    this.init();
   },
   methods: {
+    init: function() {
+      this.playList = new Array(this.splitNum).fill({
+        id: "",
+        name: "",
+        videoUrl: "",
+        loading: false,
+        error: false
+      });
+      this.getDeviceList();
+    },
+    changeSplitNum(num) {
+      this.reset();
+      this.init();
+    },
+    reset() {
+      this.videoLists = []; //视频列表
+      this.playList = []; //播放器列表
+      this.deviceList = []; //设备列表
+      this.loopPlayerIndex = 0;
+      this.isAutoScreen = false;
+      if (this.loopPlayerTimeOut) {
+        clearInterval(this.loopPlayerTimeOut);
+      }
+    },
     // 获取设备列表
     getDeviceList: function(page = 1) {
       // 超过就不请求
@@ -143,7 +173,7 @@ export default {
             const data = res.data.data;
             const list = data.list.map(item => {
               return {
-                name: item.device_name,
+                name: item.name,
                 id: `${item.deviceId}_${item.channelId}`,
                 deviceId: item.deviceId,
                 channelId: item.channelId,
@@ -322,9 +352,7 @@ export default {
     }
   },
   destroyed() {
-    if (this.loopPlayerTimeOut) {
-      clearInterval(this.loopPlayerTimeOut);
-    }
+    this.reset();
   }
 };
 </script>
@@ -378,6 +406,7 @@ export default {
   background-repeat: no-repeat;
 }
 .player-border {
+  max-width: 100%;
   width: 100%;
   height: 100%;
   padding: 5px;

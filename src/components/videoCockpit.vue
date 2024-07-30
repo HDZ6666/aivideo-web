@@ -6,7 +6,7 @@
         <div class="content-left">
           <device-tree @deviceClick="handleDeviceClick"></device-tree>
           <!-- <device-count></device-count>
-          <device-online-rate></device-online-rate> -->
+          <device-online-rate></device-online-rate>-->
         </div>
         <div class="content-main">
           <indicator-list></indicator-list>
@@ -19,7 +19,7 @@
           <alarm-tendency></alarm-tendency>
           <alarm-count></alarm-count>
           <alarm-handle-count></alarm-handle-count>
-        </div> -->
+        </div>-->
       </div>
     </div>
     <national-video-dialog ref="nationalVideoDialog" v-if="playerAction==='national'"></national-video-dialog>
@@ -42,7 +42,7 @@ import alarmList from "./cockpit/alarmList.vue";
 import alarmTendency from "./cockpit/alarmTendency.vue";
 import alarmCount from "./cockpit/alarmCount.vue";
 import alarmHandleCount from "./cockpit/alarmHandleCount.vue";
-import nationalVideoDialog from "./cockpit/nationalVideoDialog.vue";
+import nationalVideoDialog from "./cockpit/nationalVideoDialogCockpit.vue";
 import proxyVideoDialog from "./cockpit/proxyVideoDialog.vue";
 import alarmDialog from "./cockpit/alarmDialog.vue";
 
@@ -141,12 +141,14 @@ export default {
 
 .content-left {
   width: 300px;
+  /* flex: 1 1 300px; */
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
 .content-main {
+  /* flex: 1 1 800px; */
   flex: 1;
   margin: 0 20px;
   display: flex;

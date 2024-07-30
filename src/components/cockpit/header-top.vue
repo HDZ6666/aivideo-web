@@ -9,8 +9,10 @@
     />
     <div class="center-title">监控驾驶舱</div>
     <div class="right-btn">
-      <div class="backBtn" @click="back()">
-        <dv-border-box-10>后台管理</dv-border-box-10>
+      <div class="backBtn">
+        <dv-border-box-10>
+          <div @click="back()" style="cursor:pointer">后台管理</div>
+        </dv-border-box-10>
       </div>
     </div>
   </div>
@@ -75,7 +77,6 @@ export default {
   height: 50px;
   line-height: 50px;
   text-align: center;
-  cursor: pointer;
 }
 
 .openAlarm {
