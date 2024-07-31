@@ -116,7 +116,7 @@ export default {
                 nodeType: "device",
                 id: `${item.deviceId}_${item.channelId}`,
                 isLeaf: true,
-                online: item.status,
+                online: item.onLine,
                 userData: item
               };
             });
