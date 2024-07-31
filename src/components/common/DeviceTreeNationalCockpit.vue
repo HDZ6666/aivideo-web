@@ -11,16 +11,14 @@
     style="width: 100%; display:inline-block !important;"
   >
     <span class="custom-tree-node" slot-scope="{ node, data }">
-      <div class="tree-node-label">
-        <span>{{ node.label }}</span>
-      </div>
+      <div class="tree-node-label">{{ node.label }}</div>
       <span
-        v-if="data.nodeType === 'channel' && data.online"
+        v-if="data.nodeType === 'device' && data.online"
         title="在线设备"
         class="device-online el-icon-video-camera-solid"
       ></span>
       <span
-        v-if="data.nodeType === 'channel' && !data.online "
+        v-if="data.nodeType === 'device' && !data.online "
         title="离线设备"
         class="device-offline el-icon-video-camera-solid"
       ></span>
@@ -29,7 +27,6 @@
 </template>
 
 <script>
-import DeviceService from "../service/DeviceService.js";
 export default {
   name: "DeviceTree",
   props: {
@@ -38,7 +35,6 @@ export default {
   },
   data() {
     return {
-      deviceService: new DeviceService(),
       defaultProps: {
         children: "children",
         label: "name",
@@ -46,46 +42,18 @@ export default {
       },
       deviceLoad: false,
       deviceGroupList: [],
-      groupObj: {},
-      onlyCatalog: false
+      groupObj: {}
     };
   },
   mounted() {},
   methods: {
     handleNodeClick(data, node, element) {
-      // 不是分组、有channelId、不是目录
-      if (
-        data.nodeType !== "group" &&
-        data.userData.channelId &&
-        data.type !== 2
-      ) {
+      if (data.nodeType === "device") {
         if (!data.online) {
           this.$message.error("设备离线!不允许点播");
         } else {
           this.clickEvent(data);
         }
-      }
-    },
-    loadNode: function(node, resolve) {
-      // 初始化
-      if (node.level === 0) {
-        this.getGroupTree(node.level, resolve);
-      }
-      if (node.level > 0) {
-        // 类型是分组并且有子分组
-        if (node.data.nodeType === "group" && node.data.hasChildren) {
-          this.getGroupTree(node.data.id, resolve);
-        }
-        // 类型是分组并且没有子分组
-        if (node.data.nodeType === "group" && !node.data.hasChildren) {
-          // 请求NVR
-          this.getDeviceTree(node.data.id, resolve);
-        }
-        // // 类型是设备
-        // if (node.data.nodeType === "device") {
-        //   // 请求通道
-        //   this.getChannelTree(node.data.id, resolve);
-        // }
       }
     },
     getGroupTree: function(parentId, resolve) {
@@ -130,27 +98,25 @@ export default {
           resolve([]);
         });
     },
-    getDeviceTree: function(groupId, resolve) {
+    getDeviceTree: function(categoryId, resolve) {
       this.$axios({
         method: "get",
         url: `/api/device/query/devicesChannel`,
         params: {
           page: 1,
           count: 9999,
-          groupId: groupId
+          groupId: categoryId
         }
       })
         .then(res => {
           if (res.data.code === 0) {
             const list = res.data.data.list.map(item => {
               return {
-                name: item.channelName || item.name,
+                name: item.name,
+                nodeType: "device",
+                id: `${item.deviceId}_${item.channelId}`,
                 isLeaf: true,
-                id: item.id,
-                nodeType: "channel",
-                deviceId: item.deviceId,
-                channelId: item.channelId,
-                online: item.onLine,
+                online: item.status,
                 userData: item
               };
             });
@@ -163,80 +129,21 @@ export default {
           resolve([]);
         });
     },
-    getChannelTree: function(deviceId, resolve) {
-      this.$axios({
-        method: "get",
-        url: `/api/device/query/tree/${deviceId}`,
-        params: {
-          page: 1,
-          count: 9999,
-          parentId: deviceId,
-          onlyCatalog: this.onlyCatalog
+    loadNode: function(node, resolve) {
+      // 初始化
+      if (node.level === 0) {
+        this.getGroupTree(node.level, resolve);
+      }
+      if (node.level > 0) {
+        // 类型是分组并且有子分组
+        if (node.data.nodeType === "group" && node.data.hasChildren) {
+          this.getGroupTree(node.data.id, resolve);
         }
-      })
-        .then(res => {
-          if (res.data.code === 0) {
-            this.channelDataHandler(res.data.data.list, resolve);
-          } else {
-            resolve([]);
-          }
-        })
-        .catch(error => {
-          resolve([]);
-        });
-    },
-    channelDataHandler: function(data, resolve) {
-      if (data.length > 0) {
-        let nodeList = [];
-        for (let i = 0; i < data.length; i++) {
-          let item = data[i];
-          let type = 3;
-          if (item.id.length <= 10) {
-            type = 2;
-          } else {
-            if (item.id.length > 14) {
-              let channelType = item.id.substring(10, 13);
-              console.log("channelType: " + channelType);
-              if (channelType === "215" || channelType === "216") {
-                type = 2;
-              }
-              if (item.basicData.ptztype === 1) {
-                // 1-球机;2-半球;3-固定枪机;4-遥控枪机
-                type = 4;
-              } else if (item.basicData.ptztype === 2) {
-                type = 5;
-              } else if (
-                item.basicData.ptztype === 3 ||
-                item.basicData.ptztype === 4
-              ) {
-                type = 6;
-              }
-            } else {
-              if (
-                item.basicData.subCount > 0 ||
-                item.basicData.parental === 1
-              ) {
-                type = 2;
-              }
-            }
-          }
-          let node = {
-            name: item.name || item.basicData.channelId,
-            isLeaf: type !== 2,
-            id: item.id,
-            nodeType: "channel",
-            deviceId: item.deviceId,
-            type: type,
-            online: item.basicData.status,
-            hasGPS: item.basicData.longitude * item.basicData.latitude !== 0,
-            userData: item.basicData
-          };
-          console.log(node);
-          nodeList.push(node);
+        // 类型是分组并且没有子分组
+        if (node.data.nodeType === "group" && !node.data.hasChildren) {
+          // 请求设备
+          this.getDeviceTree(node.data.id, resolve);
         }
-        resolve(nodeList);
-      } else {
-        resolve([]);
       }
     },
     reset: function() {
@@ -259,10 +166,6 @@ export default {
 .screen-device-tree .el-tree-node__expand-icon.is-leaf {
   color: transparent;
 }
-.screen-device-tree .el-tree-node__content {
-  min-height: 26px;
-  height: auto;
-}
 .screen-device-tree .el-tree-node__content:hover {
   background-color: rgba(31, 51, 162, 0.6);
 }
@@ -270,6 +173,12 @@ export default {
 .screen-device-tree .el-tree-node:focus > .el-tree-node__content {
   background-color: rgba(31, 51, 162, 0.6);
 }
+
+.screen-device-tree .el-tree-node__content {
+  min-height: 26px;
+  height: auto;
+}
+
 .custom-tree-node {
   flex: 1;
   display: flex;
@@ -277,6 +186,9 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+  overflow: hidden;
+  flex-wrap: nowrap;
+  flex-direction: row;
 }
 
 .device-online {

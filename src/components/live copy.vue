@@ -72,7 +72,7 @@
 <script>
 import uiHeader from "../layout/UiHeader.vue";
 import player from "./common/jessibuca.vue";
-import DeviceTreeNational from "./common/DeviceTreeNationalCockpit.vue";
+import DeviceTreeNational from "./common/DeviceTreeNational.vue";
 import DeviceTreeProxy from "./common/DeviceTreeProxy.vue";
 
 import { mixin } from "../utils/mixin";
@@ -159,12 +159,7 @@ export default {
     },
     clickEvent: function(device) {
       if (this.playerAction === "national") {
-        if (device.userData && device.userData.aiStreamInfo) {
-          this.save(device);
-          const url = device.userData.aiStreamInfo.WS_FLV;
-          this.setPlayUrl(url, this.playerIdx);
-        }
-        // this.sendDevicePush(device.userData);
+        this.sendDevicePush(device.userData);
       } else {
         if (device.userData && device.userData.streamInfo) {
           this.save(device);
