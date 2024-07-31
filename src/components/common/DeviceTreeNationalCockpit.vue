@@ -112,7 +112,7 @@ export default {
           if (res.data.code === 0) {
             const list = res.data.data.list.map(item => {
               return {
-                name: item.name,
+                name: item.channelName,
                 nodeType: "device",
                 id: `${item.deviceId}_${item.channelId}`,
                 isLeaf: true,
