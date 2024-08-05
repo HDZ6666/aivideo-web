@@ -5,8 +5,8 @@
       <div class="container-content">
         <div class="content-left">
           <device-tree @deviceClick="handleDeviceClick"></device-tree>
-          <device-count></device-count>
-          <device-online-rate></device-online-rate>
+          <!-- <device-count></device-count>
+          <device-online-rate></device-online-rate> -->
         </div>
         <div class="content-main">
           <indicator-list></indicator-list>
@@ -17,8 +17,8 @@
         <div class="content-right">
           <alarm-list></alarm-list>
           <alarm-tendency></alarm-tendency>
-          <alarm-count></alarm-count>
-          <alarm-handle-count></alarm-handle-count>
+          <!-- <alarm-count></alarm-count>
+          <alarm-handle-count></alarm-handle-count> -->
         </div>
       </div>
     </div>
@@ -140,7 +140,7 @@ export default {
 }
 
 .content-left {
-  width: 250px;
+  width: 280px;
   height: 100%;
   display: flex;
   flex-direction: column;

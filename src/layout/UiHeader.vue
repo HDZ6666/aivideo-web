@@ -20,8 +20,8 @@
         <el-menu-item index="/deviceList">设备列表</el-menu-item>
         <el-menu-item index="/deviceGroup">分组</el-menu-item>
       </el-submenu>
-      <el-menu-item index="/map" v-if="username==='admin'">电子地图</el-menu-item>
-      <el-menu-item index="/pushVideoList" v-if="username==='admin'">推流列表</el-menu-item>
+      <!-- <el-menu-item index="/map" v-if="username==='admin'">电子地图</el-menu-item> -->
+      <!-- <el-menu-item index="/pushVideoList" v-if="username==='admin'">推流列表</el-menu-item> -->
       <el-menu-item index="/streamProxyList">非国标对接</el-menu-item>
       <el-submenu index="3">
         <template slot="title">系统管理</template>

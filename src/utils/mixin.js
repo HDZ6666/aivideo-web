@@ -5,7 +5,7 @@ export const mixin = {
         ? false
         : JSON.parse(localStorage.getItem("alarmSwitchStatus")),
       playerType: "liveplayer", // liveplayer|jessibuca
-      playerAction: "national" // national|proxy
+      playerAction: "proxy" // national|proxy
     };
   }
 };
