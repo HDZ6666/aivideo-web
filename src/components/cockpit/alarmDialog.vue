@@ -50,25 +50,20 @@
               <el-descriptions-item label="分组名称">某大厦</el-descriptions-item>
               <el-descriptions-item label="设备名称">{{ dialogObj.showAlarmObj.deviceName }}</el-descriptions-item>
               <el-descriptions-item label="告警ID">{{ dialogObj.showAlarmObj.alarmId }}</el-descriptions-item>
-              <el-descriptions-item label="置信度">58%</el-descriptions-item>
+              <el-descriptions-item label="置信度">95%</el-descriptions-item>
               <el-descriptions-item label="处理情况">
-                <el-tag size="small" color="#2db7f5" class="handleStatus">待处理</el-tag>
+                <el-tag size="small" color="#2db7f5" class="handleStatus"> {{ dialogObj.showAlarmObj.status === 0 ? '未处理' :dialogObj.showAlarmObj.status === 1 ? '已处理' : '误报' }}</el-tag>
               </el-descriptions-item>
               <el-descriptions-item label="通知人员">
                 <div class="notifePeople-box">
-                  <el-tag size="small" class="notifePeople">黄总</el-tag>
-                  <el-tag size="small" class="notifePeople">李总</el-tag>
-                  <el-tag size="small" class="notifePeople">何总</el-tag>
-                  <el-tag size="small" class="notifePeople">何总</el-tag>
-                  <el-tag size="small" class="notifePeople">何总</el-tag>
-                  <el-tag size="small" class="notifePeople">何总</el-tag>
-                  <el-tag size="small" class="notifePeople">何总</el-tag>
+                  <el-tag size="small" class="notifePeople">曾广在</el-tag>
+                  <el-tag size="small" class="notifePeople">吴广</el-tag>
                 </div>
               </el-descriptions-item>
             </el-descriptions>
             <div class="handleButtons">
               <dv-border-box-8 class="handleButton">
-                <div @click="handleState(1)">处理</div>
+                <div @click=" (1)">处理</div>
               </dv-border-box-8>
               <dv-border-box-8 class="handleButton" :reverse="true">
                 <div @click="handleState(2)">误报</div>
@@ -116,6 +111,7 @@ export default {
   watch: {
     alarmNotify: {
       handler(newVal, oldVal) {
+        console.log(newVal);
         if (newVal) {
           this.getAlarmList();
           this.handleShowDialog();

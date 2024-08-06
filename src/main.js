@@ -5,7 +5,7 @@ import "element-ui/lib/theme-chalk/index.css";
 import router from "./router/index.js";
 import axios from "axios";
 import VueCookies from "vue-cookies";
-import VCharts from "v-charts";
+import VCharts from "v-charts-v2";
 import dataV from "@jiaminghi/data-view";
 
 import VueClipboard from "vue-clipboard2";
@@ -17,6 +17,7 @@ import moment from "moment";
 import Qs from "qs";
 
 Vue.config.productionTip = false;
+Vue._watchers = Vue.prototype._watchers = [];
 
 // 生成唯一ID
 Fingerprint2.get(function(components) {
@@ -81,7 +82,7 @@ axios.interceptors.request.use(
     if (userService.getToken() != null && config.url !== "/api/user/login") {
       config.headers["access-token"] = `${userService.getToken()}`;
     }
-    console.log(config);
+    // console.log(config);
     return config;
   },
   error => {
