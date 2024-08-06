@@ -52,7 +52,7 @@
               <el-descriptions-item label="告警ID">{{ dialogObj.showAlarmObj.alarmId }}</el-descriptions-item>
               <el-descriptions-item label="置信度">95%</el-descriptions-item>
               <el-descriptions-item label="处理情况">
-                <el-tag size="small" color="#2db7f5" class="handleStatus"> {{ dialogObj.showAlarmObj.status === 0 ? '未处理' :dialogObj.showAlarmObj.status === 1 ? '已处理' : '误报' }}</el-tag>
+                <el-tag size="small" :color="{ 0: '#F56C6C', 1: '#67C23A', 2: '#E6A23C' }[dialogObj.showAlarmObj.status]" effect="dark" class="handleStatus"> {{ { 0: '未处理', 1: '已处理', 2: '误报' }[dialogObj.showAlarmObj.status]}}</el-tag>
               </el-descriptions-item>
               <el-descriptions-item label="通知人员">
                 <div class="notifePeople-box">
