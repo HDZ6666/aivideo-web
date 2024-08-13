@@ -52,7 +52,12 @@
               <el-descriptions-item label="告警ID">{{ dialogObj.showAlarmObj.alarmId }}</el-descriptions-item>
               <el-descriptions-item label="置信度">95%</el-descriptions-item>
               <el-descriptions-item label="处理情况">
-                <el-tag size="small" :color="{ 0: '#F56C6C', 1: '#67C23A', 2: '#E6A23C' }[dialogObj.showAlarmObj.status]" effect="dark" class="handleStatus"> {{ { 0: '未处理', 1: '已处理', 2: '误报' }[dialogObj.showAlarmObj.status]}}</el-tag>
+                <el-tag
+                  size="small"
+                  :color="{ 0: '#F56C6C', 1: '#67C23A', 2: '#E6A23C' }[dialogObj.showAlarmObj.status]"
+                  effect="dark"
+                  class="handleStatus"
+                >{{ { 0: '未处理', 1: '已处理', 2: '误报' }[dialogObj.showAlarmObj.status]}}</el-tag>
               </el-descriptions-item>
               <el-descriptions-item label="通知人员">
                 <div class="notifePeople-box">
@@ -63,7 +68,7 @@
             </el-descriptions>
             <div class="handleButtons">
               <dv-border-box-8 class="handleButton">
-                <div @click=" (1)">处理</div>
+                <div @click="handleState(1)">处理</div>
               </dv-border-box-8>
               <dv-border-box-8 class="handleButton" :reverse="true">
                 <div @click="handleState(2)">误报</div>
@@ -79,6 +84,7 @@
 <script>
 import moment from "moment";
 import { mixin } from "../../utils/mixin";
+import EventBus from "../../utils/eventBus";
 export default {
   name: "alarmDialog",
   mixins: [mixin],
@@ -103,16 +109,38 @@ export default {
         countDownTimer: null, // 倒计时定时器
         count: 0, // 倒计时
         handleLoading: false, // 处理中
-        showClose: false // 是否显示关闭
+        showClose: false, // 是否显示关闭
         // showTimes: 0
+        dingyue: false
       }
     };
   },
-  watch: {
-    alarmNotify: {
-      handler(newVal, oldVal) {
-        console.log(newVal);
-        if (newVal) {
+  // watch: {
+  //   alarmNotify: {
+  //     handler(newVal, oldVal) {0
+  //       console.log(newVal);
+  //       if (newVal) {
+  //         this.getAlarmList();
+  //         this.handleShowDialog();
+  //       } else {
+  //         clearTimeout(this.dialogObj.domTimer);
+  //         clearInterval(this.dialogObj.countDownTimer);
+  //         clearInterval(this.dialogObj.requestTimer);
+  //         this.dialogObj.showDialog = false;
+  //         this.resetAlarmListState(); // 重置告警状态
+  //       }
+  //     },
+  //     immediate: true
+  //   }
+  // },
+  mounted() {
+    EventBus.$on("ai", this.changeAI);
+    EventBus.$on("openVideoDialog", this.openVideoDialog);
+  },
+  methods: {
+    openVideoDialog(value) {
+      if (this.dingyue) {
+        if (value) {
           this.getAlarmList();
           this.handleShowDialog();
         } else {
@@ -120,13 +148,22 @@ export default {
           clearInterval(this.dialogObj.countDownTimer);
           clearInterval(this.dialogObj.requestTimer);
           this.dialogObj.showDialog = false;
-          this.resetAlarmListState(); // 重置告警状态
         }
-      },
-      immediate: true
-    }
-  },
-  methods: {
+      }
+    },
+    changeAI(value) {
+      this.dingyue = value;
+      if (value) {
+        this.getAlarmList();
+        this.handleShowDialog();
+      } else {
+        clearTimeout(this.dialogObj.domTimer);
+        clearInterval(this.dialogObj.countDownTimer);
+        clearInterval(this.dialogObj.requestTimer);
+        this.dialogObj.showDialog = false;
+        this.resetAlarmListState(); // 重置告警状态
+      }
+    },
     getAlarmList() {
       const dialogObj = this.dialogObj;
       if (!dialogObj.getListLoading) {
@@ -265,6 +302,8 @@ export default {
     }
   },
   destroyed() {
+    EventBus.$off("ai", this.changeAI);
+    EventBus.$off("openVideoDialog", this.openVideoDialog);
     clearTimeout(this.dialogObj.domTimer);
     clearInterval(this.dialogObj.countDownTimer);
     clearInterval(this.dialogObj.requestTimer);

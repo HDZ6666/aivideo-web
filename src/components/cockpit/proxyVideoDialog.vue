@@ -43,6 +43,7 @@
 import LivePlayer from "@liveqing/liveplayer";
 import player from "../common/jessibuca.vue";
 import { mixin } from "../../utils/mixin";
+import EventBus from "../../utils/eventBus";
 export default {
   name: "videoDialog",
   mixins: [mixin],
@@ -61,6 +62,7 @@ export default {
   mounted() {},
   methods: {
     open: function(data) {
+      EventBus.$emit("openVideoDialog", false);
       if (data.userData && data.userData.streamInfo) {
         const url =
           location.protocol === "https:"
@@ -84,6 +86,7 @@ export default {
         error: false
       };
       this.showDetail = false;
+      EventBus.$emit("openVideoDialog", true);
     },
     // 播放器加载完成
     onPlayerPlay: function(e) {

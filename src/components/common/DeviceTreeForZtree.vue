@@ -103,10 +103,19 @@ export default {
 .device-tree-main-box{
   text-align: left;
 }
-.device-online{
+/* .device-online{
   color: #252525;
 }
 .device-offline{
   color: #727272;
+} */
+.device-online {
+  font-size: 18px;
+  color: #59c4e6;
 }
+.device-offline {
+  font-size: 18px;
+  color: #c6ced8;
+}
+
 </style>

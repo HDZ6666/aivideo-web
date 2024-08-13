@@ -132,7 +132,7 @@ export default {
       this.getListLoading = true;
       this.$axios({
         method: "get",
-        url: `/cockpit/api/proxy/list`,
+        url: `/ai/api/device/query/cameraList`,
         params: {
           page: _page,
           pageSize: _pageSize
@@ -143,11 +143,11 @@ export default {
             const data = res.data.data;
             const list = data.list.map(item => {
               return {
-                name: item.name,
-                id: item.app + item.stream,
-                deviceId: item.deviceId || '',
-                channelId: item.channelId || '',
-                videoUrl: item.streamInfo.ws_flv.url,
+                name: item.device_name,
+                id: `${item.deviceId}_${item.channelId}`,
+                deviceId: item.deviceId,
+                channelId: item.channelId,
+                videoUrl: item.aiStreamInfo ? item.aiStreamInfo.WS_FLV : "",
                 getVideoUrl: false,
                 loading: false,
                 error: false
