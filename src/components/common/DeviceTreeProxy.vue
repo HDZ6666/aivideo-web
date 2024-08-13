@@ -116,7 +116,7 @@ export default {
                 nodeType: "device",
                 id: item.streamKey,
                 isLeaf: true,
-                online: item.status,
+                online: true,
                 userData: item
               };
             });

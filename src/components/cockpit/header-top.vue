@@ -11,22 +11,43 @@
     <div class="right-btn">
       <div class="backBtn">
         <dv-border-box-10>
-          <div @click="back()" style="cursor:pointer">后台管理</div>
+          <div @click="back()" style="cursor: pointer;">后台管理</div>
         </dv-border-box-10>
+      </div>
+      <div class="openAlarm">
+        <el-switch
+          v-model="alarmNotify"
+          active-color="#13ce66"
+          inactive-color="#ff4949"
+          @change="handleAcceptAlarm"
+        ></el-switch>
+        <span class="openAlarmText">{{alarmNotify?'开启告警':'关闭告警'}}</span>
       </div>
     </div>
   </div>
 </template>
 
   <script>
+// import { mixin } from "../../utils/mixin";
+import EventBus from "../../utils/eventBus";
 export default {
   name: "header-top",
+  // mixins: [mixin],
   data() {
-    return {};
+    return {
+      alarmNotify: false
+    };
   },
   methods: {
     back() {
       this.$router.push("/");
+    },
+    handleAcceptAlarm(value) {
+      // localStorage.setItem("alarmSwitchStatus", this.alarmNotify);
+      EventBus.$emit("ai", value);
+      this.$message.success(
+        `${this.alarmNotify ? "开启" : "关闭"}订阅告警成功`
+      );
     }
   }
 };

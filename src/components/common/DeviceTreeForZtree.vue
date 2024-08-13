@@ -109,4 +109,13 @@ export default {
 .device-offline{
   color: #727272;
 } */
+.device-online {
+  font-size: 18px;
+  color: #59c4e6;
+}
+.device-offline {
+  font-size: 18px;
+  color: #c6ced8;
+}
+
 </style>

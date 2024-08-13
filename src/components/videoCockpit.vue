@@ -18,8 +18,7 @@
           <alarm-list></alarm-list>
           <alarm-tendency></alarm-tendency>
           <alarm-count></alarm-count>
-          <alarm-handle-count></alarm-handle-count>
-        </div>-->
+        <alarm-handle-count></alarm-handle-count>-->
       </div>
     </div>
     <national-video-dialog ref="nationalVideoDialog" v-if="playerAction==='national'"></national-video-dialog>
@@ -140,8 +139,7 @@ export default {
 }
 
 .content-left {
-  width: 300px;
-  /* flex: 1 1 300px; */
+  width: 280px;
   height: 100%;
   display: flex;
   flex-direction: column;

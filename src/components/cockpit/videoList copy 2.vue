@@ -10,11 +10,6 @@
             </span>
           </div>
           <div>
-            <el-select v-model="splitNum" @change="changeSplitNum">
-              <el-option :value="9" label="9宫格"></el-option>
-              <el-option :value="12" label="12宫格"></el-option>
-              <el-option :value="16" label="16宫格"></el-option>
-            </el-select>
             <el-button type="primary" style="background: #6c7797;" @click="screenAction('prev')">上一屏</el-button>
             <el-button type="primary" style="background: #6c7797;" @click="screenAction('next')">下一屏</el-button>
             <el-button type="danger" @click="screenAction('stop')" v-if="isAutoScreen">停止轮播</el-button>
@@ -32,16 +27,13 @@
       <el-col
         :span="24/colSpan"
         v-for="(player,index) in playList"
-        :key="`${splitNum}宫格_${index}`"
+        :key="index"
         class="palyer-box"
+        :style="{height:`${colSpanHeight}%`}"
       >
-        <dv-border-box-12
-          class="player-border"
-          :style="{height:`${videoHeightPX}px`,width:`${videoWidthPX}px`}"
-        >
+        <dv-border-box-12 class="player-border">
           <div
             class="video-box"
-            :style="{height:`${videoHeightPX}px`,width:`${videoWidthPX}px`}"
             v-loading="player.loading"
             :loading.sync="player.loading"
             element-loading-text="加载中..."
@@ -71,7 +63,7 @@
               ref="player"
               :videoUrl="player.videoUrl"
               hideControls
-              screen
+              fluent
             />
           </div>
         </dv-border-box-12>
@@ -94,13 +86,14 @@ export default {
   mixins: [mixin],
   data() {
     return {
+      requestTimer: null,
       loopPlayerTimeOut: null,
       getListLoading: false,
       pages: 1, //默认分页数
       total: -1, //默认总数
       loopPlayerIndex: 0, //当前轮播的屏数
       requesttime: 3, // 请求数据时间
-      looptime: 5 * 60, //轮播间隔时间
+      looptime: 5, //轮播间隔时间
       splitNum: 9, //分屏数 [1,4,9,12,16]
       videoLists: [], //视频列表
       playList: [], //播放器列表
@@ -115,42 +108,19 @@ export default {
     },
     colSpanHeight() {
       return Math.floor(100 / (this.splitNum / this.colSpan));
-    },
-    videoHeightPX() {
-      return Math.floor(500 / (this.splitNum / this.colSpan));
-    },
-    videoWidthPX() {
-      return Math.floor(this.videoHeightPX * (16 / 9));
     }
   },
   mounted() {
-    this.init();
+    this.playList = new Array(this.splitNum).fill({
+      id: "",
+      name: "",
+      videoUrl: "",
+      loading: false,
+      error: false
+    });
+    this.getDeviceList();
   },
   methods: {
-    init: function() {
-      this.playList = new Array(this.splitNum).fill({
-        id: "",
-        name: "",
-        videoUrl: "",
-        loading: false,
-        error: false
-      });
-      this.getDeviceList();
-    },
-    changeSplitNum(num) {
-      this.reset();
-      this.init();
-    },
-    reset() {
-      this.videoLists = []; //视频列表
-      this.playList = []; //播放器列表
-      this.deviceList = []; //设备列表
-      this.loopPlayerIndex = 0;
-      this.isAutoScreen = false;
-      if (this.loopPlayerTimeOut) {
-        clearInterval(this.loopPlayerTimeOut);
-      }
-    },
     // 获取设备列表
     getDeviceList: function(page = 1) {
       // 超过就不请求
@@ -162,7 +132,7 @@ export default {
       this.getListLoading = true;
       this.$axios({
         method: "get",
-        url: `/cockpit/api/proxy/list`,
+        url: `/ai/api/device/query/cameraList`,
         params: {
           page: _page,
           pageSize: _pageSize
@@ -173,11 +143,11 @@ export default {
             const data = res.data.data;
             const list = data.list.map(item => {
               return {
-                name: item.name,
-                id: item.app + item.stream,
-                deviceId: item.deviceId || '',
-                channelId: item.channelId || '',
-                videoUrl: item.streamInfo.ws_flv.url,
+                name: item.device_name,
+                id: `${item.deviceId}_${item.channelId}`,
+                deviceId: item.deviceId,
+                channelId: item.channelId,
+                videoUrl: item.aiStreamInfo ? item.aiStreamInfo.WS_FLV : "",
                 getVideoUrl: false,
                 loading: false,
                 error: false
@@ -352,7 +322,9 @@ export default {
     }
   },
   destroyed() {
-    this.reset();
+    if (this.loopPlayerTimeOut) {
+      clearInterval(this.loopPlayerTimeOut);
+    }
   }
 };
 </script>
@@ -406,7 +378,6 @@ export default {
   background-repeat: no-repeat;
 }
 .player-border {
-  max-width: 100%;
   width: 100%;
   height: 100%;
   padding: 5px;
