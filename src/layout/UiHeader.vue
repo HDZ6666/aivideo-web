@@ -41,10 +41,9 @@
       <el-submenu index style="float: right;">
         <template slot="title">欢迎，{{ username }}</template>
         <el-menu-item @click="openDoc">在线文档</el-menu-item>
-        <el-menu-item>
-          <!-- <el-switch v-model="alarmNotify" inactive-text="报警信息推送" @change="alarmNotifyChannge"></el-switch> -->
-          <!-- <el-switch v-model="alarmNotify" inactive-text="报警信息推送" @change="alarmNotifyChannge"></el-switch> -->
-        </el-menu-item>
+        <!-- <el-menu-item>
+          <el-switch v-model="alarmNotify" inactive-text="报警信息推送" @change="alarmNotifyChannge"></el-switch>
+        </el-menu-item>-->
         <el-menu-item @click="changePassword">修改密码</el-menu-item>
         <el-menu-item @click="loginout">注销</el-menu-item>
       </el-submenu>
