@@ -10,20 +10,23 @@
         </div>
         <div class="content-main">
           <indicator-list></indicator-list>
-          <video-list></video-list>
+          <video-list-national v-if="playerAction==='national'"></video-list-national>
+          <video-list-proxy v-if="playerAction==='proxy'"></video-list-proxy>
           <!-- <dv-decoration-3 style="width:300px;height:50px;" />
           <alarm-carousel></alarm-carousel>-->
         </div>
-        <!-- <div class="content-right">
+        <div class="content-right">
           <alarm-list></alarm-list>
           <alarm-tendency></alarm-tendency>
-          <alarm-count></alarm-count>
-        <alarm-handle-count></alarm-handle-count>-->
+          <!-- <alarm-count></alarm-count>
+          <alarm-handle-count></alarm-handle-count>-->
+        </div>
       </div>
     </div>
     <national-video-dialog ref="nationalVideoDialog" v-if="playerAction==='national'"></national-video-dialog>
     <proxy-video-dialog ref="proxyVideoDialog" v-if="playerAction==='proxy'"></proxy-video-dialog>
-    <alarm-dialog ref="alarmDialog"></alarm-dialog>
+    <alarm-dialog-national ref="alarmDialog" v-if="aiType==='nationalAI'"></alarm-dialog-national>
+    <alarm-dialog-proxy ref="alarmDialog" v-if="aiType==='proxyAI'"></alarm-dialog-proxy>
   </div>
 </template>
 
@@ -35,15 +38,17 @@ import deviceTree from "./cockpit/deviceTree.vue";
 import deviceCount from "./cockpit/deviceCount.vue";
 import deviceOnlineRate from "./cockpit/deviceOnlineRate.vue";
 import indicatorList from "./cockpit/indicatorList.vue";
-import videoList from "./cockpit/videoList.vue";
+import videoListNational from "./cockpit/videoListNational.vue";
+import videoListProxy from "./cockpit/videoListProxy.vue";
 import alarmCarousel from "./cockpit/alarmCarousel.vue";
 import alarmList from "./cockpit/alarmList.vue";
 import alarmTendency from "./cockpit/alarmTendency.vue";
 import alarmCount from "./cockpit/alarmCount.vue";
 import alarmHandleCount from "./cockpit/alarmHandleCount.vue";
-import nationalVideoDialog from "./cockpit/nationalVideoDialogCockpit.vue";
+import nationalVideoDialog from "./cockpit/nationalVideoDialog.vue";
 import proxyVideoDialog from "./cockpit/proxyVideoDialog.vue";
-import alarmDialog from "./cockpit/alarmDialog.vue";
+import alarmDialogNational from "./cockpit/alarmDialogNational.vue";
+import alarmDialogProxy from "./cockpit/alarmDialogProxy.vue";
 
 import { mixin } from "../utils/mixin";
 
@@ -56,7 +61,8 @@ export default {
     deviceCount,
     deviceOnlineRate,
     indicatorList,
-    videoList,
+    videoListNational,
+    videoListProxy,
     alarmCarousel,
     alarmList,
     alarmTendency,
@@ -64,7 +70,8 @@ export default {
     alarmHandleCount,
     nationalVideoDialog,
     proxyVideoDialog,
-    alarmDialog
+    alarmDialogNational,
+    alarmDialogProxy
   },
   data() {
     return {};

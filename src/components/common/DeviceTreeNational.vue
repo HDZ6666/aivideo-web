@@ -11,9 +11,7 @@
     style="width: 100%; display:inline-block !important;"
   >
     <span class="custom-tree-node" slot-scope="{ node, data }">
-      <div class="tree-node-label">
-        <span>{{ node.label }}</span>
-      </div>
+      <div class="tree-node-label">{{ node.label }}</div>
       <span
         v-if="data.nodeType === 'channel' && data.online"
         title="在线设备"
@@ -53,12 +51,7 @@ export default {
   mounted() {},
   methods: {
     handleNodeClick(data, node, element) {
-      // 不是分组、有channelId、不是目录
-      if (
-        data.nodeType !== "group" &&
-        data.userData.channelId &&
-        data.type !== 2
-      ) {
+      if (data.nodeType === "channel") {
         if (!data.online) {
           this.$message.error("设备离线!不允许点播");
         } else {

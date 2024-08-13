@@ -14,7 +14,7 @@
           <div @click="back()" style="cursor: pointer;">后台管理</div>
         </dv-border-box-10>
       </div>
-      <div class="openAlarm">
+      <div class="openAlarm" v-if="aiType">
         <el-switch
           v-model="alarmNotify"
           active-color="#13ce66"
@@ -28,11 +28,11 @@
 </template>
 
   <script>
-// import { mixin } from "../../utils/mixin";
+import { mixin } from "../../utils/mixin";
 import EventBus from "../../utils/eventBus";
 export default {
   name: "header-top",
-  // mixins: [mixin],
+  mixins: [mixin],
   data() {
     return {
       alarmNotify: false

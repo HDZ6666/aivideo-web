@@ -9,8 +9,18 @@
               <el-tag effect="dark">{{ `第${loopPlayerIndex}屏` }}</el-tag>
             </span>
           </div>
-          <div>
-            <el-button type="primary" style="background: #6c7797;" @click="screenAction('prev')">上一屏</el-button>
+          <div class="control-btn">
+            <el-select v-model="splitNum" @change="changeSplitNum" style="width: 150px;">
+              <el-option :value="4" label="4宫格"></el-option>
+              <el-option :value="9" label="9宫格"></el-option>
+              <el-option :value="12" label="12宫格"></el-option>
+              <el-option :value="16" label="16宫格"></el-option>
+            </el-select>
+            <el-button
+              type="primary"
+              style="background: #6c7797;margin-left:10px"
+              @click="screenAction('prev')"
+            >上一屏</el-button>
             <el-button type="primary" style="background: #6c7797;" @click="screenAction('next')">下一屏</el-button>
             <el-button type="danger" @click="screenAction('stop')" v-if="isAutoScreen">停止轮播</el-button>
             <el-button
@@ -23,52 +33,57 @@
         </div>
       </el-col>
     </el-row>
-    <el-row class="player-list">
-      <el-col
-        :span="24/colSpan"
-        v-for="(player,index) in playList"
-        :key="index"
-        class="palyer-box"
-        :style="{height:`${colSpanHeight}%`}"
-      >
-        <dv-border-box-12 class="player-border">
-          <div
-            class="video-box"
-            v-loading="player.loading"
-            :loading.sync="player.loading"
-            element-loading-text="加载中..."
-            element-loading-background="#000"
-            v-if="playerType === 'liveplayer'"
-          >
-            <LivePlayer
-              ref="livePlayer"
-              :video-title="player.name"
-              :videoUrl="player.videoUrl"
-              :hasaudio="false"
-              :alt="player.error?'视频加载失败':'无信号'"
-              live
-              muted
-              aspect="fullscreen"
-              stretch
-              hide-big-play-button
-              hide-stretch-button
-              :controls="false"
-              @play="onPlayerPlay($event,player,index)"
-              @error="onPlayerError($event,player,index)"
-            ></LivePlayer>
+    <div class="player-list">
+      <el-row>
+        <el-col
+          :span="24/colSpan"
+          v-for="(player,index) in playList"
+          :key="`${splitNum}宫格_${index}`"
+          class="palyer-box"
+        >
+          <div class="video-out-container" :style="{width:`${videoWidthPX}px`}">
+            <div class="video-inner-container">
+              <dv-border-box-12 class="player-border">
+                <div
+                  class="video-box"
+                  v-loading="player.loading"
+                  :loading.sync="player.loading"
+                  element-loading-text="加载中..."
+                  element-loading-background="#000"
+                  v-if="playerType === 'liveplayer'"
+                >
+                  <LivePlayer
+                    ref="livePlayer"
+                    :video-title="player.name"
+                    :videoUrl="player.videoUrl"
+                    :hasaudio="false"
+                    :alt="player.error?'视频加载失败':'无信号'"
+                    live
+                    muted
+                    aspect="fullscreen"
+                    stretch
+                    hide-big-play-button
+                    hide-stretch-button
+                    :controls="false"
+                    @play="onPlayerPlay($event,player,index)"
+                    @error="onPlayerError($event,player,index)"
+                  ></LivePlayer>
+                </div>
+                <div class="video-box" v-if="playerType === 'jessibuca'">
+                  <player
+                    v-if="player.videoUrl"
+                    ref="player"
+                    :videoUrl="player.videoUrl"
+                    hideControls
+                    screen
+                  />
+                </div>
+              </dv-border-box-12>
+            </div>
           </div>
-          <div class="video-box" v-else>
-            <player
-              v-if="player.videoUrl"
-              ref="player"
-              :videoUrl="player.videoUrl"
-              hideControls
-              fluent
-            />
-          </div>
-        </dv-border-box-12>
-      </el-col>
-    </el-row>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -86,14 +101,13 @@ export default {
   mixins: [mixin],
   data() {
     return {
-      requestTimer: null,
       loopPlayerTimeOut: null,
       getListLoading: false,
       pages: 1, //默认分页数
       total: -1, //默认总数
       loopPlayerIndex: 0, //当前轮播的屏数
       requesttime: 3, // 请求数据时间
-      looptime: 5, //轮播间隔时间
+      looptime: 5 * 60, //轮播间隔时间
       splitNum: 9, //分屏数 [1,4,9,12,16]
       videoLists: [], //视频列表
       playList: [], //播放器列表
@@ -106,21 +120,41 @@ export default {
     colSpan() {
       return Math.ceil(Math.sqrt(this.splitNum));
     },
-    colSpanHeight() {
-      return Math.floor(100 / (this.splitNum / this.colSpan));
+    videoHeightPX() {
+      return Math.floor(500 / (this.splitNum / this.colSpan));
+    },
+    videoWidthPX() {
+      return Math.floor(this.videoHeightPX * (16 / 9));
     }
   },
   mounted() {
-    this.playList = new Array(this.splitNum).fill({
-      id: "",
-      name: "",
-      videoUrl: "",
-      loading: false,
-      error: false
-    });
-    this.getDeviceList();
+    this.init();
   },
   methods: {
+    init: function() {
+      this.playList = new Array(this.splitNum).fill({
+        id: "",
+        name: "",
+        videoUrl: "",
+        loading: false,
+        error: false
+      });
+      this.getDeviceList();
+    },
+    changeSplitNum(num) {
+      this.reset();
+      this.init();
+    },
+    reset() {
+      this.videoLists = []; //视频列表
+      this.playList = []; //播放器列表
+      this.deviceList = []; //设备列表
+      this.loopPlayerIndex = 0;
+      this.isAutoScreen = false;
+      if (this.loopPlayerTimeOut) {
+        clearInterval(this.loopPlayerTimeOut);
+      }
+    },
     // 获取设备列表
     getDeviceList: function(page = 1) {
       // 超过就不请求
@@ -132,7 +166,7 @@ export default {
       this.getListLoading = true;
       this.$axios({
         method: "get",
-        url: `/ai/api/device/query/cameraList`,
+        url: `/cockpit/api/proxy/list`,
         params: {
           page: _page,
           pageSize: _pageSize
@@ -143,11 +177,11 @@ export default {
             const data = res.data.data;
             const list = data.list.map(item => {
               return {
-                name: item.device_name,
-                id: `${item.deviceId}_${item.channelId}`,
-                deviceId: item.deviceId,
-                channelId: item.channelId,
-                videoUrl: item.aiStreamInfo ? item.aiStreamInfo.WS_FLV : "",
+                name: item.name,
+                id: item.app + item.stream,
+                deviceId: item.deviceId || "",
+                channelId: item.channelId || "",
+                videoUrl: item.streamInfo.ws_flv.url,
                 getVideoUrl: false,
                 loading: false,
                 error: false
@@ -157,7 +191,7 @@ export default {
             this.total = data.total;
             this.videoLists = [...this.videoLists, ...list];
             if (_page === 1 && this.videoLists.length > 0) {
-              this.screenAction("next"); //首屏自动加载
+              this.nextScreen(); //首屏自动加载
               console.log("首屏自动加载");
             }
             // 循环获取设备列表
@@ -288,14 +322,6 @@ export default {
         this.loopPlayer();
       }, this.looptime * 1000);
     },
-    // 停止轮播
-    // stopScreen: function() {
-    //   if (this.loopPlayerTimeOut) {
-    //     clearInterval(this.loopPlayerTimeOut);
-    //   }
-    //   this.isAutoScreen = false;
-    //   this.$message.success(`停止轮播`);
-    // },
     // 播放器加载完成
     onPlayerPlay: function(e, player, index) {
       if (player.loading) {
@@ -322,9 +348,7 @@ export default {
     }
   },
   destroyed() {
-    if (this.loopPlayerTimeOut) {
-      clearInterval(this.loopPlayerTimeOut);
-    }
+    this.reset();
   }
 };
 </script>
@@ -338,61 +362,52 @@ export default {
   display: flex;
   flex-direction: column;
 }
-.player-list {
-  flex: 1;
-}
-.palyer-box {
-  padding: 2px;
-}
-/* .palyer-box:last-child {
-  margin-bottom: 0;
-} */
 
-.video-box {
-  width: 100%;
-  height: 100%;
-  /* width: calc(100% - 10px);
-  height: calc(100% - 10px); */
-  /* width: 48%;
-  height: 48%;
-  margin: 1%; */
-  /* border: 1px solid #fff; */
-  /* background: #000; */
-  border-radius: 10px;
-  position: relative;
-  overflow: hidden;
-  background-color: #000;
-  /* margin: 20px; */
-}
-.video-content {
-  height: 0;
-  padding-bottom: 56.25%;
-  position: relative;
-}
-
-.player-content {
-  position: absolute;
-  inset: 0;
-  background-image: url("/static/images/video.jpeg");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-.player-border {
-  width: 100%;
-  height: 100%;
-  padding: 5px;
-  box-sizing: border-box;
-  /* position: absolute; */
-  /* left: -5px;
-  top: -5px; */
-  /* width: calc(100% + 10px);
-  height: calc(100% + 10px); */
-}
 .control-box {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 0px;
   text-align: right;
+}
+
+/* .control-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-around;
+} */
+
+.player-list {
+  flex: 1;
+  display: flex;
+}
+.palyer-box {
+  padding: 1px;
+}
+.video-out-container {
+  max-width: 100%;
+  padding-top: 56.25%;
+  position: relative;
+}
+.video-inner-container {
+  position: absolute;
+  inset: 0;
+}
+
+.video-box {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.player-border {
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+  box-sizing: border-box;
 }
 </style>

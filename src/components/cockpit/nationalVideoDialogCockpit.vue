@@ -30,7 +30,7 @@
             @error="onPlayerError($event)"
           ></LivePlayer>
         </div>
-        <div class="video-box" v-else>
+        <div class="video-box" v-if="playerType==='jessibuca'">
           <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
           <player ref="player" :videoUrl="player.videoUrl" screen autoplay />
         </div>

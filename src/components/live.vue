@@ -72,7 +72,7 @@
 <script>
 import uiHeader from "../layout/UiHeader.vue";
 import player from "./common/jessibuca.vue";
-import DeviceTreeNational from "./common/DeviceTreeNationalCockpit.vue";
+import DeviceTreeNational from "./common/DeviceTreeNational.vue";
 import DeviceTreeProxy from "./common/DeviceTreeProxy.vue";
 
 import { mixin } from "../utils/mixin";

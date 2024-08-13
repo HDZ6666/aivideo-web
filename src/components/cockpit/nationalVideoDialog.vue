@@ -30,7 +30,7 @@
             @error="onPlayerError($event)"
           ></LivePlayer>
         </div>
-        <div class="video-box" v-else>
+        <div class="video-box" v-if="playerType==='jessibuca'">
           <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
           <player ref="player" :videoUrl="player.videoUrl" screen autoplay />
         </div>
@@ -43,6 +43,7 @@
 import LivePlayer from "@liveqing/liveplayer";
 import player from "../common/jessibuca.vue";
 import { mixin } from "../../utils/mixin";
+import EventBus from "../../utils/eventBus";
 
 export default {
   name: "videoDialog",
@@ -91,6 +92,7 @@ export default {
     },
     open: function(data) {
       if (data.userData.deviceId && data.userData.channelId) {
+        EventBus.$emit("openVideoDialog", true);
         this.showDetail = true;
         this.player = {
           name: data.name,
@@ -111,6 +113,7 @@ export default {
         error: false
       };
       this.showDetail = false;
+      EventBus.$emit("openVideoDialog", false);
     },
     // 播放器加载完成
     onPlayerPlay: function(e) {

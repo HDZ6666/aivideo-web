@@ -56,6 +56,23 @@ export default {
         }
       }
     },
+    loadNode: function(node, resolve) {
+      // 初始化
+      if (node.level === 0) {
+        this.getGroupTree(node.level, resolve);
+      }
+      if (node.level > 0) {
+        // 类型是分组并且有子分组
+        if (node.data.nodeType === "group" && node.data.hasChildren) {
+          this.getGroupTree(node.data.id, resolve);
+        }
+        // 类型是分组并且没有子分组
+        if (node.data.nodeType === "group" && !node.data.hasChildren) {
+          // 请求设备
+          this.getDeviceTree(node.data.id, resolve);
+        }
+      }
+    },
     getGroupTree: function(parentId, resolve) {
       this.$axios({
         method: "get",
@@ -128,23 +145,6 @@ export default {
         .catch(error => {
           resolve([]);
         });
-    },
-    loadNode: function(node, resolve) {
-      // 初始化
-      if (node.level === 0) {
-        this.getGroupTree(node.level, resolve);
-      }
-      if (node.level > 0) {
-        // 类型是分组并且有子分组
-        if (node.data.nodeType === "group" && node.data.hasChildren) {
-          this.getGroupTree(node.data.id, resolve);
-        }
-        // 类型是分组并且没有子分组
-        if (node.data.nodeType === "group" && !node.data.hasChildren) {
-          // 请求设备
-          this.getDeviceTree(node.data.id, resolve);
-        }
-      }
     },
     reset: function() {
       this.$forceUpdate();

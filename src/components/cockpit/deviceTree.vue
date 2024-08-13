@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import DeviceTreeNational from "../common/DeviceTreeNationalCockpit.vue";
+import DeviceTreeNational from "../common/DeviceTreeNational.vue";
 import DeviceTreeProxy from "../common/DeviceTreeProxy.vue";
 
 import { mixin } from "../../utils/mixin";

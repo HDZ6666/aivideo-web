@@ -10,7 +10,7 @@
       </div>
       <dv-border-box-11
         class="dialog-border"
-        :title="dialogObj.showAlarmObj.modelname"
+        :title="dialogObj.showAlarmObj.alarmDescription"
         backgroundColor="rgba(67,79,103,0.9)"
       >
         <div
@@ -30,7 +30,7 @@
               v-show="item.id === dialogObj.showAlarmObj.id"
               />-->
               <img
-                :src="dialogObj.showAlarmObj.alarmImg"
+                :src="dialogObj.showAlarmObj.alarmImage"
                 alt
                 style="width: 100%; height: 100%;object-fit: contain;"
                 fit="contain"
@@ -47,24 +47,24 @@
             <dv-decoration-3 style="width:250px;height:30px;" />
             <el-descriptions :column="1" size="medium">
               <el-descriptions-item label="告警时间">{{ dialogObj.showAlarmObj.alarmTime || '' }}</el-descriptions-item>
-              <el-descriptions-item label="分组名称">某大厦</el-descriptions-item>
-              <el-descriptions-item label="设备名称">{{ dialogObj.showAlarmObj.deviceName }}</el-descriptions-item>
-              <el-descriptions-item label="告警ID">{{ dialogObj.showAlarmObj.alarmId }}</el-descriptions-item>
-              <el-descriptions-item label="置信度">95%</el-descriptions-item>
+              <!-- <el-descriptions-item label="分组名称">某大厦</el-descriptions-item> -->
+              <el-descriptions-item label="设备名称">{{ dialogObj.showAlarmObj.deviceName || '' }}</el-descriptions-item>
+              <el-descriptions-item label="告警ID">{{ dialogObj.showAlarmObj.id || '' }}</el-descriptions-item>
+              <!-- <el-descriptions-item label="置信度">95%</el-descriptions-item> -->
               <el-descriptions-item label="处理情况">
                 <el-tag
                   size="small"
-                  :color="{ 0: '#F56C6C', 1: '#67C23A', 2: '#E6A23C' }[dialogObj.showAlarmObj.status]"
+                  :color="{ 0: '#F56C6C', 1: '#67C23A', 2: '#E6A23C' }[dialogObj.showAlarmObj.status || 0]"
                   effect="dark"
                   class="handleStatus"
-                >{{ { 0: '未处理', 1: '已处理', 2: '误报' }[dialogObj.showAlarmObj.status]}}</el-tag>
+                >{{ { 0: '未处理', 1: '已处理', 2: '误报' }[dialogObj.showAlarmObj.status || 0]}}</el-tag>
               </el-descriptions-item>
-              <el-descriptions-item label="通知人员">
+              <!-- <el-descriptions-item label="通知人员">
                 <div class="notifePeople-box">
                   <el-tag size="small" class="notifePeople">曾广在</el-tag>
                   <el-tag size="small" class="notifePeople">吴广</el-tag>
                 </div>
-              </el-descriptions-item>
+              </el-descriptions-item>-->
             </el-descriptions>
             <div class="handleButtons">
               <dv-border-box-8 class="handleButton">
@@ -95,7 +95,7 @@ export default {
         // 告警数据
         requestTimer: null, // 告警请求定时器
         page: 1, // 当前页
-        pageSize: 9999, // 每页条数
+        pageSize: 4, // 每页条数
         total: 0, // 总条数
         getListLoading: false, // 是否加载中
         alarmShowList: [], // 远程加载全部告警列表
@@ -111,51 +111,45 @@ export default {
         handleLoading: false, // 处理中
         showClose: false, // 是否显示关闭
         // showTimes: 0
-        dingyue: false
+        isOpenDingyue: false, // 是否打开订阅
+        isOpenVideoDialog: false //是否打开视频弹窗
       }
     };
   },
-  // watch: {
-  //   alarmNotify: {
-  //     handler(newVal, oldVal) {0
-  //       console.log(newVal);
-  //       if (newVal) {
-  //         this.getAlarmList();
-  //         this.handleShowDialog();
-  //       } else {
-  //         clearTimeout(this.dialogObj.domTimer);
-  //         clearInterval(this.dialogObj.countDownTimer);
-  //         clearInterval(this.dialogObj.requestTimer);
-  //         this.dialogObj.showDialog = false;
-  //         this.resetAlarmListState(); // 重置告警状态
-  //       }
-  //     },
-  //     immediate: true
-  //   }
-  // },
   mounted() {
     EventBus.$on("ai", this.changeAI);
     EventBus.$on("openVideoDialog", this.openVideoDialog);
   },
   methods: {
     openVideoDialog(value) {
-      if (this.dingyue) {
+      this.isOpenVideoDialog = value;
+      if (this.isOpenDingyue) {
+        if (this.dialogObj.domTimer) clearTimeout(this.dialogObj.domTimer);
+        if (this.dialogObj.countDownTimer)
+          clearTimeout(this.dialogObj.countDownTimer);
+        this.getAlarmList();
         if (value) {
-          this.getAlarmList();
-          this.handleShowDialog();
-        } else {
-          clearTimeout(this.dialogObj.domTimer);
-          clearInterval(this.dialogObj.countDownTimer);
-          clearInterval(this.dialogObj.requestTimer);
+          // 打开了弹窗就关闭告警
           this.dialogObj.showDialog = false;
+          if (this.dialogObj.alarmShowList.every(item => item.showDialog)) {
+            // 全部都展示过就重置
+            this.resetAlarmListState();
+          }
+        } else {
+          this.dialogObj.domTimer = setTimeout(() => {
+            this.handleShowDialog();
+          }, this.dialogObj.hideTime * 1000);
         }
       }
     },
     changeAI(value) {
-      this.dingyue = value;
+      this.isOpenDingyue = value;
       if (value) {
         this.getAlarmList();
-        this.handleShowDialog();
+        if (!this.isOpenVideoDialog) {
+          // 如果没有打开了视频弹窗就展示告警弹窗
+          this.handleShowDialog();
+        }
       } else {
         clearTimeout(this.dialogObj.domTimer);
         clearInterval(this.dialogObj.countDownTimer);
@@ -170,10 +164,10 @@ export default {
         dialogObj.getListLoading = true;
         this.$axios({
           method: "get",
-          url: `/ai/api/alarm/alarmCameraListAll`,
+          url: `/api/alarm/all`,
           params: {
             page: this.dialogObj.page,
-            pageSize: this.dialogObj.pageSize,
+            count: this.dialogObj.pageSize,
             status: 0, // 未处理
             todayTime: moment(new Date()).format("YYYY-MM-DD") // 今天
           }
@@ -228,7 +222,7 @@ export default {
           const showItem = dialogObj.alarmShowList.filter(
             item => !item.showDialog
           )[0]; // 拿第一个没有展示的值
-          _timeout = 0.5; // 500毫秒检测一次看图片加载完没有
+          // _timeout = 0.5; // 500毫秒检测一次看图片加载完没有
           // 图片已经加载了
           if (showItem) {
             _timeout = dialogObj.showTime;

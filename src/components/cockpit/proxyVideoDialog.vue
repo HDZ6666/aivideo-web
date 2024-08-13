@@ -30,7 +30,7 @@
             @error="onPlayerError($event)"
           ></LivePlayer>
         </div>
-        <div class="video-box" v-else>
+        <div class="video-box" v-if="playerType==='jessibuca'">
           <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
           <player ref="player" :videoUrl="player.videoUrl" screen autoplay />
         </div>
@@ -62,8 +62,8 @@ export default {
   mounted() {},
   methods: {
     open: function(data) {
-      EventBus.$emit("openVideoDialog", false);
       if (data.userData && data.userData.streamInfo) {
+        EventBus.$emit("openVideoDialog", true);
         const url =
           location.protocol === "https:"
             ? data.userData.streamInfo.wss_flv.url
@@ -86,7 +86,7 @@ export default {
         error: false
       };
       this.showDetail = false;
-      EventBus.$emit("openVideoDialog", true);
+      EventBus.$emit("openVideoDialog", false);
     },
     // 播放器加载完成
     onPlayerPlay: function(e) {
