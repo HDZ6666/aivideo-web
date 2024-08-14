@@ -59,6 +59,7 @@ export default {
       }).then(res => {
         if (res.data.code === 0) {
           const list = res.data.data;
+          if (list.length === 0) return;
           const _list = list.map(item => {
             return {
               date: moment(item.alarmDate).format("M/D"),

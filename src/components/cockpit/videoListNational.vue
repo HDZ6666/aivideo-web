@@ -2,14 +2,14 @@
   <div class="videoList-container">
     <el-row>
       <el-col :span="24">
-        <div class="control-box">
+        <div class="videoList-control-box">
           <div>
             <span>
               当前轮播:
               <el-tag effect="dark">{{ `第${loopPlayerIndex}屏` }}</el-tag>
             </span>
           </div>
-          <div class="control-btn">
+          <div class="videoList-control-btn">
             <el-select v-model="splitNum" @change="changeSplitNum" style="width: 150px;">
               <el-option :value="4" label="4宫格"></el-option>
               <el-option :value="9" label="9宫格"></el-option>
@@ -363,11 +363,14 @@ export default {
   flex-direction: column;
 }
 
-.control-box {
+.videoList-control-box {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 10px 0px;
+}
+
+.videoList-control-btn {
+  flex: 1;
   text-align: right;
 }
 
