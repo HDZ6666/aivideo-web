@@ -4,6 +4,7 @@
       <div class="device-content">
         <DeviceTreeNational :clickEvent="clickEvent" isScreen v-if="playerAction === 'national'"></DeviceTreeNational>
         <DeviceTreeProxy :clickEvent="clickEvent" isScreen v-if="playerAction === 'proxy'"></DeviceTreeProxy>
+        <DeviceTreeNationalCockpit :clickEvent="clickEvent" isScreen v-if="playerAction === 'nationalCockpit'"></DeviceTreeNationalCockpit>
       </div>
     </dv-border-box-11>
   </div>
@@ -12,6 +13,7 @@
 <script>
 import DeviceTreeNational from "../common/DeviceTreeNational.vue";
 import DeviceTreeProxy from "../common/DeviceTreeProxy.vue";
+import DeviceTreeNationalCockpit from "../common/DeviceTreeNationalCockpit.vue";
 
 import { mixin } from "../../utils/mixin";
 export default {
@@ -20,7 +22,8 @@ export default {
   props: ["deviceList"],
   components: {
     DeviceTreeNational,
-    DeviceTreeProxy
+    DeviceTreeProxy,
+    DeviceTreeNationalCockpit
   },
   methods: {
     clickEvent: function(device) {

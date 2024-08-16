@@ -20,6 +20,11 @@
                   :contextMenuEvent="contextMenuEvent"
                   v-if="playerAction === 'proxy'"
                 ></DeviceTreeProxy>
+                <DeviceTreeNationalCockpit
+                  :clickEvent="clickEvent"
+                  :contextMenuEvent="contextMenuEvent"
+                  v-if="playerAction === 'nationalCockpit'"
+                ></DeviceTreeNationalCockpit>
               </div>
             </el-main>
           </el-container>
@@ -73,6 +78,7 @@
 import uiHeader from "../layout/UiHeader.vue";
 import player from "./common/jessibuca.vue";
 import DeviceTreeNational from "./common/DeviceTreeNational.vue";
+import DeviceTreeNationalCockpit from "./common/DeviceTreeNationalCockpit.vue";
 import DeviceTreeProxy from "./common/DeviceTreeProxy.vue";
 
 import { mixin } from "../utils/mixin";
@@ -84,6 +90,7 @@ export default {
     uiHeader,
     player,
     DeviceTreeNational,
+    DeviceTreeNationalCockpit,
     DeviceTreeProxy
   },
   data() {
@@ -159,22 +166,20 @@ export default {
     },
     clickEvent: function(device) {
       if (this.playerAction === "national") {
-        if (device.userData && device.userData.aiStreamInfo) {
-          this.save(device);
-          const url = device.userData.aiStreamInfo.WS_FLV;
-          this.setPlayUrl(url, this.playerIdx);
-        }
-        // this.sendDevicePush(device.userData);
+        this.sendDevicePush(device.userData);
       } else {
-        if (device.userData && device.userData.streamInfo) {
-          this.save(device);
-          const streamInfo = device.userData.streamInfo;
-          const url =
-            location.protocol === "https:"
-              ? streamInfo.wss_flv.url
-              : streamInfo.ws_flv.url;
-          this.setPlayUrl(url, this.playerIdx);
+        const info =
+          this.playerAction === "proxy"
+            ? device.userData.streamInfo
+            : device.userData.aiStreamInfo;
+        if (!info) {
+          this.$message.error("播放失败，播放地址缺失!");
+          return;
         }
+        this.save(device);
+        const url =
+          this.playerAction === "proxy" ? info.ws_flv.url : info.WS_FLV;
+        this.setPlayUrl(url, this.playerIdx);
       }
     },
     contextMenuEvent: function(device, event, data, isCatalog) {},
@@ -384,5 +389,4 @@ export default {
   font-size: 18px;
   color: #c6ced8;
 }
-
 </style>
