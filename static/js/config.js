@@ -1,8 +1,9 @@
-window.baseUrl = "http://192.168.0.210:18080"; //要改成部署地址的后端地址
-// window.baseUrl = "https://fyict.cn:18080"
+window.baseUrl = "http://192.168.0.210:18080"; //虹桥B
+// window.baseUrl = "http://192.168.8.220:18080"   // 虹桥C
+// window.baseUrl = "http://192.168.1.146:18080"   // 虹桥A
 window.iframeBaseUrl = "http://192.168.0.210:8066";
-// window.iframeBaseUrl = "https://fyict.cn:8066"
-// window.iframeBaseUrl = "http://192.168.1.106:8066"
+// window.iframeBaseUrl = "http://192.168.0.220:8066";
+// window.iframeBaseUrl = "http://192.168.1.146:8066";
 // map组件全局参数, 注释此内容可以关闭地图功能
 window.mapParam = {
   // 开启/关闭地图功能
