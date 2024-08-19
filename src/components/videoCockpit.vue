@@ -23,8 +23,10 @@
         </div>
       </div>
     </div>
+    <national-video-dialog ref="national" v-if="playerAction==='national'"></national-video-dialog>
+    <nationalVideoDialogCockpit ref="nationalCockpit" v-if="playerAction==='nationalCockpit'"></nationalVideoDialogCockpit>
+    <proxy-video-dialog ref="proxy" v-if="playerAction==='proxy'"></proxy-video-dialog>
     <national-video-dialog ref="nationalVideoDialog" v-if="playerAction==='national'"></national-video-dialog>
-    <proxy-video-dialog ref="proxyVideoDialog" v-if="playerAction==='proxy'"></proxy-video-dialog>
     <alarm-dialog-national ref="alarmDialog" v-if="aiType==='nationalAI'"></alarm-dialog-national>
     <alarm-dialog-proxy ref="alarmDialog" v-if="aiType==='proxyAI'"></alarm-dialog-proxy>
   </div>
@@ -46,6 +48,7 @@ import alarmTendency from "./cockpit/alarmTendency.vue";
 import alarmCount from "./cockpit/alarmCount.vue";
 import alarmHandleCount from "./cockpit/alarmHandleCount.vue";
 import nationalVideoDialog from "./cockpit/nationalVideoDialog.vue";
+import nationalVideoDialogCockpit from "./cockpit/nationalVideoDialogCockpit.vue";
 import proxyVideoDialog from "./cockpit/proxyVideoDialog.vue";
 import alarmDialogNational from "./cockpit/alarmDialogNational.vue";
 import alarmDialogProxy from "./cockpit/alarmDialogProxy.vue";
@@ -69,6 +72,7 @@ export default {
     alarmCount,
     alarmHandleCount,
     nationalVideoDialog,
+    nationalVideoDialogCockpit,
     proxyVideoDialog,
     alarmDialogNational,
     alarmDialogProxy
@@ -90,11 +94,7 @@ export default {
   destroyed() {},
   methods: {
     handleDeviceClick(data) {
-      this.$refs[
-        this.playerAction === "national"
-          ? "nationalVideoDialog"
-          : "proxyVideoDialog"
-      ].open(data);
+      this.$refs[this.playerAction].open(data);
       // if (this.playerAction === "national" && this.$refs.nationalVideoDialog) {
       //   this.$refs.nationalVideoDialog.open(data);
       // }
