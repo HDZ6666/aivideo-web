@@ -111,7 +111,7 @@ export default {
         }
         that.getUserListLoading = false;
       }).catch(function (error) {
-        that.getUserListLoading = false;
+        that.getUserListLoading  = false;
       });
 
     },

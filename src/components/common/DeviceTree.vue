@@ -1,7 +1,7 @@
 <template>
   <div id="DeviceTree" style="width: 100%;height: 100%; background-color: #FFFFFF; overflow: auto">
     <el-container>
-      <el-header>设备列表</el-header>
+      <el-header>设备列表1</el-header>
       <el-main style="background-color: #ffffff;">
         <div class="device-tree-main-box">
           <el-tree
@@ -127,6 +127,7 @@ export default {
   methods: {
     handleNodeClick(data, node, element) {
       let deviceNode = this.$refs.gdTree.getNode(data.userData.deviceId);
+      console.log(deviceNode)
       if (typeof this.clickEvent == "function") {
         this.clickEvent(
           deviceNode.data.userData,
@@ -191,6 +192,7 @@ export default {
           );
         }
       } else {
+        // return resolve([]);
         let channelArray = [];
 
         this.deviceService.getTree(
@@ -221,7 +223,6 @@ export default {
               if (channelType === "215" || channelType === "216") {
                 type = 2;
               }
-              console.log(type);
               if (item.basicData.ptztype === 1) {
                 // 1-球机;2-半球;3-固定枪机;4-遥控枪机
                 type = 4;
@@ -278,10 +279,19 @@ export default {
 .device-tree-main-box {
   text-align: left;
 }
-.device-online {
+/* .device-online {
   color: #252525;
 }
 .device-offline {
   color: #727272;
+} */
+.device-online {
+  font-size: 18px;
+  color: #59c4e6;
 }
+.device-offline {
+  font-size: 18px;
+  color: #c6ced8;
+}
+
 </style>

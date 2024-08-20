@@ -20,11 +20,6 @@
                   :contextMenuEvent="contextMenuEvent"
                   v-if="playerAction === 'proxy'"
                 ></DeviceTreeProxy>
-                <DeviceTreeNationalCockpit
-                  :clickEvent="clickEvent"
-                  :contextMenuEvent="contextMenuEvent"
-                  v-if="playerAction === 'nationalCockpit'"
-                ></DeviceTreeNationalCockpit>
               </div>
             </el-main>
           </el-container>
@@ -78,7 +73,6 @@
 import uiHeader from "../layout/UiHeader.vue";
 import player from "./common/jessibuca.vue";
 import DeviceTreeNational from "./common/DeviceTreeNational.vue";
-import DeviceTreeNationalCockpit from "./common/DeviceTreeNationalCockpit.vue";
 import DeviceTreeProxy from "./common/DeviceTreeProxy.vue";
 
 import { mixin } from "../utils/mixin";
@@ -90,7 +84,6 @@ export default {
     uiHeader,
     player,
     DeviceTreeNational,
-    DeviceTreeNationalCockpit,
     DeviceTreeProxy
   },
   data() {
@@ -168,18 +161,15 @@ export default {
       if (this.playerAction === "national") {
         this.sendDevicePush(device.userData);
       } else {
-        const info =
-          this.playerAction === "proxy"
-            ? device.userData.streamInfo
-            : device.userData.aiStreamInfo;
-        if (!info) {
-          this.$message.error("播放失败，播放地址缺失!");
-          return;
+        if (device.userData && device.userData.streamInfo) {
+          this.save(device);
+          const streamInfo = device.userData.streamInfo;
+          const url =
+            location.protocol === "https:"
+              ? streamInfo.wss_flv.url
+              : streamInfo.ws_flv.url;
+          this.setPlayUrl(url, this.playerIdx);
         }
-        this.save(device);
-        const url =
-          this.playerAction === "proxy" ? info.ws_flv.url : info.WS_FLV;
-        this.setPlayUrl(url, this.playerIdx);
       }
     },
     contextMenuEvent: function(device, event, data, isCatalog) {},
@@ -381,12 +371,4 @@ export default {
 .device-offline {
   color: #727272;
 } */
-.device-online {
-  font-size: 18px;
-  color: #59c4e6;
-}
-.device-offline {
-  font-size: 18px;
-  color: #c6ced8;
-}
 </style>

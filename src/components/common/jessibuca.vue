@@ -1,7 +1,10 @@
 <template>
-  <div ref="container" @dblclick="fullscreenSwich"
-       style="min-height: 200px;background-color: #000000;margin:0 auto;position: relative;">
-    <div class="buttons-box" id="buttonsBox">
+  <div
+    ref="container"
+    @dblclick="fullscreenSwich"
+    style="background-color: #000000;margin:0 auto;position: relative;"
+  >
+    <div class="buttons-box" id="buttonsBox" v-if="!hideControls">
       <div class="buttons-box-left">
         <i v-if="!playing" class="iconfont icon-play jessibuca-btn" @click="playBtnClick"></i>
         <i v-if="playing" class="iconfont icon-pause jessibuca-btn" @click="pause"></i>
@@ -13,11 +16,22 @@
         <span class="jessibuca-btn">{{ kBps }} kb/s</span>
         <!--          <i class="iconfont icon-file-record1 jessibuca-btn"></i>-->
         <!--          <i class="iconfont icon-xiangqing2 jessibuca-btn" ></i>-->
-        <i class="iconfont icon-camera1196054easyiconnet jessibuca-btn" @click="screenshot"
-           style="font-size: 1rem !important"></i>
+        <i
+          class="iconfont icon-camera1196054easyiconnet jessibuca-btn"
+          @click="screenshot"
+          style="font-size: 1rem !important"
+        ></i>
         <i class="iconfont icon-shuaxin11 jessibuca-btn" @click="playBtnClick"></i>
-        <i v-if="!fullscreen" class="iconfont icon-weibiaoti10 jessibuca-btn" @click="fullscreenSwich"></i>
-        <i v-if="fullscreen" class="iconfont icon-weibiaoti11 jessibuca-btn" @click="fullscreenSwich"></i>
+        <i
+          v-if="!fullscreen"
+          class="iconfont icon-weibiaoti10 jessibuca-btn"
+          @click="fullscreenSwich"
+        ></i>
+        <i
+          v-if="fullscreen"
+          class="iconfont icon-weibiaoti11 jessibuca-btn"
+          @click="fullscreenSwich"
+        ></i>
       </div>
     </div>
   </div>
@@ -26,7 +40,7 @@
 <script>
 let jessibucaPlayer = {};
 export default {
-  name: 'jessibuca',
+  name: "jessibuca",
   data() {
     return {
       playing: false,
@@ -42,29 +56,38 @@ export default {
       volume: 1,
       rotate: 0,
       vod: true, // 点播
-      forceNoOffscreen: false,
+      forceNoOffscreen: false
     };
   },
-  props: ['videoUrl', 'error', 'hasAudio', 'height'],
+  props: {
+    videoUrl: String,
+    hasAudio: Boolean,
+    hideControls: Boolean,
+    fluent: Boolean,
+    height: Number | String,
+    error: Function,
+    screen: Boolean
+  },
   mounted() {
-    let paramUrl = decodeURIComponent(this.$route.params.url)
+    let paramUrl = decodeURIComponent(this.$route.params.url);
+    console.log(this.screen);
     this.$nextTick(() => {
-      this.updatePlayerDomSize()
+      this.updatePlayerDomSize();
       window.onresize = () => {
-        this.updatePlayerDomSize()
-      }
-      if (typeof (this.videoUrl) == "undefined") {
+        this.updatePlayerDomSize();
+      };
+      if (typeof this.videoUrl == "undefined") {
         this.videoUrl = paramUrl;
       }
       this.btnDom = document.getElementById("buttonsBox");
-    })
+    });
   },
   watch: {
     videoUrl: {
       handler(val, _) {
         this.$nextTick(() => {
           this.play(val);
-        })
+        });
       },
       immediate: true
     }
@@ -72,16 +95,24 @@ export default {
   methods: {
     updatePlayerDomSize() {
       let dom = this.$refs.container;
-      let width = dom.parentNode.clientWidth
-      let height = (9 / 16) * width
+      if (this.screen) {
+        dom.style.width = width + "%";
+        dom.style.height = height + "%";
+        return;
+      }
+      let width = dom.parentNode.clientWidth;
+      let height = (9 / 16) * width;
 
-      const clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
+      const clientHeight = Math.min(
+        document.body.clientHeight,
+        document.documentElement.clientHeight
+      );
       if (height > clientHeight) {
-        height = clientHeight
-        width = (16 / 9) * height
+        height = clientHeight;
+        width = (16 / 9) * height;
       }
       if (width > 0 && height > 0) {
-        dom.style.width = width + 'px';
+        dom.style.width = width + "px";
         dom.style.height = height + "px";
       }
     },
@@ -94,7 +125,7 @@ export default {
         debug: false,
         decoder: "static/js/jessibuca/decoder.js",
         forceNoOffscreen: false,
-        hasAudio: typeof (this.hasAudio) == "undefined" ? true : this.hasAudio,
+        hasAudio: typeof this.hasAudio == "undefined" ? true : this.hasAudio,
         heartTimeout: 5,
         heartTimeoutReplay: true,
         heartTimeoutReplayTimes: 3,
@@ -123,30 +154,31 @@ export default {
         supportDblclickFullscreen: false,
         timeout: 10,
         useMSE: true,
-        useWCS: location.hostname === "localhost" || location.protocol === "https:",
+        useWCS:
+          location.hostname === "localhost" || location.protocol === "https:",
         useWebFullScreen: true,
         videoBuffer: 0.1,
         wasmDecodeErrorReplay: true,
         wcsUseVideoRender: true
       };
       console.log("Jessibuca -> options: ", options);
-      jessibucaPlayer[this._uid] = new window.Jessibuca({...options});
+      jessibucaPlayer[this._uid] = new window.Jessibuca({ ...options });
 
       let jessibuca = jessibucaPlayer[this._uid];
       let _this = this;
-      jessibuca.on("pause", function () {
+      jessibuca.on("pause", function() {
         _this.playing = false;
       });
-      jessibuca.on("play", function () {
+      jessibuca.on("play", function() {
         _this.playing = true;
       });
-      jessibuca.on("fullscreen", function (msg) {
-        _this.fullscreen = msg
+      jessibuca.on("fullscreen", function(msg) {
+        _this.fullscreen = msg;
       });
-      jessibuca.on("mute", function (msg) {
+      jessibuca.on("mute", function(msg) {
         _this.isNotMute = !msg;
       });
-      jessibuca.on("performance", function (performance) {
+      jessibuca.on("performance", function(performance) {
         let show = "卡顿";
         if (performance === 2) {
           show = "非常流畅";
@@ -155,35 +187,35 @@ export default {
         }
         _this.performance = show;
       });
-      jessibuca.on('kBps', function (kBps) {
+      jessibuca.on("kBps", function(kBps) {
         _this.kBps = Math.round(kBps);
       });
-      jessibuca.on("videoInfo", function (msg) {
+      jessibuca.on("videoInfo", function(msg) {
         console.log("Jessibuca -> videoInfo: ", msg);
       });
-      jessibuca.on("audioInfo", function (msg) {
+      jessibuca.on("audioInfo", function(msg) {
         console.log("Jessibuca -> audioInfo: ", msg);
       });
-      jessibuca.on("error", function (msg) {
+      jessibuca.on("error", function(msg) {
         console.log("Jessibuca -> error: ", msg);
       });
-      jessibuca.on("timeout", function (msg) {
+      jessibuca.on("timeout", function(msg) {
         console.log("Jessibuca -> timeout: ", msg);
       });
-      jessibuca.on("loadingTimeout", function (msg) {
+      jessibuca.on("loadingTimeout", function(msg) {
         console.log("Jessibuca -> timeout: ", msg);
       });
-      jessibuca.on("delayTimeout", function (msg) {
+      jessibuca.on("delayTimeout", function(msg) {
         console.log("Jessibuca -> timeout: ", msg);
       });
-      jessibuca.on("playToRenderTimes", function (msg) {
+      jessibuca.on("playToRenderTimes", function(msg) {
         console.log("Jessibuca -> playToRenderTimes: ", msg);
       });
     },
-    playBtnClick: function (event) {
-      this.play(this.videoUrl)
+    playBtnClick: function(event) {
+      this.play(this.videoUrl);
     },
-    play: function (url) {
+    play: function(url) {
       console.log("Jessibuca -> url: ", url);
       if (jessibucaPlayer[this._uid]) {
         this.destroy();
@@ -202,7 +234,7 @@ export default {
         });
       }
     },
-    pause: function () {
+    pause: function() {
       if (jessibucaPlayer[this._uid]) {
         jessibucaPlayer[this._uid].pause();
       }
@@ -210,44 +242,46 @@ export default {
       this.err = "";
       this.performance = "";
     },
-    screenshot: function () {
+    screenshot: function() {
       if (jessibucaPlayer[this._uid]) {
         jessibucaPlayer[this._uid].screenshot();
       }
     },
-    mute: function () {
+    mute: function() {
       if (jessibucaPlayer[this._uid]) {
         jessibucaPlayer[this._uid].mute();
       }
     },
-    cancelMute: function () {
+    cancelMute: function() {
       if (jessibucaPlayer[this._uid]) {
         jessibucaPlayer[this._uid].cancelMute();
       }
     },
-    destroy: function () {
+    destroy: function() {
       if (jessibucaPlayer[this._uid]) {
         jessibucaPlayer[this._uid].destroy();
       }
-      if (document.getElementById("buttonsBox") == null) {
-        this.$refs.container.appendChild(this.btnDom)
+      if (!this.hideControls && document.getElementById("buttonsBox") == null) {
+        this.$refs.container.appendChild(this.btnDom);
       }
       jessibucaPlayer[this._uid] = null;
       this.playing = false;
       this.err = "";
       this.performance = "";
-
     },
-    fullscreenSwich: function () {
-      let isFull = this.isFullscreen()
-      jessibucaPlayer[this._uid].setFullscreen(!isFull)
+    fullscreenSwich: function() {
+      let isFull = this.isFullscreen();
+      jessibucaPlayer[this._uid].setFullscreen(!isFull);
       this.fullscreen = !isFull;
     },
-    isFullscreen: function () {
-      return document.fullscreenElement ||
+    isFullscreen: function() {
+      return (
+        document.fullscreenElement ||
         document.msFullscreenElement ||
         document.mozFullScreenElement ||
-        document.webkitFullscreenElement || false;
+        document.webkitFullscreenElement ||
+        false
+      );
     }
   },
   destroyed() {
@@ -257,8 +291,8 @@ export default {
     this.playing = false;
     this.loaded = false;
     this.performance = "";
-  },
-}
+  }
+};
 </script>
 
 <style>

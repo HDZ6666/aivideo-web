@@ -5,41 +5,42 @@
 </template>
 
 <script>
-import  userService from './components/service/UserService'
+import userService from "./components/service/UserService";
 // import autofit from "autofit.js";
 export default {
-  name: 'app',
-  data(){
+  name: "app",
+  data() {
     return {
       isLogin: false,
       excludeLoginCheck: ["/play/wasm", "/play/rtc"],
-      userInfo: { //保存用户信息
+      userInfo: {
+        //保存用户信息
         nick: null,
         ulevel: null,
         uid: null,
         portrait: null
       }
-    }
+    };
   },
   created() {
-    if (userService.getToken() == null){
-      try {
-        if (this.excludeLoginCheck && this.excludeLoginCheck.length > 0) {
-          for (let i = 0; i < this.excludeLoginCheck.length; i++) {
-            if (this.$route.path.startsWith(this.excludeLoginCheck[i])){
-              return;
-            }
-          }
-        }
-      }catch (e) {
-        console.error(e)
-      }
-      //如果没有登录状态则跳转到登录页
-      this.$router.push('/login');
-    }
+    // if (userService.getToken() == null){
+    //   try {
+    //     if (this.excludeLoginCheck && this.excludeLoginCheck.length > 0) {
+    //       for (let i = 0; i < this.excludeLoginCheck.length; i++) {
+    //         if (this.$route.path.startsWith(this.excludeLoginCheck[i])){
+    //           return;
+    //         }
+    //       }
+    //     }
+    //   }catch (e) {
+    //     console.error(e)
+    //   }
+    //   //如果没有登录状态则跳转到登录页
+    //   this.$router.push('/login');
+    // }
   },
 
-  mounted(){
+  mounted() {
     //组件开始挂载时获取用户信息
     // this.getUserInfo();
     // autofit.init(
@@ -52,8 +53,7 @@ export default {
     //   true
     // );
   },
-  methods: {
-  },
+  methods: {},
   components: {}
 };
 </script>
@@ -89,15 +89,15 @@ body,
 /*定义滚动条轨道 内阴影+圆角*/
 ::-webkit-scrollbar-track {
   border-radius: 4px;
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
 }
 
 /*定义滑块 内阴影+圆角*/
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
   background-color: #c8c8c8;
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, .1);
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .1);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
 }
 .table-header {
   color: #727272;

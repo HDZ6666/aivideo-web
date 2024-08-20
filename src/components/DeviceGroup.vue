@@ -32,8 +32,24 @@
           >{{scope.row.state === 1 ? '启用' : '禁用'}}</el-tag>
         </template>
       </el-table-column>
+      <!-- <el-table-column prop="isScreen" label="大屏模板">
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.isScreen === 1 ? 'primary' : 'danger'"
+            disable-transitions
+          >{{scope.row.isScreen === 1 ? '是' : '否'}}</el-tag>
+        </template>
+      </el-table-column>-->
       <el-table-column label="操作">
         <template slot-scope="scope">
+          <!-- <el-button
+            v-if="scope.row.level > 0"
+            size="medium"
+            icon="el-icon-edit"
+            type="text"
+            @click="chooseDevice(scope.row)"
+          >添加设备</el-button>
+          <el-divider direction="vertical"></el-divider>-->
           <el-button size="medium" icon="el-icon-edit" type="text" @click="edit(scope.row)">修改分组</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-button
@@ -46,9 +62,8 @@
         </template>
       </el-table-column>
     </el-table>
-    <changePasswordForAdmin ref="changePasswordForAdmin"></changePasswordForAdmin>
-    <changePushKey ref="changePushKey"></changePushKey>
     <editDeviceGroup ref="editDeviceGroup" @getDeviceGroup="getDeviceGroup"></editDeviceGroup>
+    <ChooseDeviceForGroup ref="ChooseDeviceForGroup" @getDeviceGroup="getDeviceGroup"></ChooseDeviceForGroup>
     <el-pagination
       style="float: right"
       @size-change="handleSizeChange"
@@ -63,16 +78,14 @@
 </template>
 
 <script>
-import changePasswordForAdmin from "./dialog/changePasswordForAdmin.vue";
-import changePushKey from "./dialog/changePushKey.vue";
 import editDeviceGroup from "../components/dialog/editDeviceGroup.vue";
+import ChooseDeviceForGroup from "./dialog/chooseDeviceForGroup.vue";
 
 export default {
   name: "userManager",
   components: {
-    changePasswordForAdmin,
-    changePushKey,
-    editDeviceGroup
+    editDeviceGroup,
+    ChooseDeviceForGroup
   },
   data() {
     return {
@@ -155,6 +168,9 @@ export default {
     addUser: function() {
       const options = this.deviceGroupList.filter(item => item.level === 0);
       this.$refs.editDeviceGroup.openDialog("add", options, null);
+    },
+    chooseDevice(row) {
+      this.$refs.ChooseDeviceForGroup.openDialog(row);
     }
   }
 };

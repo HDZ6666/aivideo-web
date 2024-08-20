@@ -10,21 +10,7 @@
             <el-header>设备列表</el-header>
             <el-main style="background-color: #ffffff;">
               <div class="device-tree-main-box">
-                <DeviceTreeNational
-                  :clickEvent="clickEvent"
-                  :contextMenuEvent="contextMenuEvent"
-                  v-if="playerAction === 'national'"
-                ></DeviceTreeNational>
-                <DeviceTreeProxy
-                  :clickEvent="clickEvent"
-                  :contextMenuEvent="contextMenuEvent"
-                  v-if="playerAction === 'proxy'"
-                ></DeviceTreeProxy>
-                <DeviceTreeNationalCockpit
-                  :clickEvent="clickEvent"
-                  :contextMenuEvent="contextMenuEvent"
-                  v-if="playerAction === 'nationalCockpit'"
-                ></DeviceTreeNationalCockpit>
+                <DeviceTree :clickEvent="clickEvent"></DeviceTree>
               </div>
             </el-main>
           </el-container>
@@ -77,21 +63,14 @@
 <script>
 import uiHeader from "../layout/UiHeader.vue";
 import player from "./common/jessibuca.vue";
-import DeviceTreeNational from "./common/DeviceTreeNational.vue";
-import DeviceTreeNationalCockpit from "./common/DeviceTreeNationalCockpit.vue";
-import DeviceTreeProxy from "./common/DeviceTreeProxy.vue";
-
-import { mixin } from "../utils/mixin";
+import DeviceTree from "./common/DeviceTreeProxy.vue";
 
 export default {
   name: "live",
-  mixins: [mixin],
   components: {
     uiHeader,
     player,
-    DeviceTreeNational,
-    DeviceTreeNationalCockpit,
-    DeviceTreeProxy
+    DeviceTree
   },
   data() {
     return {
@@ -165,22 +144,23 @@ export default {
       this.spilt = spilt;
     },
     clickEvent: function(device) {
-      if (this.playerAction === "national") {
-        this.sendDevicePush(device.userData);
-      } else {
-        const info =
-          this.playerAction === "proxy"
-            ? device.userData.streamInfo
-            : device.userData.aiStreamInfo;
-        if (!info) {
-          this.$message.error("播放失败，播放地址缺失!");
-          return;
-        }
+      if (device.userData && device.userData.streamInfo) {
         this.save(device);
+        const streamInfo = device.userData.streamInfo;
         const url =
-          this.playerAction === "proxy" ? info.ws_flv.url : info.WS_FLV;
+          location.protocol === "https:"
+            ? streamInfo.wss_flv.url
+            : streamInfo.ws_flv.url;
         this.setPlayUrl(url, this.playerIdx);
       }
+      // this.save()
+      // if (data.channelId && !isCatalog) {
+      //   if (device.online === 0) {
+      //     this.$message.error("设备离线!不允许点播");
+      //   } else {
+      //     this.sendDevicePush(data);
+      //   }
+      // }
     },
     contextMenuEvent: function(device, event, data, isCatalog) {},
     //通知设备上传媒体流
@@ -370,23 +350,5 @@ export default {
 
 .baidumap > .anchorBL {
   display: none !important;
-}
-
-.device-tree-main-box {
-  text-align: left;
-}
-/* .device-online {
-  color: #252525;
-}
-.device-offline {
-  color: #727272;
-} */
-.device-online {
-  font-size: 18px;
-  color: #59c4e6;
-}
-.device-offline {
-  font-size: 18px;
-  color: #c6ced8;
 }
 </style>

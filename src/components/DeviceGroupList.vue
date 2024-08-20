@@ -6,6 +6,7 @@
     </div>
     <el-divider></el-divider>
     <el-tree
+      ref="groupTree"
       node-key="id"
       default-expand-all
       :data="deviceGroupList"
@@ -49,6 +50,7 @@ export default {
   },
   methods: {
     addGroup: function() {
+      this.$refs.groupTree.setCurrentKey(null);
       this.$emit("changeGroup", { id: 0 });
       // this.$router.push("/deviceGroup");
     },
@@ -69,6 +71,12 @@ export default {
           this.getDeviceGroupLoading = false;
         });
     },
+    getGroup: function() {
+      return [...this.deviceGroupList];
+    },
+    getNode: function(id) {
+      return this.$refs.deviceGroupTree.getNode(id);
+    },
     handleNodeClick(data) {
       this.$emit("changeGroup", data);
     }
@@ -76,7 +84,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .device-group-container {
   width: 100%;
   overflow: hidden;

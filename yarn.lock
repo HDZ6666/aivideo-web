@@ -59,10 +59,10 @@
   dependencies:
     "@babel/runtime" "^7.5.5"
 
-"@liveqing/liveplayer@^2.7.10":
-  version "2.7.21"
-  resolved "https://registry.npmmirror.com/@liveqing/liveplayer/-/liveplayer-2.7.21.tgz#268ccf70508f2c1fbecba66ea7625c99ad4dd9f4"
-  integrity sha512-hcmDU+ce2LDZgxulpXBXn9/dFz3o4CSZtWMTUq3zbEu1+R/V0+tJr0vfFvrQgGuDzCRjav40gLyZkRJLLU3ApQ==
+"@liveqing/liveplayer@^2.7.22":
+  version "2.7.22"
+  resolved "https://registry.npmmirror.com/@liveqing/liveplayer/-/liveplayer-2.7.22.tgz#89ff02b9a8f9c82ff2b23e103dfe6adb6bf104ca"
+  integrity sha512-Nw4IGadzvgmhpMRX9588j+5Tgz9opca4u558MorRrBJC65HOJG/xlh2wEPfO0afhPS6KicS6RcunopgTR64YrA==
 
 "@mapbox/jsonlint-lines-primitives@~2.0.2":
   version "2.0.2"
@@ -2511,7 +2511,7 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-echarts-amap@1.0.0-rc.6:
+echarts-amap@1.0.0-rc.6, echarts-amap@^1.0.0-rc.6:
   version "1.0.0-rc.6"
   resolved "https://registry.npmmirror.com/echarts-amap/-/echarts-amap-1.0.0-rc.6.tgz#5782a74daee52ed44ce3f8f62577561783f09e16"
   integrity sha512-cYJCKoQdnkZXrGweYrveU1HruZd1c0KmsF1U8o3FtsvgR2jVL5ZUpGFjMmFtpolHOUFqxizk+s+QBLkYuOWL6Q==
@@ -4811,6 +4811,11 @@ number-is-nan@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npmmirror.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha512-4jbtZXNAsfZbAHiiqjLPBiCl16dES1zI4Hpzzxw61Tk+loF+sBDBKx1ICKKKwIqQ7M0mFn1TmkN7euSncWgHiQ==
+
+numeral@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.npmmirror.com/numeral/-/numeral-2.0.6.tgz#4ad080936d443c2561aed9f2197efffe25f4e506"
+  integrity sha512-qaKRmtYPZ5qdw4jWJD6bxEf1FJEqllJrwxCLIm0sQU/A7v2/czigzOb+C2uSiFsa9lBUzeH7M1oK+Q+OLxL3kA==
 
 numerify@1.2.9:
   version "1.2.9"
@@ -7474,6 +7479,14 @@ uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.npmmirror.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
+
+v-charts-v2@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.npmmirror.com/v-charts-v2/-/v-charts-v2-2.0.9.tgz#9dbec708c58eb4e8653f79eb64c3ed168db6baf6"
+  integrity sha512-QRTCPrRaBvIn2WyPHAwbb9u9skWIgJTCByzx4ThSg/kOUBqFwplERWvErXM1gwLlf/jKDKqsxE/I3CFAsTPMcw==
+  dependencies:
+    echarts-amap "^1.0.0-rc.6"
+    numeral "^2.0.6"
 
 v-charts@^1.19.0:
   version "1.19.0"

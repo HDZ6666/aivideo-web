@@ -2,14 +2,14 @@
   <div class="videoList-container">
     <el-row>
       <el-col :span="24">
-        <div class="control-box">
+        <div class="videoList-control-box">
           <div>
             <span>
               当前轮播:
               <el-tag effect="dark">{{ `第${loopPlayerIndex}屏` }}</el-tag>
             </span>
           </div>
-          <div class="control-btn">
+          <div class="videoList-control-btn">
             <el-select v-model="splitNum" @change="changeSplitNum" style="width: 150px;">
               <el-option :value="4" label="4宫格"></el-option>
               <el-option :value="9" label="9宫格"></el-option>
@@ -101,7 +101,6 @@ export default {
   mixins: [mixin],
   data() {
     return {
-      requestTimer: null,
       loopPlayerTimeOut: null,
       getListLoading: false,
       pages: 1, //默认分页数
@@ -128,7 +127,6 @@ export default {
       return Math.floor(this.videoHeightPX * (16 / 9));
     }
   },
-
   mounted() {
     this.init();
   },
@@ -168,7 +166,7 @@ export default {
       this.getListLoading = true;
       this.$axios({
         method: "get",
-        url: `/cockpit/api/proxy/list`,
+        url: `/ai/api/device/query/cameraList`,
         params: {
           page: _page,
           pageSize: _pageSize
@@ -179,11 +177,11 @@ export default {
             const data = res.data.data;
             const list = data.list.map(item => {
               return {
-                name: item.name,
-                id: item.app + item.stream,
-                deviceId: item.deviceId || "",
-                channelId: item.channelId || "",
-                videoUrl: item.streamInfo.ws_flv.url,
+                name: item.device_name,
+                id: `${item.deviceId}_${item.channelId}`,
+                deviceId: item.deviceId,
+                channelId: item.channelId,
+                videoUrl: item.aiStreamInfo ? item.aiStreamInfo.WS_FLV : "",
                 getVideoUrl: false,
                 loading: false,
                 error: false
@@ -207,10 +205,6 @@ export default {
         .finally(() => {
           this.getListLoading = false;
         });
-      if (this.requestTimer) clearTimeout(this.requestTimer);
-      this.requestTimer = setTimeout(() => {
-        this.getDeviceList(_page + 1);
-      }, this.requesttime * 1000);
     },
     sendDevicePush: function(itemData, page) {
       let deviceId = itemData.deviceId;
@@ -369,11 +363,14 @@ export default {
   flex-direction: column;
 }
 
-.control-box {
+.videoList-control-box {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 10px 0px;
+}
+
+.videoList-control-btn {
+  flex: 1;
   text-align: right;
 }
 
@@ -415,12 +412,5 @@ export default {
   height: 100%;
   padding: 5px;
   box-sizing: border-box;
-}
-.control-box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0px;
-  text-align: right;
 }
 </style>

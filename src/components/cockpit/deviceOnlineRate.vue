@@ -1,9 +1,7 @@
 <template>
   <div class="deviceOnlineRate-container">
-    <dv-decoration-7 class="module-title">设备在线率</dv-decoration-7>
+    <dv-decoration-7 style="width:100%;height:40px;">设备在线率</dv-decoration-7>
     <div class="ring-box">
-      <!-- <dv-water-level-pond :config="config" class="dv-ring" /> -->
-      <!-- <dv-charts class="dv-ring" :option="option" /> -->
       <dv-active-ring-chart class="dv-ring" :config="deviceOnlineData" />
     </div>
   </div>
@@ -12,33 +10,30 @@
 <script>
 export default {
   name: "deviceOnlineRate",
-  props: ["deviceOnlineData"],
+  props: [],
   data() {
     return {
-      option: {
-        series: [
+      deviceOnlineData: {
+        radius: "80%",
+        activeRadius: "85%",
+        color: ["#16bf9d", "#519fd7", "#e16379"],
+        data: [
           {
-            type: "pie",
-            data: [
-              { name: "在线", value: 93 },
-              { name: "离线", value: 32 },
-              { name: "总数", value: 52 }
-            ],
-            radius: ["45%", "65%"],
-            insideLabel: {
-              show: false
-            },
-            outsideLabel: {
-              labelLineEndLength: 10,
-              formatter: "{percent}%\n{name}",
-              style: {
-                fontSize: 14,
-                fill: "#fff"
-              }
-            }
+            name: "设备总数",
+            value: 78
+          },
+          {
+            name: "在线数",
+            value: 55
+          },
+          {
+            name: "离线数",
+            value: 120
           }
         ],
-        color: ["#00baff", "#3de7c9", "#fff", "#ffc530", "#469f4b"]
+        digitalFlopStyle: {
+          fontSize: 20
+        }
       }
     };
   }
@@ -47,27 +42,22 @@ export default {
 
 <style scoped>
 .deviceOnlineRate-container {
+  position: relative;
   width: 100%;
-  height: 210px;
-  /* display: flex; */
-  /* flex-direction: column; */
+  flex: 0 0 190px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .ring-box {
-  /* position: relative;
   flex: 1;
-  display: flex; */
-  /* width: 100%; */
-  /* flex: 1; */
-  /* width: 250px;
-  height: 200px; */
-  /* position: relative; */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
 }
 .dv-ring {
-  width: 160px;
-  height: 160px;
-  /* position: absolute;
-  width: auto;
-  max-height: 100%;
-  right: 10%; */
+  min-height: 150px;
+  min-width: 150px;
 }
 </style>

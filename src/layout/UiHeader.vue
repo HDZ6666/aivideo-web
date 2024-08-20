@@ -8,30 +8,29 @@
       active-text-color="#1890ff"
       mode="horizontal"
     >
-      <el-menu-item index="/console">控制台</el-menu-item>
-
       <el-menu-item index="/videoCockpit">数据大屏</el-menu-item>
-      <el-submenu index="2">
+      <el-submenu index="2" v-if="aiType">
         <template slot="title">AI卫士</template>
         <el-menu-item index="/alarmList">告警列表</el-menu-item>
-        <el-menu-item index="/fence">告警配置</el-menu-item>
+        <!-- <el-menu-item index="/fence">告警配置</el-menu-item> -->
       </el-submenu>
-      <!-- <el-menu-item @click="getAiWeb">AI卫士</el-menu-item> -->
       <el-menu-item index="/live">分屏监控</el-menu-item>
       <el-submenu index="1">
-        <template slot="title">国标设备</template>
+        <template slot="title">国标对接</template>
         <el-menu-item index="/deviceList">设备列表</el-menu-item>
         <el-menu-item index="/deviceGroup">分组</el-menu-item>
       </el-submenu>
-      <!-- <el-menu-item index="/deviceList">国标设备</el-menu-item> -->
-      <el-menu-item index="/map">电子地图</el-menu-item>
-      <el-menu-item index="/pushVideoList">推流列表</el-menu-item>
-      <el-menu-item index="/streamProxyList">拉流代理</el-menu-item>
-      <el-menu-item index="/cloudRecord">云端录像</el-menu-item>
-      <el-menu-item index="/mediaServerManger">节点管理</el-menu-item>
-      <el-menu-item index="/parentPlatformList/15/1">国标级联</el-menu-item>
-      <el-menu-item v-if="editUser" index="/userManager">系统管理</el-menu-item>
-
+      <!-- <el-menu-item index="/map" v-if="username==='admin'">电子地图</el-menu-item> -->
+      <!-- <el-menu-item index="/pushVideoList" v-if="username==='admin'">推流列表</el-menu-item> -->
+      <el-menu-item index="/streamProxyList">非国标对接</el-menu-item>
+      <el-submenu index="3">
+        <template slot="title">系统管理</template>
+        <el-menu-item index="/console">控制台</el-menu-item>
+        <el-menu-item index="/cloudRecord">云端录像</el-menu-item>
+        <el-menu-item index="/mediaServerManger">节点管理</el-menu-item>
+        <el-menu-item index="/parentPlatformList/15/1">国标级联</el-menu-item>
+        <el-menu-item v-if="editUser" index="/userManager">用户管理</el-menu-item>
+      </el-submenu>
       <!--            <el-submenu index="/setting">-->
       <!--              <template slot="title">系统设置</template>-->
       <!--              <el-menu-item index="/setting/web">WEB服务</el-menu-item>-->
@@ -42,9 +41,9 @@
       <el-submenu index style="float: right;">
         <template slot="title">欢迎，{{ username }}</template>
         <el-menu-item @click="openDoc">在线文档</el-menu-item>
-        <el-menu-item>
+        <!-- <el-menu-item>
           <el-switch v-model="alarmNotify" inactive-text="报警信息推送" @change="alarmNotifyChannge"></el-switch>
-        </el-menu-item>
+        </el-menu-item>-->
         <el-menu-item @click="changePassword">修改密码</el-menu-item>
         <el-menu-item @click="loginout">注销</el-menu-item>
       </el-submenu>
@@ -57,14 +56,14 @@
 import changePasswordDialog from "../components/dialog/changePassword.vue";
 import userService from "../components/service/UserService";
 import { Notification } from "element-ui";
-
+import { mixin } from "../utils/mixin";
 export default {
   name: "UiHeader",
   components: { Notification, changePasswordDialog },
+  mixins: [mixin],
   data() {
     return {
       window: null,
-      alarmNotify: false,
       sseSource: null,
       username: userService.getUser().username,
       activeIndex: this.$route.path,
@@ -74,26 +73,23 @@ export default {
     };
   },
   created() {
-    console.log(JSON.stringify(userService.getUser()));
+    // console.log(JSON.stringify(userService.getUser()));
     if (this.$route.path.startsWith("/channelList")) {
       this.activeIndex = "/deviceList";
     }
   },
   mounted() {
-    console.log(window);
-    this.window = window;
-    window.addEventListener("beforeunload", e => this.beforeunloadHandler(e));
-    this.alarmNotify = this.getAlarmSwitchStatus() === "true";
-
-    // TODO: 此处延迟连接 sse, 避免 sse 连接时 browserId 还未生成, 后续待优化
-    setTimeout(() => {
-      this.sseControl();
-    }, 3000);
+    // console.log(!localStorage.getItem("alarmSwitchStatus"));
+    console.log(localStorage.getItem("alarmSwitchStatus"));
+    // this.window = window;
+    // window.addEventListener("beforeunload", e => this.beforeunloadHandler(e));
+    // this.alarmNotify = this.getAlarmSwitchStatus() === "true";
+    // // TODO: 此处延迟连接 sse, 避免 sse 连接时 browserId 还未生成, 后续待优化
+    // setTimeout(() => {
+    //   this.sseControl();
+    // }, 3000);
   },
   methods: {
-    getAiWeb() {
-      this.window.open("http://183.239.58.24:10666/#/login", "_blank");
-    },
     loginout() {
       this.$axios({
         method: "get",
@@ -124,79 +120,85 @@ export default {
           : "/doc.html"
       );
     },
-    beforeunloadHandler() {
-      this.sseSource.close();
-    },
     alarmNotifyChannge() {
-      this.setAlarmSwitchStatus();
-      this.sseControl();
-    },
-    sseControl() {
-      let that = this;
-      if (this.alarmNotify) {
-        console.log("申请SSE推送API调用，浏览器ID: " + this.$browserId);
-        this.sseSource = new EventSource(
-          "/api/emit?browserId=" + this.$browserId
-        );
-        this.sseSource.addEventListener("message", function(evt) {
-          that.$notify({
-            title: "报警信息",
-            dangerouslyUseHTMLString: true,
-            message: evt.data,
-            type: "warning",
-            position: "bottom-right",
-            duration: 3000
-          });
-          console.log("收到信息：" + evt.data);
-        });
-        this.sseSource.addEventListener(
-          "open",
-          function(e) {
-            console.log("SSE连接打开.");
-          },
-          false
-        );
-        this.sseSource.addEventListener(
-          "error",
-          function(e) {
-            if (e.target.readyState == EventSource.CLOSED) {
-              console.log("SSE连接关闭");
-            } else {
-              console.log(e.target.readyState);
-            }
-          },
-          false
-        );
-      } else {
-        if (this.sseSource != null) {
-          this.sseSource.removeEventListener("open", null);
-          this.sseSource.removeEventListener("message", null);
-          this.sseSource.removeEventListener("error", null);
-          this.sseSource.close();
-        }
-      }
-    },
-    getAlarmSwitchStatus() {
-      if (localStorage.getItem("alarmSwitchStatus") == null) {
-        localStorage.setItem("alarmSwitchStatus", false);
-      }
-      return localStorage.getItem("alarmSwitchStatus");
-    },
-    setAlarmSwitchStatus() {
       localStorage.setItem("alarmSwitchStatus", this.alarmNotify);
+      this.$message.success(
+        `${this.alarmNotify ? "开启" : "关闭"}订阅告警成功`
+      );
     }
-  },
-  destroyed() {
-    window.removeEventListener("beforeunload", e =>
-      this.beforeunloadHandler(e)
-    );
-    if (this.sseSource != null) {
-      this.sseSource.removeEventListener("open", null);
-      this.sseSource.removeEventListener("message", null);
-      this.sseSource.removeEventListener("error", null);
-      this.sseSource.close();
-    }
+    // beforeunloadHandler() {
+    //   this.sseSource.close();
+    // },
+    // alarmNotifyChannge() {
+    //   this.setAlarmSwitchStatus();
+    //   this.sseControl();
+    // },
+    // sseControl() {
+    //   let that = this;
+    //   if (this.alarmNotify) {
+    //     console.log("申请SSE推送API调用，浏览器ID: " + this.$browserId);
+    //     this.sseSource = new EventSource(
+    //       "/api/emit?browserId=" + this.$browserId
+    //     );
+    //     this.sseSource.addEventListener("message", function(evt) {
+    //       that.$notify({
+    //         title: "报警信息",
+    //         dangerouslyUseHTMLString: true,
+    //         message: evt.data,
+    //         type: "warning",
+    //         position: "bottom-right",
+    //         duration: 3000
+    //       });
+    //       console.log("收到信息：" + evt.data);
+    //     });
+    //     this.sseSource.addEventListener(
+    //       "open",
+    //       function(e) {
+    //         console.log("SSE连接打开.");
+    //       },
+    //       false
+    //     );
+    //     this.sseSource.addEventListener(
+    //       "error",
+    //       function(e) {
+    //         if (e.target.readyState == EventSource.CLOSED) {
+    //           console.log("SSE连接关闭");
+    //         } else {
+    //           console.log(e.target.readyState);
+    //         }
+    //       },
+    //       false
+    //     );
+    //   } else {
+    //     if (this.sseSource != null) {
+    //       this.sseSource.removeEventListener("open", null);
+    //       this.sseSource.removeEventListener("message", null);
+    //       this.sseSource.removeEventListener("error", null);
+    //       this.sseSource.close();
+    //     }
+    //   }
+    // },
+    // getAlarmSwitchStatus() {
+    //   if (localStorage.getItem("alarmSwitchStatus") == null) {
+    //     localStorage.setItem("alarmSwitchStatus", false);
+    //   }
+    //   return localStorage.getItem("alarmSwitchStatus");
+    // },
+    // setAlarmSwitchStatus() {
+    //   localStorage.setItem("alarmSwitchStatus", this.alarmNotify);
+    // }
   }
+  // destroyed() {
+  //   window.removeEventListener("beforeunload", e =>
+  //     this.beforeunloadHandler(e)
+  //   );
+  //   if (this.sseSource != null) {
+  //     this.sseSource.removeEventListener("open", null);
+  //     this.sseSource.removeEventListener("message", null);
+  //     this.sseSource.removeEventListener("error", null);
+  //     this.sseSource.close();
+  //   }
+  // }
 };
 </script>
 <style>
