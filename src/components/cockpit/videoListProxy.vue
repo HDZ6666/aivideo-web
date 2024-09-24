@@ -57,7 +57,7 @@
                     :video-title="player.name"
                     :videoUrl="player.videoUrl"
                     :hasaudio="false"
-                    :alt="player.error?'视频加载失败':'无信号'"
+                    :alt="player.error?'视频加载失败':'无播放资源'"
                     live
                     muted
                     aspect="fullscreen"
@@ -77,6 +77,7 @@
                     hideControls
                     screen
                   />
+                  <div v-else>无播放资源</div>
                 </div>
               </dv-border-box-12>
             </div>
@@ -374,7 +375,6 @@ export default {
   text-align: right;
 }
 
-
 /* .control-btn{
   display: inline-flex;
   align-items: center;
@@ -399,6 +399,9 @@ export default {
 }
 
 .video-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   border-radius: 10px;
