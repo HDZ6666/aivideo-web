@@ -33,8 +33,16 @@ module.exports = {
         //   '^/static/snap': '/static/snap'
         // }
       },
-      "/v2":{
-        target: "http://localhost:5173",
+      "/pc":{
+        target: "http://localhost:3001",
+        changeOrigin: true
+      },
+      "/mobile":{
+        target: "http://localhost:3002",
+        changeOrigin: true
+      },
+      "/datav":{
+        target: "http://localhost:3003",
         changeOrigin: true
       }
     },
@@ -76,7 +84,7 @@ module.exports = {
     index: path.resolve(__dirname, "../dist/index.html"),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, "../dist/"),
+    assetsRoot: path.resolve(__dirname, "../../dist/"),
     // assetsRoot:  path.resolve(__dirname, "../../src/main/resources/static/"),
     // assetsRoot:'dist',
     assetsSubDirectory: "./static",

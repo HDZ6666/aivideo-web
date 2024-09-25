@@ -397,8 +397,12 @@
 .login-loading-class > .el-loading-spinner .path {
   stroke: rgb(255, 255, 255) !important;
 }
-
-
+.login100-dispatcher{
+  text-align: center;
+}
+.login100-dispatcher > a{
+  padding: 3px 10px;
+}
 
 
 /**font**/

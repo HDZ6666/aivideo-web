@@ -5,7 +5,7 @@
     <div class="container-login100">
 
       <div class="wrap-login100">
-         <div style="text-align: right"><a href="/v2/">v2</a></div>
+
 					<span class="login100-form-title p-b-26">视频+AI管理平台</span>
           <span class="login100-form-title p-b-48">
 						<i class="fa fa-video-camera"></i>
@@ -30,8 +30,11 @@
               <button class="login100-form-btn" @click="login">登录</button>
             </div>
           </div>
+          <div  class="login100-dispatcher"><a href="/pc/">pc</a><a href="/mobile/">mobile</a><a href="/datav/">datav</a></div>
       </div>
+
     </div>
+
   </div>
 </div>
 </template>
