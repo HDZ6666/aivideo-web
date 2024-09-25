@@ -1,5 +1,5 @@
 <template>
-  <t-layout :class="`${prefix}-layout`">
+  <t-layout :class="[`${prefix}-layout`,settingStore.showContentOnly? 'content-only' : '']">
     <t-tabs
       v-if="settingStore.isUseTabsRouter"
       drag-sort
@@ -170,3 +170,9 @@ const handleDragend = (options: { currentIndex: number; targetIndex: number }) =
   ];
 };
 </script>
+<style lang="css" scoped>
+  .content-only{
+    height: 100vh;
+    overflow-y: auto;
+  }
+</style>

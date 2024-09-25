@@ -21,6 +21,9 @@ export type TStateKey = keyof typeof state;
 export const useSettingStore = defineStore('setting', {
   state: () => state,
   getters: {
+    showContentOnly: (state)=> {
+      return window.self !== window.top
+    },
     showSidebar: (state) => state.layout !== 'top',
     showSidebarLogo: (state) => state.layout === 'side',
     showHeaderLogo: (state) => state.layout !== 'side',

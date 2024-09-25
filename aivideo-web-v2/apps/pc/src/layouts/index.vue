@@ -1,25 +1,32 @@
 <template>
   <div>
-    <template v-if="setting.layout.value === 'side'">
-      <t-layout key="side" :class="mainLayoutCls">
-        <t-aside><layout-side-nav /></t-aside>
-        <t-layout>
-          <t-header><layout-header /></t-header>
-          <t-content><layout-content /></t-content>
+    <template v-if="settingStore.showContentOnly">
+      <layout-content />
+    </template>
+    <template v-else>
+      <template v-if="setting.layout.value === 'side'">
+        <t-layout key="side" :class="mainLayoutCls">
+          <t-aside><layout-side-nav /></t-aside>
+          <t-layout>
+            <t-header><layout-header /></t-header>
+            <t-content><layout-content /></t-content>
+          </t-layout>
         </t-layout>
-      </t-layout>
+      </template>
+
+      <template v-else>
+        <t-layout key="no-side">
+          <t-header><layout-header /> </t-header>
+          <t-layout :class="mainLayoutCls">
+            <layout-side-nav />
+            <layout-content />
+          </t-layout>
+        </t-layout>
+      </template>
+
+      <setting-com />
     </template>
 
-    <template v-else>
-      <t-layout key="no-side">
-        <t-header><layout-header /> </t-header>
-        <t-layout :class="mainLayoutCls">
-          <layout-side-nav />
-          <layout-content />
-        </t-layout>
-      </t-layout>
-    </template>
-    <setting-com />
   </div>
 </template>
 
@@ -48,7 +55,7 @@ const mainLayoutCls = computed(() => [
     't-layout--with-sider': settingStore.showSidebar,
   },
 ]);
-
+ 
 const appendNewRoute = () => {
   const {
     path,

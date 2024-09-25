@@ -14,14 +14,21 @@
 ### aivideo-web.code-workspace
 配置了vscode的工作空间
 ### aivideo-web-v1
-aivideo-web-v1的登录页有pc、mobile、datav链接，并将以/v2开头的请求代理到aivideo-web-v2相应的页面
-- 开发
+aivideo-web-v1的登录页有pc、mobile、datav链接，并将请求代理到aivideo-web-v2相应的页面
+#### 开发
 ```
 npm run dev
 ```
 ### aivideo-web-v2/apps/pc
 pc使用[td-starter](https://tdesign.tencent.com/starter/docs/vue-next/get-started)创建
-- 开发
+#### 开发
 ```
 pnpm dev
+```
+
+#### 添加内部模块依赖
+- package.json
+```
+    "@aivideo/rest": "workspace:*",
+    "@aivideo/common": "workspace:*"
 ```
