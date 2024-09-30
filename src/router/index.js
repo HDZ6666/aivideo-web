@@ -148,6 +148,11 @@ export default new VueRouter({
           path: "/deviceGroup",
           name: "deviceGroup",
           component: () => import("../components/DeviceGroup.vue") // deviceGroup
+        },
+        {
+          path: "/patrol",
+          name: "patrol",
+          component: () => import("../components/patrol.vue") // patrol
         }
       ]
     },

@@ -1,0 +1,370 @@
+<template>  
+    <div class="app">  
+        <div class="container">  
+            <div class="route-container">  
+                <form @submit.prevent="routesubmit">  
+                    <label for="routeName">巡逻路线名称:</label>  
+                    <input type="text" id="routeName" v-model="routeName" /><br><br>  
+                
+                    <label>选择摄像头:</label><br><br>  
+                    <div class="camera-and-button-container">  
+                        <select v-model="selectedCameras" multiple class="fixed-height-select">
+                            <option v-for="camera in cameras" :key="camera.id" :value="camera.id">{{ camera.name }}</option>  
+                        </select><br><br>  
+                        <button type="submit">添加路线</button> 
+                    </div>  
+                </form><br><br><br><br><br><br><br><br><br>
+            </div>  
+            
+            <div class="task-container">  
+                <form @submit.prevent="tasksubmit">  
+                    <el-table
+                        :data="routeList"
+                        style="width: 100%;font-size: 12px;"
+                        :height="winHeight"
+                        header-row-class-name="table-header"
+                        >
+                        <el-table-column prop="routeID" label="路线编号" min-width="100" ></el-table-column>
+                        <el-table-column prop="routename" label="路线名称" min-width="160" ></el-table-column>
+                        <el-table-column prop="createTime" label="创建时间"  width="140"></el-table-column>
+                        <el-table-column prop="updateTime" label="更新时间"  width="140"></el-table-column>
+
+                        <el-table-column label="操作" min-width="250" fixed="right">
+                            <template slot-scope="scope">
+                            <el-divider direction="vertical"></el-divider>
+                            <el-button size="medium" icon="el-icon-edit" type="text" @click="edit(scope.row)">编辑</el-button>
+                            <el-divider direction="vertical"></el-divider>
+                            <el-button
+                                size="medium"
+                                icon="el-icon-delete"
+                                type="text"
+                                @click="deleteroute(scope.row)"
+                                style="color: #f56c6c"
+                            >删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table><br>
+
+                    <label>设置任务日期:</label>
+                    <input type="radio" id="dateRange" v-model="dateType" value="range" checked>  
+                    <label for="startDate">日期范围:从</label>  
+                    <input type="date" v-model="startDate" /> 
+                    <label for="endDate">到</label>  
+                    <input type="date" v-model="endDate" /> 
+                    <input type="radio" id="unlimited" v-model="dateType" value="unlimited">  
+                    <label for="unlimited">无限期</label><br>
+                
+                    <label>设置任务时间:</label>
+                    <div class="time-and-button-container">  
+                        <Day/>  
+                        <button type="submit">添加任务</button>  
+                    </div>
+                </form>
+            </div>
+        </div>  
+        
+        <div class="table-container">  
+            <el-table
+                :data="taskList"
+                style="width: 100%;font-size: 12px;"
+                :height="winHeight"
+                header-row-class-name="table-header"
+                >
+                <el-table-column prop="taskID" label="任务编号" min-width="100" ></el-table-column>
+                <el-table-column prop="routename" label="路线名称" min-width="300" ></el-table-column>
+                <el-table-column prop="excuteStatus" label="执行状态"  width="150"></el-table-column>
+                <el-table-column prop="excuteTime" label="执行时间"  width="200"></el-table-column>
+                <el-table-column prop="abnormality" label="是否有异常"  width="100"></el-table-column>
+                <el-table-column prop="patrolReport" label="巡逻报告"  width="150"></el-table-column>
+
+            </el-table>
+            <br><br><br><br><br>
+        </div> 
+
+        <el-pagination
+            style="float: right"
+            @size-change="handleSizeChange"
+            @current-change="currentChange"
+            :current-page="currentPage"
+            :page-size="count"
+            :page-sizes="[15, 25, 35, 50]"
+            layout="total, sizes, prev, pager, next"
+            :total="total"
+        ></el-pagination>
+        <routeEdit ref="routeEdit"></routeEdit>
+        <syncChannelProgress ref="syncChannelProgress"></syncChannelProgress>
+    </div> 
+</template>  
+        
+<script>  
+import { ref } from 'vue'; 
+import axios from 'axios';
+import Day from "./Day.vue";
+// import routeEdit from "./dialog/routeEdit.vue"; //待新增vue
+    
+export default {  
+    name: 'SmartPatrol',  
+    setup() {  
+        const routeName = ref('');  
+        const cameras = ref([]); // 初始为空数组，用于存储从 API 获取的摄像头数据  
+        const selectedCameras = ref([]); // 用于存储用户选择的摄像头 ID  
+  
+        onMounted(async () => {  
+            try {  
+                const response = await axios.get('/api/device/query/devices');  
+                cameras.value = response.data; // API 直接返回摄像头数组  
+            } catch (error) {  
+                console.error('Failed to fetch cameras:', error);  
+            }  
+        });  
+    
+        const routesubmit = () => {  
+            console.log('Submit form:', {  
+                routeName: routeName.value,  
+                cameras: selectedCameras.value, // 用户选择的摄像头 ID 数组  
+            });  
+        };  
+    
+        return { routeName, cameras, selectedCameras, routesubmit };   
+
+        const tasksubmit = () => {  
+            console.log('Submit form:', {  
+            routeName: routeName.value,  
+            cameras: cameras.value,  
+            dateType: dateType.value,  
+            startDate: startDate.value,  
+            endDate: endDate.value,  
+            frequency: frequency.value,  
+            });  
+            // 这里可以添加提交到服务器的逻辑  
+        };  
+        
+        return { routeName, cameras, dateType, startDate, endDate, frequency, tasksubmit };  
+    },  
+
+    data() {  
+        return {  
+        // 巡逻时间列表，从0到23  
+        allHours: Array.from({ length: 24 }, (_, i) => i),  
+        // 选中的时间  
+        selectedHours: [],  
+        };  
+    },  
+    computed: {  
+        // 将巡逻时间分组，每组8个  
+        groupedHours() {  
+        return this.allHours.reduce((groups, hour, index) => {  
+            const groupIndex = Math.floor(index / 8);  
+            if (!groups[groupIndex]) {  
+            groups[groupIndex] = [];  
+            }  
+            groups[groupIndex].push(hour);  
+            return groups;  
+        }, []);  
+        }  
+    },  
+    methods: {  
+        // 格式化小时为更易于阅读的格式（例如，将0显示为00）  
+        formatHour(hour) {  
+        return hour.toString().padStart(2, '0')+ ':00';  
+        }
+    },
+    
+    /* 巡逻路线操作 */
+    edit: function(row) {
+      this.$refs.routeEdit.openDialog(row, () => {
+        this.$refs.routeEdit.close();
+        this.$message({
+          showClose: true,
+          message: "路线修改成功",
+          type: "success"
+        });
+        setTimeout(this.getrouteList, 200);
+      });
+    },
+
+    deleteroute: function(row) {
+      let msg = "确定删除此路线？";
+      this.$confirm(msg, "提示", {
+        dangerouslyUseHTMLString: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        center: true,
+        type: "warning"
+      })
+        .then(() => {
+          this.$axios({
+            method: "delete",
+            url: `/api/device/query/devices/${row.deviceId}/delete` //API待确认
+          })
+            .then(res => {
+              this.getrouteList();
+            })
+            .catch(error => {
+              console.error(error);
+            });
+        })
+        .catch(() => {});
+    },
+
+    components: {Day}
+       
+};  
+</script>  
+    
+<style scoped>  
+    body, html { 
+        margin: 0;  
+        padding: 0;  
+        width: 100%;  
+        height: 100%;  
+        font-family: Arial, sans-serif; /* 设置统一的字体 */  
+    }   
+    
+    .container {  
+        display: flex; /* 使用 flex 布局 */  
+        justify-content: space-between; /* 子元素之间的空间平均分布 */  
+        align-items: flex-start; /* 子元素顶部对齐（可选，根据需要调整） */  
+        width:  120%; /* 或指定具体宽度，根据需要 */  
+        padding: 10px; /* 根据需要添加内边距 */  
+        max-width: 1430px; 
+    } 
+
+    /* 文本和表单样式 */  
+    .route-container {  
+        position: relative;   
+        width: 28%;
+        padding: 10px;  
+        background-color: #f9f9f9; /* 轻微背景色增加可读性 */  
+        border-radius: 8px; /* 圆角边框 */  
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */  
+        text-align: left; /* 左对齐 */ 
+        max-height: 410px;
+    } 
+
+    .task-container {  
+        position: relative;   
+        width: 68%;
+        padding: 10px;  
+        background-color: #f9f9f9; /* 轻微背景色增加可读性 */  
+        border-radius: 8px; /* 圆角边框 */  
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */  
+        text-align: left; /* 左对齐 */ 
+        max-height: 410px;
+    } 
+    label {  
+        font-size: 16px; /* 增大标签字体大小 */  
+        color: #333; /* 深色字体，提高对比度 */  
+        margin-bottom: 5px; /* 标签与输入框间距 */ 
+        text-align: left; /* 左对齐 */  
+    }  
+    
+    input[type="text"],  
+    input[type="date"],  
+    select,  
+    input[type="radio"] + label {  
+        font-size: 14px; /* 输入框和选择框字体大小 */  
+        padding: 8px; /* 输入框内边距 */  
+        border: 1px solid #ccc; /* 边框颜色 */  
+        border-radius: 4px; /* 圆角边框 */  
+        color: #333; /* 字体颜色 */ 
+        text-align: left; /* 左对齐 */   
+    }  
+    
+    input[type="checkbox"] + label {  
+        font-size: 14px; /* 复选框标签字体大小 */  
+        margin-left: 5px; /* 复选框与标签间距 */  
+    }  
+
+    /* 摄像头选择和按钮容器的样式 */    
+    .camera-and-button-container {  
+        display: flex; /* 启用Flexbox */  
+        justify-content: space-between; /* 子元素在主轴上的分布方式 */  
+        align-items: center; /* 子元素在交叉轴上的对齐方式 */  
+        width: 100%; 
+        height:250px; 
+    }
+    
+    .fixed-height-select {  
+        height: 250px; 
+        flex: 1; /* 允许<select>元素占据剩余空间 */  
+    }  
+    
+    .camera-and-button-container button[type="submit"] {  
+        margin-right: 20px;
+        margin-top: 330px; 
+    }  
+
+    /* 时间选择和按钮容器的样式 */  
+    .time-and-button-container {  
+        display: flex; /* 启用Flexbox */  
+        justify-content: space-between; /* 子元素在主轴上的分布方式 */  
+        align-items: center; /* 子元素在交叉轴上的对齐方式 */  
+        width: 100%; /* 根据需要设置宽度 */ 
+        height:250px; /* 设置高度 */  
+    }  
+    
+    .time-and-button-container button[type="submit"] {  
+        margin-right: 20px;
+        margin-top: 150px; 
+    }  
+
+    /* 表格样式 */
+    .table-container {  
+        position: relative;  
+        top: 0px;  
+        width: 120%; 
+        max-width: 1420px; 
+        padding: 10px;  
+        background-color: #f9f9f9; /* 轻微背景色增加可读性 */  
+        border-radius: 8px; /* 圆角边框 */  
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */  
+    } 
+
+    table {  
+        width: 100%;  
+        border-collapse: collapse;  
+        margin-top: 10px;  
+    }  
+    
+    th, td {  
+        border: 1px solid #ddd;  
+        padding: 12px; /* 增大单元格内边距 */  
+        text-align: center; /* 文本居中 */  
+        font-size: 14px; /* 单元格字体大小 */  
+        color: #555; /* 字体颜色 */  
+    }  
+    
+    th {  
+        background-color: #f2f2f2; /* 表头背景色 */  
+    }  
+    
+    /* 时间选择样式 */  
+    .hour-row {  
+        display: flex;  
+        justify-content: space-between;  
+        margin-bottom: 10px; /* 分组之间的间距 */  
+    }  
+    
+    .hour-item {  
+        display: inline-block;  
+        margin-right: 10px;  
+    }  
+    
+    /* 按钮样式 */  
+    button[type="submit"] {  
+        font-size: 16px; /* 按钮字体大小 */  
+        padding: 10px 20px; /* 按钮内边距 */  
+        border: none; /* 去除边框 */  
+        border-radius: 4px; /* 圆角边框 */  
+        background-color: #007bff; /* 按钮背景色 */  
+        color: white; /* 按钮字体颜色 */  
+        cursor: pointer; /* 鼠标悬停时显示指针 */ 
+    }  
+    
+    button[type="submit"]:hover {  
+        background-color: #0056b3; /* 按钮悬停背景色 */  
+    }  
+
+</style>
+    
