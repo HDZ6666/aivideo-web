@@ -20,7 +20,7 @@
                 <form @submit.prevent="tasksubmit">  
                     <el-table
                         :data="routeList"
-                        style="width: 100%;font-size: 12px;"
+                        style="width: 100%;font-size: 12px;"    
                         :height="winHeight"
                         header-row-class-name="table-header"
                         >
@@ -111,21 +111,28 @@ export default {
   
         onMounted(async () => {  
             try {  
-                const response = await axios.get('/api/device/query/devices');  
+                const response = await axios.get('/api/device/query/devices'); //假设接口为/api/device/query/devices 
                 cameras.value = response.data; // API 直接返回摄像头数组  
             } catch (error) {  
                 console.error('Failed to fetch cameras:', error);  
             }  
         });  
     
-        const routesubmit = () => {  
-            console.log('Submit form:', {  
+        const routesubmit = async () => {  
+            try {  
+                const response = await axios.post('/api/patrol/addroute', //假设接口为api/patrol/addroute
+                {  
                 routeName: routeName.value,  
-                cameras: selectedCameras.value, // 用户选择的摄像头 ID 数组  
-            });  
-        };  
-    
-        return { routeName, cameras, selectedCameras, routesubmit };   
+                cameras: selectedCameras.value,  
+                });  
+                // 假设后端返回了新添加的巡逻路线的ID或其他相关信息，可以将其保存到某个状态或进行其他处理  
+                console.log('Route added successfully:', response.data);  
+                // 调用方法刷新路线列表和任务列表  
+                await refreshRouteAndTaskList();  
+            } catch (error) {  
+                console.error('Failed to add route:', error);  
+            }  
+        };
 
         const tasksubmit = () => {  
             console.log('Submit form:', {  
@@ -140,6 +147,22 @@ export default {
         };  
         
         return { routeName, cameras, dateType, startDate, endDate, frequency, tasksubmit };  
+
+        const refreshRouteAndTaskList = async () => {  
+            try {  
+                // 获取最新的路线列表  
+                const routeListResponse = await axios.get('/api/patrol/getroutes');  
+                routeList.value = routeListResponse.data; // 假设后端返回的是路线列表数据  
+
+                // 获取最新的任务列表  
+                const taskListResponse = await axios.get('/api/patrol/gettasks');  
+                taskList.value = taskListResponse.data; // 假设后端返回的是任务列表数据  
+            } catch (error) {  
+                console.error('Failed to refresh route and task lists:', error);  
+            }  
+        };
+
+        return { routeName, cameras, selectedCameras, routesubmit, refreshRouteAndTaskList };  
     },  
 
     data() {  
@@ -150,6 +173,7 @@ export default {
         selectedHours: [],  
         };  
     },  
+
     computed: {  
         // 将巡逻时间分组，每组8个  
         groupedHours() {  
@@ -163,6 +187,7 @@ export default {
         }, []);  
         }  
     },  
+
     methods: {  
         // 格式化小时为更易于阅读的格式（例如，将0显示为00）  
         formatHour(hour) {  
@@ -302,11 +327,12 @@ export default {
         align-items: center; /* 子元素在交叉轴上的对齐方式 */  
         width: 100%; /* 根据需要设置宽度 */ 
         height:250px; /* 设置高度 */  
+        margin-top: -10px; 
     }  
     
     .time-and-button-container button[type="submit"] {  
         margin-right: 20px;
-        margin-top: 150px; 
+        margin-top: 160px; 
     }  
 
     /* 表格样式 */
