@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "aivideo-web-v2"
+		},
+		{
+			"path": "aivideo-web-react"
 		}
 	],
 	"settings": {}
