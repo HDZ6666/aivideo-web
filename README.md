@@ -10,11 +10,19 @@
     + packages
       - common
       - rest
+  + aivideo-web-react
+
 后续新功能尽量在aivideo-web-v2上开发
 ### aivideo-web.code-workspace
 配置了vscode的工作空间
 ### aivideo-web-v1
 aivideo-web-v1的登录页有pc、mobile、datav链接，并将请求代理到aivideo-web-v2相应的页面
+#### 开发
+```
+npm run dev
+```
+### aivideo-web-react
+aivideo-web-react为AI卫士页面
 #### 开发
 ```
 npm run dev
