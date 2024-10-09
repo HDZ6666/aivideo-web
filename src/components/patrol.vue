@@ -8,9 +8,18 @@
                 
                     <label>选择摄像头:</label><br><br>  
                     <div class="camera-and-button-container">  
-                        <select v-model="selectedCameras" multiple class="fixed-height-select">
-                            <option v-for="camera in cameras" :key="camera.id" :value="camera.id">{{ camera.name }}</option>  
-                        </select><br><br>  
+                        <el-tree
+                            ref="groupTree"
+                            node-key="id"
+                            default-expand-all
+                            :data="deviceGroupList"
+                            :props="treeProps"
+                            :expand-on-click-node="false"
+                            highlight-current
+                            @node-click="handleNodeClick"
+                            show-checkbox
+                            > 
+                        </el-tree>
                         <button type="submit">添加路线</button> 
                     </div>  
                 </form><br><br><br><br><br><br><br><br><br>
@@ -21,7 +30,6 @@
                     <el-table
                         :data="routeList"
                         style="width: 100%;font-size: 12px;"    
-                        :height="winHeight"
                         header-row-class-name="table-header"
                         >
                         <el-table-column prop="routeID" label="路线编号" min-width="100" ></el-table-column>
@@ -46,12 +54,10 @@
                     </el-table><br>
 
                     <label>设置任务日期:</label>
-                    <input type="radio" id="dateRange" v-model="dateType" value="range" checked>  
-                    <label for="startDate">日期范围:从</label>  
+                    <label for="startDate">从</label>  
                     <input type="date" v-model="startDate" /> 
                     <label for="endDate">到</label>  
                     <input type="date" v-model="endDate" /> 
-                    <input type="radio" id="unlimited" v-model="dateType" value="unlimited">  
                     <label for="unlimited">无限期</label><br>
                 
                     <label>设置任务时间:</label>
@@ -67,7 +73,6 @@
             <el-table
                 :data="taskList"
                 style="width: 100%;font-size: 12px;"
-                :height="winHeight"
                 header-row-class-name="table-header"
                 >
                 <el-table-column prop="taskID" label="任务编号" min-width="100" ></el-table-column>
@@ -91,54 +96,46 @@
             layout="total, sizes, prev, pager, next"
             :total="total"
         ></el-pagination>
-        <routeEdit ref="routeEdit"></routeEdit>
-        <syncChannelProgress ref="syncChannelProgress"></syncChannelProgress>
+        <routeEdit ref="routeEdit"></routeEdit> <!--存在错误，未定义该组件-->
+        <syncChannelProgress ref="syncChannelProgress"></syncChannelProgress>  <!--存在错误，未定义该组件-->
     </div> 
 </template>  
         
 <script>  
-import { ref } from 'vue'; 
+import { ref,onMounted } from 'vue'; 
 import axios from 'axios';
 import Day from "./Day.vue";
 // import routeEdit from "./dialog/routeEdit.vue"; //待新增vue
     
 export default {  
     name: 'SmartPatrol',  
-    setup() {  
+    setup() {
         const routeName = ref('');  
-        const cameras = ref([]); // 初始为空数组，用于存储从 API 获取的摄像头数据  
-        const selectedCameras = ref([]); // 用于存储用户选择的摄像头 ID  
-  
-        onMounted(async () => {  
-            try {  
-                const response = await axios.get('/api/device/query/devices'); //假设接口为/api/device/query/devices 
-                cameras.value = response.data; // API 直接返回摄像头数组  
-            } catch (error) {  
-                console.error('Failed to fetch cameras:', error);  
-            }  
-        });  
-    
+        const cameras = ref([]);  
+        const selectedCameras = ref([]); 
+        const routeList = ref([]);  
+        const startDate = ref(null);  
+        const endDate = ref(null);  
+        const frequency = ref(null);  
+        
         const routesubmit = async () => {  
             try {  
                 const response = await axios.post('/api/patrol/addroute', //假设接口为api/patrol/addroute
                 {  
                 routeName: routeName.value,  
-                cameras: selectedCameras.value,  
-                });  
-                // 假设后端返回了新添加的巡逻路线的ID或其他相关信息，可以将其保存到某个状态或进行其他处理  
-                console.log('Route added successfully:', response.data);  
-                // 调用方法刷新路线列表和任务列表  
-                await refreshRouteAndTaskList();  
+                selectedCameras: selectedCameras.value,  
+                }); 
+                routeList.value.push(response.data);   
+                console.log('添加路线成功:', response.data);  
             } catch (error) {  
-                console.error('Failed to add route:', error);  
+                console.error('添加路线失败:', error);  
             }  
         };
 
         const tasksubmit = () => {  
             console.log('Submit form:', {  
             routeName: routeName.value,  
-            cameras: cameras.value,  
-            dateType: dateType.value,  
+            selectedCameras: selectedCameras.value,  
             startDate: startDate.value,  
             endDate: endDate.value,  
             frequency: frequency.value,  
@@ -146,7 +143,7 @@ export default {
             // 这里可以添加提交到服务器的逻辑  
         };  
         
-        return { routeName, cameras, dateType, startDate, endDate, frequency, tasksubmit };  
+        return { routeName, selectedCameras, startDate, endDate, frequency, tasksubmit };  
 
         const refreshRouteAndTaskList = async () => {  
             try {  
@@ -167,12 +164,95 @@ export default {
 
     data() {  
         return {  
-        // 巡逻时间列表，从0到23  
-        allHours: Array.from({ length: 24 }, (_, i) => i),  
-        // 选中的时间  
-        selectedHours: [],  
+            getDeviceGroupLoading: false,
+            deviceGroupList: [],
+            treeProps: {
+                children: "children",
+                label: "group_name"
+            },
+            routeName: "",
+            selectedCameras: [],
+            routeList: [],
+            startDate: "",
+            endDate: "",
+            // 巡逻时间列表，从0到23  
+            allHours: Array.from({ length: 24 }, (_, i) => i),  
+            // 选中的时间  
+            selectedHours: [], 
+            frequency: "",
+            taskList: [],
+            currentPage: 1,
+            count: 15,
+            total: 0,
         };  
     },  
+
+    methods: {  
+        addGroup: function() {
+            this.$refs.groupTree.setCurrentKey(null);
+            this.$emit("changeGroup", { id: 0 });
+            // this.$router.push("/deviceGroup");
+        },
+        getDeviceGroup: function() {
+            this.getDeviceGroupLoading = true;
+            this.$axios({
+                method: "get",
+                url: `/ai/api/device/group/cameraGroupList`
+            })
+                .then(res => {
+                if (res.data.code === 0) {
+                    this.deviceGroupList = res.data.data;
+                }
+                this.getDeviceGroupLoading = false;
+                })
+                .catch(error => {
+                console.error(error);
+                this.getDeviceGroupLoading = false;
+                });
+        },
+        getGroup: function() {
+            return [...this.deviceGroupList];
+        },
+        getNode: function(id) {
+            return this.$refs.deviceGroupTree.getNode(id);
+        },
+        handleNodeClick(data) {
+            this.$emit("changeGroup", data);
+        },
+        handleCheckChange(data, checked, indeterminate) {  
+            console.log(data, checked, indeterminate);  
+            // 这里可以添加逻辑来处理节点的选择或取消选择  
+            // 例如，将选中的节点ID存储在一个数组中  
+            if (checked) {  
+            this.selectedCameras.push(data.id); // 假设每个节点都有一个唯一的id属性  
+            } else {  
+            const index = this.selectedCameras.indexOf(data.id);  
+            if (index > -1) {  
+                this.selectedCameras.splice(index, 1);  
+            }  
+            }  
+        },  
+        
+        // 格式化小时为更易于阅读的格式（例如，将0显示为00）  
+        formatHour(hour) {  
+            return hour.toString().padStart(2, '0')+ ':00';  
+        },
+
+        // 处理分页  
+        handleSizeChange(newSize) {  
+            this.count = newSize;  
+            console.log('每页显示条目数改变:', newSize);  
+        },  
+        currentChange(newPage) {  
+            this.currentPage = newPage;   
+            console.log('当前页改变:', newPage);  
+        },  
+    },
+ 
+    mounted() {
+        this.getDeviceGroup();
+        this.fetchData(); //不存在该函数   
+    },
 
     computed: {  
         // 将巡逻时间分组，每组8个  
@@ -188,13 +268,6 @@ export default {
         }  
     },  
 
-    methods: {  
-        // 格式化小时为更易于阅读的格式（例如，将0显示为00）  
-        formatHour(hour) {  
-        return hour.toString().padStart(2, '0')+ ':00';  
-        }
-    },
-    
     /* 巡逻路线操作 */
     edit: function(row) {
       this.$refs.routeEdit.openDialog(row, () => {
@@ -266,6 +339,15 @@ export default {
         text-align: left; /* 左对齐 */ 
         max-height: 410px;
     } 
+
+    .camera-and-button-container .el-tree {  
+        top:25px;
+        height: 325px; /* 设置固定高度 */ 
+        width: 250px; 
+        overflow-y: auto; /* 允许垂直滚动 */  
+        border: 1px solid #ccc; /* 添加方框 */  
+        background-color: #f9f9f9; /* 设置背景色 */  
+    }
 
     .task-container {  
         position: relative;   
