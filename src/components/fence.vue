@@ -5,6 +5,7 @@
 
 <script>
 import FramePage from "./iframe/index.vue";
+import userService from "./service/UserService";
 export default {
   name: "fence",
   components: {
@@ -14,11 +15,17 @@ export default {
     return {
       // frameUrl: "http://183.239.58.24:10666//#/iframe/fence"
       // frameUrl: "http://192.168.1.106:8066/#/iframe/fence"
-      frameUrl: `${window.iframeBaseUrl}/#/iframe/fence`
+      frameUrl: `${window.iframeBaseUrl}/#/ai/setting/fence`
     };
+  },
+  mounted() {
+    if (userService.getToken()) {
+      this.frameUrl = `${
+        window.iframeBaseUrl
+      }/#/ai/setting/fence?token=${userService.getToken()}`;
+    }
   }
 };
 </script>
 
-<style>
-</style>
+<style></style>
