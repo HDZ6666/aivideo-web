@@ -28,37 +28,46 @@
             <div class="task-container">  
                 <form @submit.prevent="tasksubmit">  
                     <el-table
-                        :data="routeList"
-                        style="width: 100%;font-size: 12px;"    
+                        :data="paginatedrouteList"
+                        style="width: 100%;height:170px;font-size: 12px;overflow-y: auto; /* 允许垂直滚动 */  "    
                         header-row-class-name="table-header"
+                        @selection-change="handleSelectionChange"  
                         >
-                        <el-table-column prop="routeID" label="路线编号" min-width="100" ></el-table-column>
-                        <el-table-column prop="routename" label="路线名称" min-width="160" ></el-table-column>
-                        <el-table-column prop="createTime" label="创建时间"  width="140"></el-table-column>
-                        <el-table-column prop="updateTime" label="更新时间"  width="140"></el-table-column>
-
-                        <el-table-column label="操作" min-width="250" fixed="right">
+                        <el-table-column type="selection" width="55" ></el-table-column> 
+                        <el-table-column prop="routeID" label="路线编号" width="70" align="center"></el-table-column>
+                        <el-table-column prop="routename" label="路线名称" width="90" align="center"></el-table-column>
+                        <el-table-column prop="selectedCameras" label="所选摄像头"  width="300" align="center"></el-table-column>
+                        <el-table-column prop="createTime" label="创建时间"  width="130" align="center"></el-table-column>
+                        <el-table-column prop="updateTime" label="更新时间"  width="130" align="center"></el-table-column>
+                        <el-table-column label="操作" width="180" align="center">
                             <template slot-scope="scope">
                             <el-divider direction="vertical"></el-divider>
-                            <el-button size="medium" icon="el-icon-edit" type="text" @click="edit(scope.row)">编辑</el-button>
+                            <el-button size="medium" icon="el-icon-edit" type="text" @click="editroute(scope.row)">编辑</el-button>
                             <el-divider direction="vertical"></el-divider>
-                            <el-button
-                                size="medium"
-                                icon="el-icon-delete"
-                                type="text"
-                                @click="deleteroute(scope.row)"
-                                style="color: #f56c6c"
-                            >删除</el-button>
+                            <el-button size="medium" icon="el-icon-delete" type="text" @click="deleteroute(scope.row)"
+                                style="color: #f56c6c">删除</el-button>
                             </template>
                         </el-table-column>
-                    </el-table><br>
+                    </el-table>
+                    <el-pagination
+                        style="float: right"  
+                        @size-change="handleSizeChange_route"  
+                        @current-change="handleCurrentChange_route"  
+                        :current-page="currentPageRoute"  
+                        :page-size="countRoute"  
+                        :page-sizes="[2, 20, 30, 50]"  
+                        layout="total, sizes, prev, pager, next"  
+                        :total="routeList.length" 
+                    ></el-pagination><br>
 
                     <label>设置任务日期:</label>
                     <label for="startDate">从</label>  
                     <input type="date" v-model="startDate" /> 
                     <label for="endDate">到</label>  
                     <input type="date" v-model="endDate" /> 
-                    <label for="unlimited">无限期</label><br>
+                    <label for="unlimited">
+                        <input type="checkbox" id="unlimited" v-model="Unlimited" /> 无限期
+                    </label><br>
                 
                     <label>设置任务时间:</label>
                     <div class="time-and-button-container">  
@@ -71,32 +80,30 @@
         
         <div class="table-container">  
             <el-table
-                :data="taskList"
-                style="width: 100%;font-size: 12px;"
+                :data="paginatedtaskList"
+                style="width: 100%;font-size: 12px;height: 140px;overflow-y: auto; /* 允许垂直滚动 */ "
                 header-row-class-name="table-header"
                 >
-                <el-table-column prop="taskID" label="任务编号" min-width="100" ></el-table-column>
-                <el-table-column prop="routename" label="路线名称" min-width="300" ></el-table-column>
-                <el-table-column prop="excuteStatus" label="执行状态"  width="150"></el-table-column>
-                <el-table-column prop="excuteTime" label="执行时间"  width="200"></el-table-column>
-                <el-table-column prop="abnormality" label="是否有异常"  width="100"></el-table-column>
-                <el-table-column prop="patrolReport" label="巡逻报告"  width="150"></el-table-column>
-
+                <el-table-column prop="taskID" label="任务编号" width="100" align="center"></el-table-column>
+                <el-table-column prop="routename" label="路线名称" width="250" align="center"></el-table-column >
+                <el-table-column prop="excuteTime" label="执行时间"  width="250" align="center"></el-table-column>
+                <el-table-column prop="abnormality" label="是否有异常"  width="250" align="center"></el-table-column>
+                <el-table-column prop="patrolReport" label="巡逻报告"  width="250" align="center"></el-table-column>
             </el-table>
+            <el-pagination
+                style="float: right"
+                @size-change="handleSizeChange_task"
+                @current-change="handleCurrentChange_task"
+                :current-page="currentPage_task"
+                :page-size="count_task"
+                :page-sizes="[2, 20, 30, 50]"
+                layout="total, sizes, prev, pager, next"
+                :total="taskList.length"
+            ></el-pagination>
             <br><br><br><br><br>
         </div> 
 
-        <el-pagination
-            style="float: right"
-            @size-change="handleSizeChange"
-            @current-change="currentChange"
-            :current-page="currentPage"
-            :page-size="count"
-            :page-sizes="[15, 25, 35, 50]"
-            layout="total, sizes, prev, pager, next"
-            :total="total"
-        ></el-pagination>
-        <routeEdit ref="routeEdit"></routeEdit> <!--存在错误，未定义该组件-->
+        <routeEdit ref="routeEdit"></routeEdit> 
         <syncChannelProgress ref="syncChannelProgress"></syncChannelProgress>  <!--存在错误，未定义该组件-->
     </div> 
 </template>  
@@ -105,7 +112,8 @@
 import { ref,onMounted } from 'vue'; 
 import axios from 'axios';
 import Day from "./Day.vue";
-// import routeEdit from "./dialog/routeEdit.vue"; //待新增vue
+import { Pagination } from 'element-ui';  
+import routeEdit from "./dialog/routeEdit.vue"; 
     
 export default {  
     name: 'SmartPatrol',  
@@ -116,7 +124,8 @@ export default {
         const routeList = ref([]);  
         const startDate = ref(null);  
         const endDate = ref(null);  
-        const frequency = ref(null);  
+        const frequency = ref(null); 
+        const taskList = ref([]);   
         
         const routesubmit = async () => {  
             try {  
@@ -132,16 +141,24 @@ export default {
             }  
         };
 
-        const tasksubmit = () => {  
-            console.log('Submit form:', {  
-            routeName: routeName.value,  
-            selectedCameras: selectedCameras.value,  
-            startDate: startDate.value,  
-            endDate: endDate.value,  
-            frequency: frequency.value,  
-            });  
-            // 这里可以添加提交到服务器的逻辑  
-        };  
+        return { routeName, selectedCameras, routesubmit};  
+
+        const tasksubmit = async () => {  
+            try {  
+                const response = await axios.post('/api/patrol/addtask', //假设接口为api/patrol/addtask
+                {  
+                routeName: routeName.value,  
+                selectedCameras: selectedCameras.value,  
+                startDate: startDate.value,  
+                endDate: endDate.value,  
+                frequency: frequency.value,  
+                }); 
+                taskList.value.push(response.data);   
+                console.log('添加任务成功:', response.data);  
+            } catch (error) {  
+                console.error('添加任务失败:', error);  
+            }  
+        };
         
         return { routeName, selectedCameras, startDate, endDate, frequency, tasksubmit };  
 
@@ -159,7 +176,7 @@ export default {
             }  
         };
 
-        return { routeName, cameras, selectedCameras, routesubmit, refreshRouteAndTaskList };  
+        return { routeName, cameras, selectedCameras,refreshRouteAndTaskList };  
     },  
 
     data() {  
@@ -172,27 +189,41 @@ export default {
             },
             routeName: "",
             selectedCameras: [],
-            routeList: [],
+            multipleSelection: [], // 用于存储选中的行  
             startDate: "",
             endDate: "",
+            Unlimited: false,
             // 巡逻时间列表，从0到23  
             allHours: Array.from({ length: 24 }, (_, i) => i),  
             // 选中的时间  
             selectedHours: [], 
             frequency: "",
-            taskList: [],
-            currentPage: 1,
-            count: 15,
-            total: 0,
+              // 设置样例数据  
+              routeList: [  
+                { routeID: 1, routename: '路线1', selectedCameras: '摄像头1,摄像头2', createTime: '2023-04-01 10:00', updateTime: '2023-04-02 15:00' },  
+                { routeID: 2, routename: '路线2', selectedCameras: '摄像头1,摄像头3,摄像头4', createTime: '2023-03-25 08:30', updateTime: '2023-03-25 10:00' },  
+                { routeID: 3, routename: '路线3', selectedCameras: '摄像头5,摄像头6', createTime: '2023-03-20 12:00', updateTime: '2023-03-20 14:00' },  
+                { routeID: 4, routename: '路线4', selectedCameras: '摄像头7,摄像头8', createTime: '2023-03-15 14:30', updateTime: '2023-03-15 16:00' },
+                { routeID: 5, routename: '路线5', selectedCameras: '摄像头9,摄像头10', createTime: '2023-03-10 16:30', updateTime: '2023-03-10 18:00' }
+            ],  
+            taskList: [  
+                { taskID:1, routename: '路线1', excuteStatus: '已完成', excuteTime: '2023-04-01 10:00', abnormality: '无异常', patrolReport: '任务报告1' },  
+                { taskID:2, routename: '路线2', excuteStatus: '进行中', excuteTime: '2023-04-02 09:00', abnormality: '有异常', patrolReport: '任务报告2' }, 
+                { taskID:3, routename: '路线3', excuteStatus: '未开始', excuteTime: '2023-04-03 12:00', abnormality: '无异常', patrolReport: '任务报告3' },  
+            ],  
+            paginatedrouteList: [], // 当前页显示的路线列表
+            paginatedtaskList: [], // 当前页显示的任务列表  
+            currentPage_route: 1,
+            count_route: 2,
+            total_route: 0,
+            currentPage_task: 1,
+            count_task: 2,
+            total_task: 0,
         };  
     },  
 
     methods: {  
-        addGroup: function() {
-            this.$refs.groupTree.setCurrentKey(null);
-            this.$emit("changeGroup", { id: 0 });
-            // this.$router.push("/deviceGroup");
-        },
+        // 获取路线列表  
         getDeviceGroup: function() {
             this.getDeviceGroupLoading = true;
             this.$axios({
@@ -214,44 +245,88 @@ export default {
             return [...this.deviceGroupList];
         },
         getNode: function(id) {
-            return this.$refs.deviceGroupTree.getNode(id);
+            return this.$refs.groupTree.getNode(id);
         },
         handleNodeClick(data) {
             this.$emit("changeGroup", data);
         },
-        handleCheckChange(data, checked, indeterminate) {  
-            console.log(data, checked, indeterminate);  
-            // 这里可以添加逻辑来处理节点的选择或取消选择  
-            // 例如，将选中的节点ID存储在一个数组中  
-            if (checked) {  
-            this.selectedCameras.push(data.id); // 假设每个节点都有一个唯一的id属性  
-            } else {  
-            const index = this.selectedCameras.indexOf(data.id);  
-            if (index > -1) {  
-                this.selectedCameras.splice(index, 1);  
-            }  
-            }  
+
+        //处理选中的routeList
+        handleSelectionChange(val) {  
+            this.multipleSelection = val;  
+            console.log(this.multipleSelection); // 打印选中的行数据  
         },  
         
+        // 巡逻路线操作 //
+        editroute: function(row) {
+            this.$refs.routeEdit.openDialog(row, () => {
+                this.$refs.routeEdit.close();
+                this.$message({
+                showClose: true,
+                message: "路线修改成功",
+                type: "success"
+                });
+                setTimeout(this.getrouteList, 200);
+            });
+            },
+        deleteroute: function(row) {
+            let msg = "确定删除此路线？";
+            this.$confirm(msg, "提示", {
+                dangerouslyUseHTMLString: true,
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                center: true,
+                type: "warning"
+            })
+            .then(() => {
+            this.$axios({
+                method: "delete",
+                url: `/api/device/query/devices/${row.deviceId}/delete` //API待确认
+            })
+                .then(res => {
+                this.getrouteList();
+                })
+                .catch(error => {
+                console.error(error);
+                });
+            })
+            .catch(() => {});
+        },
+
         // 格式化小时为更易于阅读的格式（例如，将0显示为00）  
         formatHour(hour) {  
             return hour.toString().padStart(2, '0')+ ':00';  
         },
 
         // 处理分页  
-        handleSizeChange(newSize) {  
-            this.count = newSize;  
-            console.log('每页显示条目数改变:', newSize);  
+        handleSizeChange_route(newSize) {  
+            this.count_route = newSize;  
+            this.fetchData(); // 重新获取数据，确保分页正确 
         },  
-        currentChange(newPage) {  
-            this.currentPage = newPage;   
-            console.log('当前页改变:', newPage);  
+        handleSizeChange_task(newSize) {  
+            this.count_task = newSize;  
+            this.fetchData(); 
         },  
-    },
- 
-    mounted() {
-        this.getDeviceGroup();
-        this.fetchData(); //不存在该函数   
+        handleCurrentChange_route(newPage) { 
+            this.currentPage_route = newPage;
+            this.fetchData(); 
+        },
+        handleCurrentChange_task(newPage) {  
+            this.currentPage_task = newPage;  
+            this.fetchData(); 
+        },  
+        fetchData() {  
+            // 这里用静态数据代替,正常情况下发送一个请求到服务器，根据currentPage和count来获取数据  
+            // 例如：axios.get('/api/tasks', { params: { page: this.currentPage, limit: this.count } })  
+        
+            // 使用当前页码和每页数量来计算分页后的数据  
+            const start_route = (this.currentPage_route - 1) * this.count_route;  
+            const end_route = this.currentPage_route * this.count_route;  
+            const start_task = (this.currentPage_task - 1) * this.count_task;  
+            const end_task = this.currentPage_task * this.count_task;  
+            this.paginatedrouteList = this.routeList.slice(start_route, end_route);  
+            this.paginatedtaskList = this.taskList.slice(start_task, end_task);  
+        },  
     },
 
     computed: {  
@@ -266,46 +341,18 @@ export default {
             return groups;  
         }, []);  
         }  
+    },
+     
+    mounted() {
+        this.getDeviceGroup();
+        this.fetchData();   
     },  
 
-    /* 巡逻路线操作 */
-    edit: function(row) {
-      this.$refs.routeEdit.openDialog(row, () => {
-        this.$refs.routeEdit.close();
-        this.$message({
-          showClose: true,
-          message: "路线修改成功",
-          type: "success"
-        });
-        setTimeout(this.getrouteList, 200);
-      });
-    },
-
-    deleteroute: function(row) {
-      let msg = "确定删除此路线？";
-      this.$confirm(msg, "提示", {
-        dangerouslyUseHTMLString: true,
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        center: true,
-        type: "warning"
-      })
-        .then(() => {
-          this.$axios({
-            method: "delete",
-            url: `/api/device/query/devices/${row.deviceId}/delete` //API待确认
-          })
-            .then(res => {
-              this.getrouteList();
-            })
-            .catch(error => {
-              console.error(error);
-            });
-        })
-        .catch(() => {});
-    },
-
-    components: {Day}
+    components: {
+        Day,
+        routeEdit,
+        'el-pagination': Pagination  
+    }
        
 };  
 </script>  
@@ -325,24 +372,23 @@ export default {
         align-items: flex-start; /* 子元素顶部对齐（可选，根据需要调整） */  
         width:  120%; /* 或指定具体宽度，根据需要 */  
         padding: 10px; /* 根据需要添加内边距 */  
-        max-width: 1430px; 
+        max-width: 1390px; 
     } 
 
     /* 文本和表单样式 */  
     .route-container {  
         position: relative;   
-        width: 28%;
+        width: 400px;
         padding: 10px;  
         background-color: #f9f9f9; /* 轻微背景色增加可读性 */  
         border-radius: 8px; /* 圆角边框 */  
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */  
         text-align: left; /* 左对齐 */ 
-        max-height: 410px;
+        max-height: 470px;
     } 
 
     .camera-and-button-container .el-tree {  
-        top:25px;
-        height: 325px; /* 设置固定高度 */ 
+        height: 375px; /* 设置固定高度 */ 
         width: 250px; 
         overflow-y: auto; /* 允许垂直滚动 */  
         border: 1px solid #ccc; /* 添加方框 */  
@@ -351,13 +397,13 @@ export default {
 
     .task-container {  
         position: relative;   
-        width: 68%;
+        width: 950px; 
         padding: 10px;  
         background-color: #f9f9f9; /* 轻微背景色增加可读性 */  
         border-radius: 8px; /* 圆角边框 */  
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */  
         text-align: left; /* 左对齐 */ 
-        max-height: 410px;
+        max-height: 470px;
     } 
     label {  
         font-size: 16px; /* 增大标签字体大小 */  
@@ -389,7 +435,7 @@ export default {
         justify-content: space-between; /* 子元素在主轴上的分布方式 */  
         align-items: center; /* 子元素在交叉轴上的对齐方式 */  
         width: 100%; 
-        height:250px; 
+        height:360px; 
     }
     
     .fixed-height-select {  
@@ -419,34 +465,16 @@ export default {
 
     /* 表格样式 */
     .table-container {  
-        position: relative;  
+        position: relative;
         top: 0px;  
-        width: 120%; 
-        max-width: 1420px; 
+        width: 1380px; 
+        height: 170px; 
         padding: 10px;  
         background-color: #f9f9f9; /* 轻微背景色增加可读性 */  
         border-radius: 8px; /* 圆角边框 */  
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */  
     } 
 
-    table {  
-        width: 100%;  
-        border-collapse: collapse;  
-        margin-top: 10px;  
-    }  
-    
-    th, td {  
-        border: 1px solid #ddd;  
-        padding: 12px; /* 增大单元格内边距 */  
-        text-align: center; /* 文本居中 */  
-        font-size: 14px; /* 单元格字体大小 */  
-        color: #555; /* 字体颜色 */  
-    }  
-    
-    th {  
-        background-color: #f2f2f2; /* 表头背景色 */  
-    }  
-    
     /* 时间选择样式 */  
     .hour-row {  
         display: flex;  
