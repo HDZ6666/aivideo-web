@@ -1,42 +1,45 @@
-<template>  
-  <el-dialog  
-    :visible.sync="dialogVisible"  
-    title="路线编辑"  
-    width="30%"  
-    @close="handleClose"  
-  >  
-    <el-form :model="routeForm" ref="routeForm">  
-      <el-form-item label="路线编号" :label-width="formLabelWidth">  
-        <el-input v-model="routeForm.routeID" disabled></el-input>  
-      </el-form-item>  
-      <el-form-item label="路线名称" :label-width="formLabelWidth">  
-        <el-input v-model="routeForm.routename"></el-input>  
-      </el-form-item>
-      <el-form-item label="所选摄像头" :label-width="formLabelWidth">  
-        <el-tree
-          ref="groupTree"
-          class="el-tree"
-          node-key="id"
-          default-expand-all
-          :data="deviceGroupList"
-          :props="treeProps"
-          :expand-on-click-node="false"
-          highlight-current
-          @node-click="handleNodeClick"
-          show-checkbox
-          > 
-      </el-tree>
-      </el-form-item>    
-    </el-form>  
-    <div slot="footer" class="dialog-footer">  
-      <el-button @click="handleCancel">取消</el-button>  
-      <el-button type="primary" @click="handleSave">确认</el-button>  
-    </div>  
-  </el-dialog>  
+<template> 
+  <div id="routeEdit">  
+    <el-dialog  
+      :visible.sync="dialogVisible"  
+      title="路线编辑"  
+      width="30%"  
+      @close="handleClose"  
+    >  
+      <el-form :model="routeForm" ref="routeForm">  
+        <el-form-item label="路线编号" :label-width="formLabelWidth">  
+          <el-input v-model="routeForm.routeID" disabled></el-input>  
+        </el-form-item>  
+        <el-form-item label="路线名称" :label-width="formLabelWidth">  
+          <el-input v-model="routeForm.routename"></el-input>  
+        </el-form-item>
+        <el-form-item label="所选摄像头" :label-width="formLabelWidth">  
+          <el-tree
+            ref="groupTree"
+            class="el-tree"
+            node-key="id"
+            default-expand-all
+            :data="deviceGroupList"
+            :props="treeProps"
+            :expand-on-click-node="false"
+            highlight-current
+            @node-click="handleNodeClick"
+            show-checkbox
+            > 
+        </el-tree>
+        </el-form-item>    
+      </el-form>  
+      <div slot="footer" class="dialog-footer">  
+        <el-button @click="handleCancel">取消</el-button>  
+        <el-button type="primary" @click="handleSave">确认</el-button>  
+      </div>  
+    </el-dialog> 
+  </div> 
 </template>  
   
 <script>  
 export default {  
+  name: 'routeEdit',  
   data() {  
     return {  
       getDeviceGroupLoading: false,
