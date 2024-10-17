@@ -49,6 +49,14 @@
                             </template>
                         </el-table-column>
                     </el-table>
+                    <el-button
+                        icon="el-icon-refresh-right"
+                        circle
+                        size="mini"
+                        :loading="refreshRouteListLoading"
+                        @click="refreshRouteList()"
+                        style="float: right ;margin-top: 1px"
+                    ></el-button>
                     <el-pagination
                         style="float: right"  
                         @size-change="handleSizeChange_route"  
@@ -103,6 +111,14 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <el-button
+                icon="el-icon-refresh-right"
+                circle
+                size="mini"
+                :loading="refreshTaskListLoading"
+                @click="refreshTaskList()"
+                style="float: right ;margin-top: 1px"
+            ></el-button>
             <el-pagination
                 style="float: right"  
                 @size-change="handleSizeChange_task"  
@@ -163,6 +179,8 @@ export default {
         const currentPage_task = ref(1);
         const count_task = ref(2);
         const total_task = ref(0);
+        const refreshRouteListLoading = ref(false);
+        const refreshTaskListLoading = ref(false);
     
         const routesubmit = async () => {  
             try {  
@@ -372,7 +390,41 @@ export default {
             const end_task = this.currentPage_task * this.count_task;  
             this.paginatedrouteList = this.routeList.slice(start_route, end_route);  
             this.paginatedtaskList = this.taskList.slice(start_task, end_task);  
-        },  
+        },
+
+        // 刷新路线列表  
+        refreshRouteList: function() {  
+            this.refreshRouteListLoading = true;  
+            this.$axios({   
+                method: "get",  
+                url: "/api/patrol/getroutes"  
+            })  
+                .then(res => {  
+                this.routeList = res.data;  
+                this.refreshRouteListLoading = false;  
+                })  
+                .catch(error => {  
+                console.error(error);  
+                this.refreshRouteListLoading = false;  
+                });  
+        },
+
+        // 刷新任务列表  
+        refreshTaskList: function() {  
+            this.refreshTaskListLoading = true;  
+            this.$axios({   
+                method: "get",  
+                url: "/api/patrol/gettasks"  
+            })  
+                .then(res => {  
+                this.taskList = res.data;  
+                this.refreshTaskListLoading = false;  
+                })  
+                .catch(error => {  
+                console.error(error);  
+                this.refreshTaskListLoading = false;  
+                });  
+        },
     },
 
     computed: {  
