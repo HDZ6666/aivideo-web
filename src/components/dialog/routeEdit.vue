@@ -77,30 +77,32 @@ export default {
       this.routeForm = { ...this.originalRoute };  
       this.handleClose();  
     },  
-    // 保存编辑后的数据  
+    // 保存编辑后的数据到route/edit API  
     async handleSave() {  
       try {  
-        // 校验表单  
-        this.$refs.routeForm.validate((valid) => {  
+        this.$refs.routeForm.validate(async (valid) => {  
           if (valid) {  
-            // 假设调用API保存数据  
-            // 注意：这里应替换为实际的API调用和数据处理逻辑  
-            console.log('保存数据:', this.routeForm);  
-              
-            // 假设保存成功，关闭对话框  
-            this.handleClose();  
-              
-            // 可选：通知父组件或执行其他操作  
-            this.$emit('save-success', this.routeForm);  
+            // 调用route/edit API  
+            const response = await this.$axios.post(  
+              'http://36.133.15.158/ai_video/api/patrol/route/edit',  
+              this.routeForm  
+            );  
+            if (response.data.code === 0) {  
+              // 假设保存成功  
+              this.handleClose();  
+              this.$emit('save-success', this.routeForm);  
+            } else {  
+              // 处理保存失败的情况  
+              console.error('保存失败:', response.data.message);  
+            }  
           } else {  
             console.log('表单验证失败');  
-            return false;  
           }  
         });  
       } catch (error) {  
         console.error('保存数据时发生错误:', error);  
       }  
-    },
+    },  
     
     getDeviceGroup: function() {
         this.getDeviceGroupLoading = true;

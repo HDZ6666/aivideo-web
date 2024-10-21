@@ -44,9 +44,10 @@
                 ></el-option> 
             </el-select> 
 
-            <!-- 提交筛选按钮 --> 
+            <!-- 按钮 --> 
             <el-button type="primary" @click="applyFilter">筛选</el-button>
             <el-button type="primary" @click="resetFilter">重置</el-button>
+            <el-button type="primary" @click="exportReportList">导出</el-button>
         </div> 
 
         <div class="table-container"> 
@@ -161,6 +162,29 @@ export default {
             this.fetchData(); 
         },
         
+        // 导出报告列表
+        exportReportList() {
+            const url = '/api/exportPatrolReport';//假设接口地址为/api/exportPatrolReport
+            const params = {    
+                filterDate: this.filterDate,
+                filterRoutename: this.filterRoutename,
+                filterExcuteStatus: this.filterExcuteStatus,
+                filterAbnormality: this.filterAbnormality,
+            };
+            axios.get(url, { params: params, responseType: 'blob' })
+               .then(response => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', '巡逻报告列表.xls');
+                    document.body.appendChild(link);
+                    link.click();
+                })
+               .catch(error => {
+                    console.log(error);
+                });
+        },
+
         //查看报告
         viewReport: function(row) {
             this.$refs.showReport.openDialog(row);

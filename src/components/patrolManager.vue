@@ -115,7 +115,7 @@
                 icon="el-icon-refresh-right"
                 circle
                 size="mini"
-                :loading="refreshTaskListLoading"
+                :loading="refreshRouteListLoading"
                 @click="refreshTaskList()"
                 style="float: right ;margin-top: 1px"
             ></el-button>
@@ -179,16 +179,17 @@ export default {
         const currentPage_task = ref(1);
         const count_task = ref(2);
         const total_task = ref(0);
-        const refreshRouteListLoading = ref(false);
-        const refreshTaskListLoading = ref(false);
     
         const routesubmit = async () => {  
             try {  
-                const response = await axios.post('/ai/api/patrol/addroute', //假设接口为ai/api/patrol/addroute
+                const response = await axios.post('http://36.133.15.158/ai_video/api/patrol/route/add', 
                 {  
                 routeName: routeName.value,  
                 selectedCameras: selectedCameras.value,  
-                }); 
+                }, {headers: {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                }}); 
+                withCredentials: true;
                 routeList.value.push(response.data);   
                 console.log('添加路线成功:', response.data);  
             } catch (error) {  
@@ -198,7 +199,7 @@ export default {
 
         const tasksubmit = async () => {  
             try {  
-                const response = await axios.post('/api/patrol/addtask', //假设接口为api/patrol/addtask
+                const response = await axios.post('http://36.133.15.158/ai_video/api/patrol/route_task/add', 
                 {  
                 routeName: routeName.value,  
                 selectedCameras: selectedCameras.value,  
@@ -215,11 +216,11 @@ export default {
         const refreshList = async () => {  
             try {  
                 // 获取最新的路线列表  
-                const routeListResponse = await axios.get('/api/patrol/getroutes');  
+                const routeListResponse = await axios.get('http://36.133.15.158/ai_video/api/patrol/route/list');  
                 routeList.value = routeListResponse.data; // 假设后端返回的是路线列表数据  
 
                 // 获取最新的任务列表  
-                const taskListResponse = await axios.get('/api/patrol/gettasks');  
+                const taskListResponse = await axios.get('http://36.133.15.158/ai_video/api/patrol/route_task/list');  
                 taskList.value = taskListResponse.data; // 假设后端返回的是任务列表数据  
             } catch (error) {  
                 console.error('Failed to refresh route and task lists:', error);  
@@ -234,6 +235,9 @@ export default {
 
     data() {  
         return {  
+            refreshRouteListLoading: false,  
+            refreshTaskListLoading: false,  
+
             // 设置样例数据  
             routeList: [  
                 { routeID: 1, routename: '路线1', selectedCameras: '摄像头1,摄像头2', createTime: '2023-04-01 10:00', updateTime: '2023-04-02 15:00' },  
@@ -309,7 +313,7 @@ export default {
             .then(() => {
             this.$axios({
                 method: "delete",
-                url: `/api/device/query/devices/${row.deviceId}/delete` //API待确认
+                url: `http://36.133.15.158/ai_video/api/patrol/route/del` 
             })
                 .then(res => {
                 this.getrouteList();
@@ -345,7 +349,7 @@ export default {
             .then(() => {
             this.$axios({
                 method: "delete",
-                url: `/api/device/query/devices/${row.deviceId}/delete` //API待确认
+                url: `http://36.133.15.158/ai_video/api/patrol/route_task/del` 
             })
                 .then(res => {
                 this.gettaskList();
@@ -380,9 +384,6 @@ export default {
             this.fetchData(); 
         },  
         fetchData() {  
-            // 这里用静态数据代替,正常情况下发送一个请求到服务器，根据currentPage和count来获取数据  
-            // 例如：axios.get('/api/tasks', { params: { page: this.currentPage, limit: this.count } })  
-        
             // 使用当前页码和每页数量来计算分页后的数据  
             const start_route = (this.currentPage_route - 1) * this.count_route;  
             const end_route = this.currentPage_route * this.count_route;  
@@ -397,7 +398,7 @@ export default {
             this.refreshRouteListLoading = true;  
             this.$axios({   
                 method: "get",  
-                url: "/api/patrol/getroutes"  
+                url: "http://36.133.15.158/ai_video/api/patrol/route/list"  
             })  
                 .then(res => {  
                 this.routeList = res.data;  
@@ -414,7 +415,7 @@ export default {
             this.refreshTaskListLoading = true;  
             this.$axios({   
                 method: "get",  
-                url: "/api/patrol/gettasks"  
+                url: "http://36.133.15.158/ai_video/api/patrol/route_task/list"  
             })  
                 .then(res => {  
                 this.taskList = res.data;  
