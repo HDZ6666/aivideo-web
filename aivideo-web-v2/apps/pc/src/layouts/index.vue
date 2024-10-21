@@ -1,7 +1,12 @@
 <template>
   <div>
     <template v-if="settingStore.showContentOnly">
-      <layout-content />
+      <t-layout key="side" :class="mainLayoutCls">
+          <t-aside><layout-side-nav /></t-aside>
+          <t-layout>
+            <t-content><layout-content /></t-content>
+          </t-layout>
+        </t-layout>
     </template>
     <template v-else>
       <template v-if="setting.layout.value === 'side'">
