@@ -148,7 +148,17 @@ export default new VueRouter({
           path: "/deviceGroup",
           name: "deviceGroup",
           component: () => import("../components/DeviceGroup.vue") // deviceGroup
-        }
+        },
+        {
+          path: "/v2/alarm",
+          name: "alarmV2",
+          component: () => import("../components/v2/alarmV2.vue") // alarmV2
+        },
+        {
+          path: "/v2/datav",
+          name: "datavV2",
+          component: () => import("../components/v2/datavV2.vue") // datavV2
+        },
       ]
     },
     {

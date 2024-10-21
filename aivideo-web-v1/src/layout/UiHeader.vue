@@ -31,6 +31,11 @@
         <el-menu-item index="/parentPlatformList/15/1">国标级联</el-menu-item>
         <el-menu-item v-if="editUser" index="/userManager">用户管理</el-menu-item>
       </el-submenu>
+      <el-submenu index="v2">
+        <template slot="title">v2</template>
+        <el-menu-item index="/v2/datav">大屏v2</el-menu-item>
+        <el-menu-item index="/v2/alarm">告警v2</el-menu-item>
+      </el-submenu>
       <!--            <el-submenu index="/setting">-->
       <!--              <template slot="title">系统设置</template>-->
       <!--              <el-menu-item index="/setting/web">WEB服务</el-menu-item>-->
@@ -53,9 +58,9 @@
 </template>
 
 <script>
+import { Notification } from "element-ui";
 import changePasswordDialog from "../components/dialog/changePassword.vue";
 import userService from "../components/service/UserService";
-import { Notification } from "element-ui";
 import { mixin } from "../utils/mixin";
 export default {
   name: "UiHeader",
