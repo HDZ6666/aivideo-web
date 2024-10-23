@@ -16,7 +16,8 @@ module.exports = {
         // target: "http://192.168.1.105:18080",
         // target: "http://10.16.139.254:18080",
         // target: "https://fyict.cn:18080",
-        target: "http://183.239.58.24:18080",
+        //target: "http://183.239.58.24:18080",  // 佛山项目环境
+        target: "http://36.133.15.158/ai_video", // 清远项目环境
         // target: "http://192.168.0.151:18080",
         changeOrigin: true,
         pathRewrite: {

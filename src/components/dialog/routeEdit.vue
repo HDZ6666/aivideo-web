@@ -3,27 +3,27 @@
     <el-dialog  
       :visible.sync="dialogVisible"  
       title="路线编辑"  
-      width="30%"  
+      width="50%"  
       @close="handleClose"  
     >  
       <el-form :model="routeForm" ref="routeForm">  
         <el-form-item label="路线编号" :label-width="formLabelWidth">  
-          <el-input v-model="routeForm.routeID" disabled></el-input>  
+          <el-input v-model="routeForm.routeId" disabled></el-input>  
         </el-form-item>  
         <el-form-item label="路线名称" :label-width="formLabelWidth">  
-          <el-input v-model="routeForm.routename"></el-input>  
+          <el-input v-model="routeForm.routeName"></el-input>  
         </el-form-item>
         <el-form-item label="所选摄像头" :label-width="formLabelWidth">  
           <el-tree
             ref="groupTree"
-            class="el-tree"
             node-key="id"
             default-expand-all
             :data="deviceGroupList"
             :props="treeProps"
             :expand-on-click-node="false"
+            :default-checked-keys="selectedCamerasId"  
             highlight-current
-            @node-click="handleNodeClick"
+            @selection-change="handleSelectionChange_group"
             show-checkbox
             > 
         </el-tree>
@@ -40,6 +40,12 @@
 <script>  
 export default {  
   name: 'routeEdit',  
+  props: {  
+    selectedCamerasId: {  
+        type: Array,  
+        required: true  
+      },  
+    },
   data() {  
     return {  
       getDeviceGroupLoading: false,
@@ -51,8 +57,8 @@ export default {
       dialogVisible: false,  
       formLabelWidth: '120px',  
       routeForm: {  
-        routeID: '',  
-        routename: '', 
+        routeId: '',  
+        routeName: '', 
       },  
       originalRoute: {}, // 用于存储原始数据，以便在取消时恢复  
     };  
@@ -84,7 +90,7 @@ export default {
           if (valid) {  
             // 调用route/edit API  
             const response = await this.$axios.post(  
-              'http://36.133.15.158/ai_video/api/patrol/route/edit',  
+              '/api/patrol/route/edit',  
               this.routeForm  
             );  
             if (response.data.code === 0) {  
@@ -141,7 +147,7 @@ export default {
 <style scoped>  
 .el-tree {  
     height: 300px; /* 设置固定高度 */ 
-    width: 250px; 
+    width: 200px; 
     overflow-y: auto; /* 允许垂直滚动 */  
     border: 1px solid #ccc; /* 添加方框 */  
     background-color: #f9f9f9; /* 设置背景色 */  
