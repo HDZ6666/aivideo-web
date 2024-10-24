@@ -107,6 +107,12 @@ import { LAST_7_DAYS } from '@/utils/date';
 import { PRODUCT_LIST, TEAM_MEMBERS, USER_INFO_LIST } from './constants';
 import { getFolderLineDataSet } from './index';
 
+import { getApiClient } from '@aivideo/rest';
+const apiClient = getApiClient();
+apiClient.GET("/api/alarm/v2/datapoints/").then(r=>{
+  console.log(r);
+})
+
 echarts.use([GridComponent, TooltipComponent, LineChart, CanvasRenderer, LegendComponent]);
 
 let lineContainer: HTMLElement;

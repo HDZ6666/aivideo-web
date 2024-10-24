@@ -16,7 +16,7 @@ module.exports = {
         // target: "http://192.168.1.105:18080",
         // target: "http://10.16.139.254:18080",
         // target: "https://fyict.cn:18080",
-        target: "http://localhost:18080",
+        target: "http://172.16.66.77:18080",
         // target: "http://192.168.0.151:18080",
         changeOrigin: true,
         pathRewrite: {
@@ -27,11 +27,15 @@ module.exports = {
         // target: 'http://localhost:18080',
         // target: "http://172.16.1.106:18080",
         // target: "http://192.168.1.105:18080",
-        target: "http://localhost:18080",
+        target: "http://172.16.66.77:18080",
         changeOrigin: true
         // pathRewrite: {
         //   '^/static/snap': '/static/snap'
         // }
+      },
+      "/api": {
+        target: "http://172.16.66.77:18080",
+        changeOrigin: true
       },
       "/pc": {
         target: "http://localhost:3001",

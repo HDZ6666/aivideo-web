@@ -12,7 +12,7 @@ export default [
       {
         path: 'index',
         name: 'AlarmIndex',
-        component: () => import('@/pages/user/index.vue'),
+        component: () => import('@/pages/alarm/index.vue'),
         meta: { title: { zh_CN: '告警中心', en_US: 'Alarm Center' } },
       },
     ],
