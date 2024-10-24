@@ -11,7 +11,7 @@
             <div class="line"></div>
             <div class="list">
               <div class="rows">
-                <t-tree :data="bind.deviceTree" :activable="true" @active="changeDeviceTree" />
+                <t-tree ref="tree" :data="bind.deviceTree" :activable="true" @active="changeDeviceTree" @expand="deviceTreeExpand" />
               </div>
             </div>
           </div>
@@ -57,7 +57,7 @@
         <div class="icon"><img src="@/assets/imgs/nav_icon.png"/></div>
         <div class="text">
           <div class="value">
-            <span class="number">21</span>个
+            <span class="number">{{bind.info.device.total}}</span>个
           </div>
           <div class="name">国际设备</div>
         </div>
@@ -66,7 +66,7 @@
         <div class="icon"><img src="@/assets/imgs/nav_icon.png"/></div>
         <div class="text">
           <div class="value">
-            <span class="number">2665</span>个
+            <span class="number">{{bind.info.channel.total}}</span>个
           </div>
           <div class="name">通道总数量</div>
         </div>
@@ -75,7 +75,7 @@
         <div class="icon"><img src="@/assets/imgs/nav_icon.png"/></div>
         <div class="text">
           <div class="value">
-            <span class="number">6617</span>个
+            <span class="number">{{bind.info.channel.online}}</span>个
           </div>
           <div class="name">在线通道数量</div>
         </div>
@@ -84,7 +84,7 @@
         <div class="icon"><img src="@/assets/imgs/nav_icon.png"/></div>
         <div class="text">
           <div class="value">
-            <span class="number">12</span>个
+            <span class="number">{{bind.info.proxy.total}}</span>个
           </div>
           <div class="name">非国标设备数</div>
         </div>
@@ -96,11 +96,11 @@
         <div class="button" @click="autoPage($event)">自动轮播</div>
       </div>
       <div class="rt">
-        <div class="button">上一页</div>
+        <div class="button" @click="onPage(-1)">上一页</div>
         <div class="pageNum">{{ pager.pageIndex }} / {{ pager.totalPage }}</div>
-        <div class="button">下一页</div>
+        <div class="button" @click="onPage(1)">下一页</div>
         <div class="select">
-          <t-select v-model="pager.pageSize" @change="changePageSize">
+          <t-select v-model="pageSize" @change="changePageSize">
             <t-option key="4" label="2X2/页" value="4" />
             <t-option key="9" label="3X3/页" value="9"></t-option>
             <t-option key="16" label="4X4/页" value="16" />
@@ -108,124 +108,45 @@
         </div>
       </div>
     </div>
-    <div class="videos videos4" v-if="pager.pageSize=='4'">
+    <div class="videos">
       <div class="row">
-        <div class="col">
-          <vol-player class="active" @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-      </div>
-    </div>
-    <div class="videos videos9" v-else-if="pager.pageSize=='9'">
-      <div class="row">
-        <div class="col">
-          <vol-player class="active" @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-      </div>
-    </div>
-    <div class="videos videos16" v-else-if="pager.pageSize=='16'">
-      <div class="row">
-        <div class="col">
-          <vol-player class="active" @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
-        </div>
-        <div class="col">
-          <vol-player @click="selectVideo($event)"></vol-player>
+        <div :class="{col:true,col2:pager.pageSize==4,col3:pager.pageSize==9,col4:pager.pageSize==16}" v-for="(row,index) in bind.cameraRows" :key="index">
+          <vol-player :url="row.streamInfo.hls.url" :autoplay="true" @click="selectVideo($event)"></vol-player>
         </div>
       </div>
     </div>
   </div>
 
-  <t-dialog v-model:visible="showWarnDialog" width="5rem" class="warnDialog">
+  <t-dialog v-model:visible="warnDialog.show" width="5rem" class="warnDialog">
     <div class="content">
-      <img src="@/assets/imgs/close.png" class="close" @click="showWarnDialog=false">
-      <div></div>
+      <img src="@/assets/imgs/close.png" class="close" @click="warnDialog.show=false">
+      <div class="title">行人</div>
+      <div class="body">
+        <div class="lf">
+          <div class="img">
+            <img error="@/assets/imgs/alarm_pic.png" :src="warnDialog.data.alarmImg"/>
+          </div>
+        </div>
+        <div class="rt">
+          <div>告警时间：{{ warnDialog.data.alarmTime }}</div>
+          <div>分组名称：{{ warnDialog.data.alarmCategory }}</div>
+          <div>设备名称：{{ warnDialog.data.deviceName }}</div>
+          <div>告警ID：{{ warnDialog.data.alarmId }}</div>
+          <div>置信度：{{ warnDialog.data.alarmPriority }}</div>
+          <div>处理情况：  <t-tag theme="warning">未处理</t-tag></div>
+          <div>通知人员：</div>
+          <div class="buttons">
+
+          </div>
+        </div>
+      </div>
     </div>
+  </t-dialog>
+  <!--查看视频弹出框-->
+  <t-dialog width="5rem" class="videoDialog" :header="videoDialog.title" v-model:visible="videoDialog.show" @closed="videoDialogClosed">
+    <div class="content">
+      <vol-player ref="videoPlayer" :url="videoDialog.url" :poster="videoDialog.poster"></vol-player>
+    </div>   
   </t-dialog>
 </div>
 </template>
@@ -256,19 +177,47 @@ export default defineComponent({
   },
   data(){
     return{
-      showWarnDialog:false,
       leftBox1Height:0,
       rightBox1Height:0,
       rightBox2Height:0,
       deviceSelected:'全部设备',
+      pageSize:'9',
       chart:{
       },
       pager:{
         pageIndex:1,
-        pageSize:'9',
+        pageSize:9,
         totalPage:20
       },
+      warnDialog:{
+        show:false,
+        data:{}
+      },
+      videoDialog:{
+        show:false,
+        title:'',
+        url:'',
+        poster:''
+      },
       bind:{
+        info:{
+          channel:{
+            online:0,
+            total:0
+          },
+          device:{
+            online:0,
+            total:0
+          },
+          proxy:{
+            online:0,
+            total:0
+          },
+          push:{
+            online:0,
+            total:0
+          }
+        },
         warnList:[
           // {id:'1',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
           // {id:'2',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
@@ -290,7 +239,9 @@ export default defineComponent({
           // {id:'5',label:'禅城区',value:'禅城区'},
           // {id:'6',label:'南海区',value:'南海区'},
           // {id:'7',label:'顺德区',value:'顺德区'}
-        ]
+        ],
+        cameraList:[],
+        cameraRows:[]
       }
     }
   },
@@ -312,10 +263,11 @@ export default defineComponent({
       this.rightBox2Height=height;
       this.rightBox1Height=totalHeight-this.rightBox2Height-this.$fontSize*0.1;
     },
-    changeDevice(row){
-      this.deviceSelected=row.name;
-    },
     changePageSize(){
+      this.pager.pageSize=parseInt(this.pageSize);
+      this.pager.pageIndex=1;
+      this.pager.totalPage=Math.ceil(this.bind.cameraList.length/this.pager.pageSize);
+      this.getCameraPage();
     },
     autoPage(event){
       if($(event.currentTarget).hasClass("active")){
@@ -325,22 +277,91 @@ export default defineComponent({
         $(event.currentTarget).addClass("active")
       }
     },
+    onPage(val){
+      if(val>0){
+        if(this.pager.pageIndex+1>this.pager.totalPage){
+          this.$message.error("没有下一页了");
+        }
+        else{
+          this.pager.pageIndex++;
+          this.getCameraPage();
+        }
+      }
+      else{
+        if(this.pager.pageIndex-1<1){
+          this.$message.error("没有上一页了");
+        }
+        else{
+          this.pager.pageIndex--;
+          this.getCameraPage();
+        }
+      }
+    },
     selectVideo(event){
       $(event.currentTarget).parent().parent().parent().find(".player").removeClass("active")
       $(event.currentTarget).addClass("active")
     },
     viewWarnInfo(row){
-        this.showWarnDialog=true;
+        this.warnDialog.show=true;
+        this.warnDialog.data=row.data;
+        console.log(row);
     },
-    changeDeviceTree(node){
-      console.log(node);
+    changeDeviceTree(values,context){
+      this.deviceSelected=context.node.data.label;
+      if(context.node.data.url!=undefined && context.node.data.url!=null){
+        this.videoDialog.show=true;
+        this.$nextTick(()=>{
+          this.videoDialog.title=context.node.data.label;
+          this.videoDialog.url=context.node.data.url;
+        });
+      }
     },
-    getDeviceList(){
+    deviceTreeExpand(value,context){
+      if(context.node.data.children.length==1 && context.node.data.children[0].id==''){
+        this.getDeviceChilrenList(context.node);
+      }
+    },
+    videoDialogClosed(){
+      this.$refs['videoPlayer'].onHide();
+    },
+    getCameraList(){
       this.bind.deviceTree=[];
+      const apiClient = getApiClient();
+      apiClient.GET("/api/cockpit/proxy/list?page=1&pageSize=1000").then(r => {
+        if(r.data.code=="0"){
+          this.bind.cameraList=r.data.data.list;
+          this.pager.pageIndex=1;
+          this.pager.totalPage=Math.ceil(this.bind.cameraList.length/this.pager.pageSize);
+          this.getCameraPage();
+          let tree=[{id:0,label:'全部设备',value:'0',children:[]}];
+          for(let i=0;i<this.bind.cameraList.length;i++){
+            tree[0].children.push({
+              id:this.bind.cameraList[i].id,
+              label:this.bind.cameraList[i].name,
+              value:this.bind.cameraList[i].id.toString(),
+              url:this.bind.cameraList[i].streamInfo.hls.url
+            });
+          }
+          this.bind.deviceTree=tree;
+          this.getDeviceGroupList();
+        }
+      })
+    },
+    getCameraPage(){
+      let rows=[];
+      this.bind.cameraRows=[];
+      for(let i=0;i<this.bind.cameraList.length;i++){
+        if((i>=this.pager.pageIndex-1)*this.pager.pageSize && i<this.pager.pageIndex*this.pager.pageSize){
+          rows.push(this.bind.cameraList[i]);
+        }
+      }
+      this.bind.cameraRows=rows;
+    },
+    getDeviceGroupList(){
       const apiClient = getApiClient();
       apiClient.GET("/ai/api/device/group/cameraGroupList?parentId=0").then(r => {
         if(r.data.code=="0"){
-          let tree=[];
+          let tree=JSON.parse(JSON.stringify(this.bind.deviceTree));
           this.bind.deviceData=r.data.data;
           for(let i=0;i<r.data.data.length;i++){
             tree.push({
@@ -356,7 +377,11 @@ export default defineComponent({
     },
     getDeviceChilren(data){
       if(data.length==0){
-        return [];
+        return [{
+            id:'',
+            label:'',
+            value:''
+          }];
       }
       else{
         let tree=[];
@@ -371,11 +396,33 @@ export default defineComponent({
         return tree;
       }
     },
+    getDeviceChilrenList(node){
+      const apiClient = getApiClient();
+      apiClient.GET("/ai/api/device/queryManager/list?page=1&pageSize=9999&categoryId="+node.value).then(r => {
+        if(r.data.code=="0"){
+          let children=[];
+          for(let i=0;i<r.data.data.list.length;i++){
+            children.push({
+              id:r.data.data.list[i].id,
+              label:r.data.data.list[i].name,
+              value:r.data.data.list[i].id.toString(),
+              url:r.data.data.list[i].streamInfo.hls.url
+            });
+          }
+          let nodes=node.getChildren();
+          for(let i=0;i<nodes.length;i++){
+            nodes[i].remove();
+          }
+          this.$refs.tree.appendTo(node.value, children);
+        }
+      })
+    },
     getInfo(){
       const apiClient = getApiClient();
-      apiClient.GET("/cockpit/api/proxy/resource/info").then(r => {
-        console.log(JSON.stringify(r));
-        
+      apiClient.GET("/api/cockpit/proxy/resource/info").then(r => {
+        if(r.data.code=="0"){
+          this.bind.info=r.data.data;
+        }
       })
     },
     getAlarmList(){
@@ -389,7 +436,8 @@ export default defineComponent({
               id:r.data.data.list[i].id,
               time:r.data.data.list[i].alarmTime.substr(0,18),
               name:r.data.data.list[i].alarmTypeName,
-              status:r.data.data.list[i].status==0?'未处理':'已处理'
+              status:r.data.data.list[i].status==0?'未处理':'已处理',
+              data:r.data.data.list[i]
             });
           }
           this.bind.warnList=rows;
@@ -418,7 +466,7 @@ export default defineComponent({
   },
   mounted(){
     this.getInfo();
-    this.getDeviceList();
+    this.getCameraList();
     this.getAlarmList();
     this.getAlarmTrend();
     gjqsChartCreate(this.$echart,'chartGJQS');
@@ -568,9 +616,9 @@ export default defineComponent({
     .videos{
       width: 100%;
       .row{
-        display: flex;
+        display: block;
         .col{
-          flex:1;
+          float:left;
           width: 0.5rem;
           background-color: #000000;
           margin:0.05rem;
@@ -578,21 +626,21 @@ export default defineComponent({
             border:2px solid #d5aa5b
           }
         }
-      }
-    }
-    .videos4{
-      .col{
-        height: 1.475rem;
-      }
-    }
-    .videos9{
-      .col{
-        height: 0.95rem;
-      }
-    }
-    .videos16{
-      .col{
-        height: 0.687rem;
+        .col2{
+          width: calc(50% - 0.1rem);
+          max-width: 2.623rem;
+          height: 1.475rem;
+        }
+        .col3{
+          width:calc(33.333% - 0.1rem);
+          max-width: 1.689rem;
+          height: 0.95rem;
+        }
+        .col4{
+          width:calc(25% - 0.1rem);
+          max-width: 1.222rem;
+          height: 0.687rem;
+        }
       }
     }
   }
@@ -746,12 +794,57 @@ export default defineComponent({
       background: url('../assets/imgs/dialog_bg.png') no-repeat center;
       background-size: 100% 100%;
       position: relative;
+      padding: 0.1rem 0.2rem;
+      overflow: hidden;
       .close{
         position: absolute; 
         right:0.1rem; 
         top:0.07rem; 
         width:0.25rem;
       }
+      .title{
+        color: #fff;
+        padding-left: 0.2rem;
+        line-height: 0.42rem;
+        font-size: 0.1rem;
+        font-weight: bold;
+      }
+      .body{
+        margin-top:0.15rem; 
+        color:#fff;
+        display: flex;
+        font-size: 0.08rem;
+        .lf{
+          width:2rem;
+          padding-left: 0.1rem;
+          img{
+            width:100%;
+          }
+        }
+        .rt{
+          flex:1;
+          padding-left: 0.2rem;
+          line-height: 0.2rem;
+        }
+      }
+    }
+  }
+  :deep(.videoDialog){
+    .content{
+      width:4.7rem;
+      height:2.8rem;
+    }
+    .t-dialog__footer{
+      display: none;
+    }
+    .t-dialog__header{
+      padding-top:0.06rem;
+      color:#fff;
+    }
+    .t-dialog--default{
+      padding:0.05rem 0.14rem;
+      background-color: #3d7ab9;
+      border-color: #0f5a9b;
     }
   }
 }
