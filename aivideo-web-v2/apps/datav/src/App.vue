@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import { getApiClient } from '@aivideo/rest';
 import HelloWorld from './components/HelloWorld.vue';
+const apiClient = getApiClient();
+apiClient.GET("/api/alarm/v2/datapoints/").then(r=>{
+  console.log(r);
+})
+
 </script>
 
 <template>
