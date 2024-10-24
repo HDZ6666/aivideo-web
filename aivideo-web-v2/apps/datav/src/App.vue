@@ -3,12 +3,7 @@
 </template>
 
 <script>
-import { getApiClient } from '@aivideo/rest';
 import { defineComponent, getCurrentInstance } from "vue";
-const apiClient = getApiClient();
-apiClient.GET("/api/alarm/v2/datapoints/").then(r => {
-  console.log(r);
-})
 export default defineComponent({
   setup() {
     const currentInstance = getCurrentInstance();

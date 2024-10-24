@@ -11,7 +11,7 @@
             <div class="line"></div>
             <div class="list">
               <div class="rows">
-                <t-tree :data="bind.deviceList" :activable="true" />
+                <t-tree :data="bind.deviceTree" :activable="true" @active="changeDeviceTree" />
               </div>
             </div>
           </div>
@@ -92,7 +92,7 @@
     </div>
     <div class="pager">
       <div class="lf">
-        <div class="button">全屏</div>
+        <!-- <div class="button">全屏</div> -->
         <div class="button" @click="autoPage($event)">自动轮播</div>
       </div>
       <div class="rt">
@@ -126,7 +126,7 @@
         </div>
       </div>
     </div>
-    <div class="videos videos9 fullscreen" v-else-if="pager.pageSize=='9'">
+    <div class="videos videos9" v-else-if="pager.pageSize=='9'">
       <div class="row">
         <div class="col">
           <vol-player class="active" @click="selectVideo($event)"></vol-player>
@@ -244,6 +244,8 @@ import { defineComponent } from "vue"
 
 import { gjqsOption, gjqsChartCreate, gjqsReload, gjqsDestroy, gjqsResize } from './monitor/chartGJQS.js' 
 SwiperCore.use([Scrollbar, Pagination, Autoplay])
+
+import { getApiClient } from '@aivideo/rest';
 export default defineComponent({
   components:{
     Swiper,
@@ -268,25 +270,26 @@ export default defineComponent({
       },
       bind:{
         warnList:[
-          {id:'1',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          {id:'2',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          {id:'3',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          {id:'4',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          {id:'5',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          {id:'6',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          {id:'7',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          {id:'8',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          {id:'9',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          {id:'10',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'}
+          // {id:'1',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
+          // {id:'2',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
+          // {id:'3',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
+          // {id:'4',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
+          // {id:'5',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
+          // {id:'6',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
+          // {id:'7',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
+          // {id:'8',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
+          // {id:'9',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
+          // {id:'10',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'}
         ],
-        deviceList:[
-          {id:'1',label:'全部设备',value:'全部设备',children:[{id:'1_2',label:'全部设备1',value:'全部设备1'}]},
-          {id:'2',label:'数字大屏',value:'数字大屏'},
-          {id:'3',label:'高新区',value:'高新区'},
-          {id:'4',label:'三水区',value:'三水区'},
-          {id:'5',label:'禅城区',value:'禅城区'},
-          {id:'6',label:'南海区',value:'南海区'},
-          {id:'7',label:'顺德区',value:'顺德区'}
+        deviceData:[],
+        deviceTree:[
+          // {id:'1',label:'全部设备',value:'全部设备',children:[{id:'1_2',label:'全部设备1',value:'全部设备1'}]},
+          // {id:'2',label:'数字大屏',value:'数字大屏'},
+          // {id:'3',label:'高新区',value:'高新区'},
+          // {id:'4',label:'三水区',value:'三水区'},
+          // {id:'5',label:'禅城区',value:'禅城区'},
+          // {id:'6',label:'南海区',value:'南海区'},
+          // {id:'7',label:'顺德区',value:'顺德区'}
         ]
       }
     }
@@ -296,26 +299,6 @@ export default defineComponent({
   setup() {
   },
   watch:{
-    showCompanyDialog:{
-      handler(newValue,oldValue){
-        if(newValue){
-          $("#zzgl").css({'pointer-events':'auto'});
-        }
-        else{
-          $("#zzgl").css({'pointer-events':'none'});
-        }
-      }
-    },
-    showProductDialog:{
-      handler(newValue,oldValue){
-        if(newValue){
-          $("#zzgl").css({'pointer-events':'auto'});
-        }
-        else{
-          $("#zzgl").css({'pointer-events':'none'});
-        }
-      }
-    }
   },
   methods:{
     initBoxHeight(){
@@ -348,6 +331,85 @@ export default defineComponent({
     },
     viewWarnInfo(row){
         this.showWarnDialog=true;
+    },
+    changeDeviceTree(node){
+      console.log(node);
+    },
+    getDeviceList(){
+      this.bind.deviceTree=[];
+      const apiClient = getApiClient();
+      apiClient.GET("/ai/api/device/group/cameraGroupList?parentId=0").then(r => {
+        if(r.data.code=="0"){
+          let tree=[];
+          this.bind.deviceData=r.data.data;
+          for(let i=0;i<r.data.data.length;i++){
+            tree.push({
+              id:r.data.data[i].id,
+              label:r.data.data[i].group_name,
+              value:r.data.data[i].id.toString(),
+              children:this.getDeviceChilren(r.data.data[i].children)
+            });
+          }
+          this.bind.deviceTree=tree;
+        }
+      })
+    },
+    getDeviceChilren(data){
+      if(data.length==0){
+        return [];
+      }
+      else{
+        let tree=[];
+        for(let i=0;i<data.length;i++){
+          tree.push({
+            id:data[i].id,
+            label:data[i].group_name,
+            value:data[i].id.toString(),
+            children:this.getDeviceChilren(data[i].children)
+          });
+        }
+        return tree;
+      }
+    },
+    getInfo(){
+      const apiClient = getApiClient();
+      apiClient.GET("/cockpit/api/proxy/resource/info").then(r => {
+        console.log(JSON.stringify(r));
+        
+      })
+    },
+    getAlarmList(){
+      const apiClient = getApiClient();
+      apiClient.GET("/ai/api/alarm/alarmCameraListAll?page=1&pageSize=20").then(r => {
+        if(r.data.code=="0"){
+          this.bind.warnList=[];
+          let rows=[];
+          for(let i=0;i<r.data.data.list.length;i++){
+            rows.push({
+              id:r.data.data.list[i].id,
+              time:r.data.data.list[i].alarmTime.substr(0,18),
+              name:r.data.data.list[i].alarmTypeName,
+              status:r.data.data.list[i].status==0?'未处理':'已处理'
+            });
+          }
+          this.bind.warnList=rows;
+        }
+      })
+    },
+    getAlarmTrend(){
+      const apiClient = getApiClient();
+      apiClient.GET("/ai/api/alarm/alarmTrendListSevenDay").then(r => {
+        if(r.data.code=="0"){
+          let xAxiData=[];
+          let serieData=[];
+          for(let i=0;i<r.data.data.length;i++){
+
+          }
+          gjqsOption.xAxis[0].data=xAxiData;
+          gjqsOption.series[0].data=serieData;
+          gjqsReload();
+        }
+      })
     }
   },
   created(){
@@ -355,6 +417,10 @@ export default defineComponent({
     window.addEventListener("resize", this.initBoxHeight);
   },
   mounted(){
+    this.getInfo();
+    this.getDeviceList();
+    this.getAlarmList();
+    this.getAlarmTrend();
     gjqsChartCreate(this.$echart,'chartGJQS');
   },
   unmounted(){

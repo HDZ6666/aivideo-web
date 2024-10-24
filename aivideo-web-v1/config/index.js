@@ -37,6 +37,14 @@ module.exports = {
         target: "http://172.16.66.77:18080",
         changeOrigin: true
       },
+      "/ai/api": {
+        target: "http://172.16.66.77:18080",
+        changeOrigin: true
+      },
+      "/cockpit/api": {
+        target: "http://172.16.66.77:18080",
+        changeOrigin: true
+      },
       "/pc": {
         target: "http://localhost:3001",
         changeOrigin: true
