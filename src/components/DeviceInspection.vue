@@ -30,13 +30,13 @@
     <!--用户列表-->
     <el-table
       :data="deviceList"
-      row-key="id"
+      row-key="deviceId"
       style="width: 100%;font-size: 12px;"
       :height="winHeight"
       header-row-class-name="table-header"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55"> </el-table-column>
+      <el-table-column type="selection" width="55" :reserve-selection="true"> </el-table-column>
       <el-table-column
         prop="name"
         label="名称"
@@ -57,29 +57,26 @@
             <i
               :class="[
                 'el-icon-success',
-                scope.row.channelCount === 1 ? 'success' : ''
+                scope.row.status === 0 ? 'success' : ''
               ]"
             ></i>
             <i
               :class="[
                 'el-icon-warning',
-                scope.row.hostAddress === '2' ? 'warning' : ''
+                scope.row.status === 1 ? 'warning' : ''
               ]"
             ></i>
             <i
-              :class="[
-                'el-icon-error',
-                scope.row.hostAddress === '3' ? 'error' : ''
-              ]"
+              :class="['el-icon-error', scope.row.status === 2 ? 'error' : '']"
             ></i>
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="状态信息" min-width="200" prop="msg">
+      <el-table-column label="状态信息" min-width="200" prop="statusDescribe">
       </el-table-column>
       <el-table-column
-        prop="keepaliveTime"
-        label="最近巡检"
+        prop="updateTime"
+        label="最新巡检时间"
         min-width="160"
       ></el-table-column>
       <el-table-column label="操作">
@@ -88,7 +85,7 @@
             size="medium"
             icon="el-icon-edit"
             type="text"
-            @click="edit(scope.row)"
+            @click="handleInspection([scope.row.deviceId])"
             >巡检</el-button
           >
         </template>
@@ -125,15 +122,15 @@ export default {
       count: 15,
       total: 0,
       getDeviceListLoading: false,
-      multipleSelection: []
+      multipleSelection: [],
+      updateLooper: 0, //数据刷新轮训标志
     };
   },
   mounted() {
     this.initData();
-    // this.updateLooper = setInterval(this.initData, 10000);
+    this.updateLooper = setInterval(this.initData, 2000);
   },
   destroyed() {
-    this.$destroy("videojs");
     clearTimeout(this.updateLooper);
   },
   methods: {
@@ -152,11 +149,11 @@ export default {
       this.getDeviceListLoading = true;
       this.$axios({
         method: "get",
-        url: `/api/device/query/devices`,
+        url: `/ai/api/device/inspection/devices`,
         params: {
           page: this.currentPage,
           count: this.count,
-          groupId: this.group_id
+          groupId: 0
         }
       })
         .then(res => {
@@ -191,10 +188,8 @@ export default {
           type: "warning"
         }
       ).then(() => {
-        this.$message({
-          type: "success",
-          message: "删除成功!"
-        });
+        const list = this.multipleSelection.map(item => item.deviceId);
+        this.handleInspection(list);
       });
     },
     handleAllInspection() {
@@ -207,19 +202,29 @@ export default {
           type: "warning"
         }
       ).then(() => {
-        this.$message({
-          type: "success",
-          message: "删除成功!"
-        });
+        this.handleInspection();
       });
     },
-    edit: function(row) {
-      const options = this.deviceGroupList.filter(item => item.level === 0);
-      this.$refs.editDeviceGroup.openDialog("edit", options, row);
-    },
-    addUser: function() {
-      const options = this.deviceGroupList.filter(item => item.level === 0);
-      this.$refs.editDeviceGroup.openDialog("add", options, null);
+    handleInspection(list = []) {
+      const url =
+        list.length > 0
+          ? `/ai/api/device/inspection/devices/inspection/status`
+          : "/ai/api/device/inspection/devices/inspection/all";
+      this.$axios({
+        method: "post",
+        url: url,
+        data: list
+      })
+        .then(res => {
+          if (res.data.code === 0) {
+            this.$message.success('巡检任务已启动，请稍后查看结果!')
+            // this.getDeviceInspection();
+          }
+          this.getDeviceListLoading = false;
+        })
+        .catch(error => {
+          this.getDeviceListLoading = false;
+        });
     }
   }
 };
