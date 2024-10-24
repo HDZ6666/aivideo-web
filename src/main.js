@@ -95,35 +95,35 @@ router.beforeEach((to, from, next) => {
     next();
     return;
   }
-  if (userService.getToken() == null) {
-    if (to.path === "/videoCockpit" && to.query && to.query.token) {
-      axios({
-        method: "post",
-        url: "/api/user/oneClickLogin",
-        data: {
-          authorization: decodeURIComponent(to.query.token)
+  if (to.path === "/videoCockpit" && to.query && to.query.token) {
+    axios({
+      method: "post",
+      url: "/api/user/oneClickLogin",
+      data: {
+        authorization: decodeURIComponent(to.query.token)
+      }
+    })
+      .then(function(res) {
+        if (res.data.code === 0) {
+          userService.setToken(res.data.data.accessToken);
+          userService.setUser(res.data.data);
+          //登录成功后
+          next();
+        } else {
+          Message.error("登录失败");
+          next("/login");
         }
       })
-        .then(function(res) {
-          if (res.data.code === 0) {
-            userService.setToken(res.data.data.accessToken);
-            userService.setUser(res.data.data);
-            //登录成功后
-            next();
-          } else {
-            Message.error("登录失败");
-            next("/login");
-          }
-        })
-        .catch(function(error) {
-          Message.error(error.response.data.msg);
-          next("/login");
-        });
-    } else {
-      next("/login");
-    }
+      .catch(function(error) {
+        Message.error(error.response.data.msg);
+        next("/login");
+      });
   } else {
-    next();
+    if (userService.getToken() == null) {
+      next("/login");
+    } else {
+      next();
+    }
   }
 });
 

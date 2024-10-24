@@ -57,7 +57,7 @@
                     :video-title="player.name"
                     :videoUrl="player.videoUrl"
                     :hasaudio="false"
-                    :alt="player.error?'视频加载失败':'无信号'"
+                    :alt="player.error?'视频加载失败':'无播放资源'"
                     live
                     muted
                     aspect="fullscreen"
@@ -77,6 +77,7 @@
                     hideControls
                     screen
                   />
+                  <div v-else>无播放资源</div>
                 </div>
               </dv-border-box-12>
             </div>
@@ -190,9 +191,9 @@ export default {
             this.pages = data.pages;
             this.total = data.total;
             this.videoLists = [...this.videoLists, ...list];
+            console.log(this.videoLists);
             if (_page === 1 && this.videoLists.length > 0) {
               this.nextScreen(); //首屏自动加载
-              console.log("首屏自动加载");
             }
             // 循环获取设备列表
             this.getDeviceList(_page + 1);
@@ -398,6 +399,9 @@ export default {
 }
 
 .video-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   border-radius: 10px;
