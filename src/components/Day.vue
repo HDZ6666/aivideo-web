@@ -159,14 +159,13 @@ export default {
       background-color: #28a745; /* 绿色背景 */
       color: white;
       border: 1px solid #ccc;
-      padding: 5px;
+      padding: 3px;
       text-align: center;
   }
 
   /* 表格样式调整 */
   table {
       width: 140%;
-      height:120%;
       border-collapse: collapse;
   }
 
