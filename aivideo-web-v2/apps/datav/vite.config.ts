@@ -10,6 +10,11 @@ export default ({ mode }: ConfigEnv): UserConfig => {
   return {
     plugins: [vue()],
     base: VITE_BASE_URL,
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
     build:{
       outDir: path.resolve(__dirname, '../../../dist/datav'),
     },

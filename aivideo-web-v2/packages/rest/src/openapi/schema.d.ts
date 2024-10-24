@@ -1027,74 +1027,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/cockpit/api/proxy/resource/info": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 获取设备负载信息 */
-        get: operations["getResourceInfo"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/cockpit/api/proxy/one": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 查询单个拉流代理 */
-        get: operations["one"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/cockpit/api/proxy/list": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 分页查询大屏拉流数据 */
-        get: operations["list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/cockpit/api/proxy/getPlayUrl": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 获取推流播放地址 */
-        get: operations["getPlayUrl"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/user/users": {
         parameters: {
             query?: never;
@@ -1225,7 +1157,7 @@ export interface paths {
             cookie?: never;
         };
         /** 获取负载信息 */
-        get: operations["getResourceInfo_1"];
+        get: operations["getResourceInfo"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1463,7 +1395,7 @@ export interface paths {
             cookie?: never;
         };
         /** 推流列表查询 */
-        get: operations["list_1"];
+        get: operations["list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1480,7 +1412,7 @@ export interface paths {
             cookie?: never;
         };
         /** 获取推流播放地址 */
-        get: operations["getPlayUrl_1"];
+        get: operations["getPlayUrl"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1632,7 +1564,7 @@ export interface paths {
             cookie?: never;
         };
         /** 查询流代理 */
-        get: operations["one_1"];
+        get: operations["one"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1649,7 +1581,7 @@ export interface paths {
             cookie?: never;
         };
         /** 分页查询流代理 */
-        get: operations["list_2"];
+        get: operations["list_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2210,7 +2142,7 @@ export interface paths {
             cookie?: never;
         };
         /** 查询国标通道 */
-        get: operations["list_3"];
+        get: operations["list_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2660,6 +2592,142 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/cockpit/proxy/resource/info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 获取设备负载信息 */
+        get: operations["getResourceInfo_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cockpit/api/proxy/resource/info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 获取设备负载信息 */
+        get: operations["getResourceInfo_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cockpit/api/proxy/one": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 查询单个拉流代理 */
+        get: operations["one_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cockpit/proxy/one": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 查询单个拉流代理 */
+        get: operations["one_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cockpit/proxy/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 分页查询大屏拉流数据 */
+        get: operations["list_3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cockpit/api/proxy/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 分页查询大屏拉流数据 */
+        get: operations["list_4"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cockpit/proxy/getPlayUrl": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 获取推流播放地址 */
+        get: operations["getPlayUrl_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cockpit/api/proxy/getPlayUrl": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 获取推流播放地址 */
+        get: operations["getPlayUrl_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/cloud/record/task/list": {
         parameters: {
             query?: never;
@@ -3009,7 +3077,7 @@ export interface paths {
             cookie?: never;
         };
         /** 分组查询设备数据 */
-        get: operations["list_4"];
+        get: operations["list_5"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3417,19 +3485,19 @@ export interface paths {
             cookie?: never;
         };
         /** 修改pushkey */
-        get: operations["changePushKey_3"];
+        get: operations["changePushKey_1"];
         /** 修改pushkey */
-        put: operations["changePushKey_6"];
+        put: operations["changePushKey_4"];
         /** 修改pushkey */
-        post: operations["changePushKey_2"];
+        post: operations["changePushKey_3"];
         /** 修改pushkey */
-        delete: operations["changePushKey"];
+        delete: operations["changePushKey_5"];
         /** 修改pushkey */
-        options: operations["changePushKey_1"];
+        options: operations["changePushKey_6"];
         /** 修改pushkey */
-        head: operations["changePushKey_5"];
+        head: operations["changePushKey"];
         /** 修改pushkey */
-        patch: operations["changePushKey_4"];
+        patch: operations["changePushKey_2"];
         trace?: never;
     };
 }
@@ -3543,10 +3611,10 @@ export interface components {
         };
         LoginUser: {
             accessToken?: string;
-            password?: string;
             /** Format: int32 */
             id?: number;
             enabled?: boolean;
+            password?: string;
             role?: components["schemas"]["Role"];
             username?: string;
             authorities?: components["schemas"]["GrantedAuthority"][];
@@ -4608,44 +4676,44 @@ export interface components {
             hls?: string;
             rtmp?: string;
             transport?: string;
-            deviceID?: string;
-            channelID?: string;
-            flv?: string;
-            ws_FLV?: string;
-            mp4_FLV?: string;
-            rtsp?: string;
-            streamID?: string;
-            audioEnable?: boolean;
-            cdn?: string;
-            /** Format: int32 */
-            cascadeSize?: number;
-            /** Format: int32 */
-            channelPTZType?: number;
-            recordStartAt?: string;
             /** Format: int32 */
             relaySize?: number;
+            startAt?: string;
+            recordStartAt?: string;
+            rtsp?: string;
             snapURL?: string;
-            /** Format: int64 */
-            inBytes?: number;
+            ws_FLV?: string;
+            /** Format: int32 */
+            inBitRate?: number;
             /** Format: int32 */
             numOutputs?: number;
             ondemand?: boolean;
+            flv?: string;
             /** Format: int32 */
-            inBitRate?: number;
+            channelPTZType?: number;
+            channelID?: string;
+            audioEnable?: boolean;
+            /** Format: int32 */
+            cascadeSize?: number;
+            /** Format: int64 */
+            inBytes?: number;
             /** Format: int64 */
             outBytes?: number;
-            startAt?: string;
+            cdn?: string;
+            mp4_FLV?: string;
+            deviceID?: string;
+            streamID?: string;
             channelCustomName?: string;
             sourceAudioCodecName?: string;
             /** Format: int32 */
-            sourceVideoHeight?: number;
+            sourceVideoFrameRate?: number;
             sourceVideoCodecName?: string;
-            /** Format: int32 */
-            sourceAudioSampleRate?: number;
             /** Format: int32 */
             sourceVideoWidth?: number;
             /** Format: int32 */
-            sourceVideoFrameRate?: number;
+            sourceAudioSampleRate?: number;
+            /** Format: int32 */
+            sourceVideoHeight?: number;
         };
         /** @description 通道信息，包含播放地址 */
         DeviceChannelResponse: {
@@ -4828,290 +4896,6 @@ export interface components {
             /** Format: int32 */
             state?: number;
         };
-        /** @description 拉流设备 */
-        ResourceBaseInfo: {
-            /**
-             * Format: int32
-             * @description 设备总数
-             */
-            total?: number;
-            /**
-             * Format: int32
-             * @description 在线设备数量
-             */
-            online?: number;
-        };
-        /** @description 设备状态 */
-        ResourceInfo: {
-            device?: components["schemas"]["ResourceBaseInfo"];
-            channel?: components["schemas"]["ResourceBaseInfo"];
-            push?: components["schemas"]["ResourceBaseInfo"];
-            proxy?: components["schemas"]["ResourceBaseInfo"];
-        };
-        /** @description 文件下载地址（录像下载使用） */
-        DownloadFileInfo: {
-            httpPath?: string;
-            httpsPath?: string;
-            httpDomainPath?: string;
-            httpsDomainPath?: string;
-        };
-        PageInfoStreamProxyItemPlayUrl: {
-            /** Format: int64 */
-            total?: number;
-            list?: components["schemas"]["StreamProxyItemPlayUrl"][];
-            /** Format: int32 */
-            pageNum?: number;
-            /** Format: int32 */
-            pageSize?: number;
-            /** Format: int32 */
-            size?: number;
-            /** Format: int64 */
-            startRow?: number;
-            /** Format: int64 */
-            endRow?: number;
-            /** Format: int32 */
-            pages?: number;
-            /** Format: int32 */
-            prePage?: number;
-            /** Format: int32 */
-            nextPage?: number;
-            isFirstPage?: boolean;
-            isLastPage?: boolean;
-            hasPreviousPage?: boolean;
-            hasNextPage?: boolean;
-            /** Format: int32 */
-            navigatePages?: number;
-            navigatepageNums?: number[];
-            /** Format: int32 */
-            navigateFirstPage?: number;
-            /** Format: int32 */
-            navigateLastPage?: number;
-        };
-        /** @description 流信息 */
-        StreamInfo: {
-            /** @description 应用名 */
-            app?: string;
-            /** @description 流ID */
-            stream?: string;
-            /** @description 设备编号 */
-            deviceID?: string;
-            /** @description 通道编号 */
-            channelId?: string;
-            /** @description IP */
-            ip?: string;
-            flv?: components["schemas"]["StreamURL"];
-            https_flv?: components["schemas"]["StreamURL"];
-            ws_flv?: components["schemas"]["StreamURL"];
-            wss_flv?: components["schemas"]["StreamURL"];
-            fmp4?: components["schemas"]["StreamURL"];
-            https_fmp4?: components["schemas"]["StreamURL"];
-            ws_fmp4?: components["schemas"]["StreamURL"];
-            wss_fmp4?: components["schemas"]["StreamURL"];
-            hls?: components["schemas"]["StreamURL"];
-            https_hls?: components["schemas"]["StreamURL"];
-            ws_hls?: components["schemas"]["StreamURL"];
-            wss_hls?: components["schemas"]["StreamURL"];
-            ts?: components["schemas"]["StreamURL"];
-            https_ts?: components["schemas"]["StreamURL"];
-            ws_ts?: components["schemas"]["StreamURL"];
-            wss_ts?: components["schemas"]["StreamURL"];
-            rtmp?: components["schemas"]["StreamURL"];
-            rtmps?: components["schemas"]["StreamURL"];
-            rtsp?: components["schemas"]["StreamURL"];
-            rtsps?: components["schemas"]["StreamURL"];
-            rtc?: components["schemas"]["StreamURL"];
-            rtcs?: components["schemas"]["StreamURL"];
-            /** @description 流媒体ID */
-            mediaServerId?: string;
-            /** @description 流编码信息 */
-            tracks?: Record<string, never>;
-            /** @description 开始时间 */
-            startTime?: string;
-            /** @description 结束时间 */
-            endTime?: string;
-            /**
-             * Format: double
-             * @description 进度（录像下载使用）
-             */
-            progress?: number;
-            downLoadFilePath?: components["schemas"]["DownloadFileInfo"];
-            /** @description 是否暂停（录像回放使用） */
-            pause?: boolean;
-            transactionInfo?: components["schemas"]["TransactionInfo"];
-            /** @description 是否为子码流(true-是，false-主码流) */
-            subStream?: boolean;
-        };
-        /** @description 拉流代理的信息，包含播放地址 */
-        StreamProxyItemPlayUrl: {
-            /**
-             * Format: int32
-             * @description ID
-             */
-            gbStreamId?: number;
-            /** @description 平台ID */
-            platformId?: string;
-            /** @description 目录ID */
-            catalogId?: string;
-            /** @description 应用名 */
-            app?: string;
-            /** @description 流ID */
-            stream?: string;
-            /** @description 国标ID */
-            gbId?: string;
-            /** @description 名称 */
-            name?: string;
-            /** @description 流媒体服务ID */
-            mediaServerId?: string;
-            /**
-             * Format: double
-             * @description 经度
-             */
-            longitude?: number;
-            /**
-             * Format: double
-             * @description 纬度
-             */
-            latitude?: number;
-            /** @description 流类型（拉流/推流） */
-            streamType?: string;
-            /** @description 状态 */
-            status?: boolean;
-            /** @description 创建时间 */
-            createTime?: string;
-            /**
-             * Format: int32
-             * @description id
-             */
-            id?: number;
-            /** @description 分组名称 */
-            groupName?: string;
-            /** @description 分类ID */
-            categoryId?: string;
-            /** @description 通道号 */
-            channel?: string;
-            /** @description 通道名称 */
-            channelName?: string;
-            /** @description 设备IP */
-            deviceIp?: string;
-            /** @description 更新时间 */
-            updateTime?: string;
-            /** @description 类型 */
-            type?: string;
-            /** @description 拉流地址 */
-            url?: string;
-            /** @description 拉流地址 */
-            srcUrl?: string;
-            /** @description 目标地址 */
-            dstUrl?: string;
-            /**
-             * Format: int32
-             * @description 超时时间
-             */
-            timeoutMs?: number;
-            /** @description ffmpeg模板KEY */
-            ffmpegCmdKey?: string;
-            /** @description rtsp拉流时，拉流方式，0：tcp，1：udp，2：组播 */
-            rtpType?: string;
-            /** @description 是否启用 */
-            enable?: boolean;
-            /** @description 是否启用音频 */
-            enableAudio?: boolean;
-            /** @description 是否启用MP4 */
-            enableMp4?: boolean;
-            /** @description 是否 无人观看时删除 */
-            enableRemoveNoneReader?: boolean;
-            /** @description 是否 无人观看时自动停用 */
-            enableDisableNoneReader?: boolean;
-            /** @description 拉流代理时zlm返回的key，用于停止拉流代理 */
-            streamKey?: string;
-            streamInfo?: components["schemas"]["StreamInfo"];
-        };
-        /** @description 流地址信息 */
-        StreamURL: {
-            /** @description 协议 */
-            protocol?: string;
-            /** @description 主机地址 */
-            host?: string;
-            /**
-             * Format: int32
-             * @description 端口
-             */
-            port?: number;
-            /** @description 定位位置 */
-            file?: string;
-            /** @description 拼接后的地址 */
-            url?: string;
-        };
-        TransactionInfo: {
-            callId?: string;
-            localTag?: string;
-            remoteTag?: string;
-            branch?: string;
-        };
-        /** @description 流信息 */
-        StreamContent: {
-            /** @description 应用名 */
-            app?: string;
-            /** @description 流ID */
-            stream?: string;
-            /** @description IP */
-            ip?: string;
-            /** @description HTTP-FLV流地址 */
-            flv?: string;
-            /** @description HTTPS-FLV流地址 */
-            https_flv?: string;
-            /** @description Websocket-FLV流地址 */
-            ws_flv?: string;
-            /** @description Websockets-FLV流地址 */
-            wss_flv?: string;
-            /** @description HTTP-FMP4流地址 */
-            fmp4?: string;
-            /** @description HTTPS-FMP4流地址 */
-            https_fmp4?: string;
-            /** @description Websocket-FMP4流地址 */
-            ws_fmp4?: string;
-            /** @description Websockets-FMP4流地址 */
-            wss_fmp4?: string;
-            /** @description HLS流地址 */
-            hls?: string;
-            /** @description HTTPS-HLS流地址 */
-            https_hls?: string;
-            /** @description Websocket-HLS流地址 */
-            ws_hls?: string;
-            /** @description Websockets-HLS流地址 */
-            wss_hls?: string;
-            /** @description HTTP-TS流地址 */
-            ts?: string;
-            /** @description HTTPS-TS流地址 */
-            https_ts?: string;
-            /** @description Websocket-TS流地址 */
-            ws_ts?: string;
-            /** @description Websockets-TS流地址 */
-            wss_ts?: string;
-            /** @description RTMP流地址 */
-            rtmp?: string;
-            /** @description RTMPS流地址 */
-            rtmps?: string;
-            /** @description RTSP流地址 */
-            rtsp?: string;
-            /** @description RTSPS流地址 */
-            rtsps?: string;
-            /** @description RTC流地址 */
-            rtc?: string;
-            /** @description RTCS流地址 */
-            rtcs?: string;
-            /** @description 流媒体ID */
-            mediaServerId?: string;
-            /** @description 流编码信息 */
-            tracks?: Record<string, never>;
-            /** @description 开始时间 */
-            startTime?: string;
-            /** @description 结束时间 */
-            endTime?: string;
-            downLoadFilePath?: components["schemas"]["DownloadFileInfo"];
-            /** Format: double */
-            progress?: number;
-        };
         PageInfoUser: {
             /** Format: int64 */
             total?: number;
@@ -5158,14 +4942,14 @@ export interface components {
             artifactId?: string;
             version?: string;
             project?: string;
+            build_DATE?: string;
+            git_DATE?: string;
+            git_URL?: string;
             git_Revision?: string;
             git_BRANCH?: string;
-            git_DATE?: string;
-            build_DATE?: string;
-            git_URL?: string;
             git_Revision_SHORT?: string;
-            create_By?: string;
             build_Jdk?: string;
+            create_By?: string;
         };
         SystemAllInfo: {
             cpu?: Record<string, never>[];
@@ -5233,6 +5017,26 @@ export interface components {
             /** Format: int32 */
             registerAgainAfterTime?: number;
             registerKeepIntDialog?: boolean;
+        };
+        /** @description 拉流设备 */
+        ResourceBaseInfo: {
+            /**
+             * Format: int32
+             * @description 设备总数
+             */
+            total?: number;
+            /**
+             * Format: int32
+             * @description 在线设备数量
+             */
+            online?: number;
+        };
+        /** @description 设备状态 */
+        ResourceInfo: {
+            device?: components["schemas"]["ResourceBaseInfo"];
+            channel?: components["schemas"]["ResourceBaseInfo"];
+            push?: components["schemas"]["ResourceBaseInfo"];
+            proxy?: components["schemas"]["ResourceBaseInfo"];
         };
         MediaServerLoad: {
             id?: string;
@@ -5304,6 +5108,77 @@ export interface components {
             navigateFirstPage?: number;
             /** Format: int32 */
             navigateLastPage?: number;
+        };
+        /** @description 文件下载地址（录像下载使用） */
+        DownloadFileInfo: {
+            httpPath?: string;
+            httpsPath?: string;
+            httpDomainPath?: string;
+            httpsDomainPath?: string;
+        };
+        /** @description 流信息 */
+        StreamContent: {
+            /** @description 应用名 */
+            app?: string;
+            /** @description 流ID */
+            stream?: string;
+            /** @description IP */
+            ip?: string;
+            /** @description HTTP-FLV流地址 */
+            flv?: string;
+            /** @description HTTPS-FLV流地址 */
+            https_flv?: string;
+            /** @description Websocket-FLV流地址 */
+            ws_flv?: string;
+            /** @description Websockets-FLV流地址 */
+            wss_flv?: string;
+            /** @description HTTP-FMP4流地址 */
+            fmp4?: string;
+            /** @description HTTPS-FMP4流地址 */
+            https_fmp4?: string;
+            /** @description Websocket-FMP4流地址 */
+            ws_fmp4?: string;
+            /** @description Websockets-FMP4流地址 */
+            wss_fmp4?: string;
+            /** @description HLS流地址 */
+            hls?: string;
+            /** @description HTTPS-HLS流地址 */
+            https_hls?: string;
+            /** @description Websocket-HLS流地址 */
+            ws_hls?: string;
+            /** @description Websockets-HLS流地址 */
+            wss_hls?: string;
+            /** @description HTTP-TS流地址 */
+            ts?: string;
+            /** @description HTTPS-TS流地址 */
+            https_ts?: string;
+            /** @description Websocket-TS流地址 */
+            ws_ts?: string;
+            /** @description Websockets-TS流地址 */
+            wss_ts?: string;
+            /** @description RTMP流地址 */
+            rtmp?: string;
+            /** @description RTMPS流地址 */
+            rtmps?: string;
+            /** @description RTSP流地址 */
+            rtsp?: string;
+            /** @description RTSPS流地址 */
+            rtsps?: string;
+            /** @description RTC流地址 */
+            rtc?: string;
+            /** @description RTCS流地址 */
+            rtcs?: string;
+            /** @description 流媒体ID */
+            mediaServerId?: string;
+            /** @description 流编码信息 */
+            tracks?: Record<string, never>;
+            /** @description 开始时间 */
+            startTime?: string;
+            /** @description 结束时间 */
+            endTime?: string;
+            downLoadFilePath?: components["schemas"]["DownloadFileInfo"];
+            /** Format: double */
+            progress?: number;
         };
         OtherPsSendInfo: {
             sendLocalIp?: string;
@@ -5962,6 +5837,199 @@ export interface components {
             navigateFirstPage?: number;
             /** Format: int32 */
             navigateLastPage?: number;
+        };
+        PageInfoStreamProxyItemPlayUrl: {
+            /** Format: int64 */
+            total?: number;
+            list?: components["schemas"]["StreamProxyItemPlayUrl"][];
+            /** Format: int32 */
+            pageNum?: number;
+            /** Format: int32 */
+            pageSize?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            startRow?: number;
+            /** Format: int64 */
+            endRow?: number;
+            /** Format: int32 */
+            pages?: number;
+            /** Format: int32 */
+            prePage?: number;
+            /** Format: int32 */
+            nextPage?: number;
+            isFirstPage?: boolean;
+            isLastPage?: boolean;
+            hasPreviousPage?: boolean;
+            hasNextPage?: boolean;
+            /** Format: int32 */
+            navigatePages?: number;
+            navigatepageNums?: number[];
+            /** Format: int32 */
+            navigateFirstPage?: number;
+            /** Format: int32 */
+            navigateLastPage?: number;
+        };
+        /** @description 流信息 */
+        StreamInfo: {
+            /** @description 应用名 */
+            app?: string;
+            /** @description 流ID */
+            stream?: string;
+            /** @description 设备编号 */
+            deviceID?: string;
+            /** @description 通道编号 */
+            channelId?: string;
+            /** @description IP */
+            ip?: string;
+            flv?: components["schemas"]["StreamURL"];
+            https_flv?: components["schemas"]["StreamURL"];
+            ws_flv?: components["schemas"]["StreamURL"];
+            wss_flv?: components["schemas"]["StreamURL"];
+            fmp4?: components["schemas"]["StreamURL"];
+            https_fmp4?: components["schemas"]["StreamURL"];
+            ws_fmp4?: components["schemas"]["StreamURL"];
+            wss_fmp4?: components["schemas"]["StreamURL"];
+            hls?: components["schemas"]["StreamURL"];
+            https_hls?: components["schemas"]["StreamURL"];
+            ws_hls?: components["schemas"]["StreamURL"];
+            wss_hls?: components["schemas"]["StreamURL"];
+            ts?: components["schemas"]["StreamURL"];
+            https_ts?: components["schemas"]["StreamURL"];
+            ws_ts?: components["schemas"]["StreamURL"];
+            wss_ts?: components["schemas"]["StreamURL"];
+            rtmp?: components["schemas"]["StreamURL"];
+            rtmps?: components["schemas"]["StreamURL"];
+            rtsp?: components["schemas"]["StreamURL"];
+            rtsps?: components["schemas"]["StreamURL"];
+            rtc?: components["schemas"]["StreamURL"];
+            rtcs?: components["schemas"]["StreamURL"];
+            /** @description 流媒体ID */
+            mediaServerId?: string;
+            /** @description 流编码信息 */
+            tracks?: Record<string, never>;
+            /** @description 开始时间 */
+            startTime?: string;
+            /** @description 结束时间 */
+            endTime?: string;
+            /**
+             * Format: double
+             * @description 进度（录像下载使用）
+             */
+            progress?: number;
+            downLoadFilePath?: components["schemas"]["DownloadFileInfo"];
+            /** @description 是否暂停（录像回放使用） */
+            pause?: boolean;
+            transactionInfo?: components["schemas"]["TransactionInfo"];
+            /** @description 是否为子码流(true-是，false-主码流) */
+            subStream?: boolean;
+        };
+        /** @description 拉流代理的信息，包含播放地址 */
+        StreamProxyItemPlayUrl: {
+            /**
+             * Format: int32
+             * @description ID
+             */
+            gbStreamId?: number;
+            /** @description 平台ID */
+            platformId?: string;
+            /** @description 目录ID */
+            catalogId?: string;
+            /** @description 应用名 */
+            app?: string;
+            /** @description 流ID */
+            stream?: string;
+            /** @description 国标ID */
+            gbId?: string;
+            /** @description 名称 */
+            name?: string;
+            /** @description 流媒体服务ID */
+            mediaServerId?: string;
+            /**
+             * Format: double
+             * @description 经度
+             */
+            longitude?: number;
+            /**
+             * Format: double
+             * @description 纬度
+             */
+            latitude?: number;
+            /** @description 流类型（拉流/推流） */
+            streamType?: string;
+            /** @description 状态 */
+            status?: boolean;
+            /** @description 创建时间 */
+            createTime?: string;
+            /**
+             * Format: int32
+             * @description id
+             */
+            id?: number;
+            /** @description 分组名称 */
+            groupName?: string;
+            /** @description 分类ID */
+            categoryId?: string;
+            /** @description 通道号 */
+            channel?: string;
+            /** @description 通道名称 */
+            channelName?: string;
+            /** @description 设备IP */
+            deviceIp?: string;
+            /** @description 更新时间 */
+            updateTime?: string;
+            /** @description 类型 */
+            type?: string;
+            /** @description 拉流地址 */
+            url?: string;
+            /** @description 拉流地址 */
+            srcUrl?: string;
+            /** @description 目标地址 */
+            dstUrl?: string;
+            /**
+             * Format: int32
+             * @description 超时时间
+             */
+            timeoutMs?: number;
+            /** @description ffmpeg模板KEY */
+            ffmpegCmdKey?: string;
+            /** @description rtsp拉流时，拉流方式，0：tcp，1：udp，2：组播 */
+            rtpType?: string;
+            /** @description 是否启用 */
+            enable?: boolean;
+            /** @description 是否启用音频 */
+            enableAudio?: boolean;
+            /** @description 是否启用MP4 */
+            enableMp4?: boolean;
+            /** @description 是否 无人观看时删除 */
+            enableRemoveNoneReader?: boolean;
+            /** @description 是否 无人观看时自动停用 */
+            enableDisableNoneReader?: boolean;
+            /** @description 拉流代理时zlm返回的key，用于停止拉流代理 */
+            streamKey?: string;
+            streamInfo?: components["schemas"]["StreamInfo"];
+        };
+        /** @description 流地址信息 */
+        StreamURL: {
+            /** @description 协议 */
+            protocol?: string;
+            /** @description 主机地址 */
+            host?: string;
+            /**
+             * Format: int32
+             * @description 端口
+             */
+            port?: number;
+            /** @description 定位位置 */
+            file?: string;
+            /** @description 拼接后的地址 */
+            url?: string;
+        };
+        TransactionInfo: {
+            callId?: string;
+            localTag?: string;
+            remoteTag?: string;
+            branch?: string;
         };
         JSONArray: Record<string, never>[];
         CloudRecordItem: {
@@ -9918,179 +9986,6 @@ export interface operations {
             };
         };
     };
-    getResourceInfo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResourceInfo"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    one: {
-        parameters: {
-            query: {
-                /** @description 应用名 */
-                app: string;
-                /** @description 流Id */
-                stream: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["StreamProxyItem"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    list: {
-        parameters: {
-            query: {
-                /** @description 当前页 */
-                page?: number;
-                /** @description 每页查询数量 */
-                pageSize: number;
-                /** @description 查询内容 */
-                query?: string;
-                /** @description 是否在线 */
-                online?: boolean;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["PageInfoStreamProxyItemPlayUrl"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    getPlayUrl: {
-        parameters: {
-            query: {
-                /** @description 应用名 */
-                app: string;
-                /** @description 流id */
-                stream: string;
-                /** @description 媒体服务器id */
-                mediaServerId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["StreamContent"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
     users: {
         parameters: {
             query: {
@@ -10365,7 +10260,7 @@ export interface operations {
             };
         };
     };
-    getResourceInfo_1: {
+    getResourceInfo: {
         parameters: {
             query?: never;
             header?: never;
@@ -10949,7 +10844,7 @@ export interface operations {
             };
         };
     };
-    list_1: {
+    list: {
         parameters: {
             query?: {
                 /** @description 当前页 */
@@ -10998,7 +10893,7 @@ export interface operations {
             };
         };
     };
-    getPlayUrl_1: {
+    getPlayUrl: {
         parameters: {
             query: {
                 /** @description 应用名 */
@@ -11386,7 +11281,7 @@ export interface operations {
             };
         };
     };
-    one_1: {
+    one: {
         parameters: {
             query: {
                 /** @description 应用名 */
@@ -11429,7 +11324,7 @@ export interface operations {
             };
         };
     };
-    list_2: {
+    list_1: {
         parameters: {
             query?: {
                 /** @description 当前页 */
@@ -12870,7 +12765,7 @@ export interface operations {
             };
         };
     };
-    list_3: {
+    list_2: {
         parameters: {
             query: {
                 /** @description 当前页 */
@@ -14111,6 +14006,352 @@ export interface operations {
             };
         };
     };
+    getResourceInfo_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResourceInfo"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    getResourceInfo_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResourceInfo"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    one_1: {
+        parameters: {
+            query: {
+                /** @description 应用名 */
+                app: string;
+                /** @description 流Id */
+                stream: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StreamProxyItem"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    one_2: {
+        parameters: {
+            query: {
+                /** @description 应用名 */
+                app: string;
+                /** @description 流Id */
+                stream: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StreamProxyItem"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    list_3: {
+        parameters: {
+            query: {
+                /** @description 当前页 */
+                page?: number;
+                /** @description 每页查询数量 */
+                pageSize: number;
+                /** @description 查询内容 */
+                query?: string;
+                /** @description 是否在线 */
+                online?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageInfoStreamProxyItemPlayUrl"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    list_4: {
+        parameters: {
+            query: {
+                /** @description 当前页 */
+                page?: number;
+                /** @description 每页查询数量 */
+                pageSize: number;
+                /** @description 查询内容 */
+                query?: string;
+                /** @description 是否在线 */
+                online?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageInfoStreamProxyItemPlayUrl"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    getPlayUrl_1: {
+        parameters: {
+            query: {
+                /** @description 应用名 */
+                app: string;
+                /** @description 流id */
+                stream: string;
+                /** @description 媒体服务器id */
+                mediaServerId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StreamContent"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    getPlayUrl_2: {
+        parameters: {
+            query: {
+                /** @description 应用名 */
+                app: string;
+                /** @description 流id */
+                stream: string;
+                /** @description 媒体服务器id */
+                mediaServerId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StreamContent"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
     queryTaskList: {
         parameters: {
             query?: {
@@ -15062,7 +15303,7 @@ export interface operations {
             };
         };
     };
-    list_4: {
+    list_5: {
         parameters: {
             query: {
                 /** @description 当前页 */
@@ -16080,171 +16321,89 @@ export interface operations {
             };
         };
     };
-    changePushKey_3: {
-        parameters: {
-            query: {
-                /** @description 用户Id */
-                userId: number;
-                /** @description 新的pushKey */
-                pushKey: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    changePushKey_6: {
-        parameters: {
-            query: {
-                /** @description 用户Id */
-                userId: number;
-                /** @description 新的pushKey */
-                pushKey: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    changePushKey_2: {
-        parameters: {
-            query: {
-                /** @description 用户Id */
-                userId: number;
-                /** @description 新的pushKey */
-                pushKey: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    changePushKey: {
-        parameters: {
-            query: {
-                /** @description 用户Id */
-                userId: number;
-                /** @description 新的pushKey */
-                pushKey: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
     changePushKey_1: {
+        parameters: {
+            query: {
+                /** @description 用户Id */
+                userId: number;
+                /** @description 新的pushKey */
+                pushKey: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    changePushKey_4: {
+        parameters: {
+            query: {
+                /** @description 用户Id */
+                userId: number;
+                /** @description 新的pushKey */
+                pushKey: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    changePushKey_3: {
         parameters: {
             query: {
                 /** @description 用户Id */
@@ -16326,7 +16485,89 @@ export interface operations {
             };
         };
     };
-    changePushKey_4: {
+    changePushKey_6: {
+        parameters: {
+            query: {
+                /** @description 用户Id */
+                userId: number;
+                /** @description 新的pushKey */
+                pushKey: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    changePushKey: {
+        parameters: {
+            query: {
+                /** @description 用户Id */
+                userId: number;
+                /** @description 新的pushKey */
+                pushKey: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    changePushKey_2: {
         parameters: {
             query: {
                 /** @description 用户Id */
