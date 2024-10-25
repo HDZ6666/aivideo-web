@@ -40,7 +40,7 @@
         <el-row>       
             <el-form-item label="所选时间段" :label-width="formLabelWidth">  
               <div class="time-container">  
-                <Day class="day-container"/>  
+                <Day class="day-container" v-model="taskForm.selectedHours" @selected-hours-changed="handleTimeSelected"></Day>  
               </div>
             </el-form-item>
         </el-row>
@@ -72,7 +72,7 @@ export default {
         selectedCameras: '',  
         startDate: '',  
         endDate: '',  
-        selectedHours: '',  
+        selectedHours: [],  
       },  
       originalTask: {}, // 用于存储原始数据，以便在取消时恢复  
     };  
@@ -86,7 +86,6 @@ export default {
       this.$nextTick(() => {  
         this.$refs.taskForm.clearValidate(); // 清除表单验证  
       });  
-      callback && callback(); // 回调，可用于关闭可能已打开的其他对话框  
     },  
     // 关闭对话框（无论是否保存）  
     handleClose() {  
@@ -96,6 +95,11 @@ export default {
     handleCancel() {  
       this.taskForm = { ...this.originalTask };  
       this.handleClose();  
+    },  
+    // 处理时间段选择  
+    handleTimeSelected(finalSelectedHours) {  
+      this.taskForm.selectedHours = finalSelectedHours;  
+      console.log('选择的时间段:', finalSelectedHours);  
     },  
     // 保存编辑后的数据到route_task/edit API  
     async handleSave() {  

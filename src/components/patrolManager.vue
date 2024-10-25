@@ -80,7 +80,7 @@
                 
                     <label>设置任务时间:</label>
                     <div class="time-and-button-container">  
-                        <Day/>  
+                        <Day v-model="selectedHours" @selected-hours-changed="handleTimeSelected"></Day>  
                         <button type="submit">添加任务</button>  
                     </div>
                 </form>
@@ -174,7 +174,7 @@ export default {
         const startDate = ref(null);  
         const endDate = ref(null);  
         const Unlimited = ref(false); 
-        // const selectedHours = ref([]); 
+        const selectedHours = ref([]); //selectedHours为json格式  
         const taskList = ref([]);   
         const paginatedrouteList = ref([]); 
         const paginatedtaskList = ref([]); 
@@ -193,6 +193,11 @@ export default {
             selectedDevice.value.push(id);  
             console.log("推送选择的设备："+selectedDevice.value);  
         };  
+
+        const handleTimeSelected = (finalSelectedHours) => {  
+            selectedHours.value = finalSelectedHours;
+            console.log("选择的时间段："+selectedHours);  
+        };
 
         //处理分页
         const handleSizeChange_route = (newSize) => {
@@ -301,7 +306,7 @@ export default {
                         selectedCameras: item.selectedCameras, 
                         startDate: item.startDate,  
                         endDate: item.endDate,  
-                        // selectedHours: item.selectedHours,
+                        selectedHours: item.selectedHours,
                         createTime: item.createTime,  
                         updateTime: item.updateTime,  
                     };  
@@ -328,7 +333,7 @@ export default {
                 selectedCameras: selectedCameras.value,  
                 startDate: startDate.value,  
                 endDate: endDate.value, 
-                // selectedHours: selectedHours.value,  
+                selectedHours: selectedHours.value,  
                 }); 
                 taskList.value.push(response.data);   
                 console.log('添加任务成功:', response.data);  
@@ -415,7 +420,7 @@ export default {
                             selectedCameras: item.selectedCameras,  
                             startDate: item.startDate,  
                             endDate: item.endDate,  
-                            // selectedHours: item.selectedHours,
+                            selectedHours: item.selectedHours,
                             createTime: item.createTime,  
                             updateTime: item.updateTime,  
                         };  
@@ -443,8 +448,9 @@ export default {
             routeList,  
             startDate,  
             endDate,  
-            Unlimited,   
-            // selectedHours,  
+            Unlimited, 
+            handleTimeSelected, 
+            selectedHours,  
             taskList,  
             paginatedrouteList,  
             paginatedtaskList,  
