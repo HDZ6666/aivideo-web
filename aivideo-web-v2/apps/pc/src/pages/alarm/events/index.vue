@@ -1,41 +1,29 @@
 <template>
   <t-card>
     <t-space direction="vertical" style="width: 100%">
-      <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" label-width="calc(4em + 12px)">
-        <t-form-item label="等级" name="notifyStartLevel">
+      <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" label-width="calc(6em + 12px)">
+        <t-form-item label="告警级别" name="alarmLevel">
           <t-input
-            v-model="queryParams.notifyStartLevel"
-            type="number"
-            placeholder="请输入等级"
+            v-model="queryParams.alarmLevel"
+            placeholder="请输入告警级别"
             clearable
             style="width: 240px"
             @enter="handleQuery"
           />
         </t-form-item>
-        <t-form-item label="类型id" name="eventTypeId">
+        <t-form-item label="告警类型编号" name="alarmTypeId">
           <t-input
-            v-model="queryParams.eventTypeId"
-            placeholder="请输入类型id"
+            v-model="queryParams.alarmTypeId"
+            placeholder="请输入告警类型编号"
             clearable
             style="width: 240px"
             @enter="handleQuery"
           />
         </t-form-item>
-        <t-form-item label="通知类型" name="notifierType">
-          <t-select
-            v-model="queryParams.notifierType"
-            :options="options"
-            placeholder="请选择通知类型"
-            clearable
-            style="width: 240px"
-            @enter="handleQuery"
-          />
-        </t-form-item>
-        <t-form-item label="是否可用" name="enabled">
-          <t-select
-            v-model="queryParams.enabled"
-            :options="enabledOptions"
-            placeholder="请选择是否可用"
+        <t-form-item label="告警类型名称" name="alarmTypeName">
+          <t-input
+            v-model="queryParams.alarmTypeName"
+            placeholder="请输入告警类型名称"
             clearable
             style="width: 240px"
             @enter="handleQuery"
@@ -147,10 +135,10 @@
             </t-col>
           </t-row>
         </template>
-        <template #enabled="{ row }">
-          <t-tag v-if="row.enabled" theme="success">可用</t-tag>
-          <t-tag v-else>不可用</t-tag>
-        </template>
+<!--        <template #enabled="{ row }">-->
+<!--          <t-tag v-if="row.enabled" theme="success">可用</t-tag>-->
+<!--          <t-tag v-else>不可用</t-tag>-->
+<!--        </template>-->
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <t-link v-hasPermi="['system:dict:query']" theme="primary" hover="color" @click.stop="handleDetail(row)">
@@ -184,22 +172,46 @@
       @confirm="onConfirm"
     >
       <t-loading :loading="eLoading" size="small">
-        <t-form ref="dictRef" label-align="right" :data="form" :rules="rules" label-width="80px" @submit="submitForm">
-          <t-form-item label="事件类型" name="eventTypeId">
-            <t-input v-model="form.eventTypeId" placeholder="请输入事件类型"/>
+        <t-form ref="dictRef" label-align="right" :data="form" :rules="rules" label-width="120px" @submit="submitForm">
+          <t-form-item label="设备ID" name="deviceId">
+            <t-input v-model="form.deviceId" placeholder="请输入设备ID"/>
           </t-form-item>
-          <t-form-item label="等级" name="notifyStartLevel">
-            <t-input v-model="form.notifyStartLevel" placeholder="请输入等级"/>
+          <t-form-item label="视频通道ID" name="channelId">
+            <t-input v-model="form.channelId" placeholder="视频通道ID"/>
           </t-form-item>
-          <t-form-item label="可用" name="enabled">
-            <t-radio-group v-model="form.enabled" :options="enabledOptions" placeholder="请选择是否可用">
+          <t-form-item label="告警级别" name="alarmLevel">
+            <t-radio-group v-model="form.alarmLevel" :options="options" placeholder="请选择告警级别">
             </t-radio-group>
           </t-form-item>
-          <t-form-item label="秒" name="notifyWindowSeconds">
-            <t-input v-model="form.notifyWindowSeconds" placeholder="请输入秒"></t-input>
+          <t-form-item label="告警类型编号" name="alarmTypeId">
+            <t-input v-model="form.alarmTypeId" placeholder="请输入告警类型编号"></t-input>
           </t-form-item>
-          <t-form-item label="通知类型" name="notifierType">
-            <t-select v-model="form.notifierType" :options="options" placeholder="请输入通知类型"></t-select>
+          <t-form-item label="告警类型名称" name="alarmTypeName">
+            <t-select v-model="form.alarmTypeName" :options="options" placeholder="请输入告警类型名称"></t-select>
+          </t-form-item>
+          <t-form-item label="资源存储类型" name="assetStore">
+            <t-input v-model="form.assetStore" placeholder="请输入资源存储类型"></t-input>
+          </t-form-item>
+          <t-form-item label="告警图片" name="imageUrl">
+            <t-input v-model="form.imageUrl" placeholder="请输入告警图片"/>
+          </t-form-item>
+          <t-form-item label="原始图片" name="imageOrigin">
+            <t-input v-model="form.imageOrigin" placeholder="原始图片"/>
+          </t-form-item>
+          <t-form-item label="告警视频" name="videoUrl">
+            <t-input v-model="form.videoUrl" placeholder="请输入告警视频"/>
+          </t-form-item>
+          <t-form-item label="告警视频时长" name="videoDuration">
+            <t-input v-model="form.videoDuration" placeholder="告警视频时长"/>
+          </t-form-item>
+          <t-form-item label="经度" name="longitude">
+            <t-input v-model="form.longitude" placeholder="请输入经度"/>
+          </t-form-item>
+          <t-form-item label="纬度" name="latitude">
+            <t-input v-model="form.latitude" placeholder="请输入纬度"/>
+          </t-form-item>
+          <t-form-item label="描述" name="description">
+            <t-input v-model="form.description" placeholder="请输入描述"/>
           </t-form-item>
         </t-form>
       </t-loading>
@@ -215,11 +227,18 @@
       :footer="false"
     >
       <t-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="事件类型">{{ form.eventTypeId }}</t-descriptions-item>
-        <t-descriptions-item label="等级">{{ form.notifyStartLevel }}</t-descriptions-item>
-        <t-descriptions-item label="可用" :span="2">{{ form.enabled ? '可用' : '不可用' }}</t-descriptions-item>
-        <t-descriptions-item label="秒" :span="2">{{ form.notifyWindowSeconds }}</t-descriptions-item>
-        <t-descriptions-item label="通知类型">{{ form.notifierType }}</t-descriptions-item>
+        <t-descriptions-item label="设备ID">{{ form.deviceId }}</t-descriptions-item>
+        <t-descriptions-item label="告警级别">{{ form.alarmLevel }}</t-descriptions-item>
+        <t-descriptions-item label="告警类型编号">{{ form.alarmTypeId }}</t-descriptions-item>
+        <t-descriptions-item label="告警类型名称">{{ form.alarmTypeName }}</t-descriptions-item>
+        <t-descriptions-item label="资源存储类型">{{ form.assetStore }}</t-descriptions-item>
+        <t-descriptions-item label="告警图片">{{ form.imageUrl }}</t-descriptions-item>
+        <t-descriptions-item label="原始图片">{{ form.imageOrigin }}</t-descriptions-item>
+        <t-descriptions-item label="告警视频">{{ form.videoUrl }}</t-descriptions-item>
+        <t-descriptions-item label="告警视频时长">{{ form.videoDuration }}</t-descriptions-item>
+        <t-descriptions-item label="经度">{{ form.longitude }}</t-descriptions-item>
+        <t-descriptions-item label="纬度">{{ form.latitude }}</t-descriptions-item>
+        <t-descriptions-item label="描述">{{ form.description }}</t-descriptions-item>
       </t-descriptions>
     </t-dialog>
   </t-card>
@@ -248,8 +267,8 @@ import {
 } from 'tdesign-vue-next';
 import {computed, getCurrentInstance, nextTick, reactive, ref} from 'vue';
 
-import {addRules, delRules, getRules, listRules, updateRules} from '@/api/alarm/rules';
-import type {RulesForm, RulesQuery, RulesVo} from '@/api/model/alarm/rulesModel';
+import {addRules, delRules, getRules, listRules, updateRules} from '@/api/alarm/events';
+import type {RulesForm, RulesQuery, RulesVo} from '@/api/model/alarm/eventsModel';
 // import useDictStore from '@/store/modules/dict';
 // import { ArrayOps } from '@/utils/array';
 
@@ -283,31 +302,25 @@ const rules = ref<Record<string, Array<FormRule>>>({
 // 列显隐信息
 const columns = ref<Array<PrimaryTableCol>>([
   {title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center'},
-  {title: `事件类型id`, colKey: 'eventTypeId', align: 'center', ellipsis: true},
-  {title: `通知类型`, colKey: 'notifierType', align: 'center', ellipsis: true},
-  {title: `等级`, colKey: 'notifyStartLevel', align: 'center', ellipsis: true, sorter: true},
-  {title: `秒`, colKey: 'notifyWindowSeconds', align: 'center', width: 180},
-  {title: `是否可用`, colKey: 'enabled', align: 'center'},
+  {title: `流数据点编号`, colKey: 'streamPointId', align: 'center', ellipsis: true},
+  {title: `设备ID`, colKey: 'deviceId', align: 'center', ellipsis: true},
+  {title: `告警级别`, colKey: 'alarmLevel', align: 'center', ellipsis: true},
+  {title: `告警类型编号`, colKey: 'alarmTypeId', align: 'center', ellipsis: true},
+  {title: `告警类型名称`, colKey: 'alarmTypeName', align: 'center', ellipsis: true},
+  {title: `告警时间`, colKey: 'alarmTime', align: 'center', ellipsis: true},
+  {title: `资源存储`, colKey: 'assetStore', align: 'center', ellipsis: true},
+  {title: `告警视频时长`, colKey: 'videoDuration', align: 'center', ellipsis: true},
+  {title: `经度`, colKey: 'longitude', align: 'center', ellipsis: true},
+  {title: `纬度`, colKey: 'latitude', align: 'center', ellipsis: true},
+  {title: `描述`, colKey: 'description', align: 'center', ellipsis: true},
   {title: `操作`, colKey: 'operation', align: 'center', width: 180},
 ]);
 // 提交表单对象
-const form = ref<RulesForm>({
-  id: undefined,
-  enabled: undefined,
-  eventTypeId: undefined,
-  notifierType: undefined,
-  notifyStartLevel: undefined,
-  notifyWindowSeconds: undefined
-});
+const form = ref<RulesForm>({});
 // 查询对象
 const queryParams = ref<RulesQuery>({
-  enabled: undefined,
-  eventTypeId: undefined,
-  notifierType: undefined,
-  notifyStartLevel: undefined,
-  notifyWindowSeconds: undefined,
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 10
 });
 
 // 分页
@@ -326,9 +339,8 @@ const pagination = computed(() => {
 });
 //"SYSTEM" | "DATAV" | "WEBHOOK"
 const options = [
-  {label: 'SYSTEM', value: 'SYSTEM',},
-  {label: 'DATAV', value: 'DATAV',},
-  {label: 'WEBHOOK', value: 'WEBHOOK',},
+  {label: 'LOCAL', value: 'LOCAL',},
+  {label: 'HTTP ', value: 'HTTP ',},
 ]
 
 const enabledOptions = [

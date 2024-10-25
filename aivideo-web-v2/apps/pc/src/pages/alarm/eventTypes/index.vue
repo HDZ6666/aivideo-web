@@ -2,30 +2,19 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" label-width="calc(4em + 12px)">
-        <t-form-item label="等级" name="notifyStartLevel">
+        <t-form-item label="描述" name="description">
           <t-input
-            v-model="queryParams.notifyStartLevel"
-            type="number"
-            placeholder="请输入等级"
+            v-model="queryParams.description"
+            placeholder="请输入描述"
             clearable
             style="width: 240px"
             @enter="handleQuery"
           />
         </t-form-item>
-        <t-form-item label="类型id" name="eventTypeId">
+        <t-form-item label="名称" name="name">
           <t-input
-            v-model="queryParams.eventTypeId"
-            placeholder="请输入类型id"
-            clearable
-            style="width: 240px"
-            @enter="handleQuery"
-          />
-        </t-form-item>
-        <t-form-item label="通知类型" name="notifierType">
-          <t-select
-            v-model="queryParams.notifierType"
-            :options="options"
-            placeholder="请选择通知类型"
+            v-model="queryParams.name"
+            placeholder="请输入名称"
             clearable
             style="width: 240px"
             @enter="handleQuery"
@@ -185,21 +174,18 @@
     >
       <t-loading :loading="eLoading" size="small">
         <t-form ref="dictRef" label-align="right" :data="form" :rules="rules" label-width="80px" @submit="submitForm">
-          <t-form-item label="事件类型" name="eventTypeId">
-            <t-input v-model="form.eventTypeId" placeholder="请输入事件类型"/>
+          <t-form-item label="名称" name="name">
+            <t-input v-model="form.name"  placeholder="请输入名称"></t-input>
           </t-form-item>
-          <t-form-item label="等级" name="notifyStartLevel">
-            <t-input v-model="form.notifyStartLevel" placeholder="请输入等级"/>
+          <t-form-item label="描述" name="description">
+            <t-input v-model="form.description" placeholder="请输入描述"/>
           </t-form-item>
           <t-form-item label="可用" name="enabled">
             <t-radio-group v-model="form.enabled" :options="enabledOptions" placeholder="请选择是否可用">
             </t-radio-group>
           </t-form-item>
-          <t-form-item label="秒" name="notifyWindowSeconds">
-            <t-input v-model="form.notifyWindowSeconds" placeholder="请输入秒"></t-input>
-          </t-form-item>
-          <t-form-item label="通知类型" name="notifierType">
-            <t-select v-model="form.notifierType" :options="options" placeholder="请输入通知类型"></t-select>
+          <t-form-item label="秒" name="windowSeconds">
+            <t-input v-model="form.windowSeconds" placeholder="请输入秒"></t-input>
           </t-form-item>
         </t-form>
       </t-loading>
@@ -215,11 +201,10 @@
       :footer="false"
     >
       <t-descriptions :loading="openViewLoading">
-        <t-descriptions-item label="事件类型">{{ form.eventTypeId }}</t-descriptions-item>
-        <t-descriptions-item label="等级">{{ form.notifyStartLevel }}</t-descriptions-item>
+        <t-descriptions-item label="名称">{{ form.name }}</t-descriptions-item>
+        <t-descriptions-item label="描述">{{ form.description }}</t-descriptions-item>
         <t-descriptions-item label="可用" :span="2">{{ form.enabled ? '可用' : '不可用' }}</t-descriptions-item>
-        <t-descriptions-item label="秒" :span="2">{{ form.notifyWindowSeconds }}</t-descriptions-item>
-        <t-descriptions-item label="通知类型">{{ form.notifierType }}</t-descriptions-item>
+        <t-descriptions-item label="秒" :span="2">{{ form.windowSeconds }}</t-descriptions-item>
       </t-descriptions>
     </t-dialog>
   </t-card>
@@ -248,8 +233,8 @@ import {
 } from 'tdesign-vue-next';
 import {computed, getCurrentInstance, nextTick, reactive, ref} from 'vue';
 
-import {addRules, delRules, getRules, listRules, updateRules} from '@/api/alarm/rules';
-import type {RulesForm, RulesQuery, RulesVo} from '@/api/model/alarm/rulesModel';
+import {addRules, delRules, getRules, listRules, updateRules} from '@/api/alarm/eventTypes';
+import type {RulesForm, RulesQuery, RulesVo} from '@/api/model/alarm/eventTypesModel';
 // import useDictStore from '@/store/modules/dict';
 // import { ArrayOps } from '@/utils/array';
 
@@ -283,10 +268,9 @@ const rules = ref<Record<string, Array<FormRule>>>({
 // 列显隐信息
 const columns = ref<Array<PrimaryTableCol>>([
   {title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center'},
-  {title: `事件类型id`, colKey: 'eventTypeId', align: 'center', ellipsis: true},
-  {title: `通知类型`, colKey: 'notifierType', align: 'center', ellipsis: true},
-  {title: `等级`, colKey: 'notifyStartLevel', align: 'center', ellipsis: true, sorter: true},
-  {title: `秒`, colKey: 'notifyWindowSeconds', align: 'center', width: 180},
+  {title: `名称`, colKey: 'name', align: 'center', ellipsis: true},
+  {title: `描述`, colKey: 'description', align: 'center', ellipsis: true},
+  {title: `秒`, colKey: 'windowSeconds', align: 'center', width: 180},
   {title: `是否可用`, colKey: 'enabled', align: 'center'},
   {title: `操作`, colKey: 'operation', align: 'center', width: 180},
 ]);
@@ -294,18 +278,16 @@ const columns = ref<Array<PrimaryTableCol>>([
 const form = ref<RulesForm>({
   id: undefined,
   enabled: undefined,
-  eventTypeId: undefined,
-  notifierType: undefined,
-  notifyStartLevel: undefined,
-  notifyWindowSeconds: undefined
+  name: undefined,
+  description: undefined,
+  windowSeconds: undefined
 });
 // 查询对象
 const queryParams = ref<RulesQuery>({
   enabled: undefined,
-  eventTypeId: undefined,
-  notifierType: undefined,
-  notifyStartLevel: undefined,
-  notifyWindowSeconds: undefined,
+  name: undefined,
+  description: undefined,
+  windowSeconds: undefined,
   pageNum: 1,
   pageSize: 10,
 });
@@ -353,10 +335,9 @@ function reset() {
   form.value = {
     id: undefined,
     enabled: undefined,
-    eventTypeId: undefined,
-    notifierType: undefined,
-    notifyStartLevel: undefined,
-    notifyWindowSeconds: undefined
+    name: undefined,
+    description: undefined,
+    windowSeconds: undefined
   };
   dictRef.value?.reset();
 }
