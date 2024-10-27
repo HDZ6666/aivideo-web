@@ -16,8 +16,8 @@ module.exports = {
         // target: "http://192.168.1.105:18080",
         // target: "http://10.16.139.254:18080",
         // target: "https://fyict.cn:18080",
-        target: "http://localhost:18080",
-        // target: "http://192.168.0.151:18080",
+        target: "http://8.138.1.223:18080/",
+        //target: "http://192.168.0.151:18080",
         changeOrigin: true,
         pathRewrite: {
           "^/debug": "/"
@@ -57,7 +57,7 @@ module.exports = {
 
     // Various Dev Server settings
     // host:"172.16.1.106",
-    host: "127.0.0.1",
+    host: "localhost",
     useLocalIp: false, // can be overwritten by process.env.HOST
     // port: 8088, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined

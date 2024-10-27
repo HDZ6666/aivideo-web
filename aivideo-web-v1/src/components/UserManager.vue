@@ -11,9 +11,17 @@
 
       </div>
     </div>
+    <div class="flex">
+      <!-- 左侧数状选择 -->
+      <div class="leftchoose">
+        <el-card class="box-card">
+        <div v-for="item in leftList" :key="$route.path+item.name" class="box-card-text box-card-item">
+          <span :style="{color: $route.path==item.url?'#1890FF':'',cursor:'pointer'}" @click="$route.path!=item.url&&$router.push(item.url)">{{item.name }}</span> 
+        </div>
+      </el-card>
+      </div>
     <!--用户列表-->
-    <el-table :data="userList" style="width: 100%;font-size: 12px;" :height="winHeight"
-              header-row-class-name="table-header">
+    <el-table :data="userList" style="width: 90%;font-size: 12px;" :height="winHeight">
       <el-table-column prop="username" label="用户名" min-width="160"/>
       <el-table-column prop="pushKey" label="pushkey" min-width="160"/>
       <el-table-column prop="role.name" label="类型" min-width="160"/>
@@ -29,6 +37,8 @@
         </template>
       </el-table-column>
     </el-table>
+    </div>
+    
     <changePasswordForAdmin ref="changePasswordForAdmin"></changePasswordForAdmin>
     <changePushKey ref="changePushKey"></changePushKey>
     <addUser ref="addUser"></addUser>
@@ -71,11 +81,25 @@ export default {
       currentPage: 1,
       count: 15,
       total: 0,
-      getUserListLoading: false
+      getUserListLoading: false,
+      leftList:[{
+        name:"用户管理",
+        url:"/userManager"
+      },{
+        name:"角色管理",
+        url:"/roleManager"
+      },{
+        name:"菜单管理",
+        url:"/menuManager"
+      },{
+        name:"日志管理",
+        url:"/logManager"
+      }]
     };
   },
   mounted() {
     this.initData();
+    debugger
     this.updateLooper = setInterval(this.initData, 10000);
   },
   destroyed() {
@@ -233,6 +257,25 @@ export default {
   line-height: 1.5rem;
   padding: 0.3rem;
   width: 14.4rem;
+}
+.leftchoose{
+  width: calc(10% - 20px);
+  margin-right: 20px;
+  min-height: 100%;
+  
+}
+.box-card{
+    height: 100%;
+}
+.flex{
+  display: flex;
+}
+.box-card-text {
+    font-size: 14px;
+}
+
+.box-card-item {
+  padding: 18px 0;
 }
 
 </style>

@@ -19,7 +19,7 @@
               <el-option
                 v-for="item in options"
                 :key="item.id"
-                :label="item.name"
+                :label="item.roleName"
                 :value="item.id">
               </el-option>
             </el-select>
@@ -139,11 +139,12 @@ export default {
 
       this.$axios({
         method: 'get',
-        url: "/api/role/all"
+        url: "/api/role/optionselect"
       }).then((res) => {
         this.loading = true;
+        debugger
         if (res.data.code === 0) {
-          this.options=res.data.data
+          this.options=res.data.data.list
         }
       }).catch((error) => {
         console.error(error)

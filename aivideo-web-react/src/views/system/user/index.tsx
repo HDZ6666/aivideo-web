@@ -96,6 +96,16 @@ const menu: MenuOption[] = [
 		order: 1,
 		status: true,
 		isLink: false
+	},{
+		id:"7",
+		title:"系统权限",
+		icon: "AppstoreOutlined",
+		path: "",
+		type: 0,
+		pid: "",
+		order: 1,
+		status: true,
+		isLink: false
 	}
 ];
 
