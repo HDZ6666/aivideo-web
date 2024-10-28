@@ -3,6 +3,7 @@ export const routedata = [
         "name": "VideoCockpit",
         "path": "/videoCockpit",
         "component": "videoCockpit",
+        "redirect": "noRedirect",
         "hidden": false,
         "meta": {
             "title": "数据大屏",
@@ -16,7 +17,8 @@ export const routedata = [
         "path": "/",
         "hidden": false,
         "component": "Layout",
-        "redirect":"/live",
+        //"redirect":"/live",
+        "redirect": "noRedirect",
         "meta": {
             "title": "分屏监控",
             "icon": "#",
@@ -40,7 +42,8 @@ export const routedata = [
         "path": "/",
         "hidden": false,
         "component": "Layout",
-        "redirect":"/live",
+        //"redirect":"/live",
+        //"redirect": "noRedirect",
         "name":"",
         "meta": {
             "title": "国际对接",
@@ -79,7 +82,8 @@ export const routedata = [
         "name": "StreamProxyList",
         "path": "/StreamProxyList",
         "component": "Layout",
-        "redirect":"/streamProxyList",
+        //"redirect":"/streamProxyList",
+        "redirect": "noRedirect",
         "hidden": false,
         "meta": {
             "title": "非国标对接",
@@ -186,80 +190,32 @@ export const routedata = [
     //         }
     //     ]
     // },
-    // {
-    //     "name": "Xt",
-    //     "path": "/xt",
-    //     "hidden": false,
-    //     "redirect": "noRedirect",
-    //     "component": "Layout",
-    //     "alwaysShow": true,
-    //     "meta": {
-    //         "title": "系统",
-    //         "icon": "#",
-    //         "noCache": false,
-    //         "link": null
-    //     },
-    //     "children": [
-    //         {
-    //             "name": "Console",
-    //             "path": "console",
-    //             "hidden": false,
-    //             "component": "Console",
-    //             "meta": {
-    //                 "title": "控制台",
-    //                 "icon": "#",
-    //                 "noCache": false,
-    //                 "link": null
-    //             }
-    //         },
-    //         {
-    //             "name": "CloudRecord",
-    //             "path": "cloudRecord",
-    //             "hidden": false,
-    //             "component": "CloudRecord",
-    //             "meta": {
-    //                 "title": "云端录像",
-    //                 "icon": "#",
-    //                 "noCache": false,
-    //                 "link": null
-    //             }
-    //         },
-    //         {
-    //             "name": "MediaServerManger",
-    //             "path": "mediaServerManger",
-    //             "hidden": false,
-    //             "component": "MediaServerManger",
-    //             "meta": {
-    //                 "title": "节点管理",
-    //                 "icon": "#",
-    //                 "noCache": false,
-    //                 "link": null
-    //             }
-    //         },
-    //         {
-    //             "name": "ParentPlatformList/15/1",
-    //             "path": "parentPlatformList/15/1",
-    //             "hidden": false,
-    //             "component": "ParentPlatformList",
-    //             "meta": {
-    //                 "title": "国际级联",
-    //                 "icon": "#",
-    //                 "noCache": false,
-    //                 "link": null
-    //             }
-    //         },
-    //         {
-    //             "name": "UserManager",
-    //             "path": "userManager",
-    //             "hidden": false,
-    //             "component": "UserManager",
-    //             "meta": {
-    //                 "title": "用户管理",
-    //                 "icon": "#",
-    //                 "noCache": false,
-    //                 "link": null
-    //             }
-    //         }
-    //     ]
-    // }
+    {
+        "name": "Xt",
+        "path": "/xt",
+        "hidden": false,
+        "redirect": "noRedirect",
+        "component": "Layout",
+        "alwaysShow": true,
+        "meta": {
+            "title": "系统管理",
+            "icon": "#",
+            "noCache": false,
+            "link": null
+        },
+        "children": [
+            {
+                "name": "MenuManager",
+                "path": "menuManager",
+                "hidden": false,
+                "component": "menuManager",
+                "meta": {
+                    "title": "菜单管理",
+                    "icon": "#",
+                    "noCache": false,
+                    "link": null
+                }
+            }
+        ]
+    }
 ]

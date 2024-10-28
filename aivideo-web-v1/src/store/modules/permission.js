@@ -37,8 +37,8 @@ const permission = {
             method:"get",
         })).then(res => {
             if(res.data.code == 0){
-                //const { data } = res.data
-                const data = routedata
+                const { data } = res.data
+                //const data = routedata
                 const sdata = JSON.parse(JSON.stringify(data))
                 const rdata = JSON.parse(JSON.stringify(data))
                 const sidebarRoutes = filterAsyncRouter(sdata)
@@ -118,7 +118,6 @@ function filterChildren(childrenMap, lastRouter = false) {
 export function filterDynamicRoutes(routes) {
   const res = []
   routes.forEach(route => {
-    debugger
     if (route.permissions) {
       if (auth.hasPermiOr(route.permissions)) {
         res.push(route)
