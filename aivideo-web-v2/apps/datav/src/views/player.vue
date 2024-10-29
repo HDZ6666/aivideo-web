@@ -114,7 +114,7 @@ export default defineComponent({
                   this.startPlay(x.url);
                 }
                 else{
-                  this.$message(x.resultDesc);
+                  this.$message.error(x.resultDesc);
                 }
             });
           }
@@ -126,7 +126,7 @@ export default defineComponent({
       checkPlayer(){
         if($(this.$refs["player"]).find('div:first').hasClass("vjs-error")){
           this.stopPlay();
-          this.$message("视频播放失败");
+          this.$message.error("视频播放失败");
         }
         else{
           this.timer=setTimeout(this.checkPlayer, 1000);
