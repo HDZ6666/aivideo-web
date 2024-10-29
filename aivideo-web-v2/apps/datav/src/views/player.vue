@@ -8,6 +8,7 @@ import cacheMP4 from "../assets/video/cache.mp4"
 import $ from 'jquery'
 import videojs from 'video.js'
 import 'video.js/dist/video-js.css'
+// import 'videojs-contrib-hls'
 
 import { defineComponent } from "vue"
 export default defineComponent({

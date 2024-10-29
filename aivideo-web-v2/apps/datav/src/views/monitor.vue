@@ -120,7 +120,7 @@
   <t-dialog v-model:visible="warnDialog.show" width="5rem" class="warnDialog">
     <div class="content">
       <img src="@/assets/imgs/close.png" class="close" @click="warnDialog.show=false">
-      <div class="title">行人</div>
+      <div class="title">{{warnDialog.data.alarmTypeName}}</div>
       <div class="body">
         <div class="lf">
           <div class="img">
@@ -133,7 +133,7 @@
           <div>设备名称：{{ warnDialog.data.deviceName }}</div>
           <div>告警ID：{{ warnDialog.data.alarmId }}</div>
           <div>置信度：{{ warnDialog.data.alarmPriority }}</div>
-          <div>处理情况：  <t-tag theme="warning">未处理</t-tag></div>
+          <div>处理情况：  <t-tag theme="warning" v-if="warnDialog.data.status==0">未处理</t-tag><t-tag theme="success" v-else>已处理</t-tag></div>
           <div>通知人员：</div>
           <div class="buttons">
 
@@ -160,7 +160,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 
 import { Vue3SeamlessScroll } from "vue3-seamless-scroll"
 import VolBox from "./box.vue"
-import VolPlayer from "./player.vue"
+import VolPlayer from "./livePlayer.vue"
 import { defineComponent } from "vue"
 
 import { gjqsOption, gjqsChartCreate, gjqsReload, gjqsDestroy, gjqsResize } from './monitor/chartGJQS.js' 
@@ -427,17 +427,17 @@ export default defineComponent({
     },
     getAlarmList(){
       const apiClient = getApiClient();
-      apiClient.GET("/ai/api/alarm/alarmCameraListAll?page=1&pageSize=20").then(r => {
+      apiClient.GET("/api/alarm/v2/events/").then(r => {
         if(r.data.code=="0"){
           this.bind.warnList=[];
           let rows=[];
-          for(let i=0;i<r.data.data.list.length;i++){
+          for(let i=0;i<r.data.data.records.length;i++){
             rows.push({
-              id:r.data.data.list[i].id,
-              time:r.data.data.list[i].alarmTime.substr(0,18),
-              name:r.data.data.list[i].alarmTypeName,
-              status:r.data.data.list[i].status==0?'未处理':'已处理',
-              data:r.data.data.list[i]
+              id:r.data.data.records[i].id,
+              time:r.data.data.records[i].alarmTime.substr(0,18),
+              name:r.data.data.records[i].alarmTypeName,
+              status:r.data.data.records[i].status==0?'未处理':'已处理',
+              data:r.data.data.records[i]
             });
           }
           this.bind.warnList=rows;
@@ -446,12 +446,13 @@ export default defineComponent({
     },
     getAlarmTrend(){
       const apiClient = getApiClient();
-      apiClient.GET("/ai/api/alarm/alarmTrendListSevenDay").then(r => {
+      apiClient.GET("/api/alarm/v2/stat/statAlarmCountByTime?startTime=2024-10-01&endTime=2024-10-29").then(r => {
         if(r.data.code=="0"){
           let xAxiData=[];
           let serieData=[];
           for(let i=0;i<r.data.data.length;i++){
-
+            xAxiData.push(r.data.data[i].alarmDate.substr(5,5));
+            serieData.push(r.data.data[i].alarmCount);
           }
           gjqsOption.xAxis[0].data=xAxiData;
           gjqsOption.series[0].data=serieData;
