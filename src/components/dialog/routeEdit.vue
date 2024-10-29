@@ -3,7 +3,7 @@
     <el-dialog  
       :visible.sync="dialogVisible"  
       title="路线编辑"  
-      width="50%"  
+      width="40%"  
       @close="handleClose"  
     >  
       <el-form :model="routeForm" ref="routeForm">  
@@ -119,7 +119,9 @@ export default {
 <style scoped>  
 .device-tree-main-box {
     text-align: left;
-    width: 110%;
+    width: 100%;
     margin-left: -20px;
+    overflow-y: auto;
+    height: 280px;
 }
 </style>

@@ -75,7 +75,7 @@
                     <label for="endDate">到</label>  
                     <input type="date" v-model="endDate" /> 
                     <label for="unlimited">
-                        <input type="checkbox" id="unlimited" v-model="Unlimited" /> 无限期
+                        <input type="checkbox" id="unlimited" v-model="isUnlimited" @change="handleUnlimitedChange"/> 无限期
                     </label><br>
                 
                     <label>设置任务时间:</label>
@@ -173,7 +173,7 @@ export default {
         const routeList = ref([]);  
         const startDate = ref(null);  
         const endDate = ref(null);  
-        const Unlimited = ref(false); 
+        const isUnlimited = ref(false); 
         const selectedHours = ref([]); //selectedHours为json格式  
         const taskList = ref([]);   
         const paginatedrouteList = ref([]); 
@@ -197,6 +197,17 @@ export default {
         const handleTimeSelected = (finalSelectedHours) => {  
             selectedHours.value = finalSelectedHours;
             console.log("选择的时间段："+selectedHours);  
+        };
+
+        //勾选无限期将日期范围设置为今天到2099-12-31
+        const handleUnlimitedChange = () => {  
+            if (isUnlimited.value) {  
+                const today = new Date();  
+                const futureDate = new Date(2099, 11, 31);  
+                startDate.value = today.toISOString().split('T')[0];  
+                endDate.value = futureDate.toISOString().split('T')[0];  
+                console.log("日期范围设置为"+startDate.value+"到"+endDate.value);  
+            }  
         };
 
         //处理分页
@@ -448,8 +459,9 @@ export default {
             routeList,  
             startDate,  
             endDate,  
-            Unlimited, 
+            isUnlimited, 
             handleTimeSelected, 
+            handleUnlimitedChange, 
             selectedHours,  
             taskList,  
             paginatedrouteList,  

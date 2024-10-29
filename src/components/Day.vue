@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="resetSelection">重置</button><br>
+    <button @click="resetSelection" style="float: left;">重置</button><br>
     <table>
       <thead>
         <tr>
@@ -151,6 +151,7 @@ export default {
                     selectedTimesMap[i].push(j); // 将被选中的小时添加到对应周几的数组中  
                 }  
             }  
+            
             // 如果该周几有被选中的小时，则将其转换为逗号分隔的字符串  
             if (selectedTimesMap[i].length > 0) {  
                 selectedTimesMap[i] = selectedTimesMap[i].join(',');  
@@ -160,17 +161,12 @@ export default {
             }  
         } 
         console.log("selectedTimesMap", selectedTimesMap); 
-      
-        const selected_hours = {};  
-        for (let i = 0; i < 7; i++) {  
-            selected_hours[`weekday${i + 1}`] = selectedTimesMap[i] || '';  // 将对象属性名从 0 到 6 改为 1 到 7  
-        }  
         
         // 创建一个最终的对象数组，只包含有选中小时的周几  
         const finalSelectedHours = [];  
         for (const [weekdayIndex, hoursString] of Object.entries(selectedTimesMap)) {  
             finalSelectedHours.push({  
-                weekday: parseInt(weekdayIndex, 10) , 
+                weekday: parseInt(weekdayIndex, 10)+1, 
                 hours: hoursString   
             });  
         }     

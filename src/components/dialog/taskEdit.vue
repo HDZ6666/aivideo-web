@@ -4,7 +4,7 @@
       :visible.sync="dialogVisible"  
       title="任务编辑"  
       width="60%"  
-      top="7rem"
+      top="4rem" 
       @close="handleClose" 
     >  
       <el-form :model="taskForm" ref="taskForm" class="task-form"> 
@@ -134,9 +134,11 @@ export default {
 <style scoped>  
 .time-container {  
   width: 100%;
+  margin-top: 10px;
 }  
   
 .day-container {  
   width: 70%;
 }  
+
 </style>

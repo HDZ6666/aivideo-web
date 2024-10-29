@@ -6,38 +6,27 @@
                 v-model="filterDate" 
                 type="date" 
                 placeholder="选择日期" 
-                @change="applyFilter" 
             ></el-date-picker> 
 
             <!-- 路线名称筛选 --> 
             <el-input 
-                v-model="filterRoutename" 
+                v-model="filterrouteName" 
                 placeholder="输入路线名称" 
-                @input="applyFilter" 
             ></el-input> 
 
-            <!-- 执行状态筛选 --> 
-            <el-select 
-                v-model="filterExcuteStatus" 
-                placeholder="选择执行状态" 
-                @change="applyFilter" 
-            > 
-                <el-option 
-                    v-for="status in excuteStatuses" 
-                    :key="status" 
-                    :label="status" 
-                    :value="status" 
-                ></el-option> 
-            </el-select> 
+            <!-- 摄像头名称筛选 --> 
+            <el-input 
+                v-model="filterSelectedCameras" 
+                placeholder="输入摄像头名称" 
+            ></el-input> 
 
             <!-- 是否异常筛选 --> 
             <el-select 
                 v-model="filterAbnormality" 
                 placeholder="选择是否异常" 
-                @change="applyFilter" 
             > 
                 <el-option 
-                    v-for="status in excuteAbnormality" 
+                    v-for="status in uniqueAbnormalities" 
                     :key="status" 
                     :label="status" 
                     :value="status" 
@@ -52,18 +41,18 @@
 
         <div class="table-container"> 
             <el-table
-                :data="paginatedreportList"
+                :data="reportList"
                 style="font-size: 12px;overflow-y: auto; /* 允许垂直滚动 */ "
                 header-row-class-name="table-header"
             >
-                <el-table-column prop="reportID" label="报告编号" width=150 align="center"></el-table-column>
-                <el-table-column prop="routename" label="路线名称" width="250" align="center"></el-table-column >
-                <el-table-column prop="excuteStatus" label="执行状态" width="250" align="center"></el-table-column>
-                <el-table-column prop="excuteTime" label="执行时间" width="250" align="center"></el-table-column>
+                <el-table-column prop="reportId" label="报告编号" width=150 align="center"></el-table-column>
+                <el-table-column prop="routeName" label="路线名称" width="250" align="center"></el-table-column >
+                <el-table-column prop="selectedCameras" label="选择的摄像头" width="250" align="center"></el-table-column>
+                <el-table-column prop="createTime" label="执行时间" width="250" align="center"></el-table-column>
                 <el-table-column prop="abnormality" label="是否异常" width="220" align="center"></el-table-column>
                 <el-table-column label="巡逻报告" width="250" align="center">
                     <template slot-scope="scope">
-                    <div v-if="scope.row.excuteStatus === '巡逻成功'">
+                    <div v-if="scope.row.abnormality === '有告警'">
                         <el-divider direction="vertical"></el-divider>
                         <el-button size="medium" icon="el-icon-document" type="text" @click="viewReport(scope.row)">查看报告</el-button>
                     </div>
@@ -78,7 +67,7 @@
                 :page-size="count_report"
                 :page-sizes="[15, 30, 50]"
                 layout="total, sizes, prev, pager, next"
-                :total="reportList.length"
+                :total="total_report"
             ></el-pagination>
             <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         </div> 
@@ -88,7 +77,7 @@
 </template> 
         
 <script> 
-import { reactive, ref,onMounted } from 'vue'; 
+import { reactive, ref, onMounted } from 'vue'; 
 import axios from 'axios';
 import { Pagination } from 'element-ui'; 
 import showReport from "./dialog/showReport.vue"; 
@@ -101,118 +90,171 @@ export default {
     },
     
     setup() {
-    const reportList = ref([]);
-    const routeName = ref('');
-    const selectedCameras = ref('');
-    const paginatedreportList = ref([]); 
-    const currentPage_report = ref(1);
-    const count_report = ref(15);
-    const total_report = ref(0);
+        const reportList = ref([]);
+        const reportId = ref('');
+        const createTime = ref('');
+        const abnormality = ref('');
+        const routeName = ref('');
+        const selectedCameras = ref('');
+        const paginatedreportList = ref([]); 
+        const currentPage_report = ref(1);
+        const count_report = ref(15);
+        const total_report = ref(0);
 
-    return {routeName, selectedCameras, reportList, paginatedreportList, currentPage_report, count_report, total_report }; 
+        //获取报告列表  
+        const getReportList = () => {  
+            axios.get('/api/patrol/report/list', {  
+                params: {  
+                    page: currentPage_report.value,  
+                    count: count_report.value,  
+                }  
+            })  
+            .then(res => {  
+                reportList.value = res.data.data.list;  
+                total_report.value = res.data.data.total;  
+                paginatedreportList.value = reportList.value.map(item => {  
+                    return {  
+                        reportId: item.reportId, 
+                        routeName: item.routeName, 
+                        // selectedCameras: item.selected_cameras, 
+                        createTime: item.createTime, 
+                        abnormality: item.abnormality,
+                    };  
+                });  
+            })  
+            .catch(err => {  
+                console.log(err);  
+            });  
+        };  
+
+        //处理分页
+        const handleSizeChange_report = (size) => {  
+            count_report.value = size;  
+            getReportList();  
+        };  
+        const handleCurrentChange_report = (page) => {  
+            currentPage_report.value = page;  
+            getReportList();  
+        };
+
+        //初始化
+        onMounted(() => {  
+            getReportList(); 
+        }); 
+
+        return {reportId, routeName, createTime, abnormality, selectedCameras, reportList, getReportList, 
+            paginatedreportList, currentPage_report, count_report, total_report, handleSizeChange_report, handleCurrentChange_report,}; 
     }, 
 
     data() { 
-    return { 
-        filterDate: '', 
-        filterRoutename: '', 
-        filterExcuteStatus: '', 
-        filterAbnormality: '', 
-        excuteStatuses: [ '巡逻成功', '巡逻失败'], 
-        excuteAbnormality: ['有告警', '无告警'], 
-        // 设置样例数据  
-        reportList: [ 
-        { reportID:1, routename: '路线1', selectedCameras: '摄像头1,摄像头2', excuteStatus: '巡逻成功', excuteTime: '2023-04-03 10:00', abnormality: '有告警' }, 
-        { reportID:2, routename: '路线2', selectedCameras: '摄像头1,摄像头3,摄像头4', excuteStatus: '巡逻失败', excuteTime: '2023-04-02 09:00', abnormality: '巡逻失败' }, 
-        { reportID:3, routename: '路线3', selectedCameras: '摄像头5,摄像头6', excuteStatus: '巡逻成功', excuteTime: '2023-04-01 12:00', abnormality: '无告警' }, 
-        ], 
-    }; 
+        return { 
+            filterDate: '', 
+            filterrouteName: '',
+            filterSelectedCameras: '', 
+            filterAbnormality: '', 
+            // 设置样例数据  
+            reportList: [  
+                {  
+                    reportId: '123456', 
+                    routeName: '路线1', 
+                    selectedCameras: '摄像头1,摄像头2', 
+                    createTime: '2021-10-10 10:00:00', 
+                    abnormality: '有告警',  
+                },  
+                {  
+                    reportId: '654321', 
+                    routeName: '路线2', 
+                    selectedCameras: '摄像头3,摄像头4', 
+                    createTime: '2021-10-11 10:00:00', 
+                    abnormality: '无异常',  
+                },  
+            ], 
+            uniqueAbnormalities: [],
+        }; 
     }, 
 
+    created() { 
+        // 获取异常状态列表
+        this.getExcuteAbnormality(); 
+    },
+
     methods: { 
-    // 应用筛选条件
+        // 根据abnormality去重获取异常状态列表
+        getExcuteAbnormality() {
+            const uniqueAbnormalities = [];
+            this.reportList.forEach(report => {
+                if (!uniqueAbnormalities.includes(report.abnormality)) {
+                    uniqueAbnormalities.push(report.abnormality);
+                }
+            });
+            this.uniqueAbnormalities = uniqueAbnormalities;
+        },
+
+        // 应用筛选条件
         applyFilter() { 
             // 根据筛选条件过滤数据 
             const filteredList = this.reportList.filter(report => { 
-            const dateMatch = !this.filterDate || new Date(report.excuteTime).toDateString() === new Date(this.filterDate).toDateString(); 
-            const routenameMatch = !this.filterRoutename || report.routename.toLowerCase().includes(this.filterRoutename.toLowerCase()); 
-            const excuteStatusMatch = !this.filterExcuteStatus || report.excuteStatus === this.filterExcuteStatus; 
-            const abnormalityMatch = !this.filterAbnormality || report.abnormality === this.filterAbnormality; 
-            return dateMatch && routenameMatch && excuteStatusMatch && abnormalityMatch; 
+                const dateMatch = !this.filterDate || new Date(report.createTime.split(' ')[0]).toDateString() === new Date(this.filterDate).toDateString(); 
+                const routeNameMatch = !this.filterrouteName || report.routeName.toLowerCase().includes(this.filterrouteName.toLowerCase()); 
+                const selectedCamerasMatch = !this.filterSelectedCameras || report.selectedCameras.toLowerCase().includes(this.filterSelectedCameras.toLowerCase()); 
+                const abnormalityMatch = !this.filterAbnormality || report.abnormality === this.filterAbnormality; 
+                return dateMatch && routeNameMatch && selectedCamerasMatch && abnormalityMatch; 
             }); 
             // 更新分页后的数据 
-            this.fetchData(filteredList); 
-        }, 
-
-        // 加载数据
-        fetchData(filteredList = this.reportList) { 
-            // 使用当前页码和每页数量来计算分页后的数据 
-            const start_report = (this.currentPage_report - 1) * this.count_report; 
-            const end_report = this.currentPage_report * this.count_report; 
-            this.paginatedreportList = filteredList.slice(start_report, end_report); 
-            this.total_report = filteredList.length; // 更新总记录数以反映筛选后的数量 
+            this.paginatedreportList = filteredList; 
         }, 
 
         // 重置筛选条件
         resetFilter() { 
             this.filterDate = ''; 
-            this.filterRoutename = ''; 
+            this.filterrouteName = ''; 
+            this.filterSelectedCameras = ''; 
             this.filterExcuteStatus = ''; 
             this.filterAbnormality = ''; 
-            this.fetchData(); 
+            this.applyFilter(); 
         },
-        
-        // 导出报告列表
+
+        // 根据前端筛选条件直接导出报告列表，不需要分页
         exportReportList() {
-            const url = '/api/exportPatrolReport';//假设接口地址为/api/exportPatrolReport
-            const params = {    
-                filterDate: this.filterDate,
-                filterRoutename: this.filterRoutename,
-                filterExcuteStatus: this.filterExcuteStatus,
-                filterAbnormality: this.filterAbnormality,
-            };
-            axios.get(url, { params: params, responseType: 'blob' })
-               .then(response => {
-                    const url = window.URL.createObjectURL(new Blob([response.data]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', '巡逻报告列表.xls');
-                    document.body.appendChild(link);
-                    link.click();
-                })
-               .catch(error => {
-                    console.log(error);
-                });
+            const filteredList = this.reportList.filter(report => { 
+                const dateMatch = !this.filterDate || new Date(report.createTime.split(' ')[0]).toDateString() === new Date(this.filterDate).toDateString(); 
+                const routeNameMatch = !this.filterrouteName || report.routeName.toLowerCase().includes(this.filterrouteName.toLowerCase()); 
+                const selectedCamerasMatch = !this.filterSelectedCameras || report.selectedCameras.toLowerCase().includes(this.filterSelectedCameras.toLowerCase()); 
+                const abnormalityMatch = !this.filterAbnormality || report.abnormality === this.filterAbnormality; 
+                return dateMatch && routeNameMatch && selectedCamerasMatch && abnormalityMatch; 
+            });
+            // 将过滤后的报告列表转换为 CSV 内容  
+            const csvContent = this.reportListToCsv(filteredList);  
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });  
+            const url = URL.createObjectURL(blob);  
+            // 生成包含当前时间的文件名  
+            const currentTime = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19).replace('T', '_'); // 格式化为 YYYY-MM-DD_HH-MM-SS  
+            const downloadFileName = `reportList_${currentTime}.csv`;  
+            // 创建下载链接并触发下载
+            const link = document.createElement("a");  
+            link.href = url;  
+            link.download = downloadFileName;  
+            document.body.appendChild(link);  
+            link.click();  
+            document.body.removeChild(link);  
+        },
+
+        // 报告列表转csv格式
+        reportListToCsv(reportList) {
+            let csv = "报告编号,路线名称,选择的摄像头,执行时间,是否异常\n";
+            reportList.forEach(report => {
+                const selectedCamerasEscaped = '"' + report.selectedCameras.replace(/"/g, '""') + '"';  
+                csv += `${report.reportId},"${report.routeName}",${selectedCamerasEscaped},"${report.createTime}","${report.abnormality}"\n`; 
+            });
+            return csv;
         },
 
         //查看报告
         viewReport: function(row) {
             this.$refs.showReport.openDialog(row);
         },
-
-        // 处理分页 
-        handleSizeChange_report(newSize) { 
-            this.count_report = newSize; 
-            this.fetchData(); 
-        }, 
-        handleCurrentChange_report(newPage) { 
-            this.currentPage_report = newPage; 
-            this.fetchData(); 
-        }, 
-        fetchData() { 
-            // 这里用静态数据代替,正常情况下发送一个请求到服务器，根据currentPage和count来获取数据 
-            // 例如：axios.get('/api/tasks', { params: { page: this.currentPage, limit: this.count } }) 
         
-            // 使用当前页码和每页数量来计算分页后的数据 
-            const start_report = (this.currentPage_report - 1) * this.count_report; 
-            const end_report = this.currentPage_report * this.count_report; 
-            this.paginatedreportList = this.reportList.slice(start_report, end_report); 
-        }, 
     },
-
-    mounted() {
-        this.fetchData();  
-    },  
 }; 
 </script> 
 
