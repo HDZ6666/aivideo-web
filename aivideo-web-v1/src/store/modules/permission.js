@@ -10,7 +10,8 @@ const permission = {
     addRoutes: [],
     defaultRoutes: [],
     topbarRouters: [],
-    sidebarRouters: []
+    sidebarRouters: [],
+    sideList:[] // 左侧用户管理权限管理右侧菜单栏数据
   },
   mutations: {
     SET_ROUTES: (state, routes) => {
@@ -26,6 +27,9 @@ const permission = {
     SET_SIDEBAR_ROUTERS: (state, routes) => {
       state.sidebarRouters = routes
     },
+    SET_SIDELIST:(state, data)=>{
+      state.sideList = data
+    }
   },
   actions: {
     // 生成路由

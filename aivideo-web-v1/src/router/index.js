@@ -39,6 +39,18 @@ export const constantRoutes = [
     name: "登录",
     component:() => import("../components/Login.vue")
   },
+  {
+    path: "/",
+    name: "home",
+    component: Layout,
+    redirect: "/live",
+  },
+  {
+    path: "/roleManager",
+    name: "roleManager",
+    component: () => import("../components/roleManager1.vue") // roleManager
+  },
+
 ]
 // 动态路由
 export const dynamicRoutes = [

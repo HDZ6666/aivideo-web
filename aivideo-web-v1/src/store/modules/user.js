@@ -92,7 +92,11 @@ const user = {
     //     })
     //   })
     // },
-
+    LogOut({commit, state }){
+      debugger
+      commit('SET_ROLES', [])
+      commit('SET_PERMISSIONS', [])
+    }
     // // 前端 登出
     // FedLogOut({ commit }) {
     //   return new Promise(resolve => {

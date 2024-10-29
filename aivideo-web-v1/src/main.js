@@ -110,6 +110,8 @@ router.beforeEach((to, from, next) => {
   //     //   next({ path: '/' })
   //     // })
   //   })
+  console.log(store.getters.roles)
+  debugger
   if (store.getters.roles.length === 0) {
     // 判断当前用户是否已拉取完user_info信息
     store.dispatch('GetInfo').then(() => {
@@ -117,8 +119,25 @@ router.beforeEach((to, from, next) => {
         // 根据roles权限生成可访问的路由表
         router.addRoutes(accessRoutes) // 动态添加可访问路由表
         console.log(router)
-        console.log(router.getRoutes())
         debugger
+        const side = ['用户管理','角色管理','菜单管理','日志管理'];
+        const sideList = []; // 用户管理权限管理右侧菜单栏数据
+        accessRoutes&&accessRoutes.map((item)=>{
+          if(item.meta&&item.meta.title=="系统管理"){
+            item.children&&item.children.map((childrenItem)=>{
+              if(childrenItem.meta&&side.find((i)=>i==childrenItem.meta.title)){
+                sideList.push({
+                  name:childrenItem.meta.title,
+                  url:`${item.path}/${childrenItem.path}`
+                })
+              }
+            })
+          }
+        })
+        debugger
+        store.commit('SET_SIDELIST', sideList);
+        console.log(router.getRoutes())
+        
         next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
       })
     }).catch(err => {

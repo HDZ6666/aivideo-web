@@ -15,7 +15,7 @@
         <!-- 左侧数状选择 -->
         <div class="leftchoose">
           <el-card class="box-card">
-          <div v-for="item in leftList" :key="$route.path+item.name" class="box-card-text box-card-item">
+          <div v-for="item in sideList" :key="$route.path+item.name" class="box-card-text box-card-item">
             <span :style="{color: $route.path==item.url?'#1890FF':'',cursor:'pointer'}" @click="$route.path!=item.url&&$router.push(item.url)">{{item.name }}</span> 
           </div>
         </el-card>
@@ -119,7 +119,7 @@
   
   <script>
   import uiHeader from '../layout/UiHeader.vue'
-  
+  import { mapGetters } from "vuex";
   export default {
     name: 'userManager',
     components: {
@@ -178,22 +178,25 @@
         },
         leftList:[{
           name:"用户管理",
-          url:"/userManager"
+          url:"/xt/userManager"
         },{
           name:"角色管理",
-          url:"/roleManager"
+          url:"/xt/roleManager"
         },{
           name:"菜单管理",
-          url:"/menuManager"
+          url:"/xt/menuManager"
         },{
           name:"日志管理",
-          url:"/logManager"
+          url:"/xt/logManager"
         }]
       };
     },
     mounted() {
       this.initData();
       //this.updateLooper = setInterval(this.initData, 10000);
+    },
+    computed:{
+    ...mapGetters([ "sideList"]),
     },
     destroyed() {
       this.$destroy('videojs');
@@ -278,6 +281,10 @@
             method: 'delete',
             url: `/api/role/delete?id=${row.id}`,
           }).then((res) => {
+            this.$message({
+              message:"删除成功",
+              type:"success"
+            })
             this.getRoleList();
           }).catch((error) => {
             console.error(error);
@@ -308,16 +315,16 @@
         this.$confirm('确认要"' + text + '""' + row.roleName + '"角色吗？').then(()=> {
           //return changeRoleStatus(row.roleId, row.status);
           this.$axios({
-            method:"get",
+            method:"post",
             url:"/api/role/changeStatus",
-            params:{
+            data:{
               id:row.id,
               status:row.status
             }
           }).then(() => {
             this.$message({
               showClose: true,
-              message: `${text}成功`,
+              message: `修改成功`,
               type: 'success',
             });
           }).catch(()=>{
@@ -404,7 +411,8 @@
       submitForm: function() {
         this.$refs["form"].validate(valid => {
           if (valid) {
-            if (this.form.roleId != undefined) {
+            if (this.form.id != undefined) {
+              
               this.form.menuIds = this.getMenuAllCheckedKeys();
               this.$axios({
                 method:"put",

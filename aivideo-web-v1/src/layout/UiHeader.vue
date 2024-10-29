@@ -102,6 +102,7 @@ export default {
         .then(res => {
           // 删除用户信息，回到登录页面
           userService.clearUserInfo();
+          this.$store.dispatch('LogOut')
           this.$router.push("/login");
           if (this.sseSource != null) {
             this.sseSource.close();

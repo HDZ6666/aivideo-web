@@ -15,7 +15,7 @@
         <!-- 左侧数状选择 -->
         <div class="leftchoose">
             <el-card class="box-card">
-            <div v-for="item in leftList" :key="$route.path+item.name" class="box-card-text box-card-item">
+            <div v-for="item in sideList" :key="$route.path+item.name" class="box-card-text box-card-item">
               <span :style="{color: $route.path==item.url?'#1890FF':'',cursor:'pointer'}" @click="$route.path!=item.url&&$router.push(item.url)">{{item.name }}</span> 
             </div>
             </el-card>
@@ -110,7 +110,7 @@
   
   <script>
   import uiHeader from '../layout/UiHeader.vue'
-  
+  import { mapGetters } from "vuex";
   export default {
     name: 'userManager',
     components: {
@@ -169,18 +169,21 @@
         },
         leftList:[{
           name:"用户管理",
-          url:"/userManager"
+          url:"/xt/userManager"
         },{
           name:"角色管理",
-          url:"/roleManager"
+          url:"/xt/roleManager"
         },{
           name:"菜单管理",
-          url:"/menuManager"
+          url:"/xt/menuManager"
         },{
           name:"日志管理",
-          url:"/logManager"
+          url:"/xt/logManager"
         }]
       };
+    },
+    computed:{
+    ...mapGetters([ "sideList"]),
     },
     mounted() {
       this.initData();
