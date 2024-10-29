@@ -4,6 +4,25 @@
  */
 
 export interface paths {
+    "/api/alarm/v2/statConfig/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 查看配置详情 */
+        get: operations["findById"];
+        /** 更新配置 */
+        put: operations["update"];
+        post?: never;
+        /** 删除配置 */
+        delete: operations["deleteById"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/alarm/v2/rules/{id}": {
         parameters: {
             query?: never;
@@ -12,12 +31,12 @@ export interface paths {
             cookie?: never;
         };
         /** 查看内置规则详情 */
-        get: operations["findById"];
+        get: operations["findById_1"];
         /** 更新内置规则 */
-        put: operations["update"];
+        put: operations["update_1"];
         post?: never;
         /** 删除内置规则 */
-        delete: operations["deleteById"];
+        delete: operations["deleteById_1"];
         options?: never;
         head?: never;
         patch?: never;
@@ -31,12 +50,12 @@ export interface paths {
             cookie?: never;
         };
         /** 查看通知目标详情 */
-        get: operations["findById_1"];
+        get: operations["findById_2"];
         /** 更新通知目标 */
-        put: operations["update_1"];
+        put: operations["update_2"];
         post?: never;
         /** 删除通知目标 */
-        delete: operations["deleteById_1"];
+        delete: operations["deleteById_2"];
         options?: never;
         head?: never;
         patch?: never;
@@ -50,12 +69,12 @@ export interface paths {
             cookie?: never;
         };
         /** 查看通知详情 */
-        get: operations["findById_2"];
+        get: operations["findById_3"];
         /** 更新通知 */
-        put: operations["update_2"];
+        put: operations["update_3"];
         post?: never;
         /** 删除通知 */
-        delete: operations["deleteById_2"];
+        delete: operations["deleteById_3"];
         options?: never;
         head?: never;
         patch?: never;
@@ -69,12 +88,12 @@ export interface paths {
             cookie?: never;
         };
         /** 查看事件详情 */
-        get: operations["findById_3"];
+        get: operations["findById_4"];
         /** 更新事件 */
-        put: operations["update_3"];
+        put: operations["update_4"];
         post?: never;
         /** 删除事件 */
-        delete: operations["deleteById_3"];
+        delete: operations["deleteById_4"];
         options?: never;
         head?: never;
         patch?: never;
@@ -105,12 +124,12 @@ export interface paths {
             cookie?: never;
         };
         /** 查看事件类型详情 */
-        get: operations["findById_4"];
+        get: operations["findById_5"];
         /** 更新事件类型 */
-        put: operations["update_4"];
+        put: operations["update_5"];
         post?: never;
         /** 删除事件类型 */
-        delete: operations["deleteById_4"];
+        delete: operations["deleteById_5"];
         options?: never;
         head?: never;
         patch?: never;
@@ -579,7 +598,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/alarm/v2/rules/delete": {
+    "/api/alarm/v2/statConfig/delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -596,6 +615,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/alarm/v2/statConfig/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 查询配置列表 */
+        get: operations["findAll"];
+        put?: never;
+        /** 创建配置 */
+        post: operations["create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/alarm/v2/rules/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** 批量删除内置规则 */
+        post: operations["deleteByIds_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/alarm/v2/rules/": {
         parameters: {
             query?: never;
@@ -604,10 +658,10 @@ export interface paths {
             cookie?: never;
         };
         /** 查询内置规则列表 */
-        get: operations["findAll"];
+        get: operations["findAll_1"];
         put?: never;
         /** 创建内置规则 */
-        post: operations["create"];
+        post: operations["create_1"];
         delete?: never;
         options?: never;
         head?: never;
@@ -624,7 +678,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** 批量删除通知目标 */
-        post: operations["deleteByIds_1"];
+        post: operations["deleteByIds_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -639,10 +693,10 @@ export interface paths {
             cookie?: never;
         };
         /** 查询通知目标列表 */
-        get: operations["findAll_1"];
+        get: operations["findAll_2"];
         put?: never;
         /** 创建通知目标 */
-        post: operations["create_1"];
+        post: operations["create_2"];
         delete?: never;
         options?: never;
         head?: never;
@@ -659,7 +713,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** 批量删除通知 */
-        post: operations["deleteByIds_2"];
+        post: operations["deleteByIds_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -674,10 +728,10 @@ export interface paths {
             cookie?: never;
         };
         /** 查询通知列表 */
-        get: operations["findAll_2"];
+        get: operations["findAll_3"];
         put?: never;
         /** 创建通知 */
-        post: operations["create_2"];
+        post: operations["create_3"];
         delete?: never;
         options?: never;
         head?: never;
@@ -694,7 +748,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** 批量删除事件 */
-        post: operations["deleteByIds_3"];
+        post: operations["deleteByIds_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -709,10 +763,10 @@ export interface paths {
             cookie?: never;
         };
         /** 查询事件列表 */
-        get: operations["findAll_3"];
+        get: operations["findAll_4"];
         put?: never;
         /** 手动创建事件 */
-        post: operations["create_3"];
+        post: operations["create_4"];
         delete?: never;
         options?: never;
         head?: never;
@@ -729,7 +783,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** 批量删除事件类型 */
-        post: operations["deleteByIds_4"];
+        post: operations["deleteByIds_5"];
         delete?: never;
         options?: never;
         head?: never;
@@ -744,10 +798,10 @@ export interface paths {
             cookie?: never;
         };
         /** 查询事件类型列表 */
-        get: operations["findAll_4"];
+        get: operations["findAll_5"];
         put?: never;
         /** 创建事件类型 */
-        post: operations["create_4"];
+        post: operations["create_5"];
         delete?: never;
         options?: never;
         head?: never;
@@ -764,7 +818,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** 批量删除数据点 */
-        post: operations["deleteByIds_5"];
+        post: operations["deleteByIds_6"];
         delete?: never;
         options?: never;
         head?: never;
@@ -779,10 +833,10 @@ export interface paths {
             cookie?: never;
         };
         /** 查询数据点 */
-        get: operations["findAll_5"];
+        get: operations["findAll_6"];
         put?: never;
         /** 接收或创建数据点 */
-        post: operations["create_5"];
+        post: operations["create_6"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2847,6 +2901,125 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/alarm/v2/stat/statAlarmTypeCountByTime": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 根据时间段统计事件类型数量 */
+        get: operations["statAlarmTypeCountByTime"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/alarm/v2/stat/statAlarmProcessCountByTime": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 根据时间段统计事件已处理、未处理数量 */
+        get: operations["statAlarmProcessCountByTime"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/alarm/v2/stat/statAlarmNotifierTypeCountByTime": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 根据时间段统计通知事件数量 */
+        get: operations["statAlarmNotifierTypeCountByTime"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/alarm/v2/stat/statAlarmNotifierEventTypeCountByTime": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 根据时间区间统计通知-告警事件类型数量 */
+        get: operations["statAlarmNotifierEventTypeCountByTime"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/alarm/v2/stat/statAlarmMisReportCountByTime": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 根据时间段统计事件误报、非误报、未确认数量 */
+        get: operations["statAlarmMisReportCountByTime"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/alarm/v2/stat/statAlarmLevelCountByTime": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 根据时间段统计事件级别数量 */
+        get: operations["statAlarmLevelCountByTime"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/alarm/v2/stat/statAlarmCountByTime": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 统计时间内每天的告警数量（趋势） */
+        get: operations["statAlarmCountByTime"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/alarm/v2/notifications/stream-flux": {
         parameters: {
             query?: never;
@@ -2872,11 +3045,11 @@ export interface paths {
             cookie?: never;
         };
         /** 查看数据点详情 */
-        get: operations["findById_5"];
+        get: operations["findById_6"];
         put?: never;
         post?: never;
         /** 删除数据点 */
-        delete: operations["deleteById_5"];
+        delete: operations["deleteById_6"];
         options?: never;
         head?: never;
         patch?: never;
@@ -3487,17 +3660,17 @@ export interface paths {
         /** 修改pushkey */
         get: operations["changePushKey_1"];
         /** 修改pushkey */
-        put: operations["changePushKey_4"];
+        put: operations["changePushKey_3"];
         /** 修改pushkey */
-        post: operations["changePushKey_3"];
+        post: operations["changePushKey_2"];
         /** 修改pushkey */
-        delete: operations["changePushKey_5"];
+        delete: operations["changePushKey"];
         /** 修改pushkey */
         options: operations["changePushKey_6"];
         /** 修改pushkey */
-        head: operations["changePushKey"];
+        head: operations["changePushKey_4"];
         /** 修改pushkey */
-        patch: operations["changePushKey_2"];
+        patch: operations["changePushKey_5"];
         trace?: never;
     };
 }
@@ -3515,6 +3688,25 @@ export interface components {
             msg?: string;
             /** @description 数据 */
             data?: string;
+        };
+        StatConfig: {
+            /**
+             * Format: date-time
+             * @description 创建时间
+             */
+            createAt?: string;
+            /**
+             * Format: date-time
+             * @description 更新时间
+             */
+            updateAt?: string;
+            /** Format: int64 */
+            id?: number;
+            chartId?: string;
+            chartName?: string;
+            /** Format: int32 */
+            chartSort?: number;
+            enabled?: boolean;
         };
         AlarmRuleForm: {
             eventTypeId: string;
@@ -3614,12 +3806,12 @@ export interface components {
             /** Format: int32 */
             id?: number;
             enabled?: boolean;
-            password?: string;
             role?: components["schemas"]["Role"];
+            password?: string;
             username?: string;
             authorities?: components["schemas"]["GrantedAuthority"][];
-            accountNonExpired?: boolean;
             credentialsNonExpired?: boolean;
+            accountNonExpired?: boolean;
             accountNonLocked?: boolean;
         };
         Role: {
@@ -4372,6 +4564,13 @@ export interface components {
         IdsFormLong: {
             ids: number[];
         };
+        StatConfigForm: {
+            chartId: string;
+            chartName: string;
+            /** Format: int32 */
+            chartSort: number;
+            enabled: boolean;
+        };
         IdsFormString: {
             ids: string[];
         };
@@ -4672,48 +4871,48 @@ export interface components {
         AiStreamInfo: {
             /** Format: int32 */
             duration?: number;
+            transport?: string;
             channelName?: string;
             hls?: string;
             rtmp?: string;
-            transport?: string;
-            /** Format: int32 */
-            relaySize?: number;
-            startAt?: string;
-            recordStartAt?: string;
+            streamID?: string;
+            deviceID?: string;
             rtsp?: string;
-            snapURL?: string;
-            ws_FLV?: string;
-            /** Format: int32 */
-            inBitRate?: number;
-            /** Format: int32 */
-            numOutputs?: number;
-            ondemand?: boolean;
-            flv?: string;
-            /** Format: int32 */
-            channelPTZType?: number;
             channelID?: string;
+            flv?: string;
+            mp4_FLV?: string;
+            ws_FLV?: string;
             audioEnable?: boolean;
             /** Format: int32 */
+            relaySize?: number;
+            ondemand?: boolean;
+            /** Format: int32 */
             cascadeSize?: number;
+            snapURL?: string;
+            cdn?: string;
+            /** Format: int32 */
+            inBitRate?: number;
             /** Format: int64 */
             inBytes?: number;
+            /** Format: int32 */
+            numOutputs?: number;
+            /** Format: int32 */
+            channelPTZType?: number;
             /** Format: int64 */
             outBytes?: number;
-            cdn?: string;
-            mp4_FLV?: string;
-            deviceID?: string;
-            streamID?: string;
-            channelCustomName?: string;
+            recordStartAt?: string;
+            startAt?: string;
             sourceAudioCodecName?: string;
             /** Format: int32 */
-            sourceVideoFrameRate?: number;
+            sourceAudioSampleRate?: number;
+            channelCustomName?: string;
             sourceVideoCodecName?: string;
             /** Format: int32 */
-            sourceVideoWidth?: number;
-            /** Format: int32 */
-            sourceAudioSampleRate?: number;
+            sourceVideoFrameRate?: number;
             /** Format: int32 */
             sourceVideoHeight?: number;
+            /** Format: int32 */
+            sourceVideoWidth?: number;
         };
         /** @description 通道信息，包含播放地址 */
         DeviceChannelResponse: {
@@ -4942,14 +5141,14 @@ export interface components {
             artifactId?: string;
             version?: string;
             project?: string;
-            build_DATE?: string;
-            git_DATE?: string;
-            git_URL?: string;
-            git_Revision?: string;
-            git_BRANCH?: string;
             git_Revision_SHORT?: string;
-            build_Jdk?: string;
+            git_DATE?: string;
+            build_DATE?: string;
+            git_URL?: string;
+            git_BRANCH?: string;
+            git_Revision?: string;
             create_By?: string;
+            build_Jdk?: string;
         };
         SystemAllInfo: {
             cpu?: Record<string, never>[];
@@ -5802,9 +6001,9 @@ export interface components {
             /** @description GPS的更新时间 */
             gpsTime?: string;
             /** Format: int32 */
-            streamModeForParam?: number;
-            /** Format: int32 */
             ptztype?: number;
+            /** Format: int32 */
+            streamModeForParam?: number;
         };
         PageInfoDeviceChannelGroupInfo: {
             /** Format: int64 */
@@ -6085,6 +6284,31 @@ export interface components {
             /** Format: int32 */
             navigateLastPage?: number;
         };
+        OrderItem: {
+            column?: string;
+            asc?: boolean;
+        };
+        PageStatConfig: {
+            records?: components["schemas"]["StatConfig"][];
+            /** Format: int64 */
+            total?: number;
+            /** Format: int64 */
+            size?: number;
+            /** Format: int64 */
+            current?: number;
+            orders?: components["schemas"]["OrderItem"][];
+            optimizeCountSql?: components["schemas"]["PageStatConfig"];
+            searchCount?: components["schemas"]["PageStatConfig"];
+            optimizeJoinOfCountSql?: boolean;
+            /** Format: int64 */
+            maxLimit?: number;
+            countId?: string;
+            /**
+             * Format: int64
+             * @deprecated
+             */
+            pages?: number;
+        };
         AlarmRule: {
             /**
              * Format: date-time
@@ -6106,10 +6330,6 @@ export interface components {
             notifyWindowSeconds?: number;
             /** Format: int32 */
             notifyStartLevel?: number;
-        };
-        OrderItem: {
-            column?: string;
-            asc?: boolean;
         };
         PageAlarmRule: {
             records?: components["schemas"]["AlarmRule"][];
@@ -6862,7 +7082,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["AlarmRule"];
+                    "*/*": components["schemas"]["StatConfig"];
                 };
             };
             /** @description Bad Request */
@@ -6896,7 +7116,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AlarmRuleForm"];
+                "application/json": components["schemas"]["StatConfig"];
             };
         };
         responses: {
@@ -6986,7 +7206,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["AlarmNotifierTarget"];
+                    "*/*": components["schemas"]["AlarmRule"];
                 };
             };
             /** @description Bad Request */
@@ -7020,7 +7240,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AlarmNotifierTargetForm"];
+                "application/json": components["schemas"]["AlarmRuleForm"];
             };
         };
         responses: {
@@ -7110,7 +7330,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["AlarmNotification"];
+                    "*/*": components["schemas"]["AlarmNotifierTarget"];
                 };
             };
             /** @description Bad Request */
@@ -7144,7 +7364,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AlarmNotificationForm"];
+                "application/json": components["schemas"]["AlarmNotifierTargetForm"];
             };
         };
         responses: {
@@ -7234,7 +7454,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["AlarmEvent"];
+                    "*/*": components["schemas"]["AlarmNotification"];
                 };
             };
             /** @description Bad Request */
@@ -7258,6 +7478,130 @@ export interface operations {
         };
     };
     update_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AlarmNotificationForm"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": boolean;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    deleteById_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": number;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    findById_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AlarmEvent"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    update_4: {
         parameters: {
             query?: never;
             header?: never;
@@ -7301,7 +7645,7 @@ export interface operations {
             };
         };
     };
-    deleteById_3: {
+    deleteById_4: {
         parameters: {
             query?: never;
             header?: never;
@@ -7385,7 +7729,7 @@ export interface operations {
             };
         };
     };
-    findById_4: {
+    findById_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -7425,7 +7769,7 @@ export interface operations {
             };
         };
     };
-    update_4: {
+    update_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -7469,7 +7813,7 @@ export interface operations {
             };
         };
     };
-    deleteById_4: {
+    deleteById_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -8669,8 +9013,8 @@ export interface operations {
     findAll: {
         parameters: {
             query?: {
-                notifierType?: "SYSTEM" | "DATAV" | "WEBHOOK";
-                eventTypeId?: string;
+                chartId?: string;
+                chartName?: string;
                 enabled?: boolean;
                 page?: number;
                 size?: number;
@@ -8687,7 +9031,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageAlarmRule"];
+                    "*/*": components["schemas"]["PageStatConfig"];
                 };
             };
             /** @description Bad Request */
@@ -8719,7 +9063,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AlarmRuleForm"];
+                "application/json": components["schemas"]["StatConfigForm"];
             };
         };
         responses: {
@@ -8799,8 +9143,6 @@ export interface operations {
             query?: {
                 notifierType?: "SYSTEM" | "DATAV" | "WEBHOOK";
                 eventTypeId?: string;
-                deviceId?: string;
-                targetLike?: string;
                 enabled?: boolean;
                 page?: number;
                 size?: number;
@@ -8817,7 +9159,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageAlarmNotifierTarget"];
+                    "*/*": components["schemas"]["PageAlarmRule"];
                 };
             };
             /** @description Bad Request */
@@ -8849,7 +9191,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AlarmNotifierTargetForm"];
+                "application/json": components["schemas"]["AlarmRuleForm"];
             };
         };
         responses: {
@@ -8927,14 +9269,11 @@ export interface operations {
     findAll_2: {
         parameters: {
             query?: {
-                eventId?: number;
                 notifierType?: "SYSTEM" | "DATAV" | "WEBHOOK";
-                contentLike?: string;
-                target?: string;
-                targetLike?: boolean;
-                finished?: boolean;
-                finishAtStart?: string;
-                finishAtEnd?: string;
+                eventTypeId?: string;
+                deviceId?: string;
+                targetLike?: string;
+                enabled?: boolean;
                 page?: number;
                 size?: number;
             };
@@ -8950,7 +9289,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PageAlarmNotification"];
+                    "*/*": components["schemas"]["PageAlarmNotifierTarget"];
                 };
             };
             /** @description Bad Request */
@@ -8982,7 +9321,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AlarmNotificationForm"];
+                "application/json": components["schemas"]["AlarmNotifierTargetForm"];
             };
         };
         responses: {
@@ -9060,6 +9399,139 @@ export interface operations {
     findAll_3: {
         parameters: {
             query?: {
+                eventId?: number;
+                notifierType?: "SYSTEM" | "DATAV" | "WEBHOOK";
+                contentLike?: string;
+                target?: string;
+                targetLike?: boolean;
+                finished?: boolean;
+                finishAtStart?: string;
+                finishAtEnd?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageAlarmNotification"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    create_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AlarmNotificationForm"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": boolean;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    deleteByIds_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdsFormLong"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": number;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    findAll_4: {
+        parameters: {
+            query?: {
                 alarmTypeId?: string;
                 deviceId?: string;
                 levelStart?: number;
@@ -9108,7 +9580,7 @@ export interface operations {
             };
         };
     };
-    create_3: {
+    create_4: {
         parameters: {
             query?: never;
             header?: never;
@@ -9150,7 +9622,7 @@ export interface operations {
             };
         };
     };
-    deleteByIds_4: {
+    deleteByIds_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -9192,7 +9664,7 @@ export interface operations {
             };
         };
     };
-    findAll_4: {
+    findAll_5: {
         parameters: {
             query?: {
                 id?: string;
@@ -9236,7 +9708,7 @@ export interface operations {
             };
         };
     };
-    create_4: {
+    create_5: {
         parameters: {
             query?: never;
             header?: never;
@@ -9278,7 +9750,7 @@ export interface operations {
             };
         };
     };
-    deleteByIds_5: {
+    deleteByIds_6: {
         parameters: {
             query?: never;
             header?: never;
@@ -9320,7 +9792,7 @@ export interface operations {
             };
         };
     };
-    findAll_5: {
+    findAll_6: {
         parameters: {
             query?: {
                 alarmTypeId?: string;
@@ -9367,7 +9839,7 @@ export interface operations {
             };
         };
     };
-    create_5: {
+    create_6: {
         parameters: {
             query?: never;
             header?: never;
@@ -14704,6 +15176,307 @@ export interface operations {
             };
         };
     };
+    statAlarmTypeCountByTime: {
+        parameters: {
+            query: {
+                startTime: string;
+                endTime: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: Record<string, never>;
+                    }[];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    statAlarmProcessCountByTime: {
+        parameters: {
+            query: {
+                startTime: string;
+                endTime: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: number;
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    statAlarmNotifierTypeCountByTime: {
+        parameters: {
+            query: {
+                startTime: string;
+                endTime: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: Record<string, never>;
+                    }[];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    statAlarmNotifierEventTypeCountByTime: {
+        parameters: {
+            query: {
+                startTime: string;
+                endTime: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: Record<string, never>;
+                    }[];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    statAlarmMisReportCountByTime: {
+        parameters: {
+            query: {
+                startTime: string;
+                endTime: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: number;
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    statAlarmLevelCountByTime: {
+        parameters: {
+            query: {
+                startTime: string;
+                endTime: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: Record<string, never>;
+                    }[];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    statAlarmCountByTime: {
+        parameters: {
+            query: {
+                startTime: string;
+                endTime: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: Record<string, never>;
+                    }[];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
     streamFlux: {
         parameters: {
             query: {
@@ -14744,7 +15517,7 @@ export interface operations {
             };
         };
     };
-    findById_5: {
+    findById_6: {
         parameters: {
             query?: never;
             header?: never;
@@ -14784,7 +15557,7 @@ export interface operations {
             };
         };
     };
-    deleteById_5: {
+    deleteById_6: {
         parameters: {
             query?: never;
             header?: never;
@@ -16362,47 +17135,6 @@ export interface operations {
             };
         };
     };
-    changePushKey_4: {
-        parameters: {
-            query: {
-                /** @description 用户Id */
-                userId: number;
-                /** @description 新的pushKey */
-                pushKey: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
     changePushKey_3: {
         parameters: {
             query: {
@@ -16444,48 +17176,7 @@ export interface operations {
             };
         };
     };
-    changePushKey_5: {
-        parameters: {
-            query: {
-                /** @description 用户Id */
-                userId: number;
-                /** @description 新的pushKey */
-                pushKey: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    changePushKey_6: {
+    changePushKey_2: {
         parameters: {
             query: {
                 /** @description 用户Id */
@@ -16567,7 +17258,89 @@ export interface operations {
             };
         };
     };
-    changePushKey_2: {
+    changePushKey_6: {
+        parameters: {
+            query: {
+                /** @description 用户Id */
+                userId: number;
+                /** @description 新的pushKey */
+                pushKey: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    changePushKey_4: {
+        parameters: {
+            query: {
+                /** @description 用户Id */
+                userId: number;
+                /** @description 新的pushKey */
+                pushKey: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    changePushKey_5: {
         parameters: {
             query: {
                 /** @description 用户Id */

@@ -112,7 +112,17 @@ const apiClient = getApiClient();
 apiClient.GET("/api/alarm/v2/datapoints/").then(r=>{
   console.log(r);
 })
-
+apiClient.POST('/ai/api/device/group/addGroup',{
+  body: {
+    id: 0,
+    groupName: '',
+    platformId: 0,
+    parentId: 0,
+    level: 0,
+    sort: 0,
+    state: 0
+  }
+})
 echarts.use([GridComponent, TooltipComponent, LineChart, CanvasRenderer, LegendComponent]);
 
 let lineContainer: HTMLElement;
