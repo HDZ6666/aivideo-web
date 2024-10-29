@@ -2,16 +2,6 @@
   <t-card>
     <t-space direction="vertical" style="width: 100%">
       <t-form v-show="showSearch" ref="queryRef" :data="queryParams" layout="inline" label-width="calc(4em + 12px)">
-        <t-form-item label="等级" name="notifyStartLevel">
-          <t-input
-            v-model="queryParams.notifyStartLevel"
-            type="number"
-            placeholder="请输入等级"
-            clearable
-            style="width: 240px"
-            @enter="handleQuery"
-          />
-        </t-form-item>
         <t-form-item label="类型id" name="eventTypeId">
           <t-input
             v-model="queryParams.eventTypeId"
@@ -53,13 +43,13 @@
         <t-form-item label-width="0px">
           <t-button theme="primary" @click="handleQuery">
             <template #icon>
-              <search-icon/>
+              <search-icon />
             </template>
             搜索
           </t-button>
           <t-button theme="default" @click="resetQuery">
             <template #icon>
-              <refresh-icon/>
+              <refresh-icon />
             </template>
             重置
           </t-button>
@@ -89,7 +79,7 @@
             <t-col flex="auto">
               <t-button v-hasPermi="['system:dict:add']" theme="primary" @click="handleAdd">
                 <template #icon>
-                  <add-icon/>
+                  <add-icon />
                 </template>
                 新增
               </t-button>
@@ -101,7 +91,7 @@
                 @click="handleUpdate()"
               >
                 <template #icon>
-                  <edit-icon/>
+                  <edit-icon />
                 </template>
                 修改
               </t-button>
@@ -113,7 +103,7 @@
                 @click="handleDelete()"
               >
                 <template #icon>
-                  <delete-icon/>
+                  <delete-icon />
                 </template>
                 删除
               </t-button>
@@ -135,12 +125,12 @@
             <t-col flex="none">
               <t-button theme="default" shape="square" variant="outline" @click="showSearch = !showSearch">
                 <template #icon>
-                  <search-icon/>
+                  <search-icon />
                 </template>
               </t-button>
               <t-button theme="default" variant="outline" @click="columnControllerVisible = true">
                 <template #icon>
-                  <setting-icon/>
+                  <setting-icon />
                 </template>
                 列配置
               </t-button>
@@ -154,15 +144,15 @@
         <template #operation="{ row }">
           <t-space :size="8" break-line>
             <t-link v-hasPermi="['system:dict:query']" theme="primary" hover="color" @click.stop="handleDetail(row)">
-              <browse-icon/>
+              <browse-icon />
               详情
             </t-link>
             <t-link v-hasPermi="['system:dict:edit']" theme="primary" hover="color" @click.stop="handleUpdate(row)">
-              <edit-icon/>
+              <edit-icon />
               修改
             </t-link>
             <t-link v-hasPermi="['system:dict:remove']" theme="danger" hover="color" @click.stop="handleDelete(row)">
-              <delete-icon/>
+              <delete-icon />
               删除
             </t-link>
           </t-space>
@@ -186,10 +176,10 @@
       <t-loading :loading="eLoading" size="small">
         <t-form ref="dictRef" label-align="right" :data="form" :rules="rules" label-width="80px" @submit="submitForm">
           <t-form-item label="事件类型" name="eventTypeId">
-            <t-input v-model="form.eventTypeId" placeholder="请输入事件类型"/>
+            <t-input v-model="form.eventTypeId" placeholder="请输入事件类型" />
           </t-form-item>
           <t-form-item label="等级" name="notifyStartLevel">
-            <t-input v-model="form.notifyStartLevel" placeholder="请输入等级"/>
+            <t-input v-model="form.notifyStartLevel" placeholder="请输入等级" />
           </t-form-item>
           <t-form-item label="可用" name="enabled">
             <t-radio-group v-model="form.enabled" :options="enabledOptions" placeholder="请选择是否可用">
@@ -206,14 +196,7 @@
     </t-dialog>
 
     <!-- 字典类型详情 -->
-    <t-dialog
-      v-model:visible="openView"
-      header="详情"
-      placement="center"
-      width="700px"
-      attach="body"
-      :footer="false"
-    >
+    <t-dialog v-model:visible="openView" header="详情" placement="center" width="700px" attach="body" :footer="false">
       <t-descriptions :loading="openViewLoading">
         <t-descriptions-item label="事件类型">{{ form.eventTypeId }}</t-descriptions-item>
         <t-descriptions-item label="等级">{{ form.notifyStartLevel }}</t-descriptions-item>
@@ -240,20 +223,21 @@ import {
 } from 'tdesign-icons-vue-next';
 import {
   FormInstanceFunctions,
-  FormRule, MessagePlugin,
+  FormRule,
+  MessagePlugin,
   PageInfo,
   PrimaryTableCol,
   SubmitContext,
   TableSort,
 } from 'tdesign-vue-next';
-import {computed, getCurrentInstance, nextTick, reactive, ref} from 'vue';
+import { computed, getCurrentInstance, nextTick, reactive, ref } from 'vue';
 
-import {addRules, delRules, getRules, listRules, updateRules} from '@/api/alarm/rules';
-import type {RulesForm, RulesQuery, RulesVo} from '@/api/model/alarm/rulesModel';
+import { addRules, delRules, getRules, listRules, updateRules } from '@/api/alarm/rules';
+import type { RulesForm, RulesQuery, RulesVo } from '@/api/model/alarm/rulesModel';
 // import useDictStore from '@/store/modules/dict';
 // import { ArrayOps } from '@/utils/array';
 
-const {proxy} = getCurrentInstance();
+const { proxy } = getCurrentInstance();
 
 const openView = ref(false);
 const openViewLoading = ref(false);
@@ -276,19 +260,19 @@ const deleteDialog = ref(false);
 
 // 校验规则
 const rules = ref<Record<string, Array<FormRule>>>({
-  dictName: [{required: true, message: '字典名称不能为空'}],
-  dictRules: [{required: true, message: '字典类型不能为空'}],
+  dictName: [{ required: true, message: '字典名称不能为空' }],
+  dictRules: [{ required: true, message: '字典类型不能为空' }],
 });
 
 // 列显隐信息
 const columns = ref<Array<PrimaryTableCol>>([
-  {title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center'},
-  {title: `事件类型id`, colKey: 'eventTypeId', align: 'center', ellipsis: true},
-  {title: `通知类型`, colKey: 'notifierType', align: 'center', ellipsis: true},
-  {title: `等级`, colKey: 'notifyStartLevel', align: 'center', ellipsis: true, sorter: true},
-  {title: `秒`, colKey: 'notifyWindowSeconds', align: 'center', width: 180},
-  {title: `是否可用`, colKey: 'enabled', align: 'center'},
-  {title: `操作`, colKey: 'operation', align: 'center', width: 180},
+  { title: `选择列`, colKey: 'row-select', type: 'multiple', width: 50, align: 'center' },
+  { title: `事件类型id`, colKey: 'eventTypeId', align: 'center', ellipsis: true },
+  { title: `通知类型`, colKey: 'notifierType', align: 'center', ellipsis: true },
+  { title: `等级`, colKey: 'notifyStartLevel', align: 'center', ellipsis: true, sorter: true },
+  { title: `秒`, colKey: 'notifyWindowSeconds', align: 'center', width: 180 },
+  { title: `是否可用`, colKey: 'enabled', align: 'center' },
+  { title: `操作`, colKey: 'operation', align: 'center', width: 180 },
 ]);
 // 提交表单对象
 const form = ref<RulesForm>({
@@ -297,7 +281,7 @@ const form = ref<RulesForm>({
   eventTypeId: undefined,
   notifierType: undefined,
   notifyStartLevel: undefined,
-  notifyWindowSeconds: undefined
+  notifyWindowSeconds: undefined,
 });
 // 查询对象
 const queryParams = ref<RulesQuery>({
@@ -326,22 +310,22 @@ const pagination = computed(() => {
 });
 //"SYSTEM" | "DATAV" | "WEBHOOK"
 const options = [
-  {label: 'SYSTEM', value: 'SYSTEM',},
-  {label: 'DATAV', value: 'DATAV',},
-  {label: 'WEBHOOK', value: 'WEBHOOK',},
-]
+  { label: 'SYSTEM', value: 'SYSTEM' },
+  { label: 'DATAV', value: 'DATAV' },
+  { label: 'WEBHOOK', value: 'WEBHOOK' },
+];
 
 const enabledOptions = [
-  {label: '可用', value: true},
-  {label: '不可用', value: false},
-]
+  { label: '可用', value: true },
+  { label: '不可用', value: false },
+];
 
 /** 查询字典类型列表 */
 function getList() {
   loading.value = true;
   listRules(queryParams.value)
     .then((response) => {
-      console.log('getList', response)
+      console.log('getList', response);
       RulesList.value = response.data.data.records;
       total.value = response.data.data.total;
     })
@@ -356,7 +340,7 @@ function reset() {
     eventTypeId: undefined,
     notifierType: undefined,
     notifyStartLevel: undefined,
-    notifyWindowSeconds: undefined
+    notifyWindowSeconds: undefined,
   };
   dictRef.value?.reset();
 }
@@ -397,7 +381,7 @@ function handleSelectionChange(selection: Array<string | number>) {
 
 /** 新增按钮操作 */
 function handleAdd() {
-  reset()
+  reset();
   open.value = true;
   title.value = '添加';
 }
@@ -407,11 +391,11 @@ function handleDetail(row: RulesVo) {
   reset();
   openView.value = true;
   openViewLoading.value = true;
-  const {id} = row;
+  const { id } = row;
   getRules(id).then((response) => {
     form.value = response.data.data;
     openViewLoading.value = false;
-    console.log('handleDetail', form.value)
+    console.log('handleDetail', form.value);
   });
 }
 
@@ -433,7 +417,7 @@ function onConfirm() {
 }
 
 /** 提交按钮 */
-function submitForm({validateResult, firstError}: SubmitContext) {
+function submitForm({ validateResult, firstError }: SubmitContext) {
   if (validateResult === true) {
     // const msgLoading = proxy.$modal.msgLoading('提交中...');
     if (form.value.id) {
@@ -441,14 +425,14 @@ function submitForm({validateResult, firstError}: SubmitContext) {
         MessagePlugin.success('修改成功');
         open.value = false;
         getList();
-      })
+      });
       // .finally(() => MessagePlugin.success(msgLoading));
     } else {
       addRules(form.value).then(() => {
         MessagePlugin.success('新增成功');
         open.value = false;
         getList();
-      })
+      });
       // .finally(() => MessagePlugin.success(msgLoading));
     }
   } else {
