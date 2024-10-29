@@ -1,11 +1,13 @@
-import {getApiClient} from '@aivideo/rest';
-import {RulesForm, type RulesQuery} from "@/api/model/alarm/datapointsModel";
+import { RulesForm, type RulesQuery } from "@/api/model/alarm/datapointsModel";
+import { getApiClient } from '@aivideo/rest';
+import { components } from "@aivideo/rest/src/openapi/schema";
 
 const apiClient = getApiClient();
 
 const url = '/api/alarm/v2/datapoints/'
 
-export function addRules(data: RulesForm) {
+type AlarmDataPointForm = components["schemas"]["AlarmDataPointForm"]
+export function addRules(data: AlarmDataPointForm) {
   return apiClient.POST(
     url, {body: data}
   );
@@ -19,7 +21,10 @@ export function delRules(ids: number[]) {
 
 export function listRules(params: RulesQuery) {
   return apiClient.GET(
-    url, {params: {query: params}},
+    url, {params: {query: {
+      ...params,
+      levelStart:params?.alarmLevel
+    }}},
   );
 }
 
