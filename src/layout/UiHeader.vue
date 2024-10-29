@@ -12,7 +12,7 @@
       <el-submenu index="2" v-if="aiType">
         <template slot="title">AI卫士</template>
         <el-menu-item index="/alarmList">告警列表</el-menu-item>
-        <!-- <el-menu-item index="/fence">告警配置</el-menu-item> -->
+        <el-menu-item index="/fence">告警配置</el-menu-item>
       </el-submenu>
       <el-menu-item index="/live">分屏监控</el-menu-item>
       <el-submenu index="1">
