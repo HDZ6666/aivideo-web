@@ -69,7 +69,7 @@
           <el-form-item label="角色名称" prop="roleName">
             <el-input v-model="form.roleName" placeholder="请输入角色名称" />
           </el-form-item>
-          <el-form-item prop="roleKey">
+          <!-- <el-form-item prop="roleKey">
             <span slot="label">
               <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)" placement="top">
                 <i class="el-icon-question"></i>
@@ -77,7 +77,7 @@
               权限字符
             </span>
             <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="角色顺序" prop="roleSort">
             <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
           </el-form-item>
@@ -169,9 +169,9 @@
           roleName: [
             { required: true, message: "角色名称不能为空", trigger: "blur" }
           ],
-          roleKey: [
-            { required: true, message: "权限字符不能为空", trigger: "blur" }
-          ],
+          // roleKey: [
+          //   { required: true, message: "权限字符不能为空", trigger: "blur" }
+          // ],
           roleSort: [
             { required: true, message: "角色顺序不能为空", trigger: "blur" }
           ]
