@@ -20,10 +20,6 @@
     "swiper": "^6.8.4",
     "tdesign-icons-vue-next": "^0.2.6",
     "tdesign-vue-next": "^1.10.2",
-<<<<<<< HEAD
-=======
-    "video.js": "^7.20.3",
->>>>>>> 0bbbcd0cbd9d16f867a1f40e15da22ec78ed13d5
     "vue": "^3.4.37",
     "vue-router": "^4.4.5",
     "vue3-seamless-scroll": "^2.0.1",
