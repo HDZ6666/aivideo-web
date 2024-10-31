@@ -1,6 +1,6 @@
 <template>
     <div class="player" ref="player">
-        <LivePlayer ref="player" :videoUrl="videoUrl"/>
+        <LivePlayer ref="player" :videoUrl="videoUrl" live="true" stretch="true" style="width: 100%;height: 100%;"></LivePlayer>
     </div>
     </template>
     
@@ -55,5 +55,9 @@
     .player{
       width:100%;
       height: 100%;
+      :deep(.video-wrapper){
+        padding: 0 !important;
+        height: 100%;
+      }
     }
     </style>

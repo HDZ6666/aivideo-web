@@ -11,7 +11,7 @@
             <div class="line"></div>
             <div class="list">
               <div class="rows">
-                <t-tree ref="tree" :data="bind.deviceTree" :activable="true" @active="changeDeviceTree" @expand="deviceTreeExpand" />
+                <t-tree ref="tree" value-mode="all" :data="bind.deviceTree" :activable="true" @active="changeDeviceTree" @expand="deviceTreeExpand" />
               </div>
             </div>
           </div>
@@ -92,7 +92,7 @@
     </div>
     <div class="pager">
       <div class="lf">
-        <!-- <div class="button">全屏</div> -->
+        <div class="button">全屏</div>
         <div class="button" @click="autoPage($event)">自动轮播</div>
       </div>
       <div class="rt">
@@ -101,9 +101,9 @@
         <div class="button" @click="onPage(1)">下一页</div>
         <div class="select">
           <t-select v-model="pageSize" @change="changePageSize">
-            <t-option key="4" label="2X2/页" value="4" />
-            <t-option key="9" label="3X3/页" value="9"></t-option>
-            <t-option key="16" label="4X4/页" value="16" />
+            <t-option key="4" label="四分屏" value="4" />
+            <t-option key="9" label="九分屏" value="9"></t-option>
+            <t-option key="16" label="十六分屏" value="16" />
           </t-select>
         </div>
       </div>
@@ -317,7 +317,7 @@ export default defineComponent({
       }
     },
     deviceTreeExpand(value,context){
-      if(context.node.data.children.length==1 && context.node.data.children[0].id==''){
+      if(context.node.data.children===true){
         this.getDeviceChilrenList(context.node);
       }
     },
@@ -377,11 +377,12 @@ export default defineComponent({
     },
     getDeviceChilren(data){
       if(data.length==0){
-        return [{
-            id:'',
-            label:'',
-            value:''
-          }];
+        // return [{
+        //     id:'',
+        //     label:'',
+        //     value:''
+        //   }];
+        return true;
       }
       else{
         let tree=[];
@@ -409,10 +410,10 @@ export default defineComponent({
               url:r.data.data.list[i].streamInfo.hls.url
             });
           }
-          let nodes=node.getChildren();
-          for(let i=0;i<nodes.length;i++){
-            nodes[i].remove();
-          }
+          // let nodes=node.getChildren();
+          // for(let i=0;i<nodes.length;i++){
+          //   nodes[i].remove();
+          // }
           this.$refs.tree.appendTo(node.value, children);
         }
       })
@@ -616,33 +617,93 @@ export default defineComponent({
     }
     .videos{
       width: 100%;
+      height: calc(100% - 1.2rem);
+      margin-left: 0.14rem;
       .row{
+        width:100%;
+        height:100%;
         display: block;
         .col{
           float:left;
           width: 0.5rem;
           background-color: #000000;
-          margin:0.05rem;
+          margin:0.02rem;
+          overflow: hidden;
           .active{
             border:2px solid #d5aa5b
           }
+          :deep(.vjs-control-bar){
+            height: 0.18rem;
+            font-size: 0.08rem;
+          }
+          :deep(.vjs-time-control){
+            line-height: 0.18rem;
+            font-size: 0.08rem;
+          }
+          :deep(.vjs-icon-placeholder:before){
+            font-size: 0.1rem;
+          }
+          :deep(.vjs-playback-rate-value){
+            line-height: 0.18rem;
+            font-size: 0.09rem;
+          }
+          :deep(.vjs-button){
+            line-height: 0.19rem;
+          }
+          :deep(.vjs-icon-spinner:before){
+            font-size: 0.1rem;
+            line-height: 0.18rem;
+          }
+          :deep(.vjs-menu-item-text){
+            font-size: 0.08rem;
+            line-height: 0.14rem;
+          }
+          :deep(.vjs-menu-content){
+            bottom: 0.07rem;
+          }
+          :deep(.vjs-play-control){
+            width:0.2rem;
+          }
+          :deep(.vjs-big-play-button){
+            top: calc(50% - 0.07rem);
+            width: 0.35rem;
+            height: 0.22rem;
+            line-height: 0.18rem;
+          }
         }
         .col2{
-          width: calc(50% - 0.1rem);
-          max-width: 2.623rem;
-          height: 1.475rem;
+          width: calc(50% - 0.14rem);
+          //height: 1.39rem;
+          height: 50%;
         }
         .col3{
           width:calc(33.333% - 0.1rem);
-          max-width: 1.689rem;
-          height: 0.95rem;
+          //height: 0.92rem;
+          height: 33.333%;
         }
         .col4{
-          width:calc(25% - 0.1rem);
-          max-width: 1.222rem;
-          height: 0.687rem;
+          width:calc(25% - 0.078rem);
+          //height: 0.687rem;
+          height: 25%;
         }
       }
+    }
+    .fullscreen{
+      object-fit: contain;
+      user-select: text;
+      position: fixed!important;
+      box-sizing:border-box!important;
+      min-width: 0px !important;
+      max-width: none !important;
+      min-height: 0px !important;
+      max-height: none !important;
+      width: 100% !important;
+      height: 100% !important;
+      transform:none !important;
+      inset:0px !important;
+      margin:0% !important;
+      overlay: auto !important;
+      background-color: #0071bc;
     }
   }
   .box_content{
@@ -768,14 +829,6 @@ export default defineComponent({
         }
       }
     }
-  }
-  .fullscreen {
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100vw;
-    height: 100vh; 
-    z-index: 1000;
   }
   :deep(.warnDialog){
     .t-dialog{
