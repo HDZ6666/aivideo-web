@@ -125,6 +125,11 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+window.addEventListener("unauthorized", function(_) {
+  console.log("receive unauthorized");
+  router.push("/login");
+},false)
+
 Vue.prototype.$axios = axios;
 Vue.prototype.$cookies.config(60 * 30);
 
