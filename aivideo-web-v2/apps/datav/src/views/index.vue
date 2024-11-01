@@ -9,7 +9,7 @@
       </div>
       <div class="buttons">
         <div class="item">
-          <img src="@/assets/imgs/manager.png"/>
+          <img src="@/assets/imgs/manager.png" @click="gotoDashboard()"/>
         </div>
         <div class="item">
           <img src="@/assets/imgs/loginout.png"/>
@@ -27,10 +27,10 @@
   </div>
 </template>
 <script>
-import $ from 'jquery'
 import loading from '@/components/basic/RouterLoading.vue';
-import { defineComponent } from 'vue'
-import { useRouter } from "vue-router"
+import $ from 'jquery';
+import { defineComponent } from 'vue';
+import { useRouter } from "vue-router";
 export default defineComponent({
   components: {
     loading
@@ -49,6 +49,9 @@ export default defineComponent({
   computed:{
   },
   methods:{
+    gotoDashboard(){
+      window.top.location.href="/";
+    },
     link(url,event){
       $(event.target).parent().parent().find(".item").removeClass("active");
       $(event.target).addClass("active");
