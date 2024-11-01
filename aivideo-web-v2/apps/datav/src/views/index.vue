@@ -111,7 +111,8 @@ export default defineComponent({
     position: relative;
     overflow: hidden;
     background: #013480;
-    background: url("../assets/imgs/bg.png") no-repeat center;
+    // background: url("../assets/imgs/bg.png") no-repeat center;
+    background: linear-gradient(270deg, #060C16 0%, rgba(9, 28, 45, 0.90) 50.06%, #11182D 101.04%);
     background-size: 100% 100%;
   }
   .header {

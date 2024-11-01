@@ -21,15 +21,62 @@
     </vol-box>
   </div>
   <div class="right">
-    <vol-box title="告警统计" :height="rightBox2Height" class="box">
+    <card-box title="告警统计" :height="rightBox2Height" class="box">
       <template #content>
-        <div class="box_content">
-          <div class="warn_stat">
-            dsafadsf
+        <div class="box_content" style="flex-direction: column;">
+          <div class="warn_stat_box">
+            <div class="warn_stat_title">
+
+            </div>
+            <div class="warn_stat">
+              <div class="warn_stat_content">
+                <div class="warn_frame">
+                  <p>324</p>
+                  <span>当日告警数</span>
+                </div>
+                <div class="warn_frame">
+                  <p>324</p>
+                  <span>当日告警数</span>
+                </div>
+                <div class="warn_frame">
+                  <p>324</p>
+                  <span>当日告警数</span>
+                </div>
+                <div class="warn_frame">
+                  <p>324</p>
+                  <span>当日告警数</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="warn_stat_box">
+            <div class="warn_stat_title">
+
+            </div>
+            <div class="warn_stat">
+              <div class="warn_stat_content">
+                <div class="warn_frame">
+                  <p>324</p>
+                  <span>当日告警数</span>
+                </div>
+                <div class="warn_frame">
+                  <p>324</p>
+                  <span>当日告警数</span>
+                </div>
+                <div class="warn_frame">
+                  <p>324</p>
+                  <span>当日告警数</span>
+                </div>
+                <div class="warn_frame">
+                  <p>324</p>
+                  <span>当日告警数</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </template>
-    </vol-box>
+    </card-box>
     <vol-box title="告警概览" :height="rightBox2Height" class="box">
       <template #content>
         <div class="box_content">
@@ -52,13 +99,13 @@
         </div>
       </template>
     </vol-box>
-    <vol-box title="告警趋势" :height="rightBox2Height" class="box">
+    <card-box title="告警趋势" :height="rightBox2Height" class="box">
       <template #content>
         <div class="box_content">
           <div id="chartGJQS" class="chart"></div>
         </div>
       </template>
-    </vol-box>
+    </card-box>
   </div>
   <div class="center">
     <div class="nav">
@@ -170,6 +217,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 import { defineComponent } from "vue";
 import { Vue3SeamlessScroll } from "vue3-seamless-scroll";
 import VolBox from "./box.vue";
+import CardBox from "../components/CardBox.vue"
 import VolPlayer from "./livePlayer.vue";
 
 import { gjqsChartCreate, gjqsDestroy, gjqsOption, gjqsReload, gjqsResize } from './monitor/chartGJQS.js';
@@ -181,6 +229,7 @@ export default defineComponent({
     Swiper,
     SwiperSlide,
     Vue3SeamlessScroll,
+    CardBox,
     'vol-box':VolBox,
     'vol-player':VolPlayer
   },
@@ -507,7 +556,7 @@ export default defineComponent({
   pointer-events: all;
   .left{
     position: absolute;
-    width: 2.188rem;
+    width: 1.388rem;
     top:-0.3rem;
     left: 0.1rem;
     bottom:0.1rem;
@@ -517,18 +566,19 @@ export default defineComponent({
   }
   .right{
     position: absolute;
-    width: 2.188rem;
+    width: 2.588rem;
     top:-0.3rem;
     right: 0.1rem;
     bottom:0.1rem;
+    box-sizing: border-box;
     .box{
-      margin-top:0.1rem;
+      margin-top:0.05rem;
     }
   }
   .center{
     position: absolute;
-    left: 2.388rem;
-    right: 2.388rem;
+    left: 1.388rem;
+    right: 2.588rem;
     top:0;
     bottom:0.1rem;
     .nav{
@@ -728,38 +778,84 @@ export default defineComponent({
       height: 100%;
     }
   }
+  .warn_stat_box {
+    width: 100%;
+    height: 50%;
+  }
+  .warn_stat_title {
+    height: 28%;
+  }
   .warn_stat {
     position: relative;
-    padding: 10px;
-    width: 410px;
-    height: 81px;
+    padding: 0.1px;
+    width: 100%;
+    height: 72%;
     background: linear-gradient(90deg, #0953BC 0%, #042656 100%);
   }
+  .warn_stat_content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .warn_frame {
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .warn_frame p {
+    color: var(--vi-00-a-0-e-9, #00A0E9);
+    font-family: DINPro;
+    font-size: 0.13rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 0.15rem; /* 76.923% */
+  }
+  .warn_frame span {
+    color: var(---, #C6D1DB);
+    font-family: "PingFang SC";
+    font-size: 0.08rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
   .warn_stat::before,  
-  .warn_stat::after {  
+  .warn_stat::after,
+  .warn_stat_content::before,
+  .warn_stat_content::after {  
       content: '';  
       position: absolute;  
-      width: 10px; /* 高亮角的宽度 */  
-      height: 10px; /* 高亮角的高度 */  
-      background-color: yellow; /* 高亮颜色 */  
-      border-radius: 2px; /* 圆角效果 */  
+      width: 0.06rem;  
+      height: 0.06rem;
   }  
   .warn_stat::before {  
-      top: -5px; /* 上边高亮偏移 */  
-      left: -5px; /* 左边高亮偏移 */  
+      top: 0px; 
+      left: 0px;
+      border-top: 1px solid #7CBFFF;
+      border-left: 1px solid #7CBFFF;
   }  
   .warn_stat::after {  
-      bottom: -5px; /* 下边高亮偏移 */  
-      right: -5px; /* 右边高亮偏移 */  
-  }  
-  .warn_stat::after {  
-      bottom: -5px;  
-      right: -5px; /* 高亮右下角 */  
-  }  
-  .warn_stat::before {  
-      top: -5px;  
-      left: -5px; /* 高亮左上角 */  
-  } 
+      top: 0px; 
+      right: 0px;
+      border-top: 1px solid #7CBFFF;
+      border-right: 1px solid #7CBFFF;
+  }
+  .warn_stat_content::before {
+      bottom: 0px;  
+      right: 0px;  
+      border-bottom: 1px solid #7CBFFF;
+      border-right: 1px solid #7CBFFF;
+  }
+  .warn_stat_content::after {  
+      bottom: 0px; 
+      left: 0px;
+      border-bottom: 1px solid #7CBFFF;
+      border-left: 1px solid #7CBFFF;
+  }
+
   .warn_list {
     position: relative;
     padding: 0px;
