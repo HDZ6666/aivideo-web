@@ -27,15 +27,22 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener("toggleFullScreen", this.toggleFullScreen)
+    window.addEventListener("enterFullScreen", this.enterFullScreen)
+    window.addEventListener("exitFullScreen", this.exitFullScreen)
   },
   unmounted() {
-    window.removeEventListener("toggleFullScreen", this.toggleFullScreen)
+    window.removeEventListener("enterFullScreen", this.enterFullScreen)
+    window.removeEventListener("exitFullScreen", this.exitFullScreen)
   },
   methods:{
-    toggleFullScreen() {
-      console.log("toggleFullScreen", new Date());
-      this.fullscreen = !this.fullscreen
+    enterFullScreen() {
+      console.log("enterFullScreen", new Date());
+      this.fullscreen = true
+    },
+    
+    exitFullScreen() {
+      console.log("exitFullScreen", new Date());
+      this.fullscreen = false
     }
   }
 }

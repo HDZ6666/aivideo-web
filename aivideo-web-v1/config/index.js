@@ -49,19 +49,23 @@ module.exports = {
       },
       "/pc": {
         target: "http://localhost:3001",
-        changeOrigin: true
+        changeOrigin: true,
+        ws: true
       },
       "/mobile": {
         target: "http://localhost:3002",
-        changeOrigin: true
+        changeOrigin: true,
+        ws: true
       },
       "/datav": {
         target: "http://localhost:3003",
-        changeOrigin: true
+        changeOrigin: true,
+        ws: true
       },
       "/react": {
         target: "http://localhost:8066",
-        changeOrigin: true
+        changeOrigin: true,
+        ws: true
       },
       "/livePlayer": {
         target: "http://localhost:8066", 
