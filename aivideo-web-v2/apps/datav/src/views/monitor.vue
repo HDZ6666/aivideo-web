@@ -21,7 +21,16 @@
     </vol-box>
   </div>
   <div class="right">
-    <vol-box title="告警概览" :height="rightBox1Height" class="box">
+    <vol-box title="告警统计" :height="rightBox2Height" class="box">
+      <template #content>
+        <div class="box_content">
+          <div class="warn_stat">
+            dsafadsf
+          </div>
+        </div>
+      </template>
+    </vol-box>
+    <vol-box title="告警概览" :height="rightBox2Height" class="box">
       <template #content>
         <div class="box_content">
           <div class="warn_list">
@@ -716,6 +725,38 @@ export default defineComponent({
       height: 100%;
     }
   }
+  .warn_stat {
+    position: relative;
+    padding: 10px;
+    width: 410px;
+    height: 81px;
+    background: linear-gradient(90deg, #0953BC 0%, #042656 100%);
+  }
+  .warn_stat::before,  
+  .warn_stat::after {  
+      content: '';  
+      position: absolute;  
+      width: 10px; /* 高亮角的宽度 */  
+      height: 10px; /* 高亮角的高度 */  
+      background-color: yellow; /* 高亮颜色 */  
+      border-radius: 2px; /* 圆角效果 */  
+  }  
+  .warn_stat::before {  
+      top: -5px; /* 上边高亮偏移 */  
+      left: -5px; /* 左边高亮偏移 */  
+  }  
+  .warn_stat::after {  
+      bottom: -5px; /* 下边高亮偏移 */  
+      right: -5px; /* 右边高亮偏移 */  
+  }  
+  .warn_stat::after {  
+      bottom: -5px;  
+      right: -5px; /* 高亮右下角 */  
+  }  
+  .warn_stat::before {  
+      top: -5px;  
+      left: -5px; /* 高亮左上角 */  
+  } 
   .warn_list {
     position: relative;
     padding: 0px;
