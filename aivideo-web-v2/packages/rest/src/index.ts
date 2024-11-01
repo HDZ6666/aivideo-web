@@ -10,6 +10,10 @@ export const packageInfo = {
     version: packageJson.version
 }
 
+function emitLogin(){
+    window.top?.dispatchEvent(new CustomEvent("unauthorized"))
+}
+
 const authMiddleware: Middleware = {
     async onRequest({ schemaPath, request }) {
         if (UNPROTECTED_ROUTES.some((pathname) => schemaPath.startsWith(pathname))) {
@@ -22,9 +26,20 @@ const authMiddleware: Middleware = {
             headers.set("x-access-token", token)
             headers.set("access-token", token)
             return request;
+        }else{
+            // emitLogin()
+            return undefined
+        }
+    },
+    async onResponse({response}){
+        const status = response.status
+        if(status === 401){
+            emitLogin()
         }
     }
 };
+
+
 export function getApiClient(clientOptions?: ClientOptions) {
     const client = createClient<paths>({ ...clientOptions });
     client.use(authMiddleware)

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import FramePage from "../iframe/index.vue";
+import FramePage from "../iframe/fullheight.vue";
 export default {
   name: "datavV2",
   components: {

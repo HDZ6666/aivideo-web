@@ -1,10 +1,10 @@
 <template>
   <el-container style="height: 100%">
-    <el-header style="height: auto;">
-      <ui-header/>
+    <el-header style="height: auto;" :style="{padding: 0}">
+      <ui-header v-if="!fullscreen"/>
     </el-header>
-    <el-main>
-      <el-container>
+    <el-main :style="{padding: 0}">
+      <el-container style="height: 100%">
         <transition name="fade">
           <router-view></router-view>
         </transition>
@@ -21,6 +21,23 @@ export default {
   components: {
     uiHeader
   },
+  data() {
+    return {
+      fullscreen: false
+    }
+  },
+  mounted() {
+    window.addEventListener("toggleFullScreen", this.toggleFullScreen)
+  },
+  unmounted() {
+    window.removeEventListener("toggleFullScreen", this.toggleFullScreen)
+  },
+  methods:{
+    toggleFullScreen() {
+      console.log("toggleFullScreen", new Date());
+      this.fullscreen = !this.fullscreen
+    }
+  }
 }
 </script>
 <style>

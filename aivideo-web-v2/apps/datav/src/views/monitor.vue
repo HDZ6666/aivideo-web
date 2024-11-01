@@ -101,7 +101,7 @@
     </div>
     <div class="pager">
       <div class="lf">
-        <div class="button">全屏</div>
+        <div class="button" @click="toggleFullScreen()">全屏</div>
         <div class="button" @click="autoPage($event)">自动轮播</div>
       </div>
       <div class="rt">
@@ -160,19 +160,19 @@
 </div>
 </template>
 <script>
-import $ from 'jquery'
+import $ from 'jquery';
+import SwiperCore, { Autoplay, Pagination, Scrollbar } from 'swiper';
+import 'swiper/components/pagination/pagination.min.css';
+import 'swiper/components/scrollbar/scrollbar.min.css';
 import 'swiper/swiper-bundle.css';
-import 'swiper/components/scrollbar/scrollbar.min.css'
-import 'swiper/components/pagination/pagination.min.css'
-import SwiperCore, { Scrollbar, Pagination, Autoplay } from 'swiper'
-import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Swiper, SwiperSlide } from 'swiper/vue';
 
-import { Vue3SeamlessScroll } from "vue3-seamless-scroll"
-import VolBox from "./box.vue"
-import VolPlayer from "./livePlayer.vue"
-import { defineComponent } from "vue"
+import { defineComponent } from "vue";
+import { Vue3SeamlessScroll } from "vue3-seamless-scroll";
+import VolBox from "./box.vue";
+import VolPlayer from "./livePlayer.vue";
 
-import { gjqsOption, gjqsChartCreate, gjqsReload, gjqsDestroy, gjqsResize } from './monitor/chartGJQS.js' 
+import { gjqsChartCreate, gjqsDestroy, gjqsOption, gjqsReload, gjqsResize } from './monitor/chartGJQS.js';
 SwiperCore.use([Scrollbar, Pagination, Autoplay])
 
 import { getApiClient } from '@aivideo/rest';
@@ -261,6 +261,9 @@ export default defineComponent({
   watch:{
   },
   methods:{
+    toggleFullScreen(){
+      window.top?.dispatchEvent(new CustomEvent("toggleFullScreen"))
+    },
     initBoxHeight(){
       var totalHeight = parseInt($(document).height()-this.$fontSize*0.5);
       var height = parseInt(totalHeight/3);
