@@ -2,7 +2,7 @@
   <div id="routeEdit">  
     <el-dialog  
       :visible.sync="dialogVisible"  
-      title="任务编辑"  
+      title="路线编辑"  
       width="40%"  
       @close="handleClose"  
     >  
