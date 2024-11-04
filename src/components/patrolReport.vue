@@ -21,7 +21,7 @@
             ></el-input> 
 
             <!-- 是否异常筛选 --> 
-            <el-select 
+            <!-- <el-select 
                 v-model="filterAbnormality" 
                 placeholder="选择是否异常" 
             > 
@@ -31,7 +31,7 @@
                     :label="status" 
                     :value="status" 
                 ></el-option> 
-            </el-select> 
+            </el-select>  -->
 
             <!-- 按钮 --> 
             <el-button type="primary" @click="applyFilter">筛选</el-button>
@@ -41,21 +41,20 @@
 
         <div class="table-container"> 
             <el-table
-                :data="reportList"
+                :data="paginatedreportList"
                 style="font-size: 12px;overflow-y: auto; /* 允许垂直滚动 */ "
                 header-row-class-name="table-header"
             >
-                <el-table-column prop="reportId" label="报告编号" width=150 align="center"></el-table-column>
-                <el-table-column prop="routeName" label="路线名称" width="250" align="center"></el-table-column >
-                <el-table-column prop="selectedCameras" label="选择的摄像头" width="250" align="center"></el-table-column>
-                <el-table-column prop="createTime" label="执行时间" width="250" align="center"></el-table-column>
-                <el-table-column prop="abnormality" label="是否异常" width="220" align="center"></el-table-column>
-                <el-table-column label="巡逻报告" width="250" align="center">
+                <el-table-column prop="reportId" label="报告编号" width=80 align="center"></el-table-column>
+                <el-table-column prop="routeName" label="路线名称" width="120" align="center"></el-table-column >
+                <el-table-column prop="selectedCameras" label="选择的摄像头" width="300" align="center"></el-table-column>
+                <el-table-column prop="createTime" label="执行时间" width="180" align="center"></el-table-column>
+                <el-table-column prop="abnormality" label="是否异常" width="120" align="center"></el-table-column>
+                <el-table-column label="巡逻报告" width="350" align="center">
                     <template slot-scope="scope">
-                    <div v-if="scope.row.abnormality === '有告警'">
                         <el-divider direction="vertical"></el-divider>
                         <el-button size="medium" icon="el-icon-document" type="text" @click="viewReport(scope.row)">查看报告</el-button>
-                    </div>
+                        <el-button size="medium" icon="el-icon-download" type="text" @click="viewVideo(scope.row)">导出报告</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -77,10 +76,11 @@
 </template> 
         
 <script> 
-import { reactive, ref, onMounted } from 'vue'; 
+import { reactive, ref,onMounted } from 'vue'; 
 import axios from 'axios';
 import { Pagination } from 'element-ui'; 
 import showReport from "./dialog/showReport.vue"; 
+import { determinant } from 'ol/transform';
     
 export default { 
     name: 'patrolReport', 
@@ -116,15 +116,16 @@ export default {
                     return {  
                         reportId: item.reportId, 
                         routeName: item.routeName, 
-                        // selectedCameras: item.selected_cameras, 
+                        selectedCameras: item.selectedCameras, 
                         createTime: item.createTime, 
-                        abnormality: item.abnormality,
+                        abnormality: item.abnormalityStr,
+                        detailList: item.detailList,
                     };  
                 });  
             })  
             .catch(err => {  
                 console.log(err);  
-            });  
+            }); 
         };  
 
         //处理分页
@@ -152,43 +153,26 @@ export default {
             filterrouteName: '',
             filterSelectedCameras: '', 
             filterAbnormality: '', 
-            // 设置样例数据  
-            reportList: [  
-                {  
-                    reportId: '123456', 
-                    routeName: '路线1', 
-                    selectedCameras: '摄像头1,摄像头2', 
-                    createTime: '2021-10-10 10:00:00', 
-                    abnormality: '有告警',  
-                },  
-                {  
-                    reportId: '654321', 
-                    routeName: '路线2', 
-                    selectedCameras: '摄像头3,摄像头4', 
-                    createTime: '2021-10-11 10:00:00', 
-                    abnormality: '无异常',  
-                },  
-            ], 
             uniqueAbnormalities: [],
         }; 
     }, 
 
-    created() { 
-        // 获取异常状态列表
-        this.getExcuteAbnormality(); 
-    },
+    // created() { 
+    //     // 获取异常状态列表
+    //     this.getExcuteAbnormality(); 
+    // },
 
     methods: { 
         // 根据abnormality去重获取异常状态列表
-        getExcuteAbnormality() {
-            const uniqueAbnormalities = [];
-            this.reportList.forEach(report => {
-                if (!uniqueAbnormalities.includes(report.abnormality)) {
-                    uniqueAbnormalities.push(report.abnormality);
-                }
-            });
-            this.uniqueAbnormalities = uniqueAbnormalities;
-        },
+        // getExcuteAbnormality() {
+        //     const uniqueAbnormalities = [];
+        //     this.reportList.forEach(report => {
+        //         if (!uniqueAbnormalities.includes(report.abnormality)) {
+        //             uniqueAbnormalities.push(report.abnormality);
+        //         }
+        //     });
+        //     this.uniqueAbnormalities = uniqueAbnormalities;
+        // },
 
         // 应用筛选条件
         applyFilter() { 
@@ -197,8 +181,8 @@ export default {
                 const dateMatch = !this.filterDate || new Date(report.createTime.split(' ')[0]).toDateString() === new Date(this.filterDate).toDateString(); 
                 const routeNameMatch = !this.filterrouteName || report.routeName.toLowerCase().includes(this.filterrouteName.toLowerCase()); 
                 const selectedCamerasMatch = !this.filterSelectedCameras || report.selectedCameras.toLowerCase().includes(this.filterSelectedCameras.toLowerCase()); 
-                const abnormalityMatch = !this.filterAbnormality || report.abnormality === this.filterAbnormality; 
-                return dateMatch && routeNameMatch && selectedCamerasMatch && abnormalityMatch; 
+                // const abnormalityMatch = !this.filterAbnormality || report.abnormality === this.filterAbnormality; 
+                return dateMatch && routeNameMatch && selectedCamerasMatch ; 
             }); 
             // 更新分页后的数据 
             this.paginatedreportList = filteredList; 
@@ -244,13 +228,13 @@ export default {
             let csv = "报告编号,路线名称,选择的摄像头,执行时间,是否异常\n";
             reportList.forEach(report => {
                 const selectedCamerasEscaped = '"' + report.selectedCameras.replace(/"/g, '""') + '"';  
-                csv += `${report.reportId},"${report.routeName}",${selectedCamerasEscaped},"${report.createTime}","${report.abnormality}"\n`; 
+                csv += `${report.reportId},"${report.routeName}",${selectedCamerasEscaped},"${report.createTime}","${report.abnormalityStr}"\n`; 
             });
             return csv;
         },
 
         //查看报告
-        viewReport: function(row) {
+        viewReport(row) {
             this.$refs.showReport.openDialog(row);
         },
         
@@ -259,52 +243,45 @@ export default {
 </script> 
 
 <style scoped>  
-body, html {  
-    margin: 0;  
-    padding: 0;  
-    width: 100%;  
-    height: 100%;  
-    font-family: Arial, sans-serif; /* 设置统一的字体 */  
-} 
-
-.app { 
-    display: flex; 
-    flex-direction: column; 
-    height: 100vh; /* 使用视口高度 */ 
-    width: 100%; /* 使用视口宽度 */ 
-} 
-
-.filter-container {  
+.app {  
     display: flex;  
-    align-items: center; /* 垂直居中 */  
-    gap: 10px; /* 组件之间的间距 */  
-    margin-top: 10px;   
+    flex-direction: column; /* 使用列方向布局 */  
+    width: 82vw; /* 使容器宽度为窗口宽度的90%（因为你要自适应10%，所以这里用90%的视口宽度） */  
+    height: 89vh; /* 使容器高度为窗口高度的90%（同理） */  
+    box-sizing: border-box; /* 包括内边距和边框在内计算宽度 */  
 }  
-
+  
+.filter-container {  
+    display: flex; /* 使用行方向布局 */  
+    justify-content: space-between; /* 两端对齐子元素 */  
+    padding: 1vw; /* 添加一些内边距，使用视口单位 */  
+    box-sizing: border-box; /* 包括内边距和边框在内计算宽度 */  
+    width: 100%; /* 使容器宽度为父容器宽度 */  
+    background-color: #f5f7fa; /* 可选：添加背景色 */  
+}  
+  
 .filter-item {  
     flex: 1; /* 使每个子元素尽可能平均分配空间 */  
-    min-width: 150px; /* 设置最小宽度以防止内容溢出 */  
 }  
-
+  
 .el-date-picker, .el-input, .el-select {  
-    width: 100%; /* 使子元素填满其父容器的宽度 */  
+    width: calc(100% - 2vw); /* 减去左右内边距，确保内容区域不会超出父容器宽度 */  
     box-sizing: border-box; /* 包括内边距和边框在内计算元素的总宽度和高度 */  
-} 
-
-.el-button  {   
-    width: 150px; 
-} 
-
+}  
+  
+.el-button {  
+    width: 10vw; /* 使用视口单位设置按钮宽度 */  
+}  
+  
 .table-container {  
-    flex: 1; /* 占据剩余空间 */ 
-    margin-top: 10px;
-    padding: 10px;  
+    position: relative;  
+    height: 100%;
+    padding: 1vw; /* 使用视口单位设置内边距 */  
     background-color: #f9f9f9; /* 轻微背景色增加可读性 */  
-    border-radius: 8px; /* 圆角边框 */  
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */  
-    overflow-y: auto; /* 允许垂直滚动，如果内容超出容器高度 */ 
+    border-radius: 0.8vw; /* 使用视口单位设置圆角边框 */  
+    box-shadow: 0 0 1vw rgba(0, 0, 0, 0.1); /* 使用视口单位设置阴影效果 */  
+    overflow-y: auto; /* 允许垂直滚动，如果内容超出容器高度 */   
 }  
 </style>
-    
       
     

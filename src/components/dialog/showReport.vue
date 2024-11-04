@@ -6,7 +6,7 @@
       width="60%"  
       @close="handleClose"  
     >  
-      <el-form :model="reportForm" ref="reportForm" overflow-y="auto">  
+      <el-form :model="reportForm" overflow-y="auto">  
         <el-row>  
           <el-col :span="12">  
             <el-form-item label="报告编号" :label-width="formLabelWidth">  
@@ -39,8 +39,8 @@
                 style="width: 100%;height:300px;font-size: 12px;overflow-y: auto;"  
                 header-row-class-name="table-header"  
               >  
-                <el-table-column prop="camerasName" label="摄像头名称" width="100"></el-table-column>  
-                <el-table-column label="巡逻拍照图片">  
+                <el-table-column prop="cameraName" label="摄像头名称" width="180"></el-table-column>  
+                <el-table-column label="巡逻拍照图片" width="180">  
                   <template slot-scope="scope">  
                     <img 
                       :src="scope.row.imageUrl" 
@@ -49,30 +49,21 @@
                        />  
                   </template>  
                 </el-table-column>  
-                <el-table-column label="是否有告警">  
+                <!-- <el-table-column label="告警类型" width="120">  
                   <template slot-scope="scope">  
-                    <el-tag type="success" v-if="!scope.row.hasAlert">无</el-tag>  
-                    <el-tag type="danger" v-else>有</el-tag>  
+                    <el-tag type="danger">{{ scope.row.alarmType }}</el-tag>  
+                  </template>  
+                </el-table-column>   -->
+                <el-table-column label="告警名称" width="130">  
+                  <template slot-scope="scope">  
+                    <el-tag type="danger">{{ scope.row.alarmName }}</el-tag>  
                   </template>  
                 </el-table-column>  
-                <el-table-column label="告警类型">  
+                <el-table-column label="告警时间" width="180">  
                   <template slot-scope="scope">  
-                    <el-tag type="success" v-if="!scope.row.alertType">无</el-tag>  
-                    <el-tag type="danger" v-else>{{ scope.row.alertType }}</el-tag>  
+                    <el-tag type="danger">{{ scope.row.createTime }}</el-tag>  
                   </template>  
-                </el-table-column>  
-                <el-table-column label="告警名称">  
-                  <template slot-scope="scope">  
-                    <el-tag type="success" v-if="!scope.row.alertName">无</el-tag>  
-                    <el-tag type="danger" v-else>{{ scope.row.alertName }}</el-tag>  
-                  </template>  
-                </el-table-column>  
-                <el-table-column label="告警时间">  
-                  <template slot-scope="scope">  
-                    <el-tag type="success" v-if="!scope.row.alertTime">无</el-tag>  
-                    <el-tag type="danger" v-else>{{ scope.row.alertTime }}</el-tag>  
-                  </template>  
-                </el-table-column>  
+                </el-table-column>
               </el-table>  
             </el-form-item> 
           </el-col>  
@@ -93,7 +84,7 @@
 </template>  
   
 <script>  
-import { ref } from 'vue'; 
+import { ref, nextTick } from 'vue';
 
 export default {  
   name: 'ShowReport', 
@@ -102,75 +93,46 @@ export default {
     const dialogVisible = ref(false);  // 是否显示报告对话框  
     const showImageDialogVisible = ref(false);  // 是否显示查看图片对话框  
     const imageSrc = ref('');  // 查看图片的URL  
-    const reportForm = ref({  
-      reportId: '',  
-      routeName: '',  
-      createTime: '',  
-      abnormality: '',  
-      camerasName: '',  
-      imageUrl: '',   
-      // hasAlert: false,  
-      alertType: '',  
-      alertName: '',  
-      alertTime: '',  
+    const reportForm = ref({
+      reportId: '',
+      routeName: '',
+      createTime: '', 
+      abnormality: '',
+      detailList: [],
     });  
     const originalReport = ref({}); // 用于存储原始数据，以便在取消时恢复  
-    const reportList = ref([]);  // 用于存储报告列表  
     const filteredReportList = ref([]);  // 用于存储筛选后的报告列表  
     const formLabelWidth = '120px';  // 表单项的label宽度  
 
     //打开对话框时，传入报告数据  
-    const openDialog = (report, callback) => {  
-      this.originalReport = { ...report }; // 存储原始数据  
-      this.reportForm = { ...report }; // 填充表单数据  
-      this.filteredReportList = this.reportList.filter(item => item.reportId === report.reportId); // 筛选报告列表  
-      // 筛选detalList中reportId相同的项，并将其置于第一位  
-      this.filteredReportList.sort((a, b) => a.camerasName.localeCompare(b.camerasName)); 
-      this.filteredReportList.sort((a, b) => a.hasAlert - b.hasAlert);  
-      this.filteredReportList.sort((a, b) => a.alertType.localeCompare(b.alertType));  
-      this.filteredReportList.sort((a, b) => a.alertName.localeCompare(b.alertName));  
-      this.filteredReportList.sort((a, b) => a.alertTime.localeCompare(b.createTime));  
-      this.dialogVisible = true;  
-      this.$nextTick(() => {  
-        this.$refs.reportForm.clearValidate(); // 清除表单验证  
-      });  
-      callback && callback(); // 回调，可用于关闭可能已打开的其他对话框  
+    const openDialog =  (reportData) => { 
+      dialogVisible.value = true;
+      reportForm.value = { ...reportData }; // 填充表单数据  
+      filteredReportList.value = reportData.detailList;  // detailList列表 
+      originalReport.value = {...reportData }; // 存储原始数据，以便在取消时恢复 
+      console.log(reportForm.value);
     };  
 
     // 点击图片时打开查看图片对话框  
     const handleClick = (imageUrl) => {  
-      this.imageSrc = imageUrl;  
-      this.showImageDialogVisible = true;  
-    };  
+      imageSrc.value = imageUrl;  
+      showImageDialogVisible.value = true;  
+    };
 
     // 关闭查看图片对话框  
     const handleImageClose = () => {  
-      this.showImageDialogVisible = false;  
+      showImageDialogVisible.value = false;  
     };  
 
     // 关闭对话框  
     const handleClose = () => {  
-      this.dialogVisible = false;  
+      dialogVisible.value = false;  
     };  
 
-    return { dialogVisible, showImageDialogVisible, imageSrc, reportForm, originalReport, reportList, filteredReportList, formLabelWidth,  
-      openDialog, handleClick, handleImageClose, handleClose }; 
-  }, 
-
-  methods: {  
-  },  
-  data() {  
-    return {  
-      reportList: [  
-        { reportId: 1, routeName: '路线1', camerasName: '摄像头1', imageUrl: 'https://ai-monitor-qy.eos-dongguan-8.cmecloud.cn/1006/20240707/photo-gathering-20240707165058-e633b322792f10b237869e9320a6ee67.jpeg', hasAlert: false, alertType: '', alertName: '' },  
-        { reportId: 1, routeName: '路线1', camerasName: '摄像头2', imageUrl: 'https://ai-monitor-qy.eos-dongguan-8.cmecloud.cn/1006/20240707/photo-gathering-20240707161201-ac69968c5c6e5082eb60de5f83a307fe.jpeg', hasAlert: true, alertType: '人体', alertName: '人体检测告警' },  
-        { reportId: 1, routeName: '路线1', camerasName: '摄像头2', imageUrl: 'https://ai-monitor-qy.eos-dongguan-8.cmecloud.cn/1006/20240705/photo-gathering-20240705193811-f2c6f38066fdcaed202226dde57a27ed.jpeg', hasAlert: true, alertType: '环境', alertName: '环境异常告警' },  
-        { reportId: 2, routeName: '路线2', camerasName: '摄像头3', imageUrl: 'https://ai-monitor-qy.eos-dongguan-8.cmecloud.cn/1006/20240707/photo-gathering-20240707153308-46cbf264ad75820f44bb7999d3037d96.jpeg', hasAlert: true, alertType: '人体', alertName: '人体检测告警' },  
-        { reportId: 2, routeName: '路线2', camerasName: '摄像头4', imageUrl: 'https://ai-monitor-qy.eos-dongguan-8.cmecloud.cn/1006/20240707/photo-gathering-20240707151542-7c2c8af40c96b71fb6f86dbc2c4ba0d7.jpeg', hasAlert: true, alertType: '环境', alertName: '环境异常告警' },  
-        { reportId: 3, routeName: '路线3', camerasName: '摄像头5', imageUrl: 'https://ai-monitor-qy.eos-dongguan-8.cmecloud.cn/1006/20240707/photo-gathering-20240707143138-63a1045ab1cf7f82b8b5b2745b82f553.jpeg', hasAlert: false, alertType: '', alertName: '' },  
-        { reportId: 3, routeName: '路线3', camerasName: '摄像头6', imageUrl: 'https://ai-monitor-qy.eos-dongguan-8.cmecloud.cn/1006/20240707/photo-gathering-20240707134437-753ab7d12f34ef3a4e201da81d83c0f5.jpeg', hasAlert: false, alertType: '', alertName: '' },  
-      ],  
-    };  
-  },  
+    return { 
+      dialogVisible, showImageDialogVisible, imageSrc, reportForm, originalReport, filteredReportList, formLabelWidth, 
+      openDialog, handleClick, handleImageClose, handleClose
+    }; 
+  },   
 };  
 </script>

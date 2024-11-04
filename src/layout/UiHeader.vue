@@ -31,11 +31,7 @@
         <el-menu-item index="/parentPlatformList/15/1">国标级联</el-menu-item>
         <el-menu-item v-if="editUser" index="/userManager">用户管理</el-menu-item>
       </el-submenu>
-      <el-submenu index="4">
-        <template slot="title">智慧巡逻</template>
-        <el-menu-item index="/patrolManager">巡逻管理</el-menu-item>
-        <el-menu-item index="/patrolReport">巡逻报告</el-menu-item>
-      </el-submenu>
+      <el-menu-item index="/patrol">智慧巡逻</el-menu-item>
       <!--            <el-submenu index="/setting">-->
       <!--              <template slot="title">系统设置</template>-->
       <!--              <el-menu-item index="/setting/web">WEB服务</el-menu-item>-->

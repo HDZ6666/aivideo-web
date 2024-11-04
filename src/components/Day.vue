@@ -134,7 +134,6 @@ export default {
         // 计算行索引（weekday）  
         const rowHeight = table.rows[0].cells[1].offsetHeight; // 使用第二行的高度（假设第一行是表头）  
         const weekday = Math.floor(y / rowHeight);  
-        console.log("选中时段"+hours,"周几"+weekday); 
         // 限制索引在有效范围内  
         return {  
           weekday: Math.min(Math.max(0, weekday), 6), // 0 到 6 对应周一到周日  
@@ -160,7 +159,6 @@ export default {
                 delete selectedTimesMap[i];  
             }  
         } 
-        console.log("selectedTimesMap", selectedTimesMap); 
         
         // 创建一个最终的对象数组，只包含有选中小时的周几  
         const finalSelectedHours = [];  

@@ -150,15 +150,22 @@ export default new VueRouter({
           component: () => import("../components/DeviceGroup.vue") // deviceGroup
         },
         {
-          path: "/patrolManager",
-          name: "patrolManager",
-          component: () => import("../components/patrolManager.vue") // patrolManager
+          path: "/patrol",
+          name: "patrol",
+          component: () => import("../components/patrol.vue"), // patrol
+          children: [
+            {
+              path: "",
+              name: "patrolManager",
+              component: () => import("../components/patrolManager.vue") // patrolManager
+            },
+            {
+              path: "/patrolReport",
+              name: "patrolReport",
+              component: () => import("../components/patrolReport.vue") // patrolReport
+            }
+          ]
         },
-        {
-          path: "/patrolReport",
-          name: "patrolReport",
-          component: () => import("../components/patrolReport.vue") // patrolReport
-        }
       ]
     },
     {

@@ -4,7 +4,7 @@
       :visible.sync="dialogVisible"  
       title="任务编辑"  
       width="60%"  
-      top="4rem" 
+      top="2rem" 
       @close="handleClose" 
     >  
       <el-form :model="taskForm" ref="taskForm" class="task-form"> 
@@ -21,19 +21,34 @@
           </el-col>
         </el-row>
         <el-row>
-            <el-form-item label="所选摄像头" :label-width="formLabelWidth">  
-              <el-input v-model="taskForm.selectedCameras" disabled></el-input>  
-            </el-form-item> 
+          <el-form-item label="所选摄像头" :label-width="formLabelWidth">  
+              <div class="device-tree-main-box">
+              <DeviceTreeNational
+                  v-if="playerAction === 'national'"
+              ></DeviceTreeNational>
+              <DeviceTreeProxy @checkEvent="handleDeviceSelected"
+                  v-if="playerAction === 'proxy'"
+              ></DeviceTreeProxy>
+              <DeviceTreeNationalCockpit
+                  v-if="playerAction === 'nationalCockpit'"
+              ></DeviceTreeNationalCockpit>
+              </div>
+          </el-form-item>    
         </el-row>
         <el-row>
-          <el-col :span="12">  
+          <el-col :span="9"> 
             <el-form-item label="开始日期" :label-width="formLabelWidth">  
-              <el-input type="date" v-model="taskForm.startDate"></el-input>  
+              <el-date-picker v-model="taskForm.startDate"></el-date-picker>  
             </el-form-item> 
           </el-col>
-          <el-col :span="12">  
+          <el-col :span="10">  
             <el-form-item label="结束日期" :label-width="formLabelWidth">  
-              <el-input type="date" v-model="taskForm.endDate"></el-input>  
+              <el-date-picker v-model="taskForm.endDate"></el-date-picker> 
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">  
+            <el-form-item label="是否无限期" :label-width="formLabelWidth">  
+              <el-checkbox v-model="isUnlimited" @change="handleUnlimitedChange"></el-checkbox>
             </el-form-item>
           </el-col>
         </el-row>
@@ -43,6 +58,14 @@
                 <Day class="day-container" v-model="taskForm.selectedHours" @selected-hours-changed="handleTimeSelected"></Day>  
               </div>
             </el-form-item>
+        </el-row>
+        <el-row>告警图片采集规则:
+          <input type="radio" id="alert-all" value="all" v-model="alertRule" @selected="handleAlertRuleChange" />
+          <label for="alert-all">采集全部告警图片</label>
+          <input type="radio" id="alert-part" value="part" v-model="alertRule" @selected="handleAlertRuleChange" />
+          <label for="alert-part">当时段内首次和尾次告警图片</label>
+          <input type="radio" id="alert-none" value="none" v-model="alertRule" @selected="handleAlertRuleChange" />
+          <label for="alert-none">不保存</label>
         </el-row>
         <el-form-item>  
           <div style="float: right;">  
@@ -56,12 +79,46 @@
 </template>  
   
 <script>  
+import { ref } from "vue";  
 import Day from "../Day.vue";
+import DeviceTreeNational from "../common/DeviceTreeNational.vue";
+import DeviceTreeNationalCockpit from "../common/DeviceTreeNationalCockpit.vue";
+import DeviceTreeProxy from "../common/DeviceTreeProxy_patrol.vue";
+import { mixin } from "../../utils/mixin";
 export default { 
   name: "TaskEdit",  
   components: {
         Day,
-    }, 
+        DeviceTreeNational,
+        DeviceTreeNationalCockpit,
+        DeviceTreeProxy,
+  },  
+  mixins: [mixin],  
+  setup() {  
+    const selectedDevice = []; // 选中的设备  
+    //勾选无限期将日期范围设置为今天到2099-12-31
+    const handleUnlimitedChange = () => {  
+      if (isUnlimited.value) {  
+        const today = new Date();  
+        const futureDate = new Date(2099, 11, 31);  
+        startDate.value = today.toISOString().split('T')[0];  
+        endDate.value = futureDate.toISOString().split('T')[0];  
+        console.log("日期范围设置为"+startDate.value+"到"+endDate.value);  
+      }  
+    };
+    const alertRule = ref('all'); 
+     // 处理告警图片采集规则选择事件
+     const handleAlertRuleChange = (rule) => {
+      alertRule.value = rule;
+    };
+    return {  
+      selectedDevice,  
+      isUnlimited: false, // 是否无限期  
+      alertRule,
+      handleUnlimitedChange,
+      handleAlertRuleChange,  
+    };  
+  },  
   data() {  
     return {  
       dialogVisible: false,  
@@ -95,6 +152,12 @@ export default {
     handleCancel() {  
       this.taskForm = { ...this.originalTask };  
       this.handleClose();  
+    },  
+    // 处理设备选择 
+    handleDeviceSelected(id) {
+      this. selectedDevice.push(id);
+      this.routeForm.selectedCameras = this.selectedDevice.join(',');
+      console.log("选中的摄像头：", this.selectedDevice);
     },  
     // 处理时间段选择  
     handleTimeSelected(finalSelectedHours) {  
@@ -131,14 +194,30 @@ export default {
 };  
 </script>  
 
-<style scoped>  
+<style scoped> 
+.task-form {  
+  text-align: left;  
+  margin-top: -10px;
+}  
+.device-tree-main-box {
+  text-align: left;
+  width: 100%;
+  overflow-y: auto;
+  height: 180px;
+}
+
 .time-container {  
   width: 100%;
-  margin-top: 10px;
 }  
   
 .day-container {  
   width: 70%;
 }  
+
+input[type="checkbox"] + label {  
+  font-size: 20px; /* 复选框标签字体大小 */  
+  margin-left: 5px; /* 复选框与标签间距 */  
+}  
+
 
 </style>
