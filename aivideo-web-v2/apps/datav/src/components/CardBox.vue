@@ -52,15 +52,17 @@
   .box{
     position: relative;
     width: 2.588rem;
+    background: url("../assets/imgs/card_box_bg.png") no-repeat center;
+    background-size: 100% 100%;
     .title{
       color: #fff;
       width: 100%;
-      height: 0.255rem;
+      height: 0.235rem;
       background: url("../assets/imgs/card_title_bg.png") no-repeat center;
       background-size: 100% 100%;
       text-align: center;
       font-weight: bold;
-      line-height: 0.240rem;
+      line-height: 0.220rem;
       font-size: 0.1rem;
       text-align: left;
       padding-left: 0.21rem;
@@ -79,11 +81,12 @@
       .text::before {
         content: '';
         position: absolute;
-        width: 0.18rem;
-        height: 0.23rem;
+        width: 0.11rem;
+        height: 0.14rem;
         top: 0.05rem;
         left: 0.05rem;
         background: url(../assets/imgs/box_title_icon.png) no-repeat;
+        background-size: 100% 100%;
       }
       .text-en {
         color: #215A8E;
@@ -96,7 +99,7 @@
       .text-more {
         color: #7CBFFF;
         font-family: "PingFang SC";
-        font-size: 0.11rem;
+        font-size: 0.09rem;
         font-style: normal;
         font-weight: 400;
         line-height: normal;

@@ -1,28 +1,30 @@
 <template>
   <div class="container">
-    <div class="header">
-      <div class="title"></div>
-      <div class="times">
-        <div class="date">{{date}}</div>
-        <div class="time">{{time}}</div>
-        <div class="week">{{week}}</div>
-      </div>
-      <div class="buttons">
-        <div class="item">
-          <img src="@/assets/imgs/manager.png" @click="gotoDashboard()"/>
+    <div class="container-cover">
+      <div class="header">
+        <div class="title"></div>
+        <div class="times">
+          <div class="date">{{date}}</div>
+          <div class="time">{{time}}</div>
+          <div class="week">{{week}}</div>
         </div>
-        <div class="item">
-          <img src="@/assets/imgs/loginout.png"/>
+        <div class="buttons">
+          <div class="item">
+            <img src="@/assets/imgs/manager.png" @click="gotoDashboard()"/>
+          </div>
+          <div class="item">
+            <img src="@/assets/imgs/loginout.png"/>
+          </div>
         </div>
+      </div> 
+      <div id="main" class="main">
+        <loading v-show="$store.getters.isLoading()"></loading>
+        <router-view v-slot="{ Component }">
+            <keep-alive>
+              <component :is="Component"/>
+            </keep-alive>
+        </router-view>
       </div>
-    </div> 
-    <div id="main" class="main">
-      <loading v-show="$store.getters.isLoading()"></loading>
-      <router-view v-slot="{ Component }">
-          <keep-alive>
-            <component :is="Component"/>
-          </keep-alive>
-      </router-view>
     </div>
   </div>
 </template>
@@ -113,17 +115,20 @@ export default defineComponent({
     height: 100%;
     position: relative;
     overflow: hidden;
-    background: #013480;
-    // background: url("../assets/imgs/bg.png") no-repeat center;
-    background: linear-gradient(270deg, #060C16 0%, rgba(9, 28, 45, 0.90) 50.06%, #11182D 101.04%);
+    background: url("../assets/imgs/home-bg.png") no-repeat center;
     background-size: 100% 100%;
+  }
+  .container-cover {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(48.84% 50.6% at 50% 48.19%, rgba(0, 144, 225, 0.35) 0%, rgba(5, 118, 223, 0.03) 100%), #000;
   }
   .header {
     position: absolute;
     width: 100%;
     z-index: 1;
     height: 0.62rem;
-    background: url("../assets/imgs/header_bg.png") no-repeat center;
+    background: url("../assets/imgs/head_bg.png") no-repeat center;
     background-size: 100% 100%;
     .title{
       width: 3.382rem;
