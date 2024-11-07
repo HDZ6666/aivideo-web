@@ -1,99 +1,64 @@
 <template>
   <div id="monitor">
     <div v-if="!cameraFullscreen" class="left">
-      
       <div class="device_list">
         <div class="list">
           <div class="rows">
-            <t-tree ref="tree" value-mode="all" :data="bind.deviceTree" :activable="true"
-              @active="changeDeviceTree" @expand="deviceTreeExpand" />
+            <t-tree ref="tree" value-mode="all" :data="bind.deviceTree" :activable="true" @active="changeDeviceTree"
+              @expand="deviceTreeExpand" />
           </div>
         </div>
       </div>
     </div>
     <div v-if="!cameraFullscreen" class="right">
-      <card-box title="告警统计" :height="rightBox1Height" class="box">
-        <template #content>
-          <div class="box_content" style="flex-direction: column;">
-            <div class="warn_stat_box">
-              <div class="warn_stat_title">
-                <img src="../assets/imgs/warnstat1.png" alt="">
-                <span class="title title1">烟雾烟火</span>
-              </div>
-              <div class="warn_stat">
-                <div class="warn_stat_content">
-                  <div class="warn_frame">
-                    <p>324</p>
-                    <span>当日告警数</span>
-                  </div>
-                  <div class="warn_frame">
-                    <p>324</p>
-                    <span>当日告警数</span>
-                  </div>
-                  <div class="warn_frame">
-                    <p>324</p>
-                    <span>当日告警数</span>
-                  </div>
-                  <div class="warn_frame">
-                    <p>324</p>
-                    <span>当日告警数</span>
-                  </div>
-                </div>
-              </div>
+      <card-box title="告警统计" :height="rightBox1Height" class="box" @more="toggleWarnDialog">
+        <div class="box_content" style="flex-direction: column;">
+          <div class="warn_stat_box" v-for="(item, index) in bind.alarmStatistics" :key="index">
+            <div class="warn_stat_title">
+              <img src="../assets/imgs/warnstat1.png" alt="">
+              <span class="title title1">{{ item['alarmTypeName'] }}</span>
             </div>
-            <div class="warn_stat_box">
-              <div class="warn_stat_title">
-                <img src="../assets/imgs/warnstat2.png" alt="">
-                <span class="title title2">通道占用</span>
-              </div>
-              <div class="warn_stat">
-                <div class="warn_stat_content">
-                  <div class="warn_frame">
-                    <p>324</p>
-                    <span>当日告警数</span>
-                  </div>
-                  <div class="warn_frame">
-                    <p>324</p>
-                    <span>当日告警数</span>
-                  </div>
-                  <div class="warn_frame">
-                    <p>324</p>
-                    <span>当日告警数</span>
-                  </div>
-                  <div class="warn_frame">
-                    <p>324</p>
-                    <span>当日告警数</span>
-                  </div>
+            <div class="warn_stat">
+              <div class="warn_stat_content">
+                <div class="warn_frame">
+                  <p>{{ item['curDateAlarmCount'] }}</p>
+                  <span>当日告警数</span>
+                </div>
+                <div class="warn_frame">
+                  <p>{{ item['curDateAlarmNoHandleCount'] }}</p>
+                  <span>当日未处理</span>
+                </div>
+                <div class="warn_frame">
+                  <p>{{ item['sevenDayAlarmCount'] }}</p>
+                  <span>近7天告警数</span>
+                </div>
+                <div class="warn_frame">
+                  <p>{{ item['sevenDayAlarmNoHandleCount'] }}</p>
+                  <span>近7天未处理</span>
                 </div>
               </div>
             </div>
           </div>
-        </template>
+        </div>
       </card-box>
-      <card-box class="box" title="摄像头告警" :height="rightBox2Height">
-        <template #content>
-          <div class="box_content">
-            <div class="carema-warn">
-              <div class="carema-item">
-                <img src="../assets/imgs/alarm_pic.png" alt="">
-                <div class="carema-addr">【烟雾烟火】附属楼1</div>
-              </div>
-              <div class="carema-item">
-                <img src="../assets/imgs/alarm_pic.png" alt="">
-              </div>
+      <card-box class="box" title="摄像头告警" more="" :height="rightBox2Height">
+        <div class="box_content">
+          <div class="carema-warn">
+            <div class="carema-item" v-for="(item, index) in bind.warnList" :key="index">
+              <img :src="item.alarmImg" alt="">
+              <div class="carema-addr">【{{ item.alarmType }}】{{ item.area }}</div>
             </div>
           </div>
-        </template>
+        </div>
       </card-box>
-      <card-box title="告警趋势" :height="rightBox2Height" class="box">
-        <template #content>
-          <div class="box_content">
-            <div id="chartGJQS" class="chart"></div>
-          </div>
-        </template>
+      <card-box title="告警趋势" more="" :height="rightBox2Height" class="box">
+        <div style="color:#B4C0CC;position: absolute;">告警数量：次</div>
+        <div class="box_content">
+          <div id="chartGJQS" class="chart"></div>
+        </div>
       </card-box>
     </div>
-    <div :class="{'center':true,'center-fullscreen': cameraFullscreen}">
+    <div :class="{ 'center': true, 'center-fullscreen': cameraFullscreen }">
       <div v-if="!cameraFullscreen" class="nav">
         <div class="item">
           <div class="icon"><img src="@/assets/imgs/device_total.png" /></div>
@@ -138,30 +103,21 @@
         <template #content>
           <div class="videos">
             <div class="row">
-              <div :class="{ col: true, col2: pager.pageSize == 4, col3: pager.pageSize == 9, col4: pager.pageSize == 16 }"
+              <div
+                :class="{ col: true, col2: pager.pageSize == 4, col3: pager.pageSize == 6, col4: pager.pageSize == 12 }"
                 v-for="(row, index) in bind.cameraRows" :key="index">
                 <vol-player :url="row.streamInfo.hls.url" :autoplay="true" @click="selectVideo($event)"></vol-player>
+                <div class="video-name">{{ row.name }}</div>
               </div>
             </div>
           </div>
         </template>
       </camera-box>
       <div class="pager">
-        <!-- <div class="lf">
-          <div class="button" @click="toggleFullScreen()">全屏</div>
-          <div class="button" @click="autoPage($event)">自动轮播</div>
-        </div> -->
         <div class="rt">
           <div class="button" @click="onPage(-1)">上一屏</div>
           <div class="pageNum">{{ pager.pageIndex }} / {{ pager.totalPage }}</div>
           <div class="button" @click="onPage(1)">下一屏</div>
-          <!-- <div class="select">
-            <t-select v-model="pageSize" @change="changePageSize">
-              <t-option key="4" label="四分屏" value="4" />
-              <t-option key="9" label="九分屏" value="9"></t-option>
-              <t-option key="16" label="十六分屏" value="16" />
-            </t-select>
-          </div> -->
         </div>
       </div>
     </div>
@@ -199,6 +155,11 @@
         <vol-player ref="videoPlayer" :url="videoDialog.url" :poster="videoDialog.poster"></vol-player>
       </div>
     </t-dialog>
+
+    <warn-box v-if="warnDialogShow" @close="toggleWarnDialog"></warn-box>
+    <transition name="slide">
+      <warn-detail v-if="detailShow" :info="alarmDetail"></warn-detail>
+    </transition>
   </div>
 </template>
 <script>
@@ -215,6 +176,8 @@ import VolBox from "./box.vue";
 import CardBox from "../components/CardBox.vue"
 import CameraBox from "../components/CameraBox.vue"
 import VolPlayer from "./livePlayer.vue";
+import WarnBox from '../components/WarnBox.vue';
+import WarnDetail from '../components/WarnDetail.vue';
 
 import { gjqsChartCreate, gjqsDestroy, gjqsOption, gjqsReload, gjqsResize } from './monitor/chartGJQS.js';
 SwiperCore.use([Scrollbar, Pagination, Autoplay])
@@ -227,8 +190,16 @@ export default defineComponent({
     Vue3SeamlessScroll,
     CardBox,
     CameraBox,
+    WarnBox,
+    WarnDetail,
     'vol-box': VolBox,
     'vol-player': VolPlayer
+  },
+  props: {
+    alarmActived: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -237,12 +208,13 @@ export default defineComponent({
       rightBox2Height: 0,
       deviceSelected: '全部设备',
       cameraFullscreen: false,
-      pageSize: '9',
+      warnDialogShow: false,
+      pageSize: '6',
       chart: {
       },
       pager: {
         pageIndex: 1,
-        pageSize: 9,
+        pageSize: 6,
         totalPage: 20
       },
       warnDialog: {
@@ -274,18 +246,7 @@ export default defineComponent({
             total: 0
           }
         },
-        warnList: [
-          // {id:'1',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'2',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'3',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'4',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'5',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'6',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'7',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'8',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'9',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'10',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'}
-        ],
+        warnList: [],
         deviceData: [],
         deviceTree: [
           // {id:'1',label:'全部设备',value:'全部设备',children:[{id:'1_2',label:'全部设备1',value:'全部设备1'}]},
@@ -297,8 +258,12 @@ export default defineComponent({
           // {id:'7',label:'顺德区',value:'顺德区'}
         ],
         cameraList: [],
-        cameraRows: []
-      }
+        cameraRows: [],
+        alarmStatistics: [],
+        intervalId: null,
+      },
+      detailShow: false,
+      alarmDetail: {}
     }
   },
   computed: {
@@ -306,10 +271,22 @@ export default defineComponent({
   setup() {
   },
   watch: {
+    alarmActived(newVal) {
+      if (newVal) {
+        this.getAlarmList(); 
+        this.intervalId = setInterval(this.getAlarmList, 13000);
+      }
+      else {
+        clearInterval(this.intervalId);
+      }
+    },
   },
   methods: {
     toggleFullScreen() {
       window.top?.dispatchEvent(new CustomEvent("toggleFullScreen"))
+    },
+    toggleWarnDialog(show) {
+      this.warnDialogShow = show
     },
     initBoxHeight() {
       var totalHeight = parseInt($(document).height() - this.$fontSize * 0.5);
@@ -319,8 +296,8 @@ export default defineComponent({
         height = maxHeight;
       }
       this.leftBox1Height = totalHeight;
-      this.rightBox2Height = height;
-      this.rightBox1Height = totalHeight - this.rightBox2Height * 2;
+      this.rightBox2Height = height - this.$fontSize * 0.1;
+      this.rightBox1Height = totalHeight - this.rightBox2Height * 2 - this.$fontSize * 0.1 * 2.5;
     },
     changePageSize(pageSize) {
       console.log("changePageSize", pageSize)
@@ -372,6 +349,7 @@ export default defineComponent({
       console.log(row);
     },
     changeDeviceTree(values, context) {
+      return;
       this.deviceSelected = context.node.data.label;
       if (context.node.data.url != undefined && context.node.data.url != null) {
         this.videoDialog.show = true;
@@ -493,26 +471,22 @@ export default defineComponent({
     },
     getAlarmList() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/events/").then(r => {
+      apiClient.GET("/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2").then(r => {
         if (r.data.code == "0") {
-          this.bind.warnList = [];
-          let rows = [];
-          for (let i = 0; i < r.data.data.records.length; i++) {
-            rows.push({
-              id: r.data.data.records[i].id,
-              time: r.data.data.records[i].alarmTime.substr(0, 18),
-              name: r.data.data.records[i].alarmTypeName,
-              status: r.data.data.records[i].status == 0 ? '未处理' : '已处理',
-              data: r.data.data.records[i]
-            });
+          this.bind.warnList = r.data.data.records;
+          if (this.alarmActived) {
+            this.alarmDetail = this.bind.warnList[0]
+            this.detailShow = true
+            setTimeout(() => {
+              this.detailShow = false
+            }, 10000)
           }
-          this.bind.warnList = rows;
         }
       })
     },
     getAlarmTrend() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/stat/statAlarmCountByTime?startTime=2024-10-01&endTime=2024-10-29").then(r => {
+      apiClient.GET("/api/alarm/v2/stat/statAlarmCountByTime?startTime=2021-02-01&endTime=2024-11-07").then(r => {
         if (r.data.code == "0") {
           let xAxiData = [];
           let serieData = [];
@@ -525,6 +499,15 @@ export default defineComponent({
           gjqsReload();
         }
       })
+    },
+    getAlarmStatistics() {
+      const apiClient = getApiClient();
+      apiClient.GET("/api/alarm/v2/stat/screenAlarmStatistics").then(r => {
+        if (r.data.code == "0") {
+          r.data.data.sort((a, b) => b.sevenDayAlarmCount - a.sevenDayAlarmCount);
+          this.bind.alarmStatistics = r.data.data.slice(0, 2)
+        }
+      })
     }
   },
   created() {
@@ -532,11 +515,12 @@ export default defineComponent({
     window.addEventListener("resize", this.initBoxHeight);
   },
   mounted() {
+    gjqsChartCreate(this.$echart, 'chartGJQS');
     this.getInfo();
     this.getCameraList();
     this.getAlarmList();
     this.getAlarmTrend();
-    gjqsChartCreate(this.$echart, 'chartGJQS');
+    this.getAlarmStatistics();
   },
   unmounted() {
     gjqsDestroy();
@@ -561,7 +545,7 @@ export default defineComponent({
 
   .left {
     position: absolute;
-    width: 1.388rem;
+    width: 1.588rem;
     top: -0.2rem;
     left: 0.1rem;
     bottom: 0.1rem;
@@ -578,27 +562,29 @@ export default defineComponent({
     width: 2.588rem;
     top: -0.2rem;
     right: 0.1rem;
-    bottom: 0.1rem;
+    bottom: 0.2rem;
     box-sizing: border-box;
 
     .box {
-      margin-bottom: 0.05rem;
+      margin-bottom: 0.1rem;
     }
   }
+
   .center-fullscreen {
     left: 0.1rem !important;
     right: 0.1rem !important;
   }
+
   .center {
     position: absolute;
-    left: 1.488rem;
+    left: 1.688rem;
     right: 2.788rem;
     top: -0.1rem;
     bottom: 0.1rem;
 
     .nav {
       width: 5.159rem;
-      margin: 0.08rem auto;
+      margin: 0.16rem auto;
       display: flex;
 
       .item {
@@ -740,16 +726,25 @@ export default defineComponent({
         width: 100%;
         height: 100%;
         display: block;
+        box-sizing: border-box;
 
         .col {
           float: left;
-          width: 0.5rem;
-          background-color: #000000;
-          margin: 0.02rem;
+          // width: 0.5rem;
+          // background-color: #000000;
+          // margin: 0.06rem;
           overflow: hidden;
+          padding: 0 0.04rem 0.2rem 0.04rem;
+          box-sizing: border-box;
 
           .active {
             border: 2px solid #d5aa5b
+          }
+
+          :deep(.player) {
+            padding: 0.06rem 0.03rem;
+            background: url(../assets/imgs/video_bg.png) no-repeat;
+            background-size: 100% 100%;
           }
 
           :deep(.vjs-control-bar) {
@@ -802,21 +797,30 @@ export default defineComponent({
         }
 
         .col2 {
-          width: calc(50% - 0.04rem);
+          width: 50%;
           //height: 1.39rem;
           height: 50%;
         }
 
         .col3 {
-          width: calc(33.333% - 0.04rem);
+          width: 33.333%;
           //height: 0.92rem;
-          height: 33.333%;
+          height: 50%;
         }
 
         .col4 {
-          width: calc(25% - 0.04rem);
+          width: 25%;
           //height: 0.687rem;
-          height: 25%;
+          height: 33.333%;
+        }
+
+        .video-name {
+          width: 100%;
+          text-align: center;
+          height: 0.2rem;
+          line-height: 0.2rem;
+          color: #fff;
+          font-size: 0.08rem;
         }
       }
     }
@@ -862,9 +866,11 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-items: left;
+
     img {
       width: 0.12rem;
     }
+
     .title {
       font-family: 'YouSheBiaoTiHei';
       font-style: normal;
@@ -875,6 +881,7 @@ export default defineComponent({
       /* identical to box height, or 100% */
       letter-spacing: 0.04em;
     }
+
     .title1 {
       background: linear-gradient(180deg, #FFA06B 0%, #FF3426 100%);
       -webkit-background-clip: text;
@@ -883,6 +890,7 @@ export default defineComponent({
       text-fill-color: transparent;
       text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     }
+
     .title2 {
       background: linear-gradient(180deg, #FFC700 0%, #FF8B04 100%);
       -webkit-background-clip: text;
@@ -1223,5 +1231,20 @@ export default defineComponent({
       border-color: #0f5a9b;
     }
   }
+  
+  .slide-enter-active, .slide-leave-active {  
+  transition: transform 0.5s ease, opacity 0.5s ease;  
+}  
+
+.slide-enter {  
+  transform: translate(-100%, -100%); /* 从右上角进入 */  
+  opacity: 0; /* 透明度为零 */  
+}  
+
+.slide-leave-to {  
+  transform: translate(-100%, 100%); /* 从左下角退出 */  
+  opacity: 0; /* 透明度为零 */  
+}  
+
 }
 </style>

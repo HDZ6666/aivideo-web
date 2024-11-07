@@ -3,7 +3,7 @@
       <div class="title">
         <div class="text">{{title}}</div>
         <div class="text-en">GOA JING TONG JI</div>
-        <a class="text-more" :href="moreLink">
+        <a class="text-more" @click="clickMore">
             <div>{{more}}</div>
         </a>
       </div>
@@ -12,7 +12,7 @@
         <div class="footer"></div>
       </div>
       <div class="content">
-        <slot name="content"></slot>
+        <slot></slot>
       </div>
     </div>
   
@@ -38,13 +38,23 @@
             default: "javascript:;"
           }
       },
+    data() {
+        return {
+          show: false
+        }
+    },
       computed:{
       },
       setup() {
           
       },
-      activated(){
+      activated() {
         
+      },
+      methods: {
+        clickMore() {
+          this.$emit('more', true)
+        }
       }
   })
   </script>

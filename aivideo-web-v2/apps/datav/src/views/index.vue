@@ -9,6 +9,14 @@
           <div class="week">{{week}}</div>
         </div>
         <div class="buttons">
+          <div class="new-item">
+            <span @click="toggleFullScreen" style="color:#fff;">关闭告警</span>
+            <t-switch v-model="currentProps.alarmActived" style="margin-left: 0.05rem;" />
+          </div>
+          <div class="new-item">
+            <span @click="toggleFullScreen" style="color:#fff;">全屏</span>
+          </div>
+          <div style="width: 0.6rem;"></div>
           <div class="item">
             <img src="@/assets/imgs/manager.png" @click="gotoDashboard()"/>
           </div>
@@ -21,7 +29,7 @@
         <loading v-show="$store.getters.isLoading()"></loading>
         <router-view v-slot="{ Component }">
             <keep-alive>
-              <component :is="Component"/>
+              <component :is="Component" v-bind="currentProps" />
             </keep-alive>
         </router-view>
       </div>
@@ -41,7 +49,10 @@ export default defineComponent({
     return {
       date:"",
       time:"",
-      week:""
+      week:"",
+      currentProps: {
+        alarmActived: false
+      }
     }
   },
   setup() {
@@ -102,7 +113,37 @@ export default defineComponent({
         second="0"+second.toString();
       }
       this.time=hour+":"+minute+":"+second;
-    }
+    },
+    toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        this.enterFullScreen();
+      } else {
+        this.exitFullScreen();
+      }
+    },
+    enterFullScreen() {
+      let element = document.documentElement;
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.mozRequestFullScreen) { /* Firefox */
+        element.mozRequestFullScreen();
+      } else if (element.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+        element.webkitRequestFullscreen();
+      } else if (element.msRequestFullscreen) { /* IE/Edge */
+        element.msRequestFullscreen();
+      }
+    },
+    exitFullScreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) { /* Firefox */
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE/Edge */
+        document.msExitFullscreen();
+      }
+    },
   },
   mounted(){
       setInterval(()=>{ this.getDate()},1000);
@@ -166,7 +207,7 @@ export default defineComponent({
     }
     .buttons{
       position: absolute;
-      top:0.04rem;
+      top:0.08rem;
       right: 0;
       display: flex;
       .item{
@@ -174,6 +215,11 @@ export default defineComponent({
         img{
           width: 100%;
         }
+      }
+      .new-item {
+        display: flex;
+        font-size: 0.09rem;
+        margin-right: 0.1rem;
       }
     }
   }
