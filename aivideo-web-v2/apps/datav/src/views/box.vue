@@ -39,7 +39,7 @@ export default defineComponent({
 <style lang="less" scoped>
 .box{
   position: relative;
-  width: 2.188rem;
+  width: 1.388rem;
   .title{
     color: #fff;
     width: 100%;

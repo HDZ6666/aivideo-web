@@ -1,163 +1,166 @@
 <template>
-<div id="monitor">
-  <div class="left">
-    <vol-box title="设备列表" :height="leftBox1Height" class="box">
-      <template #content>
-        <div class="box_content">
-          <div class="device_list">
-            <div class="select">
-              <div class="text">当前选择：{{ deviceSelected }}</div>
+  <div id="monitor">
+    <div v-if="!cameraFullscreen" class="left">
+      <div class="device_list">
+        <div class="list">
+          <div class="rows">
+            <t-tree ref="tree" value-mode="all" :data="bind.deviceTree" :activable="true" @active="changeDeviceTree"
+              @expand="deviceTreeExpand" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="!cameraFullscreen" class="right">
+      <card-box title="告警统计" :height="rightBox1Height" class="box" @more="toggleWarnDialog">
+        <div class="box_content" style="flex-direction: column;">
+          <div class="warn_stat_box" v-for="(item, index) in bind.alarmStatistics" :key="index">
+            <div class="warn_stat_title">
+              <img src="../assets/imgs/warnstat1.png" alt="">
+              <span class="title title1">{{ item['alarmTypeName'] }}</span>
             </div>
-            <div class="line"></div>
-            <div class="list">
-              <div class="rows">
-                <t-tree ref="tree" value-mode="all" :data="bind.deviceTree" :activable="true" @active="changeDeviceTree" @expand="deviceTreeExpand" />
+            <div class="warn_stat">
+              <div class="warn_stat_content">
+                <div class="warn_frame">
+                  <p>{{ item['curDateAlarmCount'] }}</p>
+                  <span>当日告警数</span>
+                </div>
+                <div class="warn_frame">
+                  <p>{{ item['curDateAlarmNoHandleCount'] }}</p>
+                  <span>当日未处理</span>
+                </div>
+                <div class="warn_frame">
+                  <p>{{ item['sevenDayAlarmCount'] }}</p>
+                  <span>近7天告警数</span>
+                </div>
+                <div class="warn_frame">
+                  <p>{{ item['sevenDayAlarmNoHandleCount'] }}</p>
+                  <span>近7天未处理</span>
+                </div>
               </div>
             </div>
           </div>
-
         </div>
-      </template>
-    </vol-box>
-  </div>
-  <div class="right">
-    <vol-box title="告警统计" :height="rightBox2Height" class="box">
-      <template #content>
+      </card-box>
+      <card-box class="box" title="摄像头告警" more="" :height="rightBox2Height">
         <div class="box_content">
-          <div class="warn_stat">
-            dsafadsf
-          </div>
-        </div>
-      </template>
-    </vol-box>
-    <vol-box title="告警概览" :height="rightBox2Height" class="box">
-      <template #content>
-        <div class="box_content">
-          <div class="warn_list">
-            <div class="header">
-              <div class="time">时间</div>
-              <div class="name">事件</div>
-              <div class="status">状态</div>
-            </div>
-            <div class="body">
-              <vue3-seamless-scroll :list="bind.warnList" :step="0.35" :hover="true">
-                    <div class="item" v-for="(row,index) in bind.warnList" :key="index" @click="viewWarnInfo(row)">
-                      <div class="time">{{row.time}}</div>
-                      <div class="name">{{row.name}}</div>
-                      <div class="status">{{row.status}}</div>
-                    </div>
-              </vue3-seamless-scroll>
+          <div class="carema-warn">
+            <div class="carema-item" v-for="(item, index) in bind.warnList" :key="index">
+              <img :src="item.alarmImg" alt="">
+              <div class="carema-addr">【{{ item.alarmType }}】{{ item.area }}</div>
             </div>
           </div>
         </div>
-      </template>
-    </vol-box>
-    <vol-box title="告警趋势" :height="rightBox2Height" class="box">
-      <template #content>
+      </card-box>
+      <card-box title="告警趋势" more="" :height="rightBox2Height" class="box">
+        <div style="color:#B4C0CC;position: absolute;">告警数量：次</div>
         <div class="box_content">
           <div id="chartGJQS" class="chart"></div>
         </div>
-      </template>
-    </vol-box>
-  </div>
-  <div class="center">
-    <div class="nav">
-      <div class="item">
-        <div class="icon"><img src="@/assets/imgs/nav_icon.png"/></div>
-        <div class="text">
-          <div class="value">
-            <span class="number">{{bind.info.device.total}}</span>个
-          </div>
-          <div class="name">国际设备</div>
-        </div>
-      </div>
-      <div class="item">
-        <div class="icon"><img src="@/assets/imgs/nav_icon.png"/></div>
-        <div class="text">
-          <div class="value">
-            <span class="number">{{bind.info.channel.total}}</span>个
-          </div>
-          <div class="name">通道总数量</div>
-        </div>
-      </div>
-      <div class="item">
-        <div class="icon"><img src="@/assets/imgs/nav_icon.png"/></div>
-        <div class="text">
-          <div class="value">
-            <span class="number">{{bind.info.channel.online}}</span>个
-          </div>
-          <div class="name">在线通道数量</div>
-        </div>
-      </div>
-      <div class="item">
-        <div class="icon"><img src="@/assets/imgs/nav_icon.png"/></div>
-        <div class="text">
-          <div class="value">
-            <span class="number">{{bind.info.proxy.total}}</span>个
-          </div>
-          <div class="name">非国标设备数</div>
-        </div>
-      </div>
+      </card-box>
     </div>
-    <div class="pager">
-      <div class="lf">
-        <div class="button" @click="toggleFullScreen()">全屏</div>
-        <div class="button" @click="autoPage($event)">自动轮播</div>
-      </div>
-      <div class="rt">
-        <div class="button" @click="onPage(-1)">上一页</div>
-        <div class="pageNum">{{ pager.pageIndex }} / {{ pager.totalPage }}</div>
-        <div class="button" @click="onPage(1)">下一页</div>
-        <div class="select">
-          <t-select v-model="pageSize" @change="changePageSize">
-            <t-option key="4" label="四分屏" value="4" />
-            <t-option key="9" label="九分屏" value="9"></t-option>
-            <t-option key="16" label="十六分屏" value="16" />
-          </t-select>
-        </div>
-      </div>
-    </div>
-    <div class="videos">
-      <div class="row">
-        <div :class="{col:true,col2:pager.pageSize==4,col3:pager.pageSize==9,col4:pager.pageSize==16}" v-for="(row,index) in bind.cameraRows" :key="index">
-          <vol-player :url="row.streamInfo.hls.url" :autoplay="true" @click="selectVideo($event)"></vol-player>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <t-dialog v-model:visible="warnDialog.show" width="5rem" class="warnDialog">
-    <div class="content">
-      <img src="@/assets/imgs/close.png" class="close" @click="warnDialog.show=false">
-      <div class="title">{{warnDialog.data.alarmTypeName}}</div>
-      <div class="body">
-        <div class="lf">
-          <div class="img">
-            <img error="@/assets/imgs/alarm_pic.png" :src="warnDialog.data.alarmImg"/>
+    <div :class="{ 'center': true, 'center-fullscreen': cameraFullscreen }">
+      <div v-if="!cameraFullscreen" class="nav">
+        <div class="item">
+          <div class="icon"><img src="@/assets/imgs/device_total.png" /></div>
+          <div class="text">
+            <div class="value">
+              <span class="number">{{ bind.info.device.total }}</span><span class="unit">个</span>
+            </div>
+            <div class="name">设备总数</div>
           </div>
         </div>
+        <div class="item">
+          <div class="icon"><img src="@/assets/imgs/device_online.png" /></div>
+          <div class="text">
+            <div class="value">
+              <span class="number">{{ bind.info.channel.total }}</span><span class="unit">个</span>
+            </div>
+            <div class="name">在线设备数</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="icon"><img src="@/assets/imgs/warn_todo.png" /></div>
+          <div class="text">
+            <div class="value">
+              <span class="number">{{ bind.info.channel.online }}</span><span class="unit">个</span>
+            </div>
+            <div class="name">未处理告警数</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="icon"><img src="@/assets/imgs/warn_total.png" /></div>
+          <div class="text">
+            <div class="value">
+              <span class="number">{{ bind.info.proxy.total }}</span><span class="unit">个</span>
+            </div>
+            <div class="name">告警总数</div>
+          </div>
+        </div>
+      </div>
+      <camera-box title="监控视频" @changePageSize="changePageSize" @changeFullscreen="changeFullscreen">
+        <template #more>
+        </template>
+        <template #content>
+          <div class="videos">
+            <div class="row">
+              <div
+                :class="{ col: true, col2: pager.pageSize == 4, col3: pager.pageSize == 6, col4: pager.pageSize == 12 }"
+                v-for="(row, index) in bind.cameraRows" :key="index">
+                <vol-player :url="row.streamInfo.hls.url" :autoplay="true" @click="selectVideo($event)"></vol-player>
+                <div class="video-name">{{ row.name }}</div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </camera-box>
+      <div class="pager">
         <div class="rt">
-          <div>告警时间：{{ warnDialog.data.alarmTime }}</div>
-          <div>分组名称：{{ warnDialog.data.alarmCategory }}</div>
-          <div>设备名称：{{ warnDialog.data.deviceName }}</div>
-          <div>告警ID：{{ warnDialog.data.alarmId }}</div>
-          <div>置信度：{{ warnDialog.data.alarmPriority }}</div>
-          <div>处理情况：  <t-tag theme="warning" v-if="warnDialog.data.status==0">未处理</t-tag><t-tag theme="success" v-else>已处理</t-tag></div>
-          <div>通知人员：</div>
-          <div class="buttons">
-
-          </div>
+          <div class="button" @click="onPage(-1)">上一屏</div>
+          <div class="pageNum">{{ pager.pageIndex }} / {{ pager.totalPage }}</div>
+          <div class="button" @click="onPage(1)">下一屏</div>
         </div>
       </div>
     </div>
-  </t-dialog>
-  <!--查看视频弹出框-->
-  <t-dialog width="5rem" class="videoDialog" :header="videoDialog.title" v-model:visible="videoDialog.show" @closed="videoDialogClosed">
-    <div class="content">
-      <vol-player ref="videoPlayer" :url="videoDialog.url" :poster="videoDialog.poster"></vol-player>
-    </div>   
-  </t-dialog>
-</div>
+
+    <t-dialog v-model:visible="warnDialog.show" width="5rem" class="warnDialog">
+      <div class="content">
+        <img src="@/assets/imgs/close.png" class="close" @click="warnDialog.show = false">
+        <div class="title">{{ warnDialog.data.alarmTypeName }}</div>
+        <div class="body">
+          <div class="lf">
+            <div class="img">
+              <img error="@/assets/imgs/alarm_pic.png" :src="warnDialog.data.alarmImg" />
+            </div>
+          </div>
+          <div class="rt">
+            <div>告警时间：{{ warnDialog.data.alarmTime }}</div>
+            <div>分组名称：{{ warnDialog.data.alarmCategory }}</div>
+            <div>设备名称：{{ warnDialog.data.deviceName }}</div>
+            <div>告警ID：{{ warnDialog.data.alarmId }}</div>
+            <div>置信度：{{ warnDialog.data.alarmPriority }}</div>
+            <div>处理情况： <t-tag theme="warning" v-if="warnDialog.data.status == 0">未处理</t-tag><t-tag theme="success"
+                v-else>已处理</t-tag></div>
+            <div>通知人员：</div>
+            <div class="buttons">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </t-dialog>
+    <!--查看视频弹出框-->
+    <t-dialog width="5rem" class="videoDialog" :header="videoDialog.title" v-model:visible="videoDialog.show"
+      @closed="videoDialogClosed">
+      <div class="content">
+        <vol-player ref="videoPlayer" :url="videoDialog.url" :poster="videoDialog.poster"></vol-player>
+      </div>
+    </t-dialog>
+
+    <warn-box v-if="warnDialogShow" @close="toggleWarnDialog"></warn-box>
+    <transition name="slide">
+      <warn-detail v-if="detailShow" :info="alarmDetail"></warn-detail>
+    </transition>
+  </div>
 </template>
 <script>
 import $ from 'jquery';
@@ -170,77 +173,82 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 import { defineComponent } from "vue";
 import { Vue3SeamlessScroll } from "vue3-seamless-scroll";
 import VolBox from "./box.vue";
+import CardBox from "../components/CardBox.vue"
+import CameraBox from "../components/CameraBox.vue"
 import VolPlayer from "./livePlayer.vue";
+import WarnBox from '../components/WarnBox.vue';
+import WarnDetail from '../components/WarnDetail.vue';
 
 import { gjqsChartCreate, gjqsDestroy, gjqsOption, gjqsReload, gjqsResize } from './monitor/chartGJQS.js';
 SwiperCore.use([Scrollbar, Pagination, Autoplay])
 
 import { getApiClient } from '@aivideo/rest';
 export default defineComponent({
-  components:{
+  components: {
     Swiper,
     SwiperSlide,
     Vue3SeamlessScroll,
-    'vol-box':VolBox,
-    'vol-player':VolPlayer
+    CardBox,
+    CameraBox,
+    WarnBox,
+    WarnDetail,
+    'vol-box': VolBox,
+    'vol-player': VolPlayer
   },
-  data(){
-    return{
-      leftBox1Height:0,
-      rightBox1Height:0,
-      rightBox2Height:0,
-      deviceSelected:'全部设备',
-      pageSize:'9',
-      chart:{
+  props: {
+    alarmActived: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      leftBox1Height: 0,
+      rightBox1Height: 0,
+      rightBox2Height: 0,
+      deviceSelected: '全部设备',
+      cameraFullscreen: false,
+      warnDialogShow: false,
+      pageSize: '6',
+      chart: {
       },
-      pager:{
-        pageIndex:1,
-        pageSize:9,
-        totalPage:20
+      pager: {
+        pageIndex: 1,
+        pageSize: 6,
+        totalPage: 20
       },
-      warnDialog:{
-        show:false,
-        data:{}
+      warnDialog: {
+        show: false,
+        data: {}
       },
-      videoDialog:{
-        show:false,
-        title:'',
-        url:'',
-        poster:''
+      videoDialog: {
+        show: false,
+        title: '',
+        url: '',
+        poster: ''
       },
-      bind:{
-        info:{
-          channel:{
-            online:0,
-            total:0
+      bind: {
+        info: {
+          channel: {
+            online: 0,
+            total: 0
           },
-          device:{
-            online:0,
-            total:0
+          device: {
+            online: 0,
+            total: 0
           },
-          proxy:{
-            online:0,
-            total:0
+          proxy: {
+            online: 0,
+            total: 0
           },
-          push:{
-            online:0,
-            total:0
+          push: {
+            online: 0,
+            total: 0
           }
         },
-        warnList:[
-          // {id:'1',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'2',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'3',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'4',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'5',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'6',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'7',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'8',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'9',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'},
-          // {id:'10',time:'2024-10-14 10:50:33',name:'电子围栏',status:'未处理'}
-        ],
-        deviceData:[],
-        deviceTree:[
+        warnList: [],
+        deviceData: [],
+        deviceTree: [
           // {id:'1',label:'全部设备',value:'全部设备',children:[{id:'1_2',label:'全部设备1',value:'全部设备1'}]},
           // {id:'2',label:'数字大屏',value:'数字大屏'},
           // {id:'3',label:'高新区',value:'高新区'},
@@ -249,146 +257,169 @@ export default defineComponent({
           // {id:'6',label:'南海区',value:'南海区'},
           // {id:'7',label:'顺德区',value:'顺德区'}
         ],
-        cameraList:[],
-        cameraRows:[]
-      }
+        cameraList: [],
+        cameraRows: [],
+        alarmStatistics: [],
+        intervalId: null,
+      },
+      detailShow: false,
+      alarmDetail: {}
     }
   },
-  computed:{
+  computed: {
   },
   setup() {
   },
-  watch:{
+  watch: {
+    alarmActived(newVal) {
+      if (newVal) {
+        this.getAlarmList(); 
+        this.intervalId = setInterval(this.getAlarmList, 13000);
+      }
+      else {
+        clearInterval(this.intervalId);
+      }
+    },
   },
-  methods:{
-    toggleFullScreen(){
+  methods: {
+    toggleFullScreen() {
       window.top?.dispatchEvent(new CustomEvent("toggleFullScreen"))
     },
-    initBoxHeight(){
-      var totalHeight = parseInt($(document).height()-this.$fontSize*0.5);
-      var height = parseInt(totalHeight/3);
-      var maxHeight = parseInt(this.$fontSize*1.52);
-      if(height>maxHeight){
-        height=maxHeight;
-      }
-      this.leftBox1Height=totalHeight;
-      this.rightBox2Height=height;
-      this.rightBox1Height=totalHeight-this.rightBox2Height-this.$fontSize*0.1;
+    toggleWarnDialog(show) {
+      this.warnDialogShow = show
     },
-    changePageSize(){
-      this.pager.pageSize=parseInt(this.pageSize);
-      this.pager.pageIndex=1;
-      this.pager.totalPage=Math.ceil(this.bind.cameraList.length/this.pager.pageSize);
+    initBoxHeight() {
+      var totalHeight = parseInt($(document).height() - this.$fontSize * 0.5);
+      var height = parseInt(totalHeight / 3.5);
+      var maxHeight = parseInt(this.$fontSize * 1.52);
+      if (height > maxHeight) {
+        height = maxHeight;
+      }
+      this.leftBox1Height = totalHeight;
+      this.rightBox2Height = height - this.$fontSize * 0.1;
+      this.rightBox1Height = totalHeight - this.rightBox2Height * 2 - this.$fontSize * 0.1 * 2.5;
+    },
+    changePageSize(pageSize) {
+      console.log("changePageSize", pageSize)
+      this.pageSize = pageSize
+      this.pager.pageSize = parseInt(this.pageSize);
+      this.pager.pageIndex = 1;
+      this.pager.totalPage = Math.ceil(this.bind.cameraList.length / this.pager.pageSize);
       this.getCameraPage();
     },
-    autoPage(event){
-      if($(event.currentTarget).hasClass("active")){
+    changeFullscreen(aa) {
+      console.log("changeFullscreen", aa)
+      this.cameraFullscreen = !this.cameraFullscreen
+    },
+    autoPage(event) {
+      if ($(event.currentTarget).hasClass("active")) {
         $(event.currentTarget).removeClass("active")
       }
-      else{
+      else {
         $(event.currentTarget).addClass("active")
       }
     },
-    onPage(val){
-      if(val>0){
-        if(this.pager.pageIndex+1>this.pager.totalPage){
+    onPage(val) {
+      if (val > 0) {
+        if (this.pager.pageIndex + 1 > this.pager.totalPage) {
           this.$message.error("没有下一页了");
         }
-        else{
+        else {
           this.pager.pageIndex++;
           this.getCameraPage();
         }
       }
-      else{
-        if(this.pager.pageIndex-1<1){
+      else {
+        if (this.pager.pageIndex - 1 < 1) {
           this.$message.error("没有上一页了");
         }
-        else{
+        else {
           this.pager.pageIndex--;
           this.getCameraPage();
         }
       }
     },
-    selectVideo(event){
+    selectVideo(event) {
       $(event.currentTarget).parent().parent().parent().find(".player").removeClass("active")
       $(event.currentTarget).addClass("active")
     },
-    viewWarnInfo(row){
-        this.warnDialog.show=true;
-        this.warnDialog.data=row.data;
-        console.log(row);
+    viewWarnInfo(row) {
+      this.warnDialog.show = true;
+      this.warnDialog.data = row.data;
+      console.log(row);
     },
-    changeDeviceTree(values,context){
-      this.deviceSelected=context.node.data.label;
-      if(context.node.data.url!=undefined && context.node.data.url!=null){
-        this.videoDialog.show=true;
-        this.$nextTick(()=>{
-          this.videoDialog.title=context.node.data.label;
-          this.videoDialog.url=context.node.data.url;
+    changeDeviceTree(values, context) {
+      return;
+      this.deviceSelected = context.node.data.label;
+      if (context.node.data.url != undefined && context.node.data.url != null) {
+        this.videoDialog.show = true;
+        this.$nextTick(() => {
+          this.videoDialog.title = context.node.data.label;
+          this.videoDialog.url = context.node.data.url;
         });
       }
     },
-    deviceTreeExpand(value,context){
-      if(context.node.data.children===true){
+    deviceTreeExpand(value, context) {
+      if (context.node.data.children === true) {
         this.getDeviceChilrenList(context.node);
       }
     },
-    videoDialogClosed(){
+    videoDialogClosed() {
       this.$refs['videoPlayer'].onHide();
     },
-    getCameraList(){
-      this.bind.deviceTree=[];
+    getCameraList() {
+      this.bind.deviceTree = [];
       const apiClient = getApiClient();
       apiClient.GET("/api/cockpit/proxy/list?page=1&pageSize=1000").then(r => {
-        if(r.data.code=="0"){
-          this.bind.cameraList=r.data.data.list;
-          this.pager.pageIndex=1;
-          this.pager.totalPage=Math.ceil(this.bind.cameraList.length/this.pager.pageSize);
+        if (r.data.code == "0") {
+          this.bind.cameraList = r.data.data.list;
+          this.pager.pageIndex = 1;
+          this.pager.totalPage = Math.ceil(this.bind.cameraList.length / this.pager.pageSize);
           this.getCameraPage();
-          let tree=[{id:0,label:'全部设备',value:'0',children:[]}];
-          for(let i=0;i<this.bind.cameraList.length;i++){
+          let tree = [{ id: 0, label: '全部设备', value: '0', children: [] }];
+          for (let i = 0; i < this.bind.cameraList.length; i++) {
             tree[0].children.push({
-              id:this.bind.cameraList[i].id,
-              label:this.bind.cameraList[i].name,
-              value:this.bind.cameraList[i].id.toString(),
-              url:this.bind.cameraList[i].streamInfo.hls.url
+              id: this.bind.cameraList[i].id,
+              label: this.bind.cameraList[i].name,
+              value: this.bind.cameraList[i].id.toString(),
+              url: this.bind.cameraList[i].streamInfo.hls.url
             });
           }
-          this.bind.deviceTree=tree;
+          this.bind.deviceTree = tree;
           this.getDeviceGroupList();
         }
       })
     },
-    getCameraPage(){
-      let rows=[];
-      this.bind.cameraRows=[];
-      for(let i=0;i<this.bind.cameraList.length;i++){
-        if((i>=this.pager.pageIndex-1)*this.pager.pageSize && i<this.pager.pageIndex*this.pager.pageSize){
+    getCameraPage() {
+      let rows = [];
+      this.bind.cameraRows = [];
+      for (let i = 0; i < this.bind.cameraList.length; i++) {
+        if ((i >= this.pager.pageIndex - 1) * this.pager.pageSize && i < this.pager.pageIndex * this.pager.pageSize) {
           rows.push(this.bind.cameraList[i]);
         }
       }
-      this.bind.cameraRows=rows;
+      this.bind.cameraRows = rows;
     },
-    getDeviceGroupList(){
+    getDeviceGroupList() {
       const apiClient = getApiClient();
       apiClient.GET("/ai/api/device/group/cameraGroupList?parentId=0").then(r => {
-        if(r.data.code=="0"){
-          let tree=JSON.parse(JSON.stringify(this.bind.deviceTree));
-          this.bind.deviceData=r.data.data;
-          for(let i=0;i<r.data.data.length;i++){
+        if (r.data.code == "0") {
+          let tree = JSON.parse(JSON.stringify(this.bind.deviceTree));
+          this.bind.deviceData = r.data.data;
+          for (let i = 0; i < r.data.data.length; i++) {
             tree.push({
-              id:r.data.data[i].id,
-              label:r.data.data[i].group_name,
-              value:r.data.data[i].id.toString(),
-              children:this.getDeviceChilren(r.data.data[i].children)
+              id: r.data.data[i].id,
+              label: r.data.data[i].group_name,
+              value: r.data.data[i].id.toString(),
+              children: this.getDeviceChilren(r.data.data[i].children)
             });
           }
-          this.bind.deviceTree=tree;
+          this.bind.deviceTree = tree;
         }
       })
     },
-    getDeviceChilren(data){
-      if(data.length==0){
+    getDeviceChilren(data) {
+      if (data.length == 0) {
         // return [{
         //     id:'',
         //     label:'',
@@ -396,30 +427,30 @@ export default defineComponent({
         //   }];
         return true;
       }
-      else{
-        let tree=[];
-        for(let i=0;i<data.length;i++){
+      else {
+        let tree = [];
+        for (let i = 0; i < data.length; i++) {
           tree.push({
-            id:data[i].id,
-            label:data[i].group_name,
-            value:data[i].id.toString(),
-            children:this.getDeviceChilren(data[i].children)
+            id: data[i].id,
+            label: data[i].group_name,
+            value: data[i].id.toString(),
+            children: this.getDeviceChilren(data[i].children)
           });
         }
         return tree;
       }
     },
-    getDeviceChilrenList(node){
+    getDeviceChilrenList(node) {
       const apiClient = getApiClient();
-      apiClient.GET("/ai/api/device/queryManager/list?page=1&pageSize=9999&categoryId="+node.value).then(r => {
-        if(r.data.code=="0"){
-          let children=[];
-          for(let i=0;i<r.data.data.list.length;i++){
+      apiClient.GET("/ai/api/device/queryManager/list?page=1&pageSize=9999&categoryId=" + node.value).then(r => {
+        if (r.data.code == "0") {
+          let children = [];
+          for (let i = 0; i < r.data.data.list.length; i++) {
             children.push({
-              id:r.data.data.list[i].id,
-              label:r.data.data.list[i].name,
-              value:r.data.data.list[i].id.toString(),
-              url:r.data.data.list[i].streamInfo.hls.url
+              id: r.data.data.list[i].id,
+              label: r.data.data.list[i].name,
+              value: r.data.data.list[i].id.toString(),
+              url: r.data.data.list[i].streamInfo.hls.url
             });
           }
           // let nodes=node.getChildren();
@@ -430,162 +461,213 @@ export default defineComponent({
         }
       })
     },
-    getInfo(){
+    getInfo() {
       const apiClient = getApiClient();
       apiClient.GET("/api/cockpit/proxy/resource/info").then(r => {
-        if(r.data.code=="0"){
-          this.bind.info=r.data.data;
+        if (r.data.code == "0") {
+          this.bind.info = r.data.data;
         }
       })
     },
-    getAlarmList(){
+    getAlarmList() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/events/").then(r => {
-        if(r.data.code=="0"){
-          this.bind.warnList=[];
-          let rows=[];
-          for(let i=0;i<r.data.data.records.length;i++){
-            rows.push({
-              id:r.data.data.records[i].id,
-              time:r.data.data.records[i].alarmTime.substr(0,18),
-              name:r.data.data.records[i].alarmTypeName,
-              status:r.data.data.records[i].status==0?'未处理':'已处理',
-              data:r.data.data.records[i]
-            });
+      apiClient.GET("/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2").then(r => {
+        if (r.data.code == "0") {
+          this.bind.warnList = r.data.data.records;
+          if (this.alarmActived) {
+            this.alarmDetail = this.bind.warnList[0]
+            this.detailShow = true
+            setTimeout(() => {
+              this.detailShow = false
+            }, 10000)
           }
-          this.bind.warnList=rows;
         }
       })
     },
-    getAlarmTrend(){
+    getAlarmTrend() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/stat/statAlarmCountByTime?startTime=2024-10-01&endTime=2024-10-29").then(r => {
-        if(r.data.code=="0"){
-          let xAxiData=[];
-          let serieData=[];
-          for(let i=0;i<r.data.data.length;i++){
-            xAxiData.push(r.data.data[i].alarmDate.substr(5,5));
+      apiClient.GET("/api/alarm/v2/stat/statAlarmCountByTime?startTime=2021-02-01&endTime=2024-11-07").then(r => {
+        if (r.data.code == "0") {
+          let xAxiData = [];
+          let serieData = [];
+          for (let i = 0; i < r.data.data.length; i++) {
+            xAxiData.push(r.data.data[i].alarmDate.substr(5, 5));
             serieData.push(r.data.data[i].alarmCount);
           }
-          gjqsOption.xAxis[0].data=xAxiData;
-          gjqsOption.series[0].data=serieData;
+          gjqsOption.xAxis[0].data = xAxiData;
+          gjqsOption.series[0].data = serieData;
           gjqsReload();
+        }
+      })
+    },
+    getAlarmStatistics() {
+      const apiClient = getApiClient();
+      apiClient.GET("/api/alarm/v2/stat/screenAlarmStatistics").then(r => {
+        if (r.data.code == "0") {
+          r.data.data.sort((a, b) => b.sevenDayAlarmCount - a.sevenDayAlarmCount);
+          this.bind.alarmStatistics = r.data.data.slice(0, 2)
         }
       })
     }
   },
-  created(){
+  created() {
     this.initBoxHeight();
     window.addEventListener("resize", this.initBoxHeight);
   },
-  mounted(){
+  mounted() {
+    gjqsChartCreate(this.$echart, 'chartGJQS');
     this.getInfo();
     this.getCameraList();
     this.getAlarmList();
     this.getAlarmTrend();
-    gjqsChartCreate(this.$echart,'chartGJQS');
+    this.getAlarmStatistics();
   },
-  unmounted(){
+  unmounted() {
     gjqsDestroy();
-    window.removeEventListener("resize", this.initBoxHeight);      
+    window.removeEventListener("resize", this.initBoxHeight);
   },
-  activated(){
+  activated() {
     gjqsResize();
   },
-  deactivated(){
+  deactivated() {
   }
 })
 </script>
 <style lang="less" scoped>
-#monitor{
+#monitor {
   position: absolute;
   z-index: 1;
-  top:0;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   pointer-events: all;
-  .left{
+
+  .left {
     position: absolute;
-    width: 2.188rem;
-    top:-0.3rem;
+    width: 1.588rem;
+    top: -0.2rem;
     left: 0.1rem;
-    bottom:0.1rem;
-    .box{
-      margin-top:0.1rem;
+    bottom: 0.1rem;
+    background: url(../assets/imgs/left-bg.png) no-repeat;
+    background-size: 100% 100%;
+
+    .box {
+      margin-top: 0.1rem;
     }
   }
-  .right{
+
+  .right {
     position: absolute;
-    width: 2.188rem;
-    top:-0.3rem;
+    width: 2.588rem;
+    top: -0.2rem;
     right: 0.1rem;
-    bottom:0.1rem;
-    .box{
-      margin-top:0.1rem;
+    bottom: 0.2rem;
+    box-sizing: border-box;
+
+    .box {
+      margin-bottom: 0.1rem;
     }
   }
-  .center{
+
+  .center-fullscreen {
+    left: 0.1rem !important;
+    right: 0.1rem !important;
+  }
+
+  .center {
     position: absolute;
-    left: 2.388rem;
-    right: 2.388rem;
-    top:0;
-    bottom:0.1rem;
-    .nav{
-      width:5.159rem;
-      margin: 0.15rem auto;
+    left: 1.688rem;
+    right: 2.788rem;
+    top: -0.1rem;
+    bottom: 0.1rem;
+
+    .nav {
+      width: 5.159rem;
+      margin: 0.16rem auto;
       display: flex;
-      .item{
-        width:1.4rem;
+
+      .item {
+        width: 1.4rem;
         height: 0.422rem;
         display: flex;
-        .icon{
-          width: 0.38rem;
+
+        .icon {
+          width: 0.32rem;
           line-height: 0.522rem;
           text-align: center;
         }
-        .icon img{
-          width:100%;
+
+        .icon img {
+          width: 100%;
         }
-        .text{
+
+        .text {
           flex: 1;
           color: #39d6fe;
-          padding: 0.09rem 0.05rem;
+          padding: 0 0.05rem;
           font-size: 0.085rem;
-          .value{
-            margin-top:-0.04rem;
-            .number{
-              color:#00ff90;
-              font-size: 0.16rem;
-              font-family: "electronicFont";
+
+          .value {
+            margin-top: -0.04rem;
+
+            .number {
+              font-size: 0.14rem;
               padding-right: 0.025rem;
+              color: #F2F6FA;
+              font-family: DINPro;
+              font-style: normal;
+              font-weight: 700;
+              line-height: normal;
             }
+
+            .unit {
+              color: #C6D1DB;
+              text-align: center;
+              font-family: D-DIN;
+              font-size: 0.08rem;
+              font-style: normal;
+              font-weight: 400;
+            }
+          }
+
+          .name {
+            color: #C6D1DB;
+            font-family: "PingFang SC";
+            font-size: 0.09rem;
+            font-style: normal;
+            font-weight: 400;
           }
         }
       }
-      .item:not(firts-children){
+
+      .item:not(firts-children) {
         margin-left: 0.1rem;
       }
     }
-    .pager{
+
+    .pager {
       width: 100%;
-      padding:0.05rem 0.1rem;
+      padding: 0.05rem 0.1rem;
       display: flex;
       color: #fff;
       font-size: 0.08rem;
       margin-bottom: 0.1rem;
-      .lf{
+
+      .lf {
         display: flex;
         flex: 1;
         text-align: left;
         line-height: 0.2rem;
       }
-      .rt{
+
+      .rt {
         flex: 1;
         justify-content: right;
         display: flex;
       }
-      .button{
+
+      .button {
         width: 0.5rem;
         height: 0.2rem;
         line-height: 0.2rem;
@@ -595,171 +677,342 @@ export default defineComponent({
         margin-left: 0.04rem;
         cursor: pointer;
       }
-      .button.active{
+
+      .button.active {
         background: url("../assets/imgs/pager_button_bg2.png") no-repeat center;
         background-size: 100% 100%;
       }
-      .select{
+
+      .select {
         margin-left: 0.1rem;
-        .t-select__wrap{
+
+        .t-select__wrap {
           width: 0.6rem;
         }
-        :deep(.t-input){
+
+        :deep(.t-input) {
           height: 0.2rem;
           background: #0071bc;
           border: #0071bc;
         }
-        :deep(input){
+
+        :deep(input) {
           font-size: 0.08rem;
-          color:#fff;
+          color: #fff;
           text-align: center;
         }
-        :deep(path){
-          color:#fff;
+
+        :deep(path) {
+          color: #fff;
         }
-        :deep(.t-input--focused){
+
+        :deep(.t-input--focused) {
           box-shadow: none;
         }
       }
-      .pageNum{
+
+      .pageNum {
         line-height: 0.2rem;
         font-size: 0.08rem;
-        padding:0 0.03rem 0 0.06rem;
+        padding: 0 0.03rem 0 0.06rem;
       }
     }
-    .videos{
+
+    .videos {
       width: 100%;
-      height: calc(100% - 1.2rem);
-      margin-left: 0.14rem;
-      .row{
-        width:100%;
-        height:100%;
+      height: 100%;
+
+      .row {
+        width: 100%;
+        height: 100%;
         display: block;
-        .col{
-          float:left;
-          width: 0.5rem;
-          background-color: #000000;
-          margin:0.02rem;
+        box-sizing: border-box;
+
+        .col {
+          float: left;
+          // width: 0.5rem;
+          // background-color: #000000;
+          // margin: 0.06rem;
           overflow: hidden;
-          .active{
-            border:2px solid #d5aa5b
+          padding: 0 0.04rem 0.2rem 0.04rem;
+          box-sizing: border-box;
+
+          .active {
+            border: 2px solid #d5aa5b
           }
-          :deep(.vjs-control-bar){
+
+          :deep(.player) {
+            padding: 0.06rem 0.03rem;
+            background: url(../assets/imgs/video_bg.png) no-repeat;
+            background-size: 100% 100%;
+          }
+
+          :deep(.vjs-control-bar) {
             height: 0.18rem;
             font-size: 0.08rem;
           }
-          :deep(.vjs-time-control){
+
+          :deep(.vjs-time-control) {
             line-height: 0.18rem;
             font-size: 0.08rem;
           }
-          :deep(.vjs-icon-placeholder:before){
+
+          :deep(.vjs-icon-placeholder:before) {
             font-size: 0.1rem;
           }
-          :deep(.vjs-playback-rate-value){
+
+          :deep(.vjs-playback-rate-value) {
             line-height: 0.18rem;
             font-size: 0.09rem;
           }
-          :deep(.vjs-button){
+
+          :deep(.vjs-button) {
             line-height: 0.19rem;
           }
-          :deep(.vjs-icon-spinner:before){
+
+          :deep(.vjs-icon-spinner:before) {
             font-size: 0.1rem;
             line-height: 0.18rem;
           }
-          :deep(.vjs-menu-item-text){
+
+          :deep(.vjs-menu-item-text) {
             font-size: 0.08rem;
             line-height: 0.14rem;
           }
-          :deep(.vjs-menu-content){
+
+          :deep(.vjs-menu-content) {
             bottom: 0.07rem;
           }
-          :deep(.vjs-play-control){
-            width:0.2rem;
+
+          :deep(.vjs-play-control) {
+            width: 0.2rem;
           }
-          :deep(.vjs-big-play-button){
+
+          :deep(.vjs-big-play-button) {
             top: calc(50% - 0.07rem);
             width: 0.35rem;
             height: 0.22rem;
             line-height: 0.18rem;
           }
         }
-        .col2{
-          width: calc(50% - 0.14rem);
+
+        .col2 {
+          width: 50%;
           //height: 1.39rem;
           height: 50%;
         }
-        .col3{
-          width:calc(33.333% - 0.1rem);
+
+        .col3 {
+          width: 33.333%;
           //height: 0.92rem;
+          height: 50%;
+        }
+
+        .col4 {
+          width: 25%;
+          //height: 0.687rem;
           height: 33.333%;
         }
-        .col4{
-          width:calc(25% - 0.078rem);
-          //height: 0.687rem;
-          height: 25%;
+
+        .video-name {
+          width: 100%;
+          text-align: center;
+          height: 0.2rem;
+          line-height: 0.2rem;
+          color: #fff;
+          font-size: 0.08rem;
         }
       }
     }
-    .fullscreen{
+
+    .fullscreen {
       object-fit: contain;
       user-select: text;
-      position: fixed!important;
-      box-sizing:border-box!important;
+      position: fixed !important;
+      box-sizing: border-box !important;
       min-width: 0px !important;
       max-width: none !important;
       min-height: 0px !important;
       max-height: none !important;
       width: 100% !important;
       height: 100% !important;
-      transform:none !important;
-      inset:0px !important;
-      margin:0% !important;
+      transform: none !important;
+      inset: 0px !important;
+      margin: 0% !important;
       overlay: auto !important;
       background-color: #0071bc;
     }
   }
-  .box_content{
+
+  .box_content {
     width: 100%;
     height: 100%;
     text-align: center;
     display: flex;
-    .chart{
+
+    .chart {
       width: 100%;
       height: 100%;
     }
   }
+
+  .warn_stat_box {
+    width: 100%;
+    height: 50%;
+  }
+
+  .warn_stat_title {
+    height: 40%;
+    display: flex;
+    align-items: center;
+    justify-items: left;
+
+    img {
+      width: 0.12rem;
+    }
+
+    .title {
+      font-family: 'YouSheBiaoTiHei';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 0.1rem;
+      padding-top: 0.02rem;
+      padding-left: 0.08rem;
+      /* identical to box height, or 100% */
+      letter-spacing: 0.04em;
+    }
+
+    .title1 {
+      background: linear-gradient(180deg, #FFA06B 0%, #FF3426 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+      text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    .title2 {
+      background: linear-gradient(180deg, #FFC700 0%, #FF8B04 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+    }
+  }
+
   .warn_stat {
     position: relative;
-    padding: 10px;
-    width: 410px;
-    height: 81px;
+    padding: 0.1rem;
+    width: 100%;
+    height: 60%;
     background: linear-gradient(90deg, #0953BC 0%, #042656 100%);
   }
-  .warn_stat::before,  
-  .warn_stat::after {  
-      content: '';  
-      position: absolute;  
-      width: 10px; /* 高亮角的宽度 */  
-      height: 10px; /* 高亮角的高度 */  
-      background-color: yellow; /* 高亮颜色 */  
-      border-radius: 2px; /* 圆角效果 */  
-  }  
-  .warn_stat::before {  
-      top: -5px; /* 上边高亮偏移 */  
-      left: -5px; /* 左边高亮偏移 */  
-  }  
-  .warn_stat::after {  
-      bottom: -5px; /* 下边高亮偏移 */  
-      right: -5px; /* 右边高亮偏移 */  
-  }  
-  .warn_stat::after {  
-      bottom: -5px;  
-      right: -5px; /* 高亮右下角 */  
-  }  
-  .warn_stat::before {  
-      top: -5px;  
-      left: -5px; /* 高亮左上角 */  
-  } 
+
+  .warn_stat_content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .carema-warn {
+    width: 100%;
+    padding: 0.05rem;
+    display: flex;
+    justify-content: space-between;
+
+    .carema-item {
+      width: 45%;
+      height: 100%;
+    }
+
+    .carema-item img {
+      width: 100%;
+      height: 80%;
+    }
+
+    .carema-item .carema-addr {
+      color: #FFF;
+      font-family: "PingFang SC";
+      font-size: 0.08rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      overflow: hidden;
+      /* 隐藏超出部分 */
+      white-space: nowrap;
+      /* 不换行 */
+      text-overflow: ellipsis;
+      padding-top: 0.05rem;
+    }
+  }
+
+  .warn_frame {
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .warn_frame p {
+    color: var(--vi-00-a-0-e-9, #00A0E9);
+    font-family: DINPro;
+    font-size: 0.13rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 0.15rem;
+    /* 76.923% */
+  }
+
+  .warn_frame span {
+    color: var(---, #C6D1DB);
+    font-family: "PingFang SC";
+    font-size: 0.08rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .warn_stat::before,
+  .warn_stat::after,
+  .warn_stat_content::before,
+  .warn_stat_content::after {
+    content: '';
+    position: absolute;
+    width: 0.06rem;
+    height: 0.06rem;
+  }
+
+  .warn_stat::before {
+    top: 0px;
+    left: 0px;
+    border-top: 1px solid #7CBFFF;
+    border-left: 1px solid #7CBFFF;
+  }
+
+  .warn_stat::after {
+    top: 0px;
+    right: 0px;
+    border-top: 1px solid #7CBFFF;
+    border-right: 1px solid #7CBFFF;
+  }
+
+  .warn_stat_content::before {
+    bottom: 0px;
+    right: 0px;
+    border-bottom: 1px solid #7CBFFF;
+    border-right: 1px solid #7CBFFF;
+  }
+
+  .warn_stat_content::after {
+    bottom: 0px;
+    left: 0px;
+    border-bottom: 1px solid #7CBFFF;
+    border-left: 1px solid #7CBFFF;
+  }
+
   .warn_list {
     position: relative;
     padding: 0px;
@@ -769,66 +1022,78 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     padding-right: 0.1rem;
-    .header{
+
+    .header {
       width: 100%;
       height: 0.2rem;
       line-height: 0.2rem;
-      color:#ffffff;
+      color: #ffffff;
       background: url("../assets/imgs/table_header_bg.png") no-repeat center;
-      background-size: 100% 100%;  
+      background-size: 100% 100%;
       font-size: 0.08rem;
       display: flex;
-      .time{
-        flex:1;
-        text-align: center; 
+
+      .time {
+        flex: 1;
+        text-align: center;
       }
-      .name{
-        flex:1;
-        text-align: center; 
+
+      .name {
+        flex: 1;
+        text-align: center;
       }
-      .status{
-        width:0.45rem;
-        text-align: center; 
+
+      .status {
+        width: 0.45rem;
+        text-align: center;
       }
     }
+
     .body {
       width: 100%;
-      flex:1;
-      overflow:hidden;
-      .item{
+      flex: 1;
+      overflow: hidden;
+
+      .item {
         display: flex;
         text-align: center;
         color: #fff;
         line-height: 0.25rem;
         font-size: 0.08rem;
-        border-bottom:1px dashed #084893;
-        .time{
+        border-bottom: 1px dashed #084893;
+
+        .time {
           flex: 1;
-          text-align: center; 
-        }
-        .name{
-          flex:1;
           text-align: center;
         }
-        .status{
-          color:#ffd700;
-          width:0.45rem;
+
+        .name {
+          flex: 1;
+          text-align: center;
+        }
+
+        .status {
+          color: #ffd700;
+          width: 0.45rem;
           text-align: center;
         }
       }
     }
   }
-  .device_list{
+
+  .device_list {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    .select{
+
+    .select {
       width: 100%;
       height: 0.2rem;
       background: url("../assets/imgs/device_select_bg.png") no-repeat center;
       background-size: 100% 100%;
-      margin:0.06rem 0;
-      .text{
+      margin: 0.06rem 0;
+
+      .text {
         font-weight: bold;
         font-size: 0.08rem;
         color: #fff;
@@ -837,56 +1102,67 @@ export default defineComponent({
         padding-left: 0.25rem;
       }
     }
-    .line{
+
+    .line {
       width: 94%;
       height: 0.08rem;
       background: url("../assets/imgs/device_line.png") no-repeat center;
       background-size: 100% 100%;
       margin-bottom: 0.06rem;
     }
-    .list{
-      width:100%;
+
+    .list {
+      width: 100%;
       height: calc(100% - 0.46rem);
-      background: url("../assets/imgs/device_list_bg.png") no-repeat center;
       background-size: 100% 100%;
       overflow-x: hidden;
       overflow-y: auto;
-      .rows{
+      padding-top: 0.4rem;
+
+      .rows {
         padding: 0.1rem 0.15rem;
-        :deep(.t-tree){
-          color:#fff;
+
+        :deep(.t-tree) {
+          color: #fff;
           font-size: 0.08rem;
           line-height: 0.18rem;
           text-align: left;
         }
-        :deep(.t-is-active){
-          color:#ffd700;
+
+        :deep(.t-is-active) {
+          color: #ffd700;
           background-color: transparent !important;
         }
-        :deep(.t-tree__icon:hover){
+
+        :deep(.t-tree__icon:hover) {
           background-color: transparent !important;
         }
-        :deep(.t-tree__icon){
-          path{
+
+        :deep(.t-tree__icon) {
+          path {
             fill: #fff;
           }
         }
       }
     }
   }
-  :deep(.warnDialog){
-    .t-dialog{
+
+  :deep(.warnDialog) {
+    .t-dialog {
       background-color: transparent;
       padding: 0;
       border: none;
     }
-    .t-dialog__header{
+
+    .t-dialog__header {
       display: none;
     }
-    .t-dialog__footer{
+
+    .t-dialog__footer {
       display: none;
     }
-    .content{
+
+    .content {
       width: 5rem;
       height: 3.15rem;
       background: url('../assets/imgs/dialog_bg.png') no-repeat center;
@@ -894,56 +1170,81 @@ export default defineComponent({
       position: relative;
       padding: 0.1rem 0.2rem;
       overflow: hidden;
-      .close{
-        position: absolute; 
-        right:0.1rem; 
-        top:0.07rem; 
-        width:0.25rem;
+
+      .close {
+        position: absolute;
+        right: 0.1rem;
+        top: 0.07rem;
+        width: 0.25rem;
       }
-      .title{
+
+      .title {
         color: #fff;
         padding-left: 0.2rem;
         line-height: 0.42rem;
         font-size: 0.1rem;
         font-weight: bold;
       }
-      .body{
-        margin-top:0.15rem; 
-        color:#fff;
+
+      .body {
+        margin-top: 0.15rem;
+        color: #fff;
         display: flex;
         font-size: 0.08rem;
-        .lf{
-          width:2rem;
+
+        .lf {
+          width: 2rem;
           padding-left: 0.1rem;
-          img{
-            width:100%;
+
+          img {
+            width: 100%;
           }
         }
-        .rt{
-          flex:1;
+
+        .rt {
+          flex: 1;
           padding-left: 0.2rem;
           line-height: 0.2rem;
         }
       }
     }
   }
-  :deep(.videoDialog){
-    .content{
-      width:4.7rem;
-      height:2.8rem;
+
+  :deep(.videoDialog) {
+    .content {
+      width: 4.7rem;
+      height: 2.8rem;
     }
-    .t-dialog__footer{
+
+    .t-dialog__footer {
       display: none;
     }
-    .t-dialog__header{
-      padding-top:0.06rem;
-      color:#fff;
+
+    .t-dialog__header {
+      padding-top: 0.06rem;
+      color: #fff;
     }
-    .t-dialog--default{
-      padding:0.05rem 0.14rem;
+
+    .t-dialog--default {
+      padding: 0.05rem 0.14rem;
       background-color: #3d7ab9;
       border-color: #0f5a9b;
     }
   }
+  
+  .slide-enter-active, .slide-leave-active {  
+  transition: transform 0.5s ease, opacity 0.5s ease;  
+}  
+
+.slide-enter {  
+  transform: translate(-100%, -100%); /* 从右上角进入 */  
+  opacity: 0; /* 透明度为零 */  
+}  
+
+.slide-leave-to {  
+  transform: translate(-100%, 100%); /* 从左下角退出 */  
+  opacity: 0; /* 透明度为零 */  
+}  
+
 }
 </style>

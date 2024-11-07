@@ -49,8 +49,8 @@ const gjqsChartCreate=function($echart,id){
     },
     grid: {
         top: '25',
-        left: '40',
-        right: '8',
+        left: '55',
+        right: '20',
         bottom: '20',
         // containLabel: true
     },
@@ -75,7 +75,7 @@ const gjqsChartCreate=function($echart,id){
             },
         },
         axisLabel: {
-            color: '#fff'
+            color: '#B4C0CC'
         },
         splitLine: {
             show: false
@@ -109,7 +109,7 @@ const gjqsChartCreate=function($echart,id){
             show: true,
             margin: 15,
             textStyle: {
-                color: '#fff',
+                color: '#B4C0CC',
             },
         },
         axisTick: {

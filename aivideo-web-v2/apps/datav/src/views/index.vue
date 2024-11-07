@@ -1,28 +1,38 @@
 <template>
   <div class="container">
-    <div class="header">
-      <div class="title"></div>
-      <div class="times">
-        <div class="date">{{date}}</div>
-        <div class="time">{{time}}</div>
-        <div class="week">{{week}}</div>
-      </div>
-      <div class="buttons">
-        <div class="item">
-          <img src="@/assets/imgs/manager.png" @click="gotoDashboard()"/>
+    <div class="container-cover">
+      <div class="header">
+        <div class="title"></div>
+        <div class="times">
+          <div class="date">{{date}}</div>
+          <div class="time">{{time}}</div>
+          <div class="week">{{week}}</div>
         </div>
-        <div class="item">
-          <img src="@/assets/imgs/loginout.png"/>
+        <div class="buttons">
+          <div class="new-item">
+            <span @click="toggleFullScreen" style="color:#fff;">关闭告警</span>
+            <t-switch v-model="currentProps.alarmActived" style="margin-left: 0.05rem;" />
+          </div>
+          <div class="new-item">
+            <span @click="toggleFullScreen" style="color:#fff;">全屏</span>
+          </div>
+          <div style="width: 0.6rem;"></div>
+          <div class="item">
+            <img src="@/assets/imgs/manager.png" @click="gotoDashboard()"/>
+          </div>
+          <div class="item">
+            <img src="@/assets/imgs/loginout.png"/>
+          </div>
         </div>
+      </div> 
+      <div id="main" class="main">
+        <loading v-show="$store.getters.isLoading()"></loading>
+        <router-view v-slot="{ Component }">
+            <keep-alive>
+              <component :is="Component" v-bind="currentProps" />
+            </keep-alive>
+        </router-view>
       </div>
-    </div> 
-    <div id="main" class="main">
-      <loading v-show="$store.getters.isLoading()"></loading>
-      <router-view v-slot="{ Component }">
-          <keep-alive>
-            <component :is="Component"/>
-          </keep-alive>
-      </router-view>
     </div>
   </div>
 </template>
@@ -39,7 +49,10 @@ export default defineComponent({
     return {
       date:"",
       time:"",
-      week:""
+      week:"",
+      currentProps: {
+        alarmActived: false
+      }
     }
   },
   setup() {
@@ -100,7 +113,37 @@ export default defineComponent({
         second="0"+second.toString();
       }
       this.time=hour+":"+minute+":"+second;
-    }
+    },
+    toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        this.enterFullScreen();
+      } else {
+        this.exitFullScreen();
+      }
+    },
+    enterFullScreen() {
+      let element = document.documentElement;
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.mozRequestFullScreen) { /* Firefox */
+        element.mozRequestFullScreen();
+      } else if (element.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+        element.webkitRequestFullscreen();
+      } else if (element.msRequestFullscreen) { /* IE/Edge */
+        element.msRequestFullscreen();
+      }
+    },
+    exitFullScreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) { /* Firefox */
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE/Edge */
+        document.msExitFullscreen();
+      }
+    },
   },
   mounted(){
       setInterval(()=>{ this.getDate()},1000);
@@ -113,16 +156,20 @@ export default defineComponent({
     height: 100%;
     position: relative;
     overflow: hidden;
-    background: #013480;
-    background: url("../assets/imgs/bg.png") no-repeat center;
+    background: url("../assets/imgs/home-bg.png") no-repeat center;
     background-size: 100% 100%;
+  }
+  .container-cover {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(48.84% 50.6% at 50% 48.19%, rgba(0, 144, 225, 0.35) 0%, rgba(5, 118, 223, 0.03) 100%), #000;
   }
   .header {
     position: absolute;
     width: 100%;
     z-index: 1;
     height: 0.62rem;
-    background: url("../assets/imgs/header_bg.png") no-repeat center;
+    background: url("../assets/imgs/head_bg.png") no-repeat center;
     background-size: 100% 100%;
     .title{
       width: 3.382rem;
@@ -160,7 +207,7 @@ export default defineComponent({
     }
     .buttons{
       position: absolute;
-      top:0.04rem;
+      top:0.08rem;
       right: 0;
       display: flex;
       .item{
@@ -168,6 +215,11 @@ export default defineComponent({
         img{
           width: 100%;
         }
+      }
+      .new-item {
+        display: flex;
+        font-size: 0.09rem;
+        margin-right: 0.1rem;
       }
     }
   }
