@@ -79,7 +79,7 @@
 </template>  
   
 <script>  
-import { ref } from "vue";  
+import { ref, reactive } from "vue";  
 import Day from "../Day.vue";
 import DeviceTreeNational from "../common/DeviceTreeNational.vue";
 import DeviceTreeNationalCockpit from "../common/DeviceTreeNationalCockpit.vue";
@@ -95,25 +95,34 @@ export default {
   },  
   mixins: [mixin],  
   setup() {  
-    const selectedDevice = []; // 选中的设备  
+    const selectedDevice = []; 
+    const startDate = ref('');  
+    const endDate = ref('');  
+    const isUnlimited = ref(false);  
+    const alertRule = ref('all'); 
     //勾选无限期将日期范围设置为今天到2099-12-31
-    const handleUnlimitedChange = () => {  
-      if (isUnlimited.value) {  
+    const handleUnlimitedChange = () => { 
+      const taskForm = reactive({  
+        startDate: '',  
+        endDate: ''  
+      });  
+      if (isUnlimited.value) { 
         const today = new Date();  
         const futureDate = new Date(2099, 11, 31);  
         startDate.value = today.toISOString().split('T')[0];  
         endDate.value = futureDate.toISOString().split('T')[0];  
         console.log("日期范围设置为"+startDate.value+"到"+endDate.value);  
-      }  
-    };
-    const alertRule = ref('all'); 
+    }};
+
      // 处理告警图片采集规则选择事件
      const handleAlertRuleChange = (rule) => {
       alertRule.value = rule;
     };
     return {  
       selectedDevice,  
-      isUnlimited: false, // 是否无限期  
+      startDate,  
+      endDate,  
+      isUnlimited,  
       alertRule,
       handleUnlimitedChange,
       handleAlertRuleChange,  
@@ -125,7 +134,7 @@ export default {
       formLabelWidth: '100px', 
       taskForm: {  
         taskId: '',  
-        routenName: '', 
+        routeName: '', 
         selectedCameras: '',  
         startDate: '',  
         endDate: '',  
@@ -147,6 +156,9 @@ export default {
     // 关闭对话框（无论是否保存）  
     handleClose() {  
       this.dialogVisible = false;  
+      this.selectedDevice = []; // 清空选中的设备列表  
+      this.isUnlimited = false; // 复选框复位  
+      this.alertRule = 'all'; // 告警图片采集规则复位  
     },  
     // 取消编辑，恢复原始数据  
     handleCancel() {  
@@ -201,9 +213,10 @@ export default {
 }  
 .device-tree-main-box {
   text-align: left;
-  width: 100%;
+  width: 50%;
   overflow-y: auto;
   height: 180px;
+  margin-top: 10px;  
 }
 
 .time-container {  
@@ -214,10 +227,8 @@ export default {
   width: 70%;
 }  
 
-input[type="checkbox"] + label {  
-  font-size: 20px; /* 复选框标签字体大小 */  
-  margin-left: 5px; /* 复选框与标签间距 */  
-}  
-
+.el-checkbox {
+  font-size: 30px;
+}
 
 </style>

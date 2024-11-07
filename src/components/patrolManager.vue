@@ -236,6 +236,8 @@ export default {
             refreshTaskList,  
             handleSizeChange_task,  
             handleCurrentChange_task,  
+            startTask,  
+            stopTask,  
         };  
     }    
 };  
