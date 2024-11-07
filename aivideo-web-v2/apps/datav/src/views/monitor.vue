@@ -64,7 +64,7 @@
           <div class="icon"><img src="@/assets/imgs/device_total.png" /></div>
           <div class="text">
             <div class="value">
-              <span class="number">{{ bind.info.device.total }}</span><span class="unit">个</span>
+              <span class="number">{{ bind.stat.allDev }}</span><span class="unit">个</span>
             </div>
             <div class="name">设备总数</div>
           </div>
@@ -73,7 +73,7 @@
           <div class="icon"><img src="@/assets/imgs/device_online.png" /></div>
           <div class="text">
             <div class="value">
-              <span class="number">{{ bind.info.channel.total }}</span><span class="unit">个</span>
+              <span class="number">{{ bind.stat.onlineDev }}</span><span class="unit">个</span>
             </div>
             <div class="name">在线设备数</div>
           </div>
@@ -82,7 +82,7 @@
           <div class="icon"><img src="@/assets/imgs/warn_todo.png" /></div>
           <div class="text">
             <div class="value">
-              <span class="number">{{ bind.info.channel.online }}</span><span class="unit">个</span>
+              <span class="number">{{ bind.stat.activedAlarm }}</span><span class="unit">个</span>
             </div>
             <div class="name">未处理告警数</div>
           </div>
@@ -91,7 +91,7 @@
           <div class="icon"><img src="@/assets/imgs/warn_total.png" /></div>
           <div class="text">
             <div class="value">
-              <span class="number">{{ bind.info.proxy.total }}</span><span class="unit">个</span>
+              <span class="number">{{ bind.stat.allAlarm }}</span><span class="unit">个</span>
             </div>
             <div class="name">告警总数</div>
           </div>
@@ -228,6 +228,12 @@ export default defineComponent({
         poster: ''
       },
       bind: {
+        stat: {
+          allDev: 0,
+          onlineDev: 0,
+          allAlarm: 0,
+          activedAlarm: 0
+        },
         info: {
           channel: {
             online: 0,
@@ -469,6 +475,22 @@ export default defineComponent({
         }
       })
     },
+    getAllDev() {
+      const apiClient = getApiClient();
+      apiClient.GET("/api/alarm/v2/deviceInfo/deviceCount").then(r => {
+        if (r.data.code == "0") {
+          this.bind.stat.allDev = r.data.data.deviceCount;
+        }
+      })
+    },
+    getOnlineDev() {
+      const apiClient = getApiClient();
+      apiClient.GET("/api/alarm/v2/deviceInfo/onlineDeviceCount").then(r => {
+        if (r.data.code == "0") {
+          this.bind.stat.onlineDev = r.data.data.onlineDeviceCount;
+        }
+      })
+    },
     getAlarmList() {
       const apiClient = getApiClient();
       apiClient.GET("/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2").then(r => {
@@ -505,6 +527,12 @@ export default defineComponent({
       apiClient.GET("/api/alarm/v2/stat/screenAlarmStatistics").then(r => {
         if (r.data.code == "0") {
           r.data.data.sort((a, b) => b.sevenDayAlarmCount - a.sevenDayAlarmCount);
+          this.bind.stat.allAlarm = r.data.data.reduce((t, current) => {
+            return t + current.sevenDayAlarmCount
+          }, 0)
+          this.bind.stat.activedAlarm = r.data.data.reduce((t, current) => {
+            return t + current.sevenDayAlarmNoHandleCount
+          }, 0)
           this.bind.alarmStatistics = r.data.data.slice(0, 2)
         }
       })
@@ -517,6 +545,8 @@ export default defineComponent({
   mounted() {
     gjqsChartCreate(this.$echart, 'chartGJQS');
     this.getInfo();
+    this.getAllDev();
+    this.getOnlineDev();
     this.getCameraList();
     this.getAlarmList();
     this.getAlarmTrend();
