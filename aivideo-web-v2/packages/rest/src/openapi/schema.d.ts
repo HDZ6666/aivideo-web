@@ -2901,15 +2901,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/alarm/v2/stat/statAlarmTypeCountByTime": {
+    "/api/alarm/v2/stat/statAlarmTypeGroupCountByTime": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** 根据时间段统计事件类型数量 */
-        get: operations["statAlarmTypeCountByTime"];
+        /** 根据时间段统计告警-事件分组数量 */
+        get: operations["statAlarmTypeGroupCountByTime"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2918,83 +2918,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/alarm/v2/stat/statAlarmProcessCountByTime": {
+    "/api/alarm/v2/stat/statAlarmPriorityCountByTime": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** 根据时间段统计事件已处理、未处理数量 */
-        get: operations["statAlarmProcessCountByTime"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/alarm/v2/stat/statAlarmNotifierTypeCountByTime": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 根据时间段统计通知事件数量 */
-        get: operations["statAlarmNotifierTypeCountByTime"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/alarm/v2/stat/statAlarmNotifierEventTypeCountByTime": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 根据时间区间统计通知-告警事件类型数量 */
-        get: operations["statAlarmNotifierEventTypeCountByTime"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/alarm/v2/stat/statAlarmMisReportCountByTime": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 根据时间段统计事件误报、非误报、未确认数量 */
-        get: operations["statAlarmMisReportCountByTime"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/alarm/v2/stat/statAlarmLevelCountByTime": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 根据时间段统计事件级别数量 */
-        get: operations["statAlarmLevelCountByTime"];
+        /** 统计时间内每种告警级别的数量 */
+        get: operations["statAlarmPriorityCountByTime"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3010,7 +2942,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** 统计时间内每天的告警数量（趋势） */
+        /** 统计时间内每天的告警数量趋势 */
         get: operations["statAlarmCountByTime"];
         put?: never;
         post?: never;
@@ -3658,19 +3590,19 @@ export interface paths {
             cookie?: never;
         };
         /** 修改pushkey */
-        get: operations["changePushKey_1"];
+        get: operations["changePushKey_2"];
         /** 修改pushkey */
-        put: operations["changePushKey_3"];
+        put: operations["changePushKey"];
         /** 修改pushkey */
-        post: operations["changePushKey_2"];
+        post: operations["changePushKey_3"];
         /** 修改pushkey */
-        delete: operations["changePushKey"];
+        delete: operations["changePushKey_6"];
         /** 修改pushkey */
-        options: operations["changePushKey_6"];
+        options: operations["changePushKey_1"];
         /** 修改pushkey */
-        head: operations["changePushKey_4"];
+        head: operations["changePushKey_5"];
         /** 修改pushkey */
-        patch: operations["changePushKey_5"];
+        patch: operations["changePushKey_4"];
         trace?: never;
     };
 }
@@ -3806,13 +3738,13 @@ export interface components {
             /** Format: int32 */
             id?: number;
             enabled?: boolean;
-            role?: components["schemas"]["Role"];
-            password?: string;
             username?: string;
             authorities?: components["schemas"]["GrantedAuthority"][];
-            credentialsNonExpired?: boolean;
             accountNonExpired?: boolean;
             accountNonLocked?: boolean;
+            credentialsNonExpired?: boolean;
+            password?: string;
+            role?: components["schemas"]["Role"];
         };
         Role: {
             /** Format: int32 */
@@ -4557,9 +4489,9 @@ export interface components {
             businessGroupId?: string;
             /** @description GPS的更新时间 */
             gpsTime?: string;
+            ptztypeText?: string;
             /** Format: int32 */
             ptztype?: number;
-            ptztypeText?: string;
         };
         IdsFormLong: {
             ids: number[];
@@ -4869,43 +4801,34 @@ export interface components {
         };
         /** @description 流信息 */
         AiStreamInfo: {
-            /** Format: int32 */
-            duration?: number;
-            transport?: string;
-            channelName?: string;
-            hls?: string;
-            rtmp?: string;
-            streamID?: string;
-            deviceID?: string;
-            rtsp?: string;
-            channelID?: string;
-            flv?: string;
-            mp4_FLV?: string;
-            ws_FLV?: string;
             audioEnable?: boolean;
-            /** Format: int32 */
-            relaySize?: number;
-            ondemand?: boolean;
+            cdn?: string;
             /** Format: int32 */
             cascadeSize?: number;
-            snapURL?: string;
-            cdn?: string;
+            channelID?: string;
+            /** Format: int32 */
+            channelPTZType?: number;
+            /** Format: int32 */
+            duration?: number;
+            flv?: string;
+            hls?: string;
             /** Format: int32 */
             inBitRate?: number;
             /** Format: int64 */
             inBytes?: number;
             /** Format: int32 */
             numOutputs?: number;
-            /** Format: int32 */
-            channelPTZType?: number;
+            ondemand?: boolean;
             /** Format: int64 */
             outBytes?: number;
+            rtmp?: string;
+            rtsp?: string;
             recordStartAt?: string;
-            startAt?: string;
-            sourceAudioCodecName?: string;
+            /** Format: int32 */
+            relaySize?: number;
+            snapURL?: string;
             /** Format: int32 */
             sourceAudioSampleRate?: number;
-            channelCustomName?: string;
             sourceVideoCodecName?: string;
             /** Format: int32 */
             sourceVideoFrameRate?: number;
@@ -4913,6 +4836,15 @@ export interface components {
             sourceVideoHeight?: number;
             /** Format: int32 */
             sourceVideoWidth?: number;
+            startAt?: string;
+            ws_FLV?: string;
+            sourceAudioCodecName?: string;
+            streamID?: string;
+            channelCustomName?: string;
+            mp4_FLV?: string;
+            deviceID?: string;
+            channelName?: string;
+            transport?: string;
         };
         /** @description 通道信息，包含播放地址 */
         DeviceChannelResponse: {
@@ -5040,9 +4972,9 @@ export interface components {
             businessGroupId?: string;
             /** @description GPS的更新时间 */
             gpsTime?: string;
+            ptztypeText?: string;
             /** Format: int32 */
             ptztype?: number;
-            ptztypeText?: string;
         };
         PageInfoDeviceChannelResponse: {
             /** Format: int64 */
@@ -5141,13 +5073,13 @@ export interface components {
             artifactId?: string;
             version?: string;
             project?: string;
+            create_By?: string;
+            git_Revision?: string;
+            git_BRANCH?: string;
+            git_URL?: string;
+            build_DATE?: string;
             git_Revision_SHORT?: string;
             git_DATE?: string;
-            build_DATE?: string;
-            git_URL?: string;
-            git_BRANCH?: string;
-            git_Revision?: string;
-            create_By?: string;
             build_Jdk?: string;
         };
         SystemAllInfo: {
@@ -5249,15 +5181,15 @@ export interface components {
             gbSend?: number;
         };
         IHookSubscribe: {
+            /** @enum {string} */
+            hookType?: "on_flow_report" | "on_http_access" | "on_play" | "on_publish" | "on_record_mp4" | "on_rtsp_auth" | "on_rtsp_realm" | "on_shell_login" | "on_stream_changed" | "on_stream_none_reader" | "on_stream_not_found" | "on_server_started" | "on_rtp_server_timeout" | "on_server_keepalive" | "on_send_rtp_stopped";
+            /** Format: date-time */
+            expires?: string;
             content?: {
                 empty?: boolean;
             } & {
                 [key: string]: Record<string, never>;
             };
-            /** Format: date-time */
-            expires?: string;
-            /** @enum {string} */
-            hookType?: "on_flow_report" | "on_http_access" | "on_play" | "on_publish" | "on_record_mp4" | "on_rtsp_auth" | "on_rtsp_realm" | "on_shell_login" | "on_stream_changed" | "on_stream_none_reader" | "on_stream_not_found" | "on_server_started" | "on_rtp_server_timeout" | "on_server_keepalive" | "on_send_rtp_stopped";
         };
         OtherRtpSendInfo: {
             sendLocalIp?: string;
@@ -6001,9 +5933,9 @@ export interface components {
             /** @description GPS的更新时间 */
             gpsTime?: string;
             /** Format: int32 */
-            ptztype?: number;
-            /** Format: int32 */
             streamModeForParam?: number;
+            /** Format: int32 */
+            ptztype?: number;
         };
         PageInfoDeviceChannelGroupInfo: {
             /** Format: int64 */
@@ -15176,7 +15108,7 @@ export interface operations {
             };
         };
     };
-    statAlarmTypeCountByTime: {
+    statAlarmTypeGroupCountByTime: {
         parameters: {
             query: {
                 startTime: string;
@@ -15219,179 +15151,7 @@ export interface operations {
             };
         };
     };
-    statAlarmProcessCountByTime: {
-        parameters: {
-            query: {
-                startTime: string;
-                endTime: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": {
-                        [key: string]: number;
-                    };
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    statAlarmNotifierTypeCountByTime: {
-        parameters: {
-            query: {
-                startTime: string;
-                endTime: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": {
-                        [key: string]: Record<string, never>;
-                    }[];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    statAlarmNotifierEventTypeCountByTime: {
-        parameters: {
-            query: {
-                startTime: string;
-                endTime: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": {
-                        [key: string]: Record<string, never>;
-                    }[];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    statAlarmMisReportCountByTime: {
-        parameters: {
-            query: {
-                startTime: string;
-                endTime: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": {
-                        [key: string]: number;
-                    };
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    statAlarmLevelCountByTime: {
+    statAlarmPriorityCountByTime: {
         parameters: {
             query: {
                 startTime: string;
@@ -17094,88 +16854,6 @@ export interface operations {
             };
         };
     };
-    changePushKey_1: {
-        parameters: {
-            query: {
-                /** @description 用户Id */
-                userId: number;
-                /** @description 新的pushKey */
-                pushKey: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
-    changePushKey_3: {
-        parameters: {
-            query: {
-                /** @description 用户Id */
-                userId: number;
-                /** @description 新的pushKey */
-                pushKey: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WVPResultString"];
-                };
-            };
-        };
-    };
     changePushKey_2: {
         parameters: {
             query: {
@@ -17258,6 +16936,47 @@ export interface operations {
             };
         };
     };
+    changePushKey_3: {
+        parameters: {
+            query: {
+                /** @description 用户Id */
+                userId: number;
+                /** @description 新的pushKey */
+                pushKey: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
     changePushKey_6: {
         parameters: {
             query: {
@@ -17299,7 +17018,7 @@ export interface operations {
             };
         };
     };
-    changePushKey_4: {
+    changePushKey_1: {
         parameters: {
             query: {
                 /** @description 用户Id */
@@ -17341,6 +17060,47 @@ export interface operations {
         };
     };
     changePushKey_5: {
+        parameters: {
+            query: {
+                /** @description 用户Id */
+                userId: number;
+                /** @description 新的pushKey */
+                pushKey: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WVPResultString"];
+                };
+            };
+        };
+    };
+    changePushKey_4: {
         parameters: {
             query: {
                 /** @description 用户Id */
