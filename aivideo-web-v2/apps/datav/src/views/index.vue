@@ -10,19 +10,20 @@
         </div>
         <div class="buttons">
           <div class="new-item">
-            <span @click="toggleFullScreen" style="color:#fff;">关闭告警</span>
+            <span @click="toggleFullScreen">关闭告警</span>
             <t-switch v-model="currentProps.alarmActived" style="margin-left: 0.05rem;" />
           </div>
-          <div class="new-item">
-            <span @click="toggleFullScreen" style="color:#fff;">全屏</span>
-          </div>
+          <!-- <div class="new-item">
+            <span @click="toggleFullScreen">全屏</span>
+          </div> -->
           <div style="width: 0.6rem;"></div>
-          <div class="item">
-            <img src="@/assets/imgs/manager.png" @click="gotoDashboard()"/>
+          <div class="new-item" @click="gotoDashboard()">
+            <!-- <img src="@/assets/imgs/manager.png" @click="gotoDashboard()"/> -->
+            <img src="../assets/imgs/back.png" alt="">后台管理
           </div>
-          <div class="item">
+          <!-- <div class="item">
             <img src="@/assets/imgs/loginout.png"/>
-          </div>
+          </div> -->
         </div>
       </div> 
       <div id="main" class="main">
@@ -182,8 +183,8 @@ export default defineComponent({
       top: 0rem;
       left: 0rem;
       font-size: 0.08rem;
-      line-height: 0.209rem;
-      color: #39d6fe;
+      line-height: 0.309rem;
+      color: #fff;
       display: flex;
       .time{
         font-size: 0.09rem;
@@ -194,7 +195,7 @@ export default defineComponent({
       }
       .date{
         font-size: 0.09rem;
-        width: 0.78rem;
+        width: 0.8rem;
         text-align: right;
         overflow: hidden;
         white-space: nowrap;
@@ -204,6 +205,16 @@ export default defineComponent({
         overflow: hidden;
         white-space: nowrap;
       }
+    }
+    .times::before {
+      content: '';
+      position: absolute;
+      top: 0.075rem;
+      left: 0.1rem;
+      background: url(../assets/imgs/time.png) no-repeat;
+      background-size: 100% 100%;
+      width: 0.15rem;
+      height: 0.15rem;
     }
     .buttons{
       position: absolute;
@@ -220,6 +231,13 @@ export default defineComponent({
         display: flex;
         font-size: 0.09rem;
         margin-right: 0.1rem;
+        color: #fff;
+        align-items: center;
+        img {
+          margin-right: 0.03rem;
+          width: 0.1rem;
+          height: 0.1rem;
+        }
       }
     }
   }
