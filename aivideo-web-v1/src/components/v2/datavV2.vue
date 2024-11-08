@@ -9,13 +9,6 @@ export default {
   components: {
     FramePage
   },
-  mounted() {
-    window.dispatchEvent(new CustomEvent("enterFullScreen" ))
-  },
-  unmounted() {
-    // console.log("unmounted");
-    window.dispatchEvent(new CustomEvent("exitFullScreen" ))
-  },
   data() {
     return {
       frameUrl: `/datav/`

@@ -41,12 +41,10 @@ module.exports = {
         changeOrigin: true
       },
       "/ai/api": {
-        // target: "http://172.16.66.77:18080",
         target: apiProxy,
         changeOrigin: true
       },
       "/cockpit/api": {
-        // target: "http://172.16.66.77:18080",
         target: apiProxy,
         changeOrigin: true
       },

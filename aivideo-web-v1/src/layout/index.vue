@@ -26,7 +26,7 @@ export default {
       fullscreen: false
     }
   },
-  mounted() {
+  beforeMount() {
     window.addEventListener("enterFullScreen", this.enterFullScreen)
     window.addEventListener("exitFullScreen", this.exitFullScreen)
   },
