@@ -1,5 +1,5 @@
 <template>
-  <div id="UiHeader">
+  <div id="UiHeader" style="text-align: left;">
     <el-menu
       router
       :default-active="activeIndex"
@@ -7,48 +7,40 @@
       text-color="#fff"
       active-text-color="#1890ff"
       mode="horizontal"
+      style="display: flex;"
     >
-      <el-menu-item index="/videoCockpit">数据大屏</el-menu-item>
+    <sidebar-item
+      v-for="(route, index) in sidebarRouters"
+      :key="route.path  + index"
+      :item="route"
+      :base-path="route.path"
+    />
+      <!-- <el-menu-item index="/videoCockpit">数据大屏</el-menu-item>
       <el-submenu index="2" v-if="aiType">
         <template slot="title">AI卫士</template>
         <el-menu-item index="/alarmList">告警列表</el-menu-item>
-        <!-- <el-menu-item index="/fence">告警配置</el-menu-item> -->
       </el-submenu>
-      <el-menu-item index="/live">分屏监控</el-menu-item>
-      <el-submenu index="1">
+      <el-menu-item index="/live">分屏监控</el-menu-item> -->
+      <!-- <el-submenu index="1">
         <template slot="title">国标对接</template>
         <el-menu-item index="/deviceList">设备列表</el-menu-item>
         <el-menu-item index="/deviceGroup">分组</el-menu-item>
-      </el-submenu>
-      <!-- <el-menu-item index="/map" v-if="username==='admin'">电子地图</el-menu-item> -->
-      <!-- <el-menu-item index="/pushVideoList" v-if="username==='admin'">推流列表</el-menu-item> -->
-      <el-menu-item index="/streamProxyList">非国标对接</el-menu-item>
+      </el-submenu> -->
+      <!-- <el-menu-item index="/streamProxyList">非国标对接</el-menu-item>
       <el-submenu index="3">
         <template slot="title">系统管理</template>
         <el-menu-item index="/console">控制台</el-menu-item>
         <el-menu-item index="/cloudRecord">云端录像</el-menu-item>
         <el-menu-item index="/mediaServerManger">节点管理</el-menu-item>
         <el-menu-item index="/parentPlatformList/15/1">国标级联</el-menu-item>
-        <el-menu-item v-if="editUser" index="/userManager">用户管理</el-menu-item>
-      </el-submenu>
-      <el-submenu index="v2">
-        <template slot="title">v2</template>
-        <el-menu-item index="/v2/datav">大屏v2</el-menu-item>
-        <el-menu-item index="/v2/alarm">告警v2</el-menu-item>
-      </el-submenu>
-      <!--            <el-submenu index="/setting">-->
-      <!--              <template slot="title">系统设置</template>-->
-      <!--              <el-menu-item index="/setting/web">WEB服务</el-menu-item>-->
-      <!--              <el-menu-item index="/setting/sip">国标服务</el-menu-item>-->
-      <!--              <el-menu-item index="/setting/media">媒体服务</el-menu-item>-->
-      <!--            </el-submenu>-->
-      <!--            <el-menu-item style="float: right;" @click="loginout">退出</el-menu-item>-->
-      <el-submenu index style="float: right;">
+        <el-menu-item index="/userManager">用户管理</el-menu-item>
+        <el-menu-item index="/roleManager">角色管理</el-menu-item>
+        <el-menu-item index="/menuManager">菜单管理</el-menu-item>
+        <el-menu-item index="/logManager">日志管理</el-menu-item>
+      </el-submenu> -->
+      <el-submenu index style="float: right;position: absolute;right: 0px;">
         <template slot="title">欢迎，{{ username }}</template>
         <el-menu-item @click="openDoc">在线文档</el-menu-item>
-        <!-- <el-menu-item>
-          <el-switch v-model="alarmNotify" inactive-text="报警信息推送" @change="alarmNotifyChannge"></el-switch>
-        </el-menu-item>-->
         <el-menu-item @click="changePassword">修改密码</el-menu-item>
         <el-menu-item @click="loginout">注销</el-menu-item>
       </el-submenu>
@@ -58,13 +50,15 @@
 </template>
 
 <script>
-import { Notification } from "element-ui";
 import changePasswordDialog from "../components/dialog/changePassword.vue";
 import userService from "../components/service/UserService";
+import { Notification } from "element-ui";
 import { mixin } from "../utils/mixin";
+import { mapGetters, mapState } from "vuex";
+import SidebarItem from "./SidebarItem";
 export default {
   name: "UiHeader",
-  components: { Notification, changePasswordDialog },
+  components: { Notification, changePasswordDialog ,SidebarItem},
   mixins: [mixin],
   data() {
     return {
@@ -77,6 +71,9 @@ export default {
         : false
     };
   },
+  computed:{
+    ...mapGetters(["sidebarRouters", "sidebar"]),
+  },
   created() {
     // console.log(JSON.stringify(userService.getUser()));
     if (this.$route.path.startsWith("/channelList")) {
@@ -85,6 +82,8 @@ export default {
   },
   mounted() {
     // console.log(!localStorage.getItem("alarmSwitchStatus"));
+    console.log(this.sidebarRouters)
+    debugger
     console.log(localStorage.getItem("alarmSwitchStatus"));
     // this.window = window;
     // window.addEventListener("beforeunload", e => this.beforeunloadHandler(e));
@@ -103,6 +102,7 @@ export default {
         .then(res => {
           // 删除用户信息，回到登录页面
           userService.clearUserInfo();
+          this.$store.dispatch('LogOut')
           this.$router.push("/login");
           if (this.sseSource != null) {
             this.sseSource.close();
@@ -210,7 +210,6 @@ export default {
 #UiHeader .el-switch__label {
   color: white;
 }
-
 .el-menu--popup .el-menu-item .el-switch .el-switch__label {
   color: white !important;
 }

@@ -7,13 +7,14 @@ import Vue from "vue";
 import VueCookies from "vue-cookies";
 import App from "./App.vue";
 import router from "./router/index.js";
+import { resetForm, handleTree ,parseTime} from "@/utils/index";
+import store from '@/store/index'
 
 import Fingerprint2 from "fingerprintjs2";
 import VueClipboard from "vue-clipboard2";
 import VueClipboards from "vue-clipboards";
 import Contextmenu from "vue-contextmenujs";
 import userService from "./components/service/UserService";
-
 Vue.config.productionTip = false;
 Vue._watchers = Vue.prototype._watchers = [];
 
@@ -38,12 +39,13 @@ Vue.use(VueClipboard);
 Vue.use(ElementUI);
 Vue.use(VueCookies);
 Vue.use(VueClipboards);
-
 Vue.prototype.$notify = Notification;
 Vue.use(Contextmenu);
 Vue.use(VCharts);
 Vue.use(dataV);
-
+Vue.prototype.handleTree = handleTree
+Vue.prototype.parseTime = parseTime
+Vue.prototype.resetForm = resetForm
 axios.defaults.baseURL =
   process.env.NODE_ENV === "development"
     ? process.env.BASE_API
@@ -93,7 +95,60 @@ router.beforeEach((to, from, next) => {
     next();
     return;
   }
+  console.log(store.dispatch('GetInfo'))
+  // debugger
+  // store.dispatch('GetInfo').then(() => {
+  //   console.log(store.dispatch('GetInfo'))
+  //   store.dispatch('GenerateRoutes').then(accessRoutes => {
+  //     // 根据roles权限生成可访问的路由表
+  //     router.addRoutes(accessRoutes) // 动态添加可访问路由表
+  //     next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+  //   })
+  // }).catch(err => {
+  //     // store.dispatch('LogOut').then(() => {
+  //     //   Message.error(err)
+  //     //   next({ path: '/' })
+  //     // })
+  //   })
+  console.log(store.getters.roles)
+  debugger
+  if (store.getters.roles.length === 0) {
+    // 判断当前用户是否已拉取完user_info信息
+    store.dispatch('GetInfo').then(() => {
+      store.dispatch('GenerateRoutes').then(accessRoutes => {
+        // 根据roles权限生成可访问的路由表
+        router.addRoutes(accessRoutes) // 动态添加可访问路由表
+        console.log(router)
+        debugger
+        const side = ['用户管理','角色管理','菜单管理','日志管理'];
+        const sideList = []; // 用户管理权限管理右侧菜单栏数据
+        accessRoutes&&accessRoutes.map((item)=>{
+          if(item.meta&&item.meta.title=="系统管理"){
+            item.children&&item.children.map((childrenItem)=>{
+              if(childrenItem.meta&&side.find((i)=>i==childrenItem.meta.title)){
+                sideList.push({
+                  name:childrenItem.meta.title,
+                  url:`${item.path}/${childrenItem.path}`
+                })
+              }
+            })
+          }
+        })
+        debugger
+        store.commit('SET_SIDELIST', sideList);
+        console.log(router.getRoutes())
+        
+        next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+      })
+    }).catch(err => {
+        // store.dispatch('LogOut').then(() => {
+        //   Message.error(err)
+        //   next({ path: '/' })
+        // })
+      })
+  }
   if (userService.getToken() == null) {
+    
     if (to.path === "/videoCockpit" && to.query && to.query.token) {
       axios({
         method: "post",
@@ -134,6 +189,7 @@ Vue.prototype.$axios = axios;
 Vue.prototype.$cookies.config(60 * 30);
 
 new Vue({
+  store,
   router: router,
   render: h => h(App)
 }).$mount("#app");

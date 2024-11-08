@@ -1,5 +1,5 @@
-import welcome from "@/assets/images/welcome.png";
 import "./index.less";
+import welcome from "@/assets/images/welcome.png";
 
 enum MenType {
 	CATALOGUE = 0, // 目录
@@ -96,7 +96,17 @@ const menu: MenuOption[] = [
 		order: 1,
 		status: true,
 		isLink: false
-	},
+	},{
+		id:"7",
+		title:"系统权限",
+		icon: "AppstoreOutlined",
+		path: "",
+		type: 0,
+		pid: "",
+		order: 1,
+		status: true,
+		isLink: false
+	}
 ];
 
 function getData(arr: any) {

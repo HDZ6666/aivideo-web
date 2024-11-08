@@ -1,5 +1,10 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" style="width: 100%">
+    <div class="page-header">
+
+      <div class="page-title">权限列表</div>
+
+    </div>
     <el-form
       :model="queryParams"
       ref="queryForm"
@@ -58,7 +63,6 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:role:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -69,10 +73,9 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:role:remove']"
         >删除</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <!-- <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar> -->
     </el-row>
 
     <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
@@ -94,20 +97,18 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:role:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:role:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination
+    <el-pagination
       v-show="total>0"
       :total="total"
       :page.sync="queryParams.pageNum"

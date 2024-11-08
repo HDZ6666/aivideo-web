@@ -95,10 +95,9 @@ export default {
         console.log(res);
         console.log("登录成功");
           if (res.data.code === 0 ) {
-            userService.setUser(res.data.data)
             //登录成功后
             that.cancelEnterkeyDefaultAction();
-            that.$router.push('/');
+            that.$router.push('/live');
           }else{
             that.isLoging = false;
             that.$message({

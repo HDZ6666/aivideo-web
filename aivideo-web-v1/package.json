@@ -8,11 +8,12 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "build": "node build/build.js",
-    "buildall":"npm run build && cd ../aivideo-web-v2 && pnpm run build"
+    "buildall": "npm run build && cd ../aivideo-web-v2 && pnpm run build"
   },
   "dependencies": {
     "@jiaminghi/data-view": "^2.10.0",
     "@liveqing/liveplayer": "^2.7.22",
+    "@riophae/vue-treeselect": "^0.4.0",
     "animate.css": "^4.1.1",
     "autofit.js": "^3.1.0",
     "axios": "^0.24.0",
@@ -33,7 +34,8 @@
     "vue-cookies": "^1.8.3",
     "vue-giant-tree": "^0.1.5",
     "vue-router": "^3.1.6",
-    "vue-ztree-2.0": "^1.0.4"
+    "vue-ztree-2.0": "^1.0.4",
+    "vuex": "^3.6.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
