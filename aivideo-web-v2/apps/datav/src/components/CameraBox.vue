@@ -3,7 +3,7 @@
     <div class="title">
       <div class="title-box">
         <div class="text">{{ title }}</div>
-        <div class="text-en">SHI PIN JIAN KONG</div>
+        <div class="text-en"></div>
       </div>
       <div class="more">
         <slot name="more"></slot>
