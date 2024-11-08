@@ -1,12 +1,12 @@
 <template>
     <div class="detail-dialog" @click="close">
         <div class="box" @click="clickBox">
-            <div style="font-size: 0.1rem;padding: 0.1rem 0.1rem;">摄像头告警详情- 【{{info.alarmType}}】{{ info.area }}</div>
+            <div style="font-size: 0.1rem;padding: 0.1rem 0.1rem;">摄像头告警详情- 【{{info.alarmTypeName}}】</div>
             <div style="text-align: center;">
-                <img :src="info.alarmImg" alt="" style="width: 1.8rem;height:1rem;">
+                <img :src="info.alarmImg" alt="" style="width: 2.3rem;height:1.3rem;">
             </div>
             <div style="width: 100%;text-align: center;font-size: 0.09rem;padding: 0.05rem;">
-                【{{info.alarmType}}】{{ info.area }}
+                {{ info.deviceName }}
             </div>
             <div class="info-bottom">
                 <div style="display: flex;border-bottom: 1px dashed #274E86;">
@@ -65,8 +65,8 @@ export default defineComponent({
     align-items: center;
     .box {
         background: url(../assets/imgs/warn_detail_bg.png);
-        width: 4rem;
-        height: 2.69rem;
+        width: 5rem;
+        height: 3.19rem;
         background-size: 100% 100%;
         color: #fff;
         padding: 0.3rem 0.2rem 0.2rem 0.2rem;

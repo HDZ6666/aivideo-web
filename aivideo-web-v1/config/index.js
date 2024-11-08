@@ -4,6 +4,7 @@
 
 const path = require("path");
 // const apiProxy = 'http://localhost:18080'
+// const apiProxy = "http://192.168.124.5:18080"
 const apiProxy = "http://172.16.66.77:18080"
 module.exports = {
   dev: {
@@ -40,11 +41,13 @@ module.exports = {
         changeOrigin: true
       },
       "/ai/api": {
-        target: "http://172.16.66.77:18080",
+        // target: "http://172.16.66.77:18080",
+        target: apiProxy,
         changeOrigin: true
       },
       "/cockpit/api": {
-        target: "http://172.16.66.77:18080",
+        // target: "http://172.16.66.77:18080",
+        target: apiProxy,
         changeOrigin: true
       },
       "/pc": {

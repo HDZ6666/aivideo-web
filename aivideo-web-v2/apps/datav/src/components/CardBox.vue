@@ -2,7 +2,7 @@
     <div class="box" :style="{height:height+'px'}">
       <div class="title">
         <div class="text">{{title}}</div>
-        <div class="text-en">GOA JING TONG JI</div>
+        <div class="text-en"></div>
         <a class="text-more" @click="clickMore">
             <div>{{more}}</div>
         </a>
