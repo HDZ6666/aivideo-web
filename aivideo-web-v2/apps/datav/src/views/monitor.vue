@@ -46,7 +46,7 @@
           <div class="carema-warn">
             <div class="carema-item" v-for="(item, index) in bind.warnList" :key="index">
               <img :src="item.alarmImg" alt="">
-              <div class="carema-addr">【{{ item.alarmType }}】{{ item.area }}</div>
+              <div class="carema-addr">【{{ item.alarmTypeName }}】{{ item.deviceName }}</div>
             </div>
           </div>
         </div>
@@ -508,7 +508,7 @@ export default defineComponent({
     },
     getAlarmTrend() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/stat/statAlarmCountByTime?startTime=2021-02-01&endTime=2024-11-07").then(r => {
+      apiClient.GET("/api/alarm/v2/stat/statAlarmCountByTime?startTime=" + this.getDateDaysAgo(-7) + "&endTime=" + this.getDateDaysAgo(0)).then(r => {
         if (r.data.code == "0") {
           let xAxiData = [];
           let serieData = [];
@@ -536,7 +536,17 @@ export default defineComponent({
           this.bind.alarmStatistics = r.data.data.slice(0, 2)
         }
       })
-    }
+    },
+    getDateDaysAgo(days) {  
+      const date = new Date(); // 获取当前日期  
+      date.setDate(date.getDate() + days); // 根据传入的参数调整日期  
+
+      const year = date.getFullYear(); // 获取年份  
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份并确保是两位数  
+      const day = String(date.getDate()).padStart(2, '0'); // 获取日期并确保是两位数  
+
+      return `${year}-${month}-${day}`; // 返回格式化后的日期字符串  
+    } 
   },
   created() {
     this.initBoxHeight();
