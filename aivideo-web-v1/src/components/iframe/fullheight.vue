@@ -33,6 +33,12 @@ export default {
       loading: true
     };
   },
+  mounted() {
+    window.dispatchEvent(new CustomEvent("enterFullScreen"));
+  },
+  unmounted() {
+    window.dispatchEvent(new CustomEvent("exitFullScreen"));
+  },
   methods: {
     hideLoading() {
       this.loading = false;
