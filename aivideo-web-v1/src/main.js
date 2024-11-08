@@ -1,3 +1,5 @@
+import store from '@/store/index';
+import { handleTree, parseTime, resetForm } from "@/utils/index";
 import dataV from "@jiaminghi/data-view";
 import axios from "axios";
 import ElementUI, { Message, Notification } from "element-ui";
@@ -7,8 +9,6 @@ import Vue from "vue";
 import VueCookies from "vue-cookies";
 import App from "./App.vue";
 import router from "./router/index.js";
-import { resetForm, handleTree ,parseTime} from "@/utils/index";
-import store from '@/store/index'
 
 import Fingerprint2 from "fingerprintjs2";
 import VueClipboard from "vue-clipboard2";
@@ -95,7 +95,9 @@ router.beforeEach((to, from, next) => {
     next();
     return;
   }
-  console.log(store.dispatch('GetInfo'))
+  console.log(store.dispatch('GetInfo').catch(err => {
+    
+  }))
   // debugger
   // store.dispatch('GetInfo').then(() => {
   //   console.log(store.dispatch('GetInfo'))
@@ -111,7 +113,7 @@ router.beforeEach((to, from, next) => {
   //     // })
   //   })
   console.log(store.getters.roles)
-  debugger
+  // debugger
   if (store.getters.roles.length === 0) {
     // 判断当前用户是否已拉取完user_info信息
     store.dispatch('GetInfo').then(() => {
@@ -119,7 +121,7 @@ router.beforeEach((to, from, next) => {
         // 根据roles权限生成可访问的路由表
         router.addRoutes(accessRoutes) // 动态添加可访问路由表
         console.log(router)
-        debugger
+        // debugger
         const side = ['用户管理','角色管理','菜单管理','日志管理'];
         const sideList = []; // 用户管理权限管理右侧菜单栏数据
         accessRoutes&&accessRoutes.map((item)=>{
@@ -134,7 +136,7 @@ router.beforeEach((to, from, next) => {
             })
           }
         })
-        debugger
+        // debugger
         store.commit('SET_SIDELIST', sideList);
         console.log(router.getRoutes())
         

@@ -50,11 +50,11 @@
 </template>
 
 <script>
+import { Notification } from "element-ui";
+import { mapGetters } from "vuex";
 import changePasswordDialog from "../components/dialog/changePassword.vue";
 import userService from "../components/service/UserService";
-import { Notification } from "element-ui";
 import { mixin } from "../utils/mixin";
-import { mapGetters, mapState } from "vuex";
 import SidebarItem from "./SidebarItem";
 export default {
   name: "UiHeader",
@@ -83,7 +83,7 @@ export default {
   mounted() {
     // console.log(!localStorage.getItem("alarmSwitchStatus"));
     console.log(this.sidebarRouters)
-    debugger
+    // debugger
     console.log(localStorage.getItem("alarmSwitchStatus"));
     // this.window = window;
     // window.addEventListener("beforeunload", e => this.beforeunloadHandler(e));

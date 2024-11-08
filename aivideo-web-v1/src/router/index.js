@@ -9,7 +9,6 @@ import Layout from "../layout/index.vue";
 // import pushVideoList from "../components/PushVideoList.vue";
 // import streamProxyList from "../components/StreamProxyList.vue";
 // import map from "../components/map.vue";
-import login from "../components/Login.vue";
 // import parentPlatformList from "../components/ParentPlatformList.vue";
 // import cloudRecord from "../components/CloudRecord.vue";
 // import cloudRecordDetail from "../components/CloudRecordDetail.vue";
@@ -175,7 +174,18 @@ export const dynamicRoutes = [
         path: "/deviceGroup",
         name: "deviceGroup",
         component: () => import("../components/DeviceGroup.vue") // deviceGroup
-      }
+      },
+      ,
+        {
+          path: "/v2/alarm",
+          name: "alarmV2",
+          component: () => import("../components/v2/alarmV2.vue") // alarmV2
+        },
+        {
+          path: "/v2/datav",
+          name: "datavV2",
+          component: () => import("../components/v2/datavV2.vue") // datavV2
+        },
     ]
   },
   {
@@ -206,8 +216,7 @@ export const dynamicRoutes = [
   }
 ]
 Vue.use(VueRouter);
-
 export default new VueRouter({
   mode: "hash",
-  routes: constantRoutes
+  routes: [...constantRoutes,...dynamicRoutes]
 });

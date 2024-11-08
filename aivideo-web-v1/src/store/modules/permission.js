@@ -1,9 +1,9 @@
+import ParentView from "@/components/ParentView"
+import Layout from '@/layout/index'
 import auth from '@/plugins/auth'
 import router, { constantRoutes, dynamicRoutes } from '@/router'
-import Layout from '@/layout/index'
-import ParentView from "@/components/ParentView"
 import axios from 'axios'
-import  {routedata}  from "./mock"                       
+import { getTestTopMenu } from "../../mockdata"
 const permission = {
   state: {
     routes: [],
@@ -39,7 +39,9 @@ const permission = {
         axios(({
             url:"/api/menu/getRouters",
             method:"get",
-        })).then(res => {
+        })).catch((err)=>{
+          return getTestTopMenu(err);
+        }).then(res => {
             if(res.data.code == 0){
                 const { data } = res.data
                 //const data = routedata

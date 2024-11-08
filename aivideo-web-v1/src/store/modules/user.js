@@ -1,6 +1,7 @@
 // import { login, logout, getInfo } from '@/api/login'
 import userService from "@/components/service/UserService";
 import axios from "axios";
+import { getUserInfo } from "../../mockdata";
 // import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -58,6 +59,8 @@ const user = {
         axios({
             method:"get",
             url:"/api/user/getInfo"
+        }).catch((err)=>{
+          return getUserInfo(err);
         }).then(res => {
           const user = res.data.data.user
           //const avatar = (user.avatar == "" || user.avatar == null) ? require("@/assets/images/profile.jpg") : process.env.VUE_APP_BASE_API + user.avatar;
