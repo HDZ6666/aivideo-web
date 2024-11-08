@@ -47,7 +47,7 @@
             }
         },
         mounted(){
-            this.videoUrl=testVideo;
+            this.videoUrl=this.url
         }
     }
     </script>
