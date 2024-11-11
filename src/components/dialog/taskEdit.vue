@@ -60,12 +60,13 @@
             </el-form-item>
         </el-row>
         <el-row>告警图片采集规则:
-          <input type="radio" id="alert-all" value="all" v-model="alertRule" @selected="handleAlertRuleChange" />
-          <label for="alert-all">采集全部告警图片</label>
-          <input type="radio" id="alert-part" value="part" v-model="alertRule" @selected="handleAlertRuleChange" />
-          <label for="alert-part">当时段内首次和尾次告警图片</label>
-          <input type="radio" id="alert-none" value="none" v-model="alertRule" @selected="handleAlertRuleChange" />
-          <label for="alert-none">不保存</label>
+          <!-- <input type="radio" id="alert-all" value="all" v-model="taskRule" @selected="handleAlertRuleChange" />
+          <label for="alert-all">采集全部告警图片</label> -->
+          <input type="radio" id="alert-part" value="0" v-model="taskRule" />
+          <!-- @selected="handleAlertRuleChange" /> -->
+          <label for="alert-part">当时段内首次和尾次图片</label>
+          <!-- <input type="radio" id="alert-none" value="none" v-model="taskRule" @selected="handleAlertRuleChange" />
+          <label for="alert-none">不保存</label> -->
         </el-row>
         <el-form-item>  
           <div style="float: right;">  
@@ -79,7 +80,7 @@
 </template>  
   
 <script>  
-import { ref } from "vue";  
+import { ref, reactive } from "vue";  
 import Day from "../Day.vue";
 import DeviceTreeNational from "../common/DeviceTreeNational.vue";
 import DeviceTreeNationalCockpit from "../common/DeviceTreeNationalCockpit.vue";
@@ -95,28 +96,37 @@ export default {
   },  
   mixins: [mixin],  
   setup() {  
-    const selectedDevice = []; // 选中的设备  
+    const selectedDevice = []; 
+    const startDate = ref('');  
+    const endDate = ref('');  
+    const isUnlimited = ref(false);  
+    const taskRule = ref('0'); 
     //勾选无限期将日期范围设置为今天到2099-12-31
-    const handleUnlimitedChange = () => {  
-      if (isUnlimited.value) {  
+    const handleUnlimitedChange = () => { 
+      const taskForm = reactive({  
+        startDate: '',  
+        endDate: ''  
+      });  
+      if (isUnlimited.value) { 
         const today = new Date();  
         const futureDate = new Date(2099, 11, 31);  
         startDate.value = today.toISOString().split('T')[0];  
         endDate.value = futureDate.toISOString().split('T')[0];  
         console.log("日期范围设置为"+startDate.value+"到"+endDate.value);  
-      }  
-    };
-    const alertRule = ref('all'); 
+    }};
+
      // 处理告警图片采集规则选择事件
-     const handleAlertRuleChange = (rule) => {
-      alertRule.value = rule;
-    };
+    //  const handleAlertRuleChange = (rule) => {
+    //   taskRule.value = rule;
+    // };
     return {  
       selectedDevice,  
-      isUnlimited: false, // 是否无限期  
-      alertRule,
+      startDate,  
+      endDate,  
+      isUnlimited,  
+      taskRule,
       handleUnlimitedChange,
-      handleAlertRuleChange,  
+      // handleAlertRuleChange,  
     };  
   },  
   data() {  
@@ -125,11 +135,12 @@ export default {
       formLabelWidth: '100px', 
       taskForm: {  
         taskId: '',  
-        routenName: '', 
+        routeName: '', 
         selectedCameras: '',  
         startDate: '',  
         endDate: '',  
-        selectedHours: [],  
+        selectedHours: [], 
+        taskRule: '0',
       },  
       originalTask: {}, // 用于存储原始数据，以便在取消时恢复  
     };  
@@ -147,6 +158,9 @@ export default {
     // 关闭对话框（无论是否保存）  
     handleClose() {  
       this.dialogVisible = false;  
+      this.selectedDevice = []; // 清空选中的设备列表  
+      this.isUnlimited = false; // 复选框复位  
+      this.taskRule = '0'; // 告警图片采集规则复位  
     },  
     // 取消编辑，恢复原始数据  
     handleCancel() {  
@@ -156,7 +170,7 @@ export default {
     // 处理设备选择 
     handleDeviceSelected(id) {
       this. selectedDevice.push(id);
-      this.routeForm.selectedCameras = this.selectedDevice.join(',');
+      this.taskForm.selectedCameras = this.selectedDevice.join(',');
       console.log("选中的摄像头：", this.selectedDevice);
     },  
     // 处理时间段选择  
@@ -201,9 +215,10 @@ export default {
 }  
 .device-tree-main-box {
   text-align: left;
-  width: 100%;
+  width: 50%;
   overflow-y: auto;
   height: 180px;
+  margin-top: 10px;  
 }
 
 .time-container {  
@@ -214,10 +229,8 @@ export default {
   width: 70%;
 }  
 
-input[type="checkbox"] + label {  
-  font-size: 20px; /* 复选框标签字体大小 */  
-  margin-left: 5px; /* 复选框与标签间距 */  
-}  
-
+.el-checkbox {
+  font-size: 30px;
+}
 
 </style>

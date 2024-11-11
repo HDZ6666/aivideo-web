@@ -36,7 +36,7 @@
             <!-- 按钮 --> 
             <el-button type="primary" @click="applyFilter">筛选</el-button>
             <el-button type="primary" @click="resetFilter">重置</el-button>
-            <el-button type="primary" @click="exportReportList">导出</el-button>
+            <el-button type="primary" @click="exportList">导出</el-button>
         </div> 
 
         <div class="table-container"> 
@@ -49,16 +49,17 @@
                 <el-table-column prop="routeName" label="路线名称" width="120" align="center"></el-table-column >
                 <el-table-column prop="selectedCameras" label="选择的摄像头" width="300" align="center"></el-table-column>
                 <el-table-column prop="createTime" label="执行时间" width="180" align="center"></el-table-column>
-                <el-table-column prop="abnormality" label="是否异常" width="120" align="center"></el-table-column>
-                <el-table-column label="巡逻报告" width="350" align="center">
+                <el-table-column prop="abnormality" label="是否异常" width="100" align="center"></el-table-column>
+                <el-table-column label="巡逻报告" width="370" align="center">
                     <template slot-scope="scope">
                         <el-divider direction="vertical"></el-divider>
                         <el-button size="medium" icon="el-icon-document" type="text" @click="viewReport(scope.row)">查看报告</el-button>
-                        <el-button size="medium" icon="el-icon-download" type="text" @click="viewVideo(scope.row)">导出报告</el-button>
+                        <!-- 从子组件showReport中调用reportForm，传递数据到本组件并通过按钮触发导出报告功能 -->
+                        <el-button size="medium" icon="el-icon-download" type="text" @click="exportReport(scope.row)">导出报告</el-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <el-pagination
+            <!-- <el-pagination
                 style="float: right"
                 @size-change="handleSizeChange_report"
                 @current-change="handleCurrentChange_report"
@@ -67,7 +68,7 @@
                 :page-sizes="[15, 30, 50]"
                 layout="total, sizes, prev, pager, next"
                 :total="total_report"
-            ></el-pagination>
+            ></el-pagination> -->
             <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         </div> 
 
@@ -80,7 +81,6 @@ import { reactive, ref,onMounted } from 'vue';
 import axios from 'axios';
 import { Pagination } from 'element-ui'; 
 import showReport from "./dialog/showReport.vue"; 
-import { determinant } from 'ol/transform';
     
 export default { 
     name: 'patrolReport', 
@@ -97,54 +97,68 @@ export default {
         const routeName = ref('');
         const selectedCameras = ref('');
         const paginatedreportList = ref([]); 
-        const currentPage_report = ref(1);
-        const count_report = ref(15);
-        const total_report = ref(0);
+        // const currentPage_report = ref(1);
+        // const count_report = ref(15);
+        // const total_report = ref(0);
 
         //获取报告列表  
-        const getReportList = () => {  
-            axios.get('/api/patrol/report/list', {  
-                params: {  
-                    page: currentPage_report.value,  
-                    count: count_report.value,  
-                }  
-            })  
-            .then(res => {  
-                reportList.value = res.data.data.list;  
-                total_report.value = res.data.data.total;  
-                paginatedreportList.value = reportList.value.map(item => {  
-                    return {  
-                        reportId: item.reportId, 
-                        routeName: item.routeName, 
-                        selectedCameras: item.selectedCameras, 
-                        createTime: item.createTime, 
-                        abnormality: item.abnormalityStr,
-                        detailList: item.detailList,
-                    };  
-                });  
-            })  
-            .catch(err => {  
-                console.log(err);  
-            }); 
-        };  
+        // const getReportList = () => {  
+        //     axios.get('/api/patrol/report/list', {  
+        //         params: {  
+        //             page: currentPage_report.value,  
+        //             count: count_report.value,  
+        //         }  
+        //     })  
+        //     .then(res => {  
+        //         reportList.value = res.data.data.list;  
+        //         total_report.value = res.data.data.total;  
+        //         paginatedreportList.value = reportList.value.map(item => {  
+        //             return {  
+        //                 reportId: item.reportId, 
+        //                 routeName: item.routeName, 
+        //                 selectedCameras: item.selectedCameras, 
+        //                 createTime: item.createTime, 
+        //                 abnormality: item.abnormalityStr,
+        //                 detailList: item.detailList,
+        //             };  
+        //         });  
+        //     })  
+        //     .catch(err => {  
+        //         console.log(err);  
+        //     }); 
+        // };  
 
-        //处理分页
-        const handleSizeChange_report = (size) => {  
-            count_report.value = size;  
-            getReportList();  
-        };  
-        const handleCurrentChange_report = (page) => {  
-            currentPage_report.value = page;  
-            getReportList();  
-        };
-
+        // //处理分页
+        // const handleSizeChange_report = (size) => {  
+        //     count_report.value = size;  
+        //     getReportList();  
+        // };  
+        // const handleCurrentChange_report = (page) => {  
+        //     currentPage_report.value = page;  
+        //     getReportList();  
+        // };
+        
         //初始化
-        onMounted(() => {  
-            getReportList(); 
-        }); 
+        // onMounted(() => {  
+        //     getReportList(); 
+        // }); 
 
-        return {reportId, routeName, createTime, abnormality, selectedCameras, reportList, getReportList, 
-            paginatedreportList, currentPage_report, count_report, total_report, handleSizeChange_report, handleCurrentChange_report,}; 
+        return {
+            reportId, 
+            routeName, 
+            createTime, 
+            abnormality, 
+            selectedCameras, 
+            reportList, 
+            // getReportList, 
+            paginatedreportList, 
+            // currentPage_report, 
+            // count_report, 
+            // total_report, 
+            // handleSizeChange_report, 
+            // handleCurrentChange_report,
+            exportReport,
+        }; 
     }, 
 
     data() { 
@@ -154,6 +168,69 @@ export default {
             filterSelectedCameras: '', 
             filterAbnormality: '', 
             uniqueAbnormalities: [],
+            // paginatedreportList样例数据
+            paginatedreportList: [
+                {
+                    reportId: '1', 
+                    routeName: '路线1',
+                    selectedCameras: '摄像头1,摄像头2', 
+                    createTime: '2024-11-14 10:10:10', 
+                    abnormality: '异常',
+                    detailList: [
+                        {
+                            cameraName: '摄像头1',
+                            imageUrl: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
+                            abnormality: '是',
+                            alarmName: '电子围栏',
+                            createTime: '2024-11-14 10:00:00',
+                        },
+                        {
+                            cameraName: '摄像头2',
+                            imageUrl: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
+                            abnormality: '否',
+                            alarmName: '',
+                            createTime: '',
+                        },
+                        {
+                            cameraName: '摄像头3',
+                            imageUrl: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
+                            abnormality: '是',
+                            alarmName: '电子围栏',
+                            createTime: '2024-11-14 10:00:00',
+                        }, 
+                    ],
+                },
+                {
+                    reportId: '2', 
+                    routeName: '路线2',
+                    selectedCameras: '摄像头3,摄像头4', 
+                    createTime: '2024-11-14 11:10:10', 
+                    abnormality: '正常',
+                    detailList: [
+                        {
+                            cameraName: '摄像头3',
+                            imageUrl: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
+                            abnormality: '否',
+                            alarmName: '',
+                            createTime: '',
+                        },
+                        {
+                            cameraName: '摄像头4',
+                            imageUrl: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
+                            abnormality: '否',
+                            alarmName: '',
+                            createTime: '',
+                        },
+                        {
+                            cameraName: '摄像头5',
+                            imageUrl: 'https://www.baidu.com/img/flexible/logo/pc/result.png',
+                            abnormality: '否',
+                            alarmName: '',
+                            createTime: '',
+                        }, 
+                    ],
+                },
+            ],
         }; 
     }, 
 
@@ -199,7 +276,7 @@ export default {
         },
 
         // 根据前端筛选条件直接导出报告列表，不需要分页
-        exportReportList() {
+        exportList() {
             const filteredList = this.reportList.filter(report => { 
                 const dateMatch = !this.filterDate || new Date(report.createTime.split(' ')[0]).toDateString() === new Date(this.filterDate).toDateString(); 
                 const routeNameMatch = !this.filterrouteName || report.routeName.toLowerCase().includes(this.filterrouteName.toLowerCase()); 
@@ -246,8 +323,8 @@ export default {
 .app {  
     display: flex;  
     flex-direction: column; /* 使用列方向布局 */  
-    width: 82vw; /* 使容器宽度为窗口宽度的90%（因为你要自适应10%，所以这里用90%的视口宽度） */  
-    height: 89vh; /* 使容器高度为窗口高度的90%（同理） */  
+    width: 80vw; 
+    height: 87vh; /* 使容器高度为窗口高度的90%（同理） */  
     box-sizing: border-box; /* 包括内边距和边框在内计算宽度 */  
 }  
   
