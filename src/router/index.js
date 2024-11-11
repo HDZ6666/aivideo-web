@@ -153,6 +153,23 @@ export default new VueRouter({
           path: "/deviceInspection",
           name: "deviceInspection",
           component: () => import("../components/DeviceInspection.vue") // deviceInspection
+        },
+        {
+          path: "/patrol",
+          name: "patrol",
+          component: () => import("../components/patrol.vue"), // patrol
+          children: [
+            {
+              path: "",
+              name: "patrolManager",
+              component: () => import("../components/patrolManager.vue") // patrolManager
+            },
+            {
+              path: "/patrolReport",
+              name: "patrolReport",
+              component: () => import("../components/patrolReport.vue") // patrolReport
+            }
+          ]
         }
       ]
     },
