@@ -60,12 +60,13 @@
             </el-form-item>
         </el-row>
         <el-row>告警图片采集规则:
-          <input type="radio" id="alert-all" value="all" v-model="alertRule" @selected="handleAlertRuleChange" />
-          <label for="alert-all">采集全部告警图片</label>
-          <input type="radio" id="alert-part" value="part" v-model="alertRule" @selected="handleAlertRuleChange" />
-          <label for="alert-part">当时段内首次和尾次告警图片</label>
-          <input type="radio" id="alert-none" value="none" v-model="alertRule" @selected="handleAlertRuleChange" />
-          <label for="alert-none">不保存</label>
+          <!-- <input type="radio" id="alert-all" value="all" v-model="taskRule" @selected="handleAlertRuleChange" />
+          <label for="alert-all">采集全部告警图片</label> -->
+          <input type="radio" id="alert-part" value="0" v-model="taskRule" />
+          <!-- @selected="handleAlertRuleChange" /> -->
+          <label for="alert-part">当时段内首次和尾次图片</label>
+          <!-- <input type="radio" id="alert-none" value="none" v-model="taskRule" @selected="handleAlertRuleChange" />
+          <label for="alert-none">不保存</label> -->
         </el-row>
         <el-form-item>  
           <div style="float: right;">  
@@ -99,7 +100,7 @@ export default {
     const startDate = ref('');  
     const endDate = ref('');  
     const isUnlimited = ref(false);  
-    const alertRule = ref('all'); 
+    const taskRule = ref('0'); 
     //勾选无限期将日期范围设置为今天到2099-12-31
     const handleUnlimitedChange = () => { 
       const taskForm = reactive({  
@@ -115,17 +116,17 @@ export default {
     }};
 
      // 处理告警图片采集规则选择事件
-     const handleAlertRuleChange = (rule) => {
-      alertRule.value = rule;
-    };
+    //  const handleAlertRuleChange = (rule) => {
+    //   taskRule.value = rule;
+    // };
     return {  
       selectedDevice,  
       startDate,  
       endDate,  
       isUnlimited,  
-      alertRule,
+      taskRule,
       handleUnlimitedChange,
-      handleAlertRuleChange,  
+      // handleAlertRuleChange,  
     };  
   },  
   data() {  
@@ -138,7 +139,8 @@ export default {
         selectedCameras: '',  
         startDate: '',  
         endDate: '',  
-        selectedHours: [],  
+        selectedHours: [], 
+        taskRule: '0',
       },  
       originalTask: {}, // 用于存储原始数据，以便在取消时恢复  
     };  
@@ -158,7 +160,7 @@ export default {
       this.dialogVisible = false;  
       this.selectedDevice = []; // 清空选中的设备列表  
       this.isUnlimited = false; // 复选框复位  
-      this.alertRule = 'all'; // 告警图片采集规则复位  
+      this.taskRule = '0'; // 告警图片采集规则复位  
     },  
     // 取消编辑，恢复原始数据  
     handleCancel() {  
@@ -168,7 +170,7 @@ export default {
     // 处理设备选择 
     handleDeviceSelected(id) {
       this. selectedDevice.push(id);
-      this.routeForm.selectedCameras = this.selectedDevice.join(',');
+      this.taskForm.selectedCameras = this.selectedDevice.join(',');
       console.log("选中的摄像头：", this.selectedDevice);
     },  
     // 处理时间段选择  

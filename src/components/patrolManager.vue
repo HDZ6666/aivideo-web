@@ -19,16 +19,20 @@
                     <el-table-column prop="taskStatus" label="任务状态"  width="100" align="center"></el-table-column>
                     <el-table-column label="操作" width="180" align="center">
                         <template slot-scope="scope">
-                        <el-divider direction="vertical"></el-divider>
-                        <el-button size="medium" icon="el-icon-edit" type="text" @click="editTask(scope.row)">编辑</el-button>
-                        <el-divider direction="vertical"></el-divider>
-                        <el-button size="medium" icon="el-icon-delete" type="text" @click="deleteTask(scope.row)"
-                            style="color: #f56c6c">删除</el-button>
-                        <el-divider direction="vertical"></el-divider>
-                        <el-button size="medium" icon="el-icon-star-on" type="text" @click="startTask(scope.row)">启用</el-button>
-                        <el-divider direction="vertical"></el-divider>
-                        <el-button size="medium" icon="el-icon-star-off" type="text" @click="stopTask(scope.row)"
-                            style="color: #f56c6c">停用</el-button>
+                            <el-divider direction="vertical"></el-divider>
+                            <el-button size="medium" icon="el-icon-edit" type="text" @click="editTask(scope.row)">编辑</el-button>
+                            <el-divider direction="vertical"></el-divider>
+                            <el-button size="medium" icon="el-icon-delete" type="text" @click="deleteTask(scope.row)"
+                                style="color: #f56c6c">删除</el-button>
+                            <el-divider direction="vertical"></el-divider>
+                            <el-switch
+                                v-model="scope.row.taskStatusSwitch" 
+                                active-text="启用"
+                                inactive-text="停用"
+                                @change="toggleTaskStatus(scope.row)"
+                                style="display: block; margin: 0 auto;" 
+                            ></el-switch>
+                            <el-divider direction="vertical"></el-divider>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -107,7 +111,8 @@ export default {
                         endDate: item.endDate,  
                         selectedHours: item.selectedHours,
                         createTime: item.createTime,  
-                        updateTime: item.updateTime,  
+                        updateTime: item.updateTime, 
+                        taskStatus: item.taskStatus,  
                     };  
                 });  
             })  
@@ -180,6 +185,7 @@ export default {
                             selectedHours: item.selectedHours,
                             createTime: item.createTime,  
                             updateTime: item.updateTime,  
+                            taskStatus: item.taskStatus,  
                         };  
                     });  
                 })  
@@ -190,29 +196,20 @@ export default {
             }  
         };  
 
-        //启用任务
-        const startTask = (row) => {  
-            axios.put('/api/patrol/route_task/start', { taskId: row.taskId })  // 假设启用接口为PUT /api/patrol/route_task/start
+        //启用/停用任务
+        const toggleTaskStatus = (row) => {  
+            const status = row.taskStatusSwitch ? 1 : 0;  
+            axios.put('/api/patrol/route_task/edit_task_status', { 
+                taskId: row.taskId,  
+                taskStatus: taskStatus,  
+            })  
             .then(res => {  
-                alert('启用成功');  
+                alert('任务状态修改成功');  
                 getTaskList();  
             })  
             .catch(err => {  
                 console.log(err);  
-                alert('启用失败');  
-            });  
-        };  
-
-        //停用任务
-        const stopTask = (row) => {  
-            axios.put('/api/patrol/route_task/stop', { taskId: row.taskId })  // 假设停用接口为PUT /api/patrol/route_task/stop
-            .then(res => {  
-                alert('停用成功');  
-                getTaskList();  
-            })  
-            .catch(err => {  
-                console.log(err);  
-                alert('停用失败');  
+                alert('任务状态修改失败');  
             });  
         };  
 
@@ -236,8 +233,7 @@ export default {
             refreshTaskList,  
             handleSizeChange_task,  
             handleCurrentChange_task,  
-            startTask,  
-            stopTask,  
+            toggleTaskStatus,  
         };  
     }    
 };  
