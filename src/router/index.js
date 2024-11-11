@@ -148,6 +148,11 @@ export default new VueRouter({
           path: "/deviceGroup",
           name: "deviceGroup",
           component: () => import("../components/DeviceGroup.vue") // deviceGroup
+        },
+        {
+          path: "/deviceInspection",
+          name: "deviceInspection",
+          component: () => import("../components/DeviceInspection.vue") // deviceInspection
         }
       ]
     },
