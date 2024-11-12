@@ -104,7 +104,7 @@
           <div class="videos">
             <div class="row">
               <div
-                :class="{ col: true, col2: pager.pageSize == 4, col3: pager.pageSize == 6, col4: pager.pageSize == 12 }"
+                :class="{ col: true, col2: pager.pageSize == 4, col3: pager.pageSize == 9, col4: pager.pageSize == 12, col5: pager.pageSize == 16 }"
                 v-for="(row, index) in bind.cameraRows" :key="index">
                 <vol-player :url="row.streamInfo.hls.url" :autoplay="true" @click="selectVideo($event)"></vol-player>
                 <div class="video-name">{{ row.name }}</div>
@@ -158,7 +158,7 @@
 
     <warn-box v-if="warnDialogShow" @close="toggleWarnDialog"></warn-box>
     <transition name="slide">
-      <warn-detail v-if="detailShow" :info="alarmDetail"></warn-detail>
+      <warn-detail v-if="detailShow" :info="alarmDetail" @close="detailShow=false"></warn-detail>
     </transition>
   </div>
 </template>
@@ -209,12 +209,12 @@ export default defineComponent({
       deviceSelected: '全部设备',
       cameraFullscreen: false,
       warnDialogShow: false,
-      pageSize: '6',
+      pageSize: '4',
       chart: {
       },
       pager: {
         pageIndex: 1,
-        pageSize: 6,
+        pageSize: 4,
         totalPage: 20
       },
       warnDialog: {
@@ -255,6 +255,7 @@ export default defineComponent({
         warnList: [],
         deviceData: [],
         deviceTree: [
+          { id: 0, label: '全部设备', value: '0', children: [] }
           // {id:'1',label:'全部设备',value:'全部设备',children:[{id:'1_2',label:'全部设备1',value:'全部设备1'}]},
           // {id:'2',label:'数字大屏',value:'数字大屏'},
           // {id:'3',label:'高新区',value:'高新区'},
@@ -355,6 +356,8 @@ export default defineComponent({
       console.log(row);
     },
     changeDeviceTree(values, context) {
+      console.log(context.node.data.id)
+      this.getCameraList(context.node.data.id)
       return;
       this.deviceSelected = context.node.data.label;
       if (context.node.data.url != undefined && context.node.data.url != null) {
@@ -373,26 +376,29 @@ export default defineComponent({
     videoDialogClosed() {
       this.$refs['videoPlayer'].onHide();
     },
-    getCameraList() {
-      this.bind.deviceTree = [];
+    getCameraList(categoryId=0) {
+      // this.bind.deviceTree = [];
       const apiClient = getApiClient();
-      apiClient.GET("/api/cockpit/proxy/list?page=1&pageSize=1000").then(r => {
+      var apiUrl = `/api/cockpit/proxy/list?page=1&pageSize=1000`
+      if (categoryId) {
+        apiUrl += `&categoryId=${categoryId}`
+      }
+      apiClient.GET(apiUrl).then(r => {
         if (r.data.code == "0") {
           this.bind.cameraList = r.data.data.list;
           this.pager.pageIndex = 1;
           this.pager.totalPage = Math.ceil(this.bind.cameraList.length / this.pager.pageSize);
           this.getCameraPage();
-          let tree = [{ id: 0, label: '全部设备', value: '0', children: [] }];
-          for (let i = 0; i < this.bind.cameraList.length; i++) {
-            tree[0].children.push({
-              id: this.bind.cameraList[i].id,
-              label: this.bind.cameraList[i].name,
-              value: this.bind.cameraList[i].id.toString(),
-              url: this.bind.cameraList[i].streamInfo.hls.url
-            });
-          }
-          this.bind.deviceTree = tree;
-          this.getDeviceGroupList();
+          // let tree = [{ id: 0, label: '全部设备', value: '0', children: [] }];
+          // for (let i = 0; i < this.bind.cameraList.length; i++) {
+          //   tree[0].children.push({
+          //     id: this.bind.cameraList[i].id,
+          //     label: this.bind.cameraList[i].name,
+          //     value: this.bind.cameraList[i].id.toString(),
+          //     url: this.bind.cameraList[i].streamInfo.hls.url
+          //   });
+          // }
+          // this.bind.deviceTree = tree;
         }
       })
     },
@@ -558,6 +564,7 @@ export default defineComponent({
     this.getAllDev();
     this.getOnlineDev();
     this.getCameraList();
+    this.getDeviceGroupList();
     this.getAlarmList();
     this.getAlarmTrend();
     this.getAlarmStatistics();
@@ -845,13 +852,19 @@ export default defineComponent({
         .col3 {
           width: 33.333%;
           //height: 0.92rem;
-          height: 50%;
+          height: 33.333%;
         }
 
         .col4 {
           width: 25%;
           //height: 0.687rem;
           height: 33.333%;
+        }
+
+        .col5 {
+          width: 25%;
+          //height: 0.687rem;
+          height: 25%;
         }
 
         .video-name {

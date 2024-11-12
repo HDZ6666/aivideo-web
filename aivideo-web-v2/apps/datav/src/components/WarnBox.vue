@@ -5,7 +5,7 @@
             <div class="content">
                 <table class="warn-table">
                     <tbody>
-                        <tr style="background: #062B5A;">
+                        <tr v-if="warnList.length > 0" style="background: #062B5A;">
                             <th>告警类型</th>
                             <th>设备名称</th>
                             <th>告警时间</th>
@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <warn-detail v-if="detailShow" :info="detail" @close="detailShow=false"></warn-detail>
+        <warn-detail v-if="detailShow" :info="detail" @close="detailShow=false" @handle="getAlarmList()"></warn-detail>
     </div>
 
 </template>

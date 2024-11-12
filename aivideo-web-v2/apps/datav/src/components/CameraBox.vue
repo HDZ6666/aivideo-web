@@ -15,8 +15,9 @@
           <div class="select">
             <t-select size="small" v-model="pageSize" @change="changePageSize">
               <t-option key="4" label="四宫格" value="4" />
-              <t-option key="6" label="九宫格" value="6"></t-option>
-              <t-option key="12" label="十六宫格" value="12" />
+              <t-option key="9" label="九宫格" value="9"></t-option>
+              <t-option key="12" label="十二宫格" value="12" />
+              <!-- <t-option key="16" label="十六宫格" value="16" /> -->
             </t-select>
           </div>
         </div>
@@ -60,7 +61,7 @@ export default defineComponent({
   data() {
     return {
       checked: true,
-      pageSize: '6',
+      pageSize: '4',
       fullscreen: false
     }
   },

@@ -3,7 +3,7 @@
         <div class="box" @click="clickBox">
             <div style="font-size: 0.1rem;padding: 0.1rem 0.1rem;">摄像头告警详情- 【{{info.alarmTypeName}}】</div>
             <div style="text-align: center;">
-                <img :src="info.alarmImg" alt="" style="width: 2.3rem;height:1.3rem;">
+                <img :src="info.alarmImg" alt="" style="width: 2.2rem;height:1.3rem;">
             </div>
             <div style="width: 100%;text-align: center;font-size: 0.09rem;padding: 0.05rem;">
                 {{ info.deviceName }}
@@ -16,6 +16,14 @@
                 <div class="info-item">告警描述：</div>
                 <div style="padding:0 0.05rem 0.1rem 0.05rem;font-size: 0.09rem;">
                     {{ info.alarmDescription??'好的硒鼓好的硒鼓好的硒鼓好的硒鼓硒鼓好的硒鼓好的硒鼓好的硒鼓' }}
+                </div>
+            </div>
+            <div class="info-action">
+                <div class="button" @click="alarmHandle(1)">
+                    处理
+                </div>
+                <div class="button" @click="alarmHandle(2)">
+                    误报
                 </div>
             </div>
         </div>
@@ -46,6 +54,21 @@ export default defineComponent({
         },
         close(e) {
             this.$emit("close", false)
+        },
+        alarmHandle(status) {
+            const apiClient = getApiClient();
+            const apiUrl = `/api/alarm/handle?status=${status}&alarmId=${this.info.id}`
+            apiClient.GET(apiUrl).then(r => {
+                console.log("alarmHandle func", r)
+                if (r.data && r.data.code == "0") {
+                    this.$message.success("操作成功");
+                    this.close();
+                    this.$emit("handle", true)
+                }
+                else if (r.error) {
+                    this.$message.error(r.error.msg)
+                }
+            })
         }
     }
 })
@@ -92,6 +115,23 @@ export default defineComponent({
                 top: 0.055rem;
             }
         }
+
+        .info-action {
+            display: flex;
+            justify-content: right;
+            padding: 0.1rem;
+            .button {
+                width: 0.5rem;
+                height: 0.2rem;
+                line-height: 0.2rem;
+                text-align: center;
+                background: url("../assets/imgs/pager_button_bg.png") no-repeat center;
+                background-size: 100% 100%;
+                margin-left: 0.1rem;
+                cursor: pointer;
+            }
+        }
+        
     }
 }
 </style>
