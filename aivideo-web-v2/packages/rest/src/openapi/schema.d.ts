@@ -3658,17 +3658,17 @@ export interface paths {
             cookie?: never;
         };
         /** 修改pushkey */
-        get: operations["changePushKey_5"];
+        get: operations["changePushKey_4"];
         /** 修改pushkey */
         put: operations["changePushKey"];
         /** 修改pushkey */
-        post: operations["changePushKey_4"];
+        post: operations["changePushKey_5"];
         /** 修改pushkey */
-        delete: operations["changePushKey_2"];
+        delete: operations["changePushKey_3"];
         /** 修改pushkey */
         options: operations["changePushKey_6"];
         /** 修改pushkey */
-        head: operations["changePushKey_3"];
+        head: operations["changePushKey_2"];
         /** 修改pushkey */
         patch: operations["changePushKey_1"];
         trace?: never;
@@ -3778,9 +3778,9 @@ export interface components {
             latitude?: number | null;
             /** @description 描述 */
             description?: string | null;
+            pkey?: string;
             /** Format: double */
             pvalue?: number;
-            pkey?: string;
         };
         AlarmEventProcessForm: {
             misreport?: boolean;
@@ -3803,16 +3803,16 @@ export interface components {
         };
         LoginUser: {
             accessToken?: string;
+            accountNonExpired?: boolean;
+            accountNonLocked?: boolean;
+            credentialsNonExpired?: boolean;
             /** Format: int32 */
             id?: number;
             enabled?: boolean;
             authorities?: components["schemas"]["GrantedAuthority"][];
-            credentialsNonExpired?: boolean;
-            accountNonExpired?: boolean;
-            accountNonLocked?: boolean;
             password?: string;
-            role?: components["schemas"]["Role"];
             username?: string;
+            role?: components["schemas"]["Role"];
         };
         Role: {
             /** Format: int32 */
@@ -4624,9 +4624,9 @@ export interface components {
             latitude?: number | null;
             /** @description 描述 */
             description?: string | null;
+            pkey?: string;
             /** Format: double */
             pvalue?: number;
-            pkey?: string;
         };
         Result: {
             message?: string;
@@ -4869,15 +4869,18 @@ export interface components {
         };
         /** @description 流信息 */
         AiStreamInfo: {
-            channelCustomName?: string;
-            startAt?: string;
-            ws_FLV?: string;
             /** Format: int32 */
-            sourceVideoHeight?: number;
+            sourceAudioSampleRate?: number;
+            sourceAudioCodecName?: string;
+            channelID?: string;
             /** Format: int32 */
-            sourceVideoWidth?: number;
+            channelPTZType?: number;
+            flv?: string;
+            hls?: string;
             /** Format: int32 */
-            sourceVideoFrameRate?: number;
+            inBitRate?: number;
+            /** Format: int64 */
+            inBytes?: number;
             /** Format: int32 */
             numOutputs?: number;
             ondemand?: boolean;
@@ -4886,33 +4889,30 @@ export interface components {
             rtmp?: string;
             rtsp?: string;
             recordStartAt?: string;
+            /** Format: int32 */
+            relaySize?: number;
+            snapURL?: string;
+            sourceVideoCodecName?: string;
+            /** Format: int32 */
+            sourceVideoFrameRate?: number;
+            /** Format: int32 */
+            sourceVideoHeight?: number;
+            /** Format: int32 */
+            sourceVideoWidth?: number;
+            startAt?: string;
+            ws_FLV?: string;
             audioEnable?: boolean;
             cdn?: string;
             /** Format: int32 */
             cascadeSize?: number;
-            channelID?: string;
-            /** Format: int32 */
-            channelPTZType?: number;
-            flv?: string;
-            hls?: string;
-            /** Format: int32 */
-            inBitRate?: number;
-            sourceAudioCodecName?: string;
+            channelCustomName?: string;
             mp4_FLV?: string;
-            /** Format: int32 */
-            duration?: number;
             streamID?: string;
             /** Format: int32 */
-            relaySize?: number;
-            snapURL?: string;
-            /** Format: int32 */
-            sourceAudioSampleRate?: number;
-            sourceVideoCodecName?: string;
-            /** Format: int64 */
-            inBytes?: number;
-            deviceID?: string;
-            transport?: string;
+            duration?: number;
             channelName?: string;
+            transport?: string;
+            deviceID?: string;
         };
         /** @description 通道信息，包含播放地址 */
         DeviceChannelResponse: {
@@ -5141,14 +5141,14 @@ export interface components {
             artifactId?: string;
             version?: string;
             project?: string;
-            create_By?: string;
-            build_Jdk?: string;
             git_Revision?: string;
             git_BRANCH?: string;
             git_URL?: string;
             build_DATE?: string;
             git_Revision_SHORT?: string;
             git_DATE?: string;
+            create_By?: string;
+            build_Jdk?: string;
         };
         SystemAllInfo: {
             cpu?: Record<string, never>[];
@@ -5249,15 +5249,15 @@ export interface components {
             gbSend?: number;
         };
         IHookSubscribe: {
-            /** @enum {string} */
-            hookType?: "on_flow_report" | "on_http_access" | "on_play" | "on_publish" | "on_record_mp4" | "on_rtsp_auth" | "on_rtsp_realm" | "on_shell_login" | "on_stream_changed" | "on_stream_none_reader" | "on_stream_not_found" | "on_server_started" | "on_rtp_server_timeout" | "on_server_keepalive" | "on_send_rtp_stopped";
-            /** Format: date-time */
-            expires?: string;
             content?: {
                 empty?: boolean;
             } & {
                 [key: string]: Record<string, never>;
             };
+            /** @enum {string} */
+            hookType?: "on_flow_report" | "on_http_access" | "on_play" | "on_publish" | "on_record_mp4" | "on_rtsp_auth" | "on_rtsp_realm" | "on_shell_login" | "on_stream_changed" | "on_stream_none_reader" | "on_stream_not_found" | "on_server_started" | "on_rtp_server_timeout" | "on_server_keepalive" | "on_send_rtp_stopped";
+            /** Format: date-time */
+            expires?: string;
         };
         OtherRtpSendInfo: {
             sendLocalIp?: string;
@@ -14727,6 +14727,7 @@ export interface operations {
                 page?: number;
                 /** @description 每页查询数量 */
                 pageSize: number;
+                categoryId?: number;
                 /** @description 查询内容 */
                 query?: string;
                 /** @description 是否在线 */
@@ -14774,6 +14775,7 @@ export interface operations {
                 page?: number;
                 /** @description 每页查询数量 */
                 pageSize: number;
+                categoryId?: number;
                 /** @description 查询内容 */
                 query?: string;
                 /** @description 是否在线 */
@@ -17169,7 +17171,7 @@ export interface operations {
             };
         };
     };
-    changePushKey_5: {
+    changePushKey_4: {
         parameters: {
             query: {
                 /** @description 用户Id */
@@ -17251,7 +17253,7 @@ export interface operations {
             };
         };
     };
-    changePushKey_4: {
+    changePushKey_5: {
         parameters: {
             query: {
                 /** @description 用户Id */
@@ -17292,7 +17294,7 @@ export interface operations {
             };
         };
     };
-    changePushKey_2: {
+    changePushKey_3: {
         parameters: {
             query: {
                 /** @description 用户Id */
@@ -17374,7 +17376,7 @@ export interface operations {
             };
         };
     };
-    changePushKey_3: {
+    changePushKey_2: {
         parameters: {
             query: {
                 /** @description 用户Id */
