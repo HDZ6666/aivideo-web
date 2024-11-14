@@ -15,14 +15,17 @@ export default {
     return {
       // frameUrl: "http://183.239.58.24:106666//#/iframe/alarmList"
       // frameUrl: "http://192.168.1.106:8066/#/iframe/alarmList",
-      frameUrl: `${window.iframeBaseUrl}/#/ai/alarm`
+      frameUrl: `${window.iframeBaseUrl}/`,
+      redirectUrl: "/ai/alarm"
     };
   },
   mounted() {
     if (userService.getToken()) {
       this.frameUrl = `${
         window.iframeBaseUrl
-      }/#/ai/alarm?token=${userService.getToken()}`;
+      }/#/redirect?RedirectUrl=${encodeURIComponent(
+        this.redirectUrl
+      )}&token=${userService.getToken()}`;
     }
   }
 };
