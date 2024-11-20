@@ -160,6 +160,7 @@
     <transition name="slide">
       <warn-detail v-if="detailShow" :info="alarmDetail" @close="detailShow=false"></warn-detail>
     </transition>
+    <audio id="alertSound" ref="alertSound" :src="soundSrc"></audio>
   </div>
 </template>
 <script>
@@ -169,6 +170,7 @@ import 'swiper/components/pagination/pagination.min.css';
 import 'swiper/components/scrollbar/scrollbar.min.css';
 import 'swiper/swiper-bundle.css';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import sound from '../assets/alert.mp3';
 
 import { defineComponent } from "vue";
 import { Vue3SeamlessScroll } from "vue3-seamless-scroll";
@@ -203,6 +205,7 @@ export default defineComponent({
   },
   data() {
     return {
+      soundSrc: sound,
       leftBox1Height: 0,
       rightBox1Height: 0,
       rightBox2Height: 0,
@@ -504,6 +507,7 @@ export default defineComponent({
           this.bind.warnList = r.data.data.records;
           if (this.alarmActived) {
             this.alarmDetail = this.bind.warnList[0]
+            this.$refs.alertSound.play();
             this.detailShow = true
             setTimeout(() => {
               this.detailShow = false
