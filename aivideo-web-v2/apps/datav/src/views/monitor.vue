@@ -5,7 +5,11 @@
         <div class="list">
           <div class="rows">
             <t-tree ref="tree" value-mode="all" :data="bind.deviceTree" :activable="true" @active="changeDeviceTree"
-              @expand="deviceTreeExpand" />
+              @expand="deviceTreeExpand">
+              <template #label="{ node }">
+                <span @dblclick.stop="() => searchDeviceTree(node)">{{ node.label }}</span>
+              </template>
+            </t-tree>
           </div>
         </div>
       </div>
@@ -41,12 +45,12 @@
           </div>
         </div>
       </card-box>
-      <card-box class="box" title="摄像头告警" more="" :height="rightBox2Height">
+      <card-box class="box" title="摄像头告警" more="详情" :height="rightBox2Height" @more="toggleCameraDialog">
         <div class="box_content">
-          <div class="carema-warn">
-            <div class="carema-item" v-for="(item, index) in bind.warnList" :key="index">
+          <div class="camera-warn">
+            <div class="camera-item" v-for="(item, index) in bind.warnList" :key="index" @click="cameraDetail(item)">
               <img :src="item.alarmImg" alt="">
-              <div class="carema-addr">【{{ item.alarmTypeName }}】{{ item.deviceName }}</div>
+              <div class="camera-addr">【{{ item.alarmTypeName }}】{{ item.deviceName }}</div>
             </div>
           </div>
         </div>
@@ -157,10 +161,12 @@
     </t-dialog>
 
     <warn-box v-if="warnDialogShow" @close="toggleWarnDialog"></warn-box>
+    <warn-box-grid v-if="warngridDialogShow" @close="toggleCameraDialog"></warn-box-grid>
     <transition name="slide">
-      <warn-detail v-if="detailShow" :info="alarmDetail" @close="detailShow=false"></warn-detail>
+      <warn-detail v-if="detailShow" :info="alarmDetail" @close="detailShow = false"></warn-detail>
     </transition>
     <audio id="alertSound" ref="alertSound" :src="soundSrc"></audio>
+    <warn-detail v-if="cameraInfoShow" :info="cameraInfo" @close="cameraInfoShow = false"></warn-detail>
   </div>
 </template>
 <script>
@@ -176,6 +182,7 @@ import { defineComponent } from "vue";
 import { Vue3SeamlessScroll } from "vue3-seamless-scroll";
 import VolBox from "./box.vue";
 import CardBox from "../components/CardBox.vue"
+import WarnBoxGrid from "../components/WarnBoxGrid.vue"
 import CameraBox from "../components/CameraBox.vue"
 import VolPlayer from "./livePlayer.vue";
 import WarnBox from '../components/WarnBox.vue';
@@ -193,6 +200,7 @@ export default defineComponent({
     CardBox,
     CameraBox,
     WarnBox,
+    WarnBoxGrid,
     WarnDetail,
     'vol-box': VolBox,
     'vol-player': VolPlayer
@@ -212,6 +220,7 @@ export default defineComponent({
       deviceSelected: '全部设备',
       cameraFullscreen: false,
       warnDialogShow: false,
+      warngridDialogShow: false,
       pageSize: '4',
       chart: {
       },
@@ -259,13 +268,6 @@ export default defineComponent({
         deviceData: [],
         deviceTree: [
           { id: 0, label: '全部设备', value: '0', children: [] }
-          // {id:'1',label:'全部设备',value:'全部设备',children:[{id:'1_2',label:'全部设备1',value:'全部设备1'}]},
-          // {id:'2',label:'数字大屏',value:'数字大屏'},
-          // {id:'3',label:'高新区',value:'高新区'},
-          // {id:'4',label:'三水区',value:'三水区'},
-          // {id:'5',label:'禅城区',value:'禅城区'},
-          // {id:'6',label:'南海区',value:'南海区'},
-          // {id:'7',label:'顺德区',value:'顺德区'}
         ],
         cameraList: [],
         cameraRows: [],
@@ -273,7 +275,9 @@ export default defineComponent({
         intervalId: null,
       },
       detailShow: false,
-      alarmDetail: {}
+      alarmDetail: {},
+      cameraInfoShow: false,
+      cameraInfo: {}
     }
   },
   computed: {
@@ -283,7 +287,7 @@ export default defineComponent({
   watch: {
     alarmActived(newVal) {
       if (newVal) {
-        this.getAlarmList(); 
+        this.getAlarmList();
         this.intervalId = setInterval(this.getAlarmList, 13000);
       }
       else {
@@ -297,6 +301,10 @@ export default defineComponent({
     },
     toggleWarnDialog(show) {
       this.warnDialogShow = show
+    },
+    toggleCameraDialog(show) {
+      console.log(show)
+      this.warngridDialogShow = show
     },
     initBoxHeight() {
       var totalHeight = parseInt($(document).height() - this.$fontSize * 0.5);
@@ -358,9 +366,13 @@ export default defineComponent({
       this.warnDialog.data = row.data;
       console.log(row);
     },
+    searchDeviceTree(node) {
+      console.log("searchDeviceTree", node)
+      this.getCameraList(node.value)
+    },
     changeDeviceTree(values, context) {
       console.log(context.node.data.id)
-      this.getCameraList(context.node.data.id)
+      // this.getCameraList(context.node.data.id)
       return;
       this.deviceSelected = context.node.data.label;
       if (context.node.data.url != undefined && context.node.data.url != null) {
@@ -379,7 +391,7 @@ export default defineComponent({
     videoDialogClosed() {
       this.$refs['videoPlayer'].onHide();
     },
-    getCameraList(categoryId=0) {
+    getCameraList(categoryId = 0) {
       // this.bind.deviceTree = [];
       const apiClient = getApiClient();
       var apiUrl = `/api/cockpit/proxy/list?page=1&pageSize=1000`
@@ -502,11 +514,11 @@ export default defineComponent({
     },
     getAlarmList() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2").then(r => {
+      apiClient.GET("/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2&status=0").then(r => {
         if (r.data.code == "0") {
           this.bind.warnList = r.data.data.records;
           if (this.alarmActived) {
-            this.alarmDetail = this.bind.warnList[0]
+            this.alarmDetail = this.bind.warnList.find(item => item.status == 0)
             this.$refs.alertSound.play();
             this.detailShow = true
             setTimeout(() => {
@@ -547,7 +559,7 @@ export default defineComponent({
         }
       })
     },
-    getDateDaysAgo(days) {  
+    getDateDaysAgo(days) {
       const date = new Date(); // 获取当前日期  
       date.setDate(date.getDate() + days); // 根据传入的参数调整日期  
 
@@ -556,7 +568,11 @@ export default defineComponent({
       const day = String(date.getDate()).padStart(2, '0'); // 获取日期并确保是两位数  
 
       return `${year}-${month}-${day}`; // 返回格式化后的日期字符串  
-    } 
+    },
+    cameraDetail(item) {
+      this.cameraInfo = item
+      this.cameraInfoShow = true
+    }
   },
   created() {
     this.initBoxHeight();
@@ -972,23 +988,24 @@ export default defineComponent({
     justify-content: space-between;
   }
 
-  .carema-warn {
+  .camera-warn {
     width: 100%;
     padding: 0.05rem;
     display: flex;
     justify-content: space-between;
 
-    .carema-item {
+    .camera-item {
       width: 45%;
       height: 100%;
+      cursor: pointer;
     }
 
-    .carema-item img {
+    .camera-item img {
       width: 100%;
       height: 80%;
     }
 
-    .carema-item .carema-addr {
+    .camera-item .camera-addr {
       color: #FFF;
       font-family: "PingFang SC";
       font-size: 0.08rem;
@@ -1288,20 +1305,25 @@ export default defineComponent({
       border-color: #0f5a9b;
     }
   }
-  
-  .slide-enter-active, .slide-leave-active {  
-  transition: transform 0.5s ease, opacity 0.5s ease;  
-}  
 
-.slide-enter {  
-  transform: translate(-100%, -100%); /* 从右上角进入 */  
-  opacity: 0; /* 透明度为零 */  
-}  
+  .slide-enter-active,
+  .slide-leave-active {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
 
-.slide-leave-to {  
-  transform: translate(-100%, 100%); /* 从左下角退出 */  
-  opacity: 0; /* 透明度为零 */  
-}  
+  .slide-enter {
+    transform: translate(-100%, -100%);
+    /* 从右上角进入 */
+    opacity: 0;
+    /* 透明度为零 */
+  }
+
+  .slide-leave-to {
+    transform: translate(-100%, 100%);
+    /* 从左下角退出 */
+    opacity: 0;
+    /* 透明度为零 */
+  }
 
 }
 </style>

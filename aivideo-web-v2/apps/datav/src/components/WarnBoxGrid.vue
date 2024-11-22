@@ -8,17 +8,7 @@
                         scroll-to-first-error="smooth">
                         <t-form-item label="告警类型" name="alarmTypeName">
                             <t-input v-model="searchForm.alarmTypeName"></t-input>
-                            <!-- <t-select v-model="searchForm.alarmType" class="demo-select-base" clearable filterable>
-                                <t-option v-for="(item, index) in alarmTypes" :key="index" :value="item.name" :label="item.name">
-                                {{ item.name }}
-                                </t-option>
-                            </t-select> -->
                         </t-form-item>
-
-                        <!-- <t-form-item label="优先级" name="alarmPriority">
-                            <t-input v-model="searchForm.alarmPriority"></t-input>
-                        </t-form-item> -->
-
                         <t-form-item label="日期" name="timeRange">
                             <t-date-range-picker v-model="timeRange" clearable />
                         </t-form-item>
@@ -27,24 +17,14 @@
                         </t-form-item>
                     </t-form>
                 </div>
-                <table class="warn-table">
-                    <tbody>
-                        <tr style="background: #062B5A;max-height: 50px;">
-                            <th>告警类型</th>
-                            <th>设备名称</th>
-                            <th>告警时间</th>
-                            <th>处理状态</th>
-                            <th>告警缩略图</th>
-                        </tr>
-                        <tr v-for="(row, index) in warnList" :key="index" @click="clickDetail(row)">
-                            <td>{{ row.alarmTypeName }}</td>
-                            <td>{{ row.modelname }}</td>
-                            <td>{{ row.alarmTime }}</td>
-                            <td>{{ row.status == 0 ? '未处理' : (row.status == 1 ? '已处理' : '') }}</td>
-                            <td><img style="width:0.2rem;" :src="row.alarmImg" alt=""></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="warn-body">
+                    <div class="camera-warn">
+                        <div class="camera-item" v-for="(item, index) in warnList" :key="index" @click="clickDetail(item)">
+                            <img :src="item.alarmImg" alt="">
+                            <div class="camera-addr">【{{ item.alarmTypeName }}】{{ item.deviceName }}</div>
+                        </div>
+                    </div>
+                </div>
                 <div class="pager">
                     <div class="rt">
                         <div class="button" @click="onPage(-1)">上一屏</div>
@@ -70,12 +50,12 @@ export default defineComponent({
     },
     data() {
         return {
-            warnList: [{},{},{},{},{},{}],
+            warnList: [],
             detailShow: false,
             detail: {},
             pager: {
                 pageIndex: 1,
-                pageSize: 6,
+                pageSize: 8,
                 totalPage: 1
             },
             searchForm: {
@@ -123,9 +103,6 @@ export default defineComponent({
             apiClient.GET(apiUrl).then(r => {
                 if (r.data.code == "0") {
                     this.warnList = r.data.data.records;
-                    while (this.warnList.length < 6) {
-                        this.warnList.push({})
-                    }
                     this.pager.totalPage = r.data.data.pages;
                 }
             })
@@ -218,15 +195,43 @@ export default defineComponent({
                 }
             }
 
-            .warn-table {
+            .warn-body {
                 width: 100%;
                 height: 79%;
                 font-size: 0.1rem;
 
-                tr {
-                    height: 14.3%;
-                    border-top: 1px solid #062B5A;
-                    text-align: center;
+                .camera-warn {
+                    width: 100%;
+                    height: 100%;
+                    padding: 0.05rem;
+
+                    .camera-item {
+                    width: 25%;
+                    height: 50%;
+                    cursor: pointer;
+                    float: left;
+                    padding: 0.1rem;
+                    }
+
+                    .camera-item img {
+                    width: 100%;
+                    height: 80%;
+                    }
+
+                    .camera-item .camera-addr {
+                    color: #FFF;
+                    font-family: "PingFang SC";
+                    font-size: 0.08rem;
+                    font-style: normal;
+                    font-weight: 400;
+                    line-height: normal;
+                    overflow: hidden;
+                    /* 隐藏超出部分 */
+                    white-space: nowrap;
+                    /* 不换行 */
+                    text-overflow: ellipsis;
+                    padding-top: 0.05rem;
+                    }
                 }
             }
 

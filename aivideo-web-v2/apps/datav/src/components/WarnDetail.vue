@@ -18,7 +18,10 @@
                     {{ info.alarmDescription??'好的硒鼓好的硒鼓好的硒鼓好的硒鼓硒鼓好的硒鼓好的硒鼓好的硒鼓' }}
                 </div>
             </div>
-            <div class="info-action">
+            <div v-if="info.status==0" class="info-action">
+                <div class="desc">
+                    <span>处理说明：</span><t-input v-model="desc" placeholder="请输入处理说明" />
+                </div>
                 <div class="button" @click="alarmHandle(1)">
                     处理
                 </div>
@@ -44,6 +47,7 @@ export default defineComponent({
     },
     data() {
         return {
+            desc: ''
         }
     },
     mounted() {
@@ -57,7 +61,7 @@ export default defineComponent({
         },
         alarmHandle(status) {
             const apiClient = getApiClient();
-            const apiUrl = `/api/alarm/handle?status=${status}&alarmId=${this.info.id}`
+            const apiUrl = `/ai/api/alarm/handle?status=${status}&alarmId=${this.info.id}&alarmDescription=${this.desc}`
             apiClient.GET(apiUrl).then(r => {
                 console.log("alarmHandle func", r)
                 if (r.data && r.data.code == "0") {
@@ -120,6 +124,16 @@ export default defineComponent({
             display: flex;
             justify-content: right;
             padding: 0.1rem;
+            .desc {
+                width: 3rem;
+                height: 0.2rem;
+                line-height: 0.2rem;
+                font-size: 0.09rem;
+                display: flex;
+                span {
+                    width: 0.6rem;
+                }
+            }
             .button {
                 width: 0.5rem;
                 height: 0.2rem;
