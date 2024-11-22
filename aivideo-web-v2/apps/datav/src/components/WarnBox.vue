@@ -22,6 +22,13 @@
                         <t-form-item label="日期" name="timeRange">
                             <t-date-range-picker v-model="timeRange" clearable />
                         </t-form-item>
+                        <t-form-item label="状态" name="status">
+                            <t-select v-model="searchForm.status" class="demo-select-base" clearable filterable>
+                                <t-option v-for="(item, index) in options" :key="index" :value="item.value" :label="item.label">
+                                {{ item.label }}
+                                </t-option>
+                            </t-select>
+                        </t-form-item>
                         <t-form-item label-width="0">
                             <t-button theme="primary" @click="search">搜索</t-button>
                         </t-form-item>
@@ -70,6 +77,11 @@ export default defineComponent({
     },
     data() {
         return {
+            options: [
+                { label: '未处理', value: 0 },
+                { label: '已处理', value: 1 },
+                { label: '误报', value: 2 },
+            ],
             warnList: [{},{},{},{},{},{}],
             detailShow: false,
             detail: {},
@@ -120,6 +132,9 @@ export default defineComponent({
             if (this.searchForm.endTime) {
                 apiUrl += `&endTime=${this.searchForm.endTime}`;
             }
+            if (this.searchForm.status || this.searchForm.status === 0) {
+                apiUrl += `&status=${this.searchForm.status}`;
+            }
             apiClient.GET(apiUrl).then(r => {
                 if (r.data.code == "0") {
                     this.warnList = r.data.data.records;
@@ -131,6 +146,7 @@ export default defineComponent({
             })
         },
         clickDetail(data) {
+            if (!data.alarmTypeName) return
             this.detail = data
             this.detailShow = true
         },

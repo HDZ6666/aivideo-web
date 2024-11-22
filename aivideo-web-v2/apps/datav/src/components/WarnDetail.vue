@@ -3,7 +3,7 @@
         <div class="box" @click="clickBox">
             <div style="font-size: 0.1rem;padding: 0.1rem 0.1rem;">摄像头告警详情- 【{{info.alarmTypeName}}】</div>
             <div style="text-align: center;">
-                <img :src="info.alarmImg" alt="" style="width: 2.2rem;height:1.3rem;">
+                <img :src="info.alarmImg" alt="" style="width: 2rem;height:1.1rem;">
             </div>
             <div style="width: 100%;text-align: center;font-size: 0.09rem;padding: 0.05rem;">
                 {{ info.deviceName }}
@@ -20,7 +20,7 @@
             </div>
             <div v-if="info.status==0" class="info-action">
                 <div class="desc">
-                    <span>处理说明：</span><t-input v-model="desc" placeholder="请输入处理说明" />
+                    <span>处理说明：</span><t-textarea v-model="desc" placeholder="请输入处理说明" />
                 </div>
                 <div class="button" @click="alarmHandle(1)">
                     处理
@@ -93,7 +93,7 @@ export default defineComponent({
     .box {
         background: url(../assets/imgs/warn_detail_bg.png);
         width: 5rem;
-        height: 3.19rem;
+        height: 3.29rem;
         background-size: 100% 100%;
         color: #fff;
         padding: 0.3rem 0.2rem 0.2rem 0.2rem;
@@ -135,6 +135,7 @@ export default defineComponent({
                 }
             }
             .button {
+                margin-top: 0.15rem;
                 width: 0.5rem;
                 height: 0.2rem;
                 line-height: 0.2rem;
