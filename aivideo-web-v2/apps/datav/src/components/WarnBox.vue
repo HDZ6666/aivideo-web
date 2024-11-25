@@ -47,7 +47,7 @@
                             <td>{{ row.alarmTypeName }}</td>
                             <td>{{ row.modelname }}</td>
                             <td>{{ row.alarmTime }}</td>
-                            <td>{{ row.status == 0 ? '未处理' : (row.status == 1 ? '已处理' : '误报') }}</td>
+                            <td>{{ row.status == 0 ? '未处理' : (row.status == 1 ? '已处理' : row.status == 2 ?'误报':'') }}</td>
                             <td><img style="width:0.2rem;" :src="row.alarmImg" alt=""></td>
                         </tr>
                     </tbody>
