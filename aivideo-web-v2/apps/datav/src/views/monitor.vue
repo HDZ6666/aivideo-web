@@ -587,7 +587,7 @@ export default defineComponent({
     this.getDeviceGroupList();
     this.getAlarmList();
     this.getAlarmTrend();
-    this.getAlarmStatistics();
+    setInterval(this.getAlarmStatistics, 5000)
   },
   unmounted() {
     gjqsDestroy();
