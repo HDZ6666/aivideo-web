@@ -28,7 +28,7 @@
                     <div class="camera-warn">
                         <div class="camera-item" v-for="(item, index) in warnList" :key="index" @click="clickDetail(item)">
                             <img :src="item.alarmImg" alt="">
-                            <div class="camera-addr">【{{ item.alarmTypeName }}】{{ item.deviceName }}</div>
+                            <div class="camera-addr"><span v-if="item.status!=0" style="color:green;">【已处理】</span>【{{ item.alarmTypeName }}】{{ item.deviceName }}</div>
                         </div>
                     </div>
                 </div>
