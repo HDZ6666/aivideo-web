@@ -224,6 +224,9 @@ export default defineComponent({
           }
         }
         
+      }).catch(()=>{
+        const color = '#0052d9'; // #0052d9默认风格
+            this.changeBrandTheme(color)
       })
     },
     changeBrandTheme(brandTheme) {
