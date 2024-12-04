@@ -1,7 +1,8 @@
 <template>
-  <div :class="{ 'box': true, 'fullscreen-box': fullscreen }">
-    <div class="title">
+  <div :class="{ 'box': true, 'fullscreen-box': fullscreen }" :style="boxDynameicStyle">
+    <div class="title" :style="titleDynameicStyle">
       <div class="title-box">
+        <div class="icon" :style="iconDynameicStyle"></div>
         <div class="text">{{ title }}</div>
         <div class="text-en"></div>
       </div>
@@ -21,7 +22,7 @@
             </t-select>
           </div>
         </div>
-        <div class="more-item fullscreen" @click="changeFullscreen">全屏<span class="fullscreen-icon"></span></div>
+        <div class="more-item fullscreen" @click="changeFullscreen">全屏<span :style="fullScreenDynameicStyle" class="fullscreen-icon"></span></div>
       </div>
     </div>
     <div class="bg">
@@ -37,6 +38,8 @@
 </template>
 <script>
 import { defineComponent } from "vue"
+import { mapGetters } from "vuex";
+import { getImageUrl } from '@/utils/imageUrl.js'
 export default defineComponent({
   props: {
     title: {
@@ -54,15 +57,33 @@ export default defineComponent({
     moreLink: {
       type: String,
       default: "javascript:;"
-    }
+    },
   },
-  computed: {
+  computed:{
+    ...mapGetters([ "mbData"]),
+  },
+  watch:{
+    mbData(newVal){
+      this.handleMbData(newVal)
+    }
   },
   data() {
     return {
       checked: true,
       pageSize: '4',
-      fullscreen: false
+      fullscreen: false,
+      boxDynameicStyle:{
+              
+      },
+      titleDynameicStyle:{
+        
+      },
+      iconDynameicStyle:{
+        
+      },
+      fullScreenDynameicStyle:{
+        
+      }
     }
   },
   setup() {
@@ -81,6 +102,40 @@ export default defineComponent({
       console.log("innnn")
       this.fullscreen = !this.fullscreen
       this.$emit("changeFullscreen", this.fullscreen)
+    },
+    handleMbData(item){
+      if(item.cardBoxBase64){
+        const cardBoxBase64 = getImageUrl(item.cardBoxBase64)
+        this.boxDynameicStyle = {
+          background: `url(${cardBoxBase64}) no-repeat center`,
+          backgroundSize:"100% 100%"
+        }
+      }
+      if(item.cameraTitleBase64){
+        const cameraTitleBase64 = getImageUrl(item.cameraTitleBase64)
+        this.titleDynameicStyle = {
+          background: `url(${cameraTitleBase64}) no-repeat center`,
+          backgroundSize:"100% 100%"
+        }
+      }
+      if(item.boxIcon){
+        const boxIcon = getImageUrl(item.boxIcon)
+        this.iconDynameicStyle = {
+          background: `url(${boxIcon}) no-repeat center`,
+          backgroundSize:"100% 100%",
+          width:"0.12rem",
+          height:"0.16rem",
+          top:"0.05rem",
+          left:"0.05rem"
+        }
+      }
+      if(item.fullScreenUrl){
+        const fullScreenUrl = getImageUrl(item.fullScreenUrl)
+        this.fullScreenDynameicStyle = {
+          background: `url(${fullScreenUrl}) no-repeat center`,
+          backgroundSize:"100% 100%"
+        }
+      }
     }
   }
 })
@@ -98,7 +153,8 @@ export default defineComponent({
   background-size: 100% 100%;
 
   .title {
-    color: #fff;
+    //color: #fff;
+    color: var(--text-title-color);
     width: 100%;
     height: 0.255rem;
     background: url("../assets/imgs/camera_box_bg.png") no-repeat center;
@@ -120,7 +176,8 @@ export default defineComponent({
     }
 
     .text {
-      color: #FFF;
+      //color: #FFF;
+      color: var(--text-title-color);
       text-shadow: 0px 0px 4px rgba(21, 142, 255, 0.70);
       font-family: YouSheBiaoTiHei;
       font-size: 0.11rem;
@@ -130,8 +187,8 @@ export default defineComponent({
       width: 1rem;
     }
 
-    .text::before {
-      content: '';
+    .icon {
+      //content: '';
       position: absolute;
       width: 0.18rem;
       height: 0.23rem;
@@ -182,13 +239,15 @@ export default defineComponent({
 
           :deep(.t-input) {
             height: 0.2rem;
-            background: #0071bc;
-            border: #0071bc;
+            //background: #0071bc;
+            // border: var(--td-bg-color-specialcomponent);
+            border: 1px solid var(--td-brand-color);
           }
 
           :deep(input) {
             font-size: 0.08rem;
-            color: #fff;
+            //color: #fff;
+            color: var(--input-color-normal);
             text-align: center;
           }
 

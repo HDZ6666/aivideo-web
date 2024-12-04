@@ -36,7 +36,7 @@
                 </div>
                 <table class="warn-table">
                     <tbody>
-                        <tr style="background: #062B5A;max-height: 50px;">
+                        <tr style="background: var(--table_tbody_tr);max-height: 50px;">
                             <th>告警类型</th>
                             <th>设备名称</th>
                             <th>告警时间</th>
@@ -69,6 +69,7 @@
 import { defineComponent } from "vue"
 import { getApiClient } from '@aivideo/rest';
 import WarnDetail from '../components/WarnDetail.vue';
+import { mapGetters } from "vuex";
 export default defineComponent({
     components: {
         WarnDetail
@@ -83,6 +84,17 @@ export default defineComponent({
                 { label: '误报', value: 2 },
             ],
             warnList: [{},{},{},{},{},{}],
+            // warnList: [{
+            //     alarmTypeName:"测试数据0",
+            //     modelname:"cs",
+            //     alarmTime:"2024-11-20",
+            //     status:0
+            // },{
+            //     alarmTypeName:"测试数据1",
+            //     modelname:"cs",
+            //     alarmTime:"2024-11-20",
+            //     status:1
+            // }],
             detailShow: false,
             detail: {},
             pager: {
@@ -100,6 +112,7 @@ export default defineComponent({
             },
             timeRange: [],
             alarmTypes: []
+            
         }
     },
     setup() {
@@ -110,6 +123,14 @@ export default defineComponent({
     mounted() {
         this.getAlarmTypes()
         this.getAlarmList()
+    },
+    computed:{
+        ...mapGetters([ "mbData"]),
+    },
+    watch:{
+        mbData(newVal){
+            this.handleMbData(newVal)
+        }
     },
     methods: {
         getAlarmTypes() {
@@ -186,6 +207,20 @@ export default defineComponent({
                 }
             }
         },
+        handleMbData(item){
+        //   if(item.cardBoxBase64){
+        //     this.boxDynameicStyle = {
+        //       background: `url(${item.cardBoxBase64}) no-repeat center`,
+        //       backgroundSize:"100% 100%"
+        //     }
+        //   }
+        //   if(item.cardTitleBase64){
+        //     this.titleDynameicStyle = {
+        //       background: `url(${item.cardTitleBase64}) no-repeat center`,
+        //       backgroundSize:"100% 100%"
+        //     }
+        //   }
+        }
     }
 })
 </script>
@@ -198,8 +233,8 @@ export default defineComponent({
     bottom: 0;
     z-index: 89998;
     padding: 0.1rem 0.1rem 0.1rem 0.1rem;
-    background-color: rgba(0, 0, 0, 0.7);
-
+    //background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(--warn__dialog__color);
     .close {
         position: fixed;
         top: 0.1rem;
@@ -213,9 +248,10 @@ export default defineComponent({
         position: relative;
         width: 100%;
         height: 100%;
-        background: #061A40 url("../assets/imgs/warn_bg.png") no-repeat center;
+        background: var(--warn__dialog__color) url("../assets/imgs/warn_bg.png") no-repeat center;
         background-size: 100% 100%;
-        color: #fff;
+        //color: #fff;
+        color: var(--warn__dialog__text__color);
         padding-top: 0.2rem;
 
         .content {
@@ -250,7 +286,8 @@ export default defineComponent({
                 width: 100%;
                 padding: 0.05rem 0.1rem;
                 display: flex;
-                color: #fff;
+                //color: #fff;
+                color: var(--text-page-color);
                 font-size: 0.08rem;
                 margin-bottom: 0.1rem;
 
@@ -272,14 +309,16 @@ export default defineComponent({
                     height: 0.2rem;
                     line-height: 0.2rem;
                     text-align: center;
-                    background: url("../assets/imgs/pager_button_bg.png") no-repeat center;
+                    // background: url("../assets/imgs/pager_button_bg.png") no-repeat center;
                     background-size: 100% 100%;
+                    background: var(--button-bg-color);
                     margin-left: 0.04rem;
                     cursor: pointer;
                 }
 
                 .button.active {
-                    background: url("../assets/imgs/pager_button_bg2.png") no-repeat center;
+                    //background: url("../assets/imgs/pager_button_bg2.png") no-repeat center;
+                    background: var(--button-bg-active-color);
                     background-size: 100% 100%;
                 }
 
@@ -292,13 +331,16 @@ export default defineComponent({
 
                     :deep(.t-input) {
                         height: 0.2rem;
-                        background: #0071bc;
-                        border: #0071bc;
+                        //background: #0071bc;
+                        background: var(--td-bg-color-specialcomponent);
+                        //border: #0071bc;
+                        border: 0.1rem solid var(--td-brand-color);
                     }
 
                     :deep(input) {
                         font-size: 0.08rem;
-                        color: #fff;
+                        //color: #fff;
+                        color: var(--input-color-normal);
                         text-align: center;
                     }
 

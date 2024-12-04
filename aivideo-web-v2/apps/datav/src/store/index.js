@@ -13,7 +13,8 @@ export default createStore({
     data: {},
     permission: [],
     isLoading: false,//2020.06.03增加路由切换时加载提示
-    userInfo: null
+    userInfo: null,
+    mbData:{} // 大屏模板配置数据
   },
   mutations: {
     setPermission(state, data) {  //调用方式 this.$store.commit('setPermission', data)
@@ -23,7 +24,8 @@ export default createStore({
       } else {
         state.permission = data;
       }
-    }, setUserInfo(state, data) {
+    }, 
+    setUserInfo(state, data) {
       state.userInfo = data;
       localStorage.setItem(keys.USER, JSON.stringify(data));
     },
@@ -37,8 +39,12 @@ export default createStore({
     },
     updateLoadingState(state, flag) {
       state.isLoading = flag
+    },
+    setMbData(state,mbData){
+      state.mbData = mbData
     }
-  }, getters: {
+  }, 
+  getters: {
     getPermission: (state) => (path) => {  //调用方式 store.getters.getPermission('sys_User')
       if (!path) return state.permission;
       return state.permission.find(x => x.path == path);
@@ -75,7 +81,9 @@ export default createStore({
     getData: (state) => () => {
       return state.data;
     },
-  }, actions: {
+    mbData: (state)=> state.mbData
+  }, 
+  actions: {
     setPermission(context, data) {
       context.commit('setPermission', data); //调用方式 store.dispatch('push')
     },
@@ -84,6 +92,9 @@ export default createStore({
     },
     onLoading(context, flag) {
       context.commit("updateLoadingState", flag);
+    },
+    mbData({commit,state},data){
+      commit('setMbData',data)
     }
   }
 })

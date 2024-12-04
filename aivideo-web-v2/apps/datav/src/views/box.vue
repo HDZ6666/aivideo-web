@@ -41,7 +41,8 @@ export default defineComponent({
   position: relative;
   width: 1.388rem;
   .title{
-    color: #fff;
+    //color: #fff;
+    color: var(--text-title-color);
     width: 100%;
     height: 0.255rem;
     background: url("../assets/imgs/box_header_bg.png") no-repeat center;

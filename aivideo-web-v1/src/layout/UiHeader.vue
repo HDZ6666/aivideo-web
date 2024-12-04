@@ -42,6 +42,7 @@
         <template slot="title">欢迎，{{ username }}</template>
         <el-menu-item @click="openDoc">在线文档</el-menu-item>
         <el-menu-item @click="changePassword">修改密码</el-menu-item>
+        <el-menu-item @click.native="setting = true">布局设置</el-menu-item>
         <el-menu-item @click="loginout">注销</el-menu-item>
       </el-submenu>
     </el-menu>
@@ -73,6 +74,17 @@ export default {
   },
   computed:{
     ...mapGetters(["sidebarRouters", "sidebar"]),
+    setting: {
+      get() {
+        return this.$store.state.settings.showSettings
+      },
+      set(val) {
+        this.$store.dispatch('settings/changeSetting', {
+          key: 'showSettings',
+          value: val
+        })
+      }
+    },
   },
   created() {
     // console.log(JSON.stringify(userService.getUser()));

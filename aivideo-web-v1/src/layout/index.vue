@@ -10,16 +10,23 @@
         </transition>
       </el-container>
     </el-main>
+    <right-panel>
+      <Settings></Settings>
+    </right-panel>
+    
   </el-container>
 </template>
 
 <script>
 import uiHeader from "./UiHeader.vue";
-
+import Settings from "./Settings/index.vue"
+import RightPanel from '@/components/RightPanel/index.vue'
 export default {
   name: "index",
   components: {
-    uiHeader
+    uiHeader,
+    Settings,
+    RightPanel
   },
   data() {
     return {

@@ -161,7 +161,7 @@ export default defineComponent({
     },
     deactivated(){
       this.stopPlay();
-    }
+    },
 })
 </script>
 <style lang="less" scoped>

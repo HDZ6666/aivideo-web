@@ -15,6 +15,7 @@ import VueClipboard from "vue-clipboard2";
 import VueClipboards from "vue-clipboards";
 import Contextmenu from "vue-contextmenujs";
 import userService from "./components/service/UserService";
+import plugins from './plugins'
 Vue.config.productionTip = false;
 Vue._watchers = Vue.prototype._watchers = [];
 
@@ -43,6 +44,7 @@ Vue.prototype.$notify = Notification;
 Vue.use(Contextmenu);
 Vue.use(VCharts);
 Vue.use(dataV);
+Vue.use(plugins)
 Vue.prototype.handleTree = handleTree
 Vue.prototype.parseTime = parseTime
 Vue.prototype.resetForm = resetForm

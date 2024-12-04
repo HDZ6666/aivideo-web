@@ -68,9 +68,12 @@ export const useSettingStore = defineStore('setting', {
       return 'light';
     },
     changeBrandTheme(brandTheme: string) {
+      debugger
       const mode = this.displayMode;
       // 以主题色加显示模式作为键
       const colorKey = `${brandTheme}[${mode}]`;
+      console.log(this.colorList)
+      debugger
       let colorMap = this.colorList[colorKey];
       // 如果不存在色阶，就需要计算
       if (colorMap === undefined) {

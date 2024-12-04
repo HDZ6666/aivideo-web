@@ -1,6 +1,6 @@
 <template>
   <div id="monitor">
-    <div v-if="!cameraFullscreen" class="left">
+    <div v-if="!cameraFullscreen" :style="leftDynameicStyle" class="left">
       <div class="device_list">
         <div class="list">
           <div class="rows">
@@ -29,7 +29,7 @@
                   <span>当日告警数</span>
                 </div>
                 <div class="warn_frame">
-                  <p>{{ item['curDateAlarmNoHandleCount'] }}</p>
+                  <p style="color:var(--td-untreated-color)">{{ item['curDateAlarmNoHandleCount'] }}</p>
                   <span>当日未处理</span>
                 </div>
                 <div class="warn_frame">
@@ -56,7 +56,7 @@
         </div>
       </card-box>
       <card-box title="告警趋势" more="" :height="rightBox2Height" class="box">
-        <div style="color:#B4C0CC;position: absolute;">告警数量：次</div>
+        <div style="color:var(--chart-title-color);position: absolute;">告警数量：次</div>
         <div class="box_content">
           <div id="chartGJQS" class="chart"></div>
         </div>
@@ -64,16 +64,16 @@
     </div>
     <div :class="{ 'center': true, 'center-fullscreen': cameraFullscreen }">
       <div v-if="!cameraFullscreen" class="nav">
-        <div class="item">
-          <div class="icon"><img src="@/assets/imgs/device_total.png" /></div>
+        <div class="item" v-for="item in cameraFullscreenList" :key="item.imgaeUrl">
+          <div class="icon"><img :src="item.imgaeUrl" /></div>
           <div class="text">
             <div class="value">
-              <span class="number">{{ bind.stat.allDev }}</span><span class="unit">个</span>
+              <span class="number" :style="item.number=='activedAlarm'?'color:var(--td-untreated-color)':''">{{ bind.stat[item.number] }}</span><span class="unit">个</span>
             </div>
-            <div class="name">设备总数</div>
+            <div class="name">{{item.name}}</div>
           </div>
         </div>
-        <div class="item">
+        <!-- <div class="item">
           <div class="icon"><img src="@/assets/imgs/device_online.png" /></div>
           <div class="text">
             <div class="value">
@@ -99,7 +99,7 @@
             </div>
             <div class="name">告警总数</div>
           </div>
-        </div>
+        </div> -->
       </div>
       <camera-box title="监控视频" @changePageSize="changePageSize" @changeFullscreen="changeFullscreen">
         <template #more>
@@ -187,8 +187,13 @@ import CameraBox from "../components/CameraBox.vue"
 import VolPlayer from "./livePlayer.vue";
 import WarnBox from '../components/WarnBox.vue';
 import WarnDetail from '../components/WarnDetail.vue';
-
+import { mapGetters } from "vuex";
 import { gjqsChartCreate, gjqsDestroy, gjqsOption, gjqsReload, gjqsResize } from './monitor/chartGJQS.js';
+import device_total from "@/assets/imgs/device_total.png";
+import device_online from "@/assets/imgs/device_online.png";
+import warn_todo from "@/assets/imgs/warn_todo.png";
+import warn_total from "@/assets/imgs/warn_total.png"
+import { getImageUrl } from "@/utils/imageUrl.js"
 SwiperCore.use([Scrollbar, Pagination, Autoplay])
 
 import { getApiClient } from '@aivideo/rest';
@@ -264,23 +269,76 @@ export default defineComponent({
             total: 0
           }
         },
-        warnList: [],
+        warnList: [{
+          alarmTypeName:122,
+          deviceName:212
+        }],
         deviceData: [],
         deviceTree: [
-          { id: 0, label: '全部设备', value: '0', children: [] }
+          {id:'1',label:'全部设备',value:'全部设备',children:[{id:'1_2',label:'全部设备1',value:'全部设备1'}]},
+          {id:'2',label:'数字大屏',value:'数字大屏'},
+          {id:'3',label:'高新区',value:'高新区'},
+          {id:'4',label:'三水区',value:'三水区'},
+          {id:'5',label:'禅城区',value:'禅城区'},
+          {id:'6',label:'南海区',value:'南海区'},
+          {id:'7',label:'顺德区',value:'顺德区'}
         ],
         cameraList: [],
-        cameraRows: [],
-        alarmStatistics: [],
+        cameraRows: [{
+          name:"模拟数据",
+          streamInfo:{
+            hls:{
+              url:""
+            }
+          }
+        }],
+        alarmStatistics: [{
+          alarmTypeName:"烟雾烟火",
+          curDateAlarmCount:11,
+          curDateAlarmNoHandleCount:12,
+          sevenDayAlarmCount:13,
+          sevenDayAlarmNoHandleCount:14
+        },{
+          alarmTypeName:"通道占用",
+          curDateAlarmCount:11,
+          curDateAlarmNoHandleCount:12,
+          sevenDayAlarmCount:13,
+          sevenDayAlarmNoHandleCount:14
+        }],
         intervalId: null,
       },
       detailShow: false,
       alarmDetail: {},
       cameraInfoShow: false,
-      cameraInfo: {}
+      cameraInfo: {},
+      cameraFullscreenList:[{
+        imgaeUrl: device_total,
+        name:"设备总数",
+        number:"allDev"
+      },{
+        imgaeUrl:device_online,
+        name:"设备总数",
+        number:"onlineDev"
+      },{
+        imgaeUrl:warn_todo,
+        name:"未处理告警数",
+        number:"activedAlarm"
+      },{
+        imgaeUrl:warn_total,
+        name:"告警总数",
+        number:"allAlarm"
+      }],
+      leftDynameicStyle:{
+        
+      }, //左侧动态样式
+      cardBoxDynameicStyle:{
+
+      },
+      //backData:{}
     }
   },
-  computed: {
+  computed:{
+    ...mapGetters([ "mbData"]),
   },
   setup() {
   },
@@ -294,6 +352,10 @@ export default defineComponent({
         clearInterval(this.intervalId);
       }
     },
+    mbData(newVal){
+      //this.backData = newVal
+      this.getmbList(newVal)
+    }
   },
   methods: {
     toggleFullScreen() {
@@ -572,6 +634,29 @@ export default defineComponent({
     cameraDetail(item) {
       this.cameraInfo = item
       this.cameraInfoShow = true
+    },
+    getmbList(item){
+      debugger
+      if(item.deviceBackgroundBase64){
+        const deviceBackgroundBase64 = getImageUrl(item.deviceBackgroundBase64)
+        this.leftDynameicStyle = {
+          background: `url(${deviceBackgroundBase64}) no-repeat center`,
+          backgroundSize:"100% 100%"
+        }
+        console.log(this.leftDynameicStyle,"leftDynameicStyle")
+      }
+      if(item.device_total){
+        this.cameraFullscreenList[0].imgaeUrl = getImageUrl(item.device_total) 
+      }
+      if(item.device_online){
+        this.cameraFullscreenList[1].imgaeUrl = getImageUrl(item.device_online) 
+      }
+      if(item.warn_todo){
+        this.cameraFullscreenList[2].imgaeUrl = getImageUrl(item.warn_todo) 
+      }
+      if(item.warn_total){
+        this.cameraFullscreenList[3].imgaeUrl = getImageUrl(item.warn_total) 
+      }
     }
   },
   created() {
@@ -671,7 +756,7 @@ export default defineComponent({
 
         .text {
           flex: 1;
-          color: #39d6fe;
+          //color: #39d6fe;
           padding: 0 0.05rem;
           font-size: 0.085rem;
 
@@ -681,7 +766,8 @@ export default defineComponent({
             .number {
               font-size: 0.14rem;
               padding-right: 0.025rem;
-              color: #F2F6FA;
+              //color: #F2F6FA;
+              color: var(--text-number-color);
               font-family: DINPro;
               font-style: normal;
               font-weight: 700;
@@ -689,7 +775,7 @@ export default defineComponent({
             }
 
             .unit {
-              color: #C6D1DB;
+              color: var(--text-unit-color);
               text-align: center;
               font-family: D-DIN;
               font-size: 0.08rem;
@@ -699,7 +785,7 @@ export default defineComponent({
           }
 
           .name {
-            color: #C6D1DB;
+            color: var(--text-name-color);
             font-family: "PingFang SC";
             font-size: 0.09rem;
             font-style: normal;
@@ -717,7 +803,8 @@ export default defineComponent({
       width: 100%;
       padding: 0.05rem 0.1rem;
       display: flex;
-      color: #fff;
+      //color: #fff;
+      color: var(--text-page-color);
       font-size: 0.08rem;
       margin-bottom: 0.1rem;
 
@@ -739,14 +826,16 @@ export default defineComponent({
         height: 0.2rem;
         line-height: 0.2rem;
         text-align: center;
-        background: url("../assets/imgs/pager_button_bg.png") no-repeat center;
+        //background: url("../assets/imgs/pager_button_bg.png") no-repeat center;
+        background: var(--button-bg-color);
         background-size: 100% 100%;
         margin-left: 0.04rem;
         cursor: pointer;
       }
 
       .button.active {
-        background: url("../assets/imgs/pager_button_bg2.png") no-repeat center;
+        //background: url("../assets/imgs/pager_button_bg2.png") no-repeat center;
+        background: var(--button-bg-active-color);
         background-size: 100% 100%;
       }
 
@@ -759,13 +848,14 @@ export default defineComponent({
 
         :deep(.t-input) {
           height: 0.2rem;
-          background: #0071bc;
-          border: #0071bc;
+          background: var(--td-bg-color-specialcomponent);
+          //border: var(--td-bg-color-specialcomponent);
         }
 
         :deep(input) {
           font-size: 0.08rem;
-          color: #fff;
+          //color: #fff;
+          color: var(--input-color-normal);
           text-align: center;
         }
 
@@ -797,7 +887,7 @@ export default defineComponent({
 
         .col {
           float: left;
-          // width: 0.5rem;
+          
           // background-color: #000000;
           // margin: 0.06rem;
           overflow: hidden;
@@ -805,7 +895,7 @@ export default defineComponent({
           box-sizing: border-box;
 
           .active {
-            border: 2px solid #d5aa5b
+            border: 2px solid var(--border-row-col-color)
           }
 
           :deep(.player) {
@@ -892,7 +982,7 @@ export default defineComponent({
           text-align: center;
           height: 0.2rem;
           line-height: 0.2rem;
-          color: #fff;
+          color: var(--video-name);
           font-size: 0.08rem;
         }
       }
@@ -913,7 +1003,7 @@ export default defineComponent({
       inset: 0px !important;
       margin: 0% !important;
       overlay: auto !important;
-      background-color: #0071bc;
+      background-color: var(--td-bg-color-specialcomponent);
     }
   }
 
@@ -978,7 +1068,8 @@ export default defineComponent({
     padding: 0.1rem;
     width: 100%;
     height: 60%;
-    background: linear-gradient(90deg, #0953BC 0%, #042656 100%);
+    //background: linear-gradient(90deg, #0953BC 0%, #042656 100%);
+    background: var(--bg-linear-gradient);
   }
 
   .warn_stat_content {
@@ -1005,8 +1096,8 @@ export default defineComponent({
       height: 80%;
     }
 
-    .camera-item .camera-addr {
-      color: #FFF;
+    .carema-item .carema-addr {
+      color: var(--carema_addr_color);
       font-family: "PingFang SC";
       font-size: 0.08rem;
       font-style: normal;
@@ -1041,7 +1132,7 @@ export default defineComponent({
   }
 
   .warn_frame span {
-    color: var(---, #C6D1DB);
+    color: var(--warn__frame__span, #C6D1DB);
     font-family: "PingFang SC";
     font-size: 0.08rem;
     font-style: normal;
@@ -1062,29 +1153,29 @@ export default defineComponent({
   .warn_stat::before {
     top: 0px;
     left: 0px;
-    border-top: 1px solid #7CBFFF;
-    border-left: 1px solid #7CBFFF;
+    border-top: 1px solid var(--warn_stat__border-color);
+    border-left: 1px solid var(--warn_stat__border-color);
   }
 
   .warn_stat::after {
     top: 0px;
     right: 0px;
-    border-top: 1px solid #7CBFFF;
-    border-right: 1px solid #7CBFFF;
+    border-top: 1px solid var(--warn_stat__border-color);
+    border-right: 1px solid var(--warn_stat__border-color);
   }
 
   .warn_stat_content::before {
     bottom: 0px;
     right: 0px;
-    border-bottom: 1px solid #7CBFFF;
-    border-right: 1px solid #7CBFFF;
+    border-bottom: 1px solid var(--warn_stat__border-color);
+    border-right: 1px solid var(--warn_stat__border-color);
   }
 
   .warn_stat_content::after {
     bottom: 0px;
     left: 0px;
-    border-bottom: 1px solid #7CBFFF;
-    border-left: 1px solid #7CBFFF;
+    border-bottom: 1px solid var(--warn_stat__border-color);
+    border-left: 1px solid var(--warn_stat__border-color);
   }
 
   .warn_list {
@@ -1170,7 +1261,8 @@ export default defineComponent({
       .text {
         font-weight: bold;
         font-size: 0.08rem;
-        color: #fff;
+        //color: #fff;
+        color: var(--text-title-color);
         text-align: left;
         line-height: 0.2rem;
         padding-left: 0.25rem;
@@ -1197,15 +1289,17 @@ export default defineComponent({
         padding: 0.1rem 0.15rem;
 
         :deep(.t-tree) {
-          color: #fff;
+          //color: #fff;
+          color: var(--text-tree-colot);
           font-size: 0.08rem;
           line-height: 0.18rem;
           text-align: left;
         }
 
         :deep(.t-is-active) {
-          color: #ffd700;
-          background-color: transparent !important;
+          //color: #ffd700;
+          color: var(--text-tree-active-color);
+          //background-color: transparent !important;
         }
 
         :deep(.t-tree__icon:hover) {
@@ -1214,7 +1308,8 @@ export default defineComponent({
 
         :deep(.t-tree__icon) {
           path {
-            fill: #fff;
+            //fill: #fff;
+            fill: var(--icon-tree-fill-color)
           }
         }
       }
@@ -1253,7 +1348,8 @@ export default defineComponent({
       }
 
       .title {
-        color: #fff;
+        //color: #fff;
+        color:var(--text-dialog-header-title-color);
         padding-left: 0.2rem;
         line-height: 0.42rem;
         font-size: 0.1rem;
@@ -1262,7 +1358,8 @@ export default defineComponent({
 
       .body {
         margin-top: 0.15rem;
-        color: #fff;
+        //color: #fff;
+        color: var(--text-dialog-body-color);
         display: flex;
         font-size: 0.08rem;
 
@@ -1296,12 +1393,14 @@ export default defineComponent({
 
     .t-dialog__header {
       padding-top: 0.06rem;
-      color: #fff;
+      //color: #fff;
+      color:var(--text-dialog-header-title-color)
     }
 
     .t-dialog--default {
       padding: 0.05rem 0.14rem;
-      background-color: #3d7ab9;
+      //background-color: #3d7ab9;
+      background-color: var(--dialog-bg-color);
       border-color: #0f5a9b;
     }
   }

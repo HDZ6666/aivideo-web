@@ -15,7 +15,7 @@ const gjqsReload=function(){
     }
   }
 }
-const gjqsChartCreate=function($echart,id){
+const gjqsChartCreate=function($echart,id,themeColor='0052d9'){
   gjqsId=id;
   gjqsOption={
     tooltip: {
@@ -34,13 +34,13 @@ const gjqsChartCreate=function($echart,id){
                     y2: 1,
                     colorStops: [{
                         offset: 0,
-                        color: 'rgba(131, 210, 253,0)'
+                        color: 'rgba(255, 224, 144, 0)'
                     }, {
                         offset: 0.5,
-                        color: 'rgba(131, 210, 253,1)',
+                        color: 'rgba(255, 224, 144, 1)',
                     }, {
                         offset: 1,
-                        color: 'rgba(131, 210, 253,0)'
+                        color: 'rgba(255, 224, 144, 0)'
                     }],
                     global: false
                 }
@@ -62,7 +62,7 @@ const gjqsChartCreate=function($echart,id){
         axisLine:{
           show:true,  //这里的show用于设置是否显示y轴那一条线 默认为true
           lineStyle:{ //lineStyle里面写y轴那一条线的样式
-            color:'#0a79a6',
+            color:'#3F4F5E',
             width:1,    //轴线的粗细 我写的是2 最小为0，值为0的时候线隐藏
           }
         },
@@ -81,7 +81,7 @@ const gjqsChartCreate=function($echart,id){
             show: false
         },
         boundaryGap: false,
-        data: [],
+        data: ['2024-11-19','2024-11-20','2024-11-21'],
 
     }],
     yAxis: [{
@@ -100,7 +100,7 @@ const gjqsChartCreate=function($echart,id){
             }
         },
         axisLine: {
-            show: true,
+            show: false,
             lineStyle:{
               color:'#0a79a6'
             }
@@ -125,8 +125,8 @@ const gjqsChartCreate=function($echart,id){
             symbolSize: 0,
             lineStyle: {
                 normal: {
-                    color: "#02bfef",
-                    shadowColor: 'rgba(0, 0, 0, .3)',
+                    color: "#FFE090",
+                    shadowColor: 'rgba(255, 224, 144, .3)',
                     shadowBlur: 0,
                     shadowOffsetY: 0,
                     shadowOffsetX: 0,
@@ -140,10 +140,10 @@ const gjqsChartCreate=function($echart,id){
           //       }
           //   },
             itemStyle: {
-                color: "#02bfef",
-                borderColor: "#02bfef",
+                color: "#FFE090",
+                borderColor: "#FFE090",
                 borderWidth: 1,
-                shadowColor: 'rgba(0, 0, 0, .3)',
+                shadowColor: 'rgba(255, 224, 144, .3)',
                 shadowBlur: 0,
                 shadowOffsetY: 0,
                 shadowOffsetX: 0,
@@ -155,18 +155,18 @@ const gjqsChartCreate=function($echart,id){
                 normal: {
                     color: new $echart.graphic.LinearGradient(0, 0, 0, 1, [{
                             offset: 0,
-                            color: 'rgba(2, 191, 239,0.3)'
+                            color: 'rgba(255, 224, 144, .3)'
                         },
                         {
                             offset: 1,
-                            color: 'rgba(2, 191, 239,0)'
+                            color: 'rgba(255, 224, 144, 0)'
                         }
                     ], false),
                     shadowColor: 'rgba(2, 191, 239, 0.9)',
                     shadowBlur: 100
                 }
             },
-            data: []
+            data: [332,434,454]
         }
     ]
   };

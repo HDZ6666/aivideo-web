@@ -9,7 +9,7 @@
                 {{ info.deviceName }}
             </div>
             <div class="info-bottom">
-                <div style="display: flex;border-bottom: 1px dashed #274E86;">
+                <div style="display: flex;border-bottom: 1px dashed var(--dashed-color);">
                     <div class="info-item">告警时间：<span>{{ info.alarmTime }}</span></div>
                     <div class="info-item">状态：<span>{{ info.status==0?'未处理':'已处理' }}</span></div>
                 </div>
@@ -86,20 +86,22 @@ export default defineComponent({
     bottom: 0;
     z-index: 99998;
     padding: 0.1rem 0.1rem 0.1rem 0.1rem;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: var(--detail-dialog-bg-color);
     display: flex;
-    justify-content: center;
+    justify-content: center; 
     align-items: center;
     .box {
         background: url(../assets/imgs/warn_detail_bg.png);
         width: 5rem;
         height: 3.29rem;
         background-size: 100% 100%;
-        color: #fff;
+        // color: #fff;
+        color: var(--detail-dialog-box);
         padding: 0.3rem 0.2rem 0.2rem 0.2rem;
 
         .info-bottom {
-            background: #042656;
+            //background: #042656;
+            background: var(--info-bottom-color);
             width: 100%;
             padding: 0 0.05rem;
             .info-item {

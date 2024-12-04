@@ -7,7 +7,12 @@
       :reverse="true"
       :color="['#180e64', '#180e64']"
     />
-    <div class="center-title">监控驾驶舱</div>
+    <div class="center-title" style="display: flex;">
+      <img src="../../assets/logo.png" style="width: 100px" alt="">
+      <span>
+        监控驾驶舱
+      </span> 
+    </div>
     <div class="right-btn">
       <div class="backBtn">
         <dv-border-box-10>

@@ -2,6 +2,11 @@
   font-family: electronicFont;
   src: url('@/assets/css/electronicFont.ttf')
 }
+/* 优设标题黑 */
+@font-face {
+  font-family: ysbthFont;
+  src: url(@/assets/css/ysbthFont.ttf);
+}
 *{
   box-sizing:border-box;
   margin: 0;

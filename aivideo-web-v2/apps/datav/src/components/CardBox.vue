@@ -1,6 +1,7 @@
 <template>
-    <div class="box" :style="{height:height+'px'}">
-      <div class="title">
+    <div class="box" :style="[{height:height+'px'},boxDynameicStyle]">
+      <div class="title" :style="titleDynameicStyle">
+        <div class="icon" :style="iconDynameicStyle"></div>
         <div class="text">{{title}}</div>
         <div class="text-en"></div>
         <a class="text-more" @click="clickMore">
@@ -18,7 +19,9 @@
   
   </template>
   <script>
-  import { defineComponent } from "vue"
+  import { defineComponent ,ref,} from "vue"
+  import { mapGetters } from "vuex";
+  import { getImageUrl } from '@/utils/imageUrl.js'
   export default defineComponent({
       props: {
           title: {
@@ -36,17 +39,32 @@
           moreLink: {
             type: String,
             default: "javascript:;"
+          },
+      },
+      computed:{
+        ...mapGetters([ "mbData"]),
+      },
+      watch:{
+        mbData(newVal){
+          this.handleMbData(newVal)
+        }
+      },
+      data() {
+          return {
+            show: false,
+            boxDynameicStyle:{
+              
+            },
+            titleDynameicStyle:{
+              
+            },
+            iconDynameicStyle:{
+
+            }
           }
       },
-    data() {
-        return {
-          show: false
-        }
-    },
-      computed:{
-      },
-      setup() {
-          
+      setup(props) {
+         
       },
       activated() {
         
@@ -54,6 +72,29 @@
       methods: {
         clickMore() {
           this.$emit('more', true)
+        },
+        handleMbData(item){
+          if(item.cardBoxBase64){
+            const cardBoxBase64 = getImageUrl(item.cardBoxBase64)
+            this.boxDynameicStyle = {
+              background: `url(${cardBoxBase64}) no-repeat center`,
+              backgroundSize:"100% 100%"
+            }
+          }
+          if(item.cardTitleBase64){
+            const cardTitleBase64 = getImageUrl(item.cardTitleBase64)
+            this.titleDynameicStyle = {
+              background: `url(${cardTitleBase64}) no-repeat center`,
+              backgroundSize:"100% 100%"
+            }
+          }
+          if(item.boxIcon){
+            const boxIcon = getImageUrl(item.boxIcon)
+            this.iconDynameicStyle = {
+              background: `url(${boxIcon}) no-repeat center`,
+              backgroundSize:"100% 100%"
+            }
+          }
         }
       }
   })
@@ -80,7 +121,8 @@
       align-items: center;
       justify-content: space-between;
       .text {
-        color: #FFF;
+        //color: #FFF;
+        color: var(--text-title-color);
         text-shadow: 0px 0px 4px rgba(21, 142, 255, 0.70);
         font-family: YouSheBiaoTiHei;
         font-size: 0.11rem;
@@ -88,8 +130,8 @@
         font-weight: 400;
         line-height: normal;
       }
-      .text::before {
-        content: '';
+      .icon {
+        //content: '';
         position: absolute;
         width: 0.11rem;
         height: 0.14rem;
@@ -99,7 +141,8 @@
         background-size: 100% 100%;
       }
       .text-en {
-        color: #215A8E;
+        //color: #215A8E;
+        color: var(--text-en-color);
         font-family: YouSheBiaoTiHei;
         font-size: 0.08rem;
         font-style: normal;
@@ -107,7 +150,8 @@
         text-transform: uppercase;
       }
       .text-more {
-        color: #7CBFFF;
+        //color: #7CBFFF;
+        color: var(--text-more-color);
         font-family: "PingFang SC";
         font-size: 0.09rem;
         font-style: normal;
