@@ -10,8 +10,12 @@
         </div>
         <div class="content-main">
           <indicator-list></indicator-list>
-          <video-list-national v-if="playerAction==='national'"></video-list-national>
-          <video-list-proxy v-if="playerAction==='proxy'"></video-list-proxy>
+          <video-list-national
+            v-if="
+              playerAction === 'national' || playerAction === 'nationalCockpit'
+            "
+          ></video-list-national>
+          <video-list-proxy v-if="playerAction === 'proxy'"></video-list-proxy>
           <!-- <dv-decoration-3 style="width:300px;height:50px;" />
           <alarm-carousel></alarm-carousel>-->
         </div>
@@ -23,12 +27,30 @@
         </div>
       </div>
     </div>
-    <national-video-dialog ref="national" v-if="playerAction==='national'"></national-video-dialog>
-    <nationalVideoDialogCockpit ref="nationalCockpit" v-if="playerAction==='nationalCockpit'"></nationalVideoDialogCockpit>
-    <proxy-video-dialog ref="proxy" v-if="playerAction==='proxy'"></proxy-video-dialog>
-    <national-video-dialog ref="nationalVideoDialog" v-if="playerAction==='national'"></national-video-dialog>
-    <alarm-dialog-national ref="alarmDialog" v-if="aiType==='nationalAI'"></alarm-dialog-national>
-    <alarm-dialog-proxy ref="alarmDialog" v-if="aiType==='proxyAI'"></alarm-dialog-proxy>
+    <national-video-dialog
+      ref="national"
+      v-if="playerAction === 'national'"
+    ></national-video-dialog>
+    <nationalVideoDialogCockpit
+      ref="nationalCockpit"
+      v-if="playerAction === 'nationalCockpit'"
+    ></nationalVideoDialogCockpit>
+    <proxy-video-dialog
+      ref="proxy"
+      v-if="playerAction === 'proxy'"
+    ></proxy-video-dialog>
+    <national-video-dialog
+      ref="nationalVideoDialog"
+      v-if="playerAction === 'national'"
+    ></national-video-dialog>
+    <alarm-dialog-national
+      ref="alarmDialog"
+      v-if="aiType === 'nationalAI'"
+    ></alarm-dialog-national>
+    <alarm-dialog-proxy
+      ref="alarmDialog"
+      v-if="aiType === 'proxyAI'"
+    ></alarm-dialog-proxy>
   </div>
 </template>
 
@@ -110,7 +132,7 @@ export default {
 .container_bg {
   width: 100%;
   height: 100%;
-  background-image: url("/static/images/xinxidaxia.jpeg");
+  background-image: url("../assets/xinxidaxia.jpeg");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   position: relative;

@@ -4,7 +4,7 @@ import dataV from "@jiaminghi/data-view";
 import axios from "axios";
 import ElementUI, { Message, Notification } from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
-import VCharts from "v-charts-v2";
+import VCharts from "v-charts";
 import Vue from "vue";
 import VueCookies from "vue-cookies";
 import App from "./App.vue";
@@ -97,9 +97,6 @@ router.beforeEach((to, from, next) => {
     next();
     return;
   }
-  console.log(store.dispatch('GetInfo').catch(err => {
-    
-  }))
   // debugger
   // store.dispatch('GetInfo').then(() => {
   //   console.log(store.dispatch('GetInfo'))
@@ -114,7 +111,6 @@ router.beforeEach((to, from, next) => {
   //     //   next({ path: '/' })
   //     // })
   //   })
-  console.log(store.getters.roles)
   // debugger
   if (store.getters.roles.length === 0) {
     // 判断当前用户是否已拉取完user_info信息
@@ -141,7 +137,7 @@ router.beforeEach((to, from, next) => {
         // debugger
         store.commit('SET_SIDELIST', sideList);
         console.log(router.getRoutes())
-        
+
         next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
       })
     }).catch(err => {
@@ -152,8 +148,8 @@ router.beforeEach((to, from, next) => {
       })
   }
   if (userService.getToken() == null) {
-    
-    if (to.path === "/videoCockpit" && to.query && to.query.token) {
+
+    if (to.path === "/videoCockpitV1" && to.query && to.query.token) {
       axios({
         method: "post",
         url: "/api/user/oneClickLogin",

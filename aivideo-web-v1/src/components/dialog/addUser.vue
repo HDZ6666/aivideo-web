@@ -44,7 +44,6 @@
 </template>
 
 <script>
-
 export default {
   name: "addUser",
   props: {},
@@ -145,7 +144,7 @@ export default {
         debugger
         if (res.data.code === 0) {
           this.options=res.data.data.list.filter((item)=>{
-            return item.status == 0 
+            return item.status == 0
           })
         }
       }).catch((error) => {

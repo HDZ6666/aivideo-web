@@ -6,7 +6,7 @@
       class="iframe"
       ref="frameRef"
       frameborder="no"
-      border="0"
+      :border="0"
       marginwidth="0"
       marginheight="0"
       allowtransparency="yes"
@@ -18,12 +18,22 @@
 <script>
 export default {
   name: "FramePage",
-  props: ["frameSrc"],
+  props: {
+    frameSrc: {
+      type: String,
+      default: ""
+    },
+    fullScan: {
+      type: Boolean,
+      default: false
+    }
+  },
   computed: {
     getWrapStyle() {
       return {
         width: "100%",
-        height: `${window.innerHeight - 100}px`
+        height: this.fullScan ? "100%" : `${window.innerHeight - 100}px`,
+        fontSize: 0
       };
     }
   },
@@ -42,7 +52,9 @@ export default {
     },
     hideLoading() {
       this.loading = false;
-      this.calcHeight();
+      if (!this.fullScan) {
+        this.calcHeight();
+      }
     }
   }
 };

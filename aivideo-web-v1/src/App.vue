@@ -5,7 +5,6 @@
 </template>
 
 <script>
-
 // import autofit from "autofit.js";
 export default {
   name: "app",
@@ -23,6 +22,10 @@ export default {
     };
   },
   created() {
+    const alarmSwitchStatus = localStorage.getItem("alarmSwitchStatus");
+    if (alarmSwitchStatus === null) {
+      localStorage.setItem("alarmSwitchStatus", true);
+    }
     // if (userService.getToken() == null){
     //   try {
     //     if (this.excludeLoginCheck && this.excludeLoginCheck.length > 0) {

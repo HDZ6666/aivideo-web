@@ -16,7 +16,7 @@
       <div class="leftchoose">
         <el-card class="box-card">
         <div v-for="item in sideList" :key="$route.path+item.name" class="box-card-text box-card-item">
-          <span :style="{color: $route.path==item.url?'#1890FF':'',cursor:'pointer'}" @click="$route.path!=item.url&&$router.push(item.url)">{{item.name }}</span> 
+          <span :style="{color: $route.path==item.url?'#1890FF':'',cursor:'pointer'}" @click="$route.path!=item.url&&$router.push(item.url)">{{item.name }}</span>
         </div>
       </el-card>
       </div>
@@ -38,7 +38,7 @@
       </el-table-column>
     </el-table>
     </div>
-    
+
     <changePasswordForAdmin ref="changePasswordForAdmin"></changePasswordForAdmin>
     <changePushKey ref="changePushKey"></changePushKey>
     <addUser ref="addUser"></addUser>
@@ -265,7 +265,7 @@ export default {
   width: calc(10% - 20px);
   margin-right: 20px;
   min-height: 100%;
-  
+
 }
 .box-card{
     height: 100%;

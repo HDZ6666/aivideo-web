@@ -117,6 +117,7 @@ export default {
     };
   },
   mounted() {
+    this.changeAI(this.alarmNotify);
     EventBus.$on("ai", this.changeAI);
     EventBus.$on("openVideoDialog", this.openVideoDialog);
   },

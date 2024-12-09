@@ -7364,7 +7364,7 @@ var ZLMRTCClient = (function (exports) {
 	          let ret = response.data; //JSON.parse(response.data);
 
 	          if (ret.code != 0) {
-	            // mean failed for offer/anwser exchange 
+	            // mean failed for offer/anwser exchange
 	            this.dispatch(Events$1.WEBRTC_OFFER_ANWSER_EXCHANGE_FAILED, ret);
 	            return;
 	          }
@@ -7478,7 +7478,7 @@ var ZLMRTCClient = (function (exports) {
 	            let ret = response.data; //JSON.parse(response.data);
 
 	            if (ret.code != 0) {
-	              // mean failed for offer/anwser exchange 
+	              // mean failed for offer/anwser exchange
 	              this.dispatch(Events$1.WEBRTC_OFFER_ANWSER_EXCHANGE_FAILED, ret);
 	              return;
 	            }

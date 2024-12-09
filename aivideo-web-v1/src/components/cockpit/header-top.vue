@@ -1,18 +1,19 @@
 <template>
   <div id="top-header">
-    <dv-decoration-8 class="header-left-decoration" :color="['#180e64', '#180e64']" />
-    <dv-decoration-5 class="header-center-decoration" :color="['#180e64', '#180e64']" />
+    <dv-decoration-8
+      class="header-left-decoration"
+      :color="['#180e64', '#180e64']"
+    />
+    <dv-decoration-5
+      class="header-center-decoration"
+      :color="['#180e64', '#180e64']"
+    />
     <dv-decoration-8
       class="header-right-decoration"
       :reverse="true"
       :color="['#180e64', '#180e64']"
     />
-    <div class="center-title" style="display: flex;">
-      <img src="../../assets/logo.png" style="width: 100px" alt="">
-      <span>
-        监控驾驶舱
-      </span> 
-    </div>
+    <div class="center-title">监控驾驶舱</div>
     <div class="right-btn">
       <div class="backBtn">
         <dv-border-box-10>
@@ -26,29 +27,29 @@
           inactive-color="#ff4949"
           @change="handleAcceptAlarm"
         ></el-switch>
-        <span class="openAlarmText">{{alarmNotify?'开启告警':'关闭告警'}}</span>
+        <span class="openAlarmText">{{
+          alarmNotify ? "开启告警" : "关闭告警"
+        }}</span>
       </div>
     </div>
   </div>
 </template>
 
-  <script>
+<script>
 import { mixin } from "../../utils/mixin";
 import EventBus from "../../utils/eventBus";
 export default {
   name: "header-top",
   mixins: [mixin],
   data() {
-    return {
-      alarmNotify: false
-    };
+    return {};
   },
   methods: {
     back() {
       this.$router.push("/");
     },
     handleAcceptAlarm(value) {
-      // localStorage.setItem("alarmSwitchStatus", this.alarmNotify);
+      localStorage.setItem("alarmSwitchStatus", this.alarmNotify);
       EventBus.$emit("ai", value);
       this.$message.success(
         `${this.alarmNotify ? "开启" : "关闭"}订阅告警成功`
@@ -58,7 +59,7 @@ export default {
 };
 </script>
 
-  <style>
+<style>
 #top-header {
   position: relative;
   width: 100%;

@@ -10,7 +10,11 @@
             </span>
           </div>
           <div class="videoList-control-btn">
-            <el-select v-model="splitNum" @change="changeSplitNum" style="width: 150px;">
+            <el-select
+              v-model="splitNum"
+              @change="changeSplitNum"
+              style="width: 150px;"
+            >
               <el-option :value="4" label="4宫格"></el-option>
               <el-option :value="9" label="9宫格"></el-option>
               <el-option :value="12" label="12宫格"></el-option>
@@ -20,15 +24,27 @@
               type="primary"
               style="background: #6c7797;margin-left:10px"
               @click="screenAction('prev')"
-            >上一屏</el-button>
-            <el-button type="primary" style="background: #6c7797;" @click="screenAction('next')">下一屏</el-button>
-            <el-button type="danger" @click="screenAction('stop')" v-if="isAutoScreen">停止轮播</el-button>
+              >上一屏</el-button
+            >
+            <el-button
+              type="primary"
+              style="background: #6c7797;"
+              @click="screenAction('next')"
+              >下一屏</el-button
+            >
+            <el-button
+              type="danger"
+              @click="screenAction('stop')"
+              v-if="isAutoScreen"
+              >停止轮播</el-button
+            >
             <el-button
               type="primary"
               style="background: #475998;"
               @click="screenAction('auto')"
               v-else
-            >自动轮播</el-button>
+              >自动轮播</el-button
+            >
           </div>
         </div>
       </el-col>
@@ -36,12 +52,15 @@
     <div class="player-list">
       <el-row>
         <el-col
-          :span="24/colSpan"
-          v-for="(player,index) in playList"
+          :span="24 / colSpan"
+          v-for="(player, index) in playList"
           :key="`${splitNum}宫格_${index}`"
           class="palyer-box"
         >
-          <div class="video-out-container" :style="{width:`${videoWidthPX}px`}">
+          <div
+            class="video-out-container"
+            :style="{ width: `${videoWidthPX}px` }"
+          >
             <div class="video-inner-container">
               <dv-border-box-12 class="player-border">
                 <div
@@ -57,7 +76,7 @@
                     :video-title="player.name"
                     :videoUrl="player.videoUrl"
                     :hasaudio="false"
-                    :alt="player.error?'视频加载失败':'无信号'"
+                    :alt="player.error ? '视频加载失败' : '无播放资源'"
                     live
                     muted
                     aspect="fullscreen"
@@ -65,8 +84,8 @@
                     hide-big-play-button
                     hide-stretch-button
                     :controls="false"
-                    @play="onPlayerPlay($event,player,index)"
-                    @error="onPlayerError($event,player,index)"
+                    @play="onPlayerPlay($event, player, index)"
+                    @error="onPlayerError($event, player, index)"
                   ></LivePlayer>
                 </div>
                 <div class="video-box" v-if="playerType === 'jessibuca'">
@@ -77,6 +96,7 @@
                     hideControls
                     screen
                   />
+                  <div v-else>无播放资源</div>
                 </div>
               </dv-border-box-12>
             </div>
@@ -176,12 +196,18 @@ export default {
           if (res.data.code === 0) {
             const data = res.data.data;
             const list = data.list.map(item => {
+              let videoUrl;
+              if (location.protocol === "https:") {
+                videoUrl = item.aiStreamInfo.WSS_FLV;
+              } else {
+                videoUrl = item.aiStreamInfo.WS_FLV;
+              }
               return {
                 name: item.device_name,
                 id: `${item.deviceId}_${item.channelId}`,
                 deviceId: item.deviceId,
                 channelId: item.channelId,
-                videoUrl: item.aiStreamInfo ? item.aiStreamInfo.WS_FLV : "",
+                videoUrl: videoUrl || "",
                 getVideoUrl: false,
                 loading: false,
                 error: false
@@ -190,9 +216,9 @@ export default {
             this.pages = data.pages;
             this.total = data.total;
             this.videoLists = [...this.videoLists, ...list];
+            console.log(this.videoLists);
             if (_page === 1 && this.videoLists.length > 0) {
               this.nextScreen(); //首屏自动加载
-              console.log("首屏自动加载");
             }
             // 循环获取设备列表
             this.getDeviceList(_page + 1);
@@ -398,6 +424,9 @@ export default {
 }
 
 .video-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   border-radius: 10px;

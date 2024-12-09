@@ -13,7 +13,7 @@
     <right-panel>
       <Settings></Settings>
     </right-panel>
-    
+
   </el-container>
 </template>
 
@@ -46,7 +46,7 @@ export default {
       console.log("enterFullScreen", new Date());
       this.fullscreen = true
     },
-    
+
     exitFullScreen() {
       console.log("exitFullScreen", new Date());
       this.fullscreen = false

@@ -2,31 +2,6 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Layout from "../layout/index.vue";
 
-// import console from "../components/console.vue";
-// import deviceList from "../components/DeviceList.vue";
-// import channelList from "../components/channelList.vue";
-// import gbRecordDetail from "../components/GBRecordDetail.vue";
-// import pushVideoList from "../components/PushVideoList.vue";
-// import streamProxyList from "../components/StreamProxyList.vue";
-// import map from "../components/map.vue";
-// import parentPlatformList from "../components/ParentPlatformList.vue";
-// import cloudRecord from "../components/CloudRecord.vue";
-// import cloudRecordDetail from "../components/CloudRecordDetail.vue";
-// import mediaServerManger from "../components/MediaServerManger.vue";
-// import web from "../components/setting/Web.vue";
-// import sip from "../components/setting/Sip.vue";
-// import media from "../components/setting/Media.vue";
-// import live from "../components/live.vue";
-// import deviceTree from "../components/common/DeviceTree.vue";
-// import userManager from "../components/UserManager.vue";
-// import alarmList from "../components/alarmList.vue";
-// import fence from "../components/fence.vue";
-
-// import wasmPlayer from "../components/common/jessibuca.vue";
-// import rtcPlayer from "../components/dialog/rtcPlayer.vue";
-// import videoCockpit from "../components/videoCockpit.vue";
-// import deviceGroup from "../components/DeviceGroup.vue";
-
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err);
@@ -36,21 +11,20 @@ export const constantRoutes = [
   {
     path: "/login",
     name: "登录",
-    component:() => import("../components/Login.vue")
+    component: () => import("../components/Login.vue")
   },
   {
     path: "/",
     name: "home",
     component: Layout,
-    redirect: "/live",
+    redirect: "/live"
   },
   {
     path: "/roleManager",
     name: "roleManager",
     component: () => import("../components/roleManager1.vue") // roleManager
   },
-
-]
+];
 // 动态路由
 export const dynamicRoutes = [
   {
@@ -163,35 +137,61 @@ export const dynamicRoutes = [
       {
         path: "/alarmList",
         name: "alarmList",
-        component: () => import("../components/alarmList.vue") // alarmList
+        component: () => import("../components/alarmList.vue") // 告警列表
       },
       {
         path: "/fence",
         name: "fence",
-        component: () => import("../components/fence.vue") // fence
+        component: () => import("../components/fence.vue") // 算法配置
+      },
+      {
+        path: "/aiView",
+        name: "aiView",
+        component: () => import("../components/aiView.vue") // ai视界
       },
       {
         path: "/deviceGroup",
         name: "deviceGroup",
-        component: () => import("../components/DeviceGroup.vue") // deviceGroup
+        component: () => import("../components/DeviceGroup.vue") // 分组
       },
-      ,
-        {
-          path: "/v2/alarm",
-          name: "alarmV2",
-          component: () => import("../components/v2/alarmV2.vue") // alarmV2
-        },
-        {
-          path: "/v2/datav",
-          name: "datavV2",
-          component: () => import("../components/v2/datavV2.vue") // datavV2
-        },
+      {
+        path: "/deviceInspection",
+        name: "deviceInspection",
+        component: () => import("../components/DeviceInspection.vue") // 巡检
+      },
+      {
+        path: "/patrol",
+        name: "patrol",
+        component: () => import("../components/patrol.vue"), // 巡逻
+        children: [
+          {
+            path: "",
+            name: "patrolManager",
+            component: () => import("../components/patrolManager.vue") // 巡逻任务
+          },
+          {
+            path: "/patrolReport",
+            name: "patrolReport",
+            component: () => import("../components/patrolReport.vue") // 巡逻报告
+          }
+        ]
+      },
+      {
+        path: "/v2/alarm",
+        name: "alarmV2",
+        component: () => import("../components/v2/alarmV2.vue") // alarmV2
+      },
+      {
+        path: "/v2/datav",
+        name: "datavV2",
+        component: () => import("../components/v2/datavV2.vue") // datavV2
+      }
     ]
   },
   {
     path: "/login",
     name: "登录",
-    component:() => import("../components/Login.vue")
+    component: () => import("../components/Login.vue")
   },
   {
     path: "/test",
@@ -208,15 +208,19 @@ export const dynamicRoutes = [
     name: "rtcPlayer",
     component: () => import("../components/dialog/rtcPlayer.vue") // rtcPlayer
   },
-
   {
-    path: "/videoCockpit",
+    path: "/videoCockpitV1",
     name: "驾驶舱",
-    component: () => import("../components/videoCockpit.vue") // videoCockpit
+    component: () => import("../components/videoCockpit.vue") // 大屏v1
+  },
+  {
+    path: "/videoCockpitV2",
+    name: "驾驶舱",
+    component: () => import("../components/dataV.vue") // 大屏v2
   }
-]
+];
 Vue.use(VueRouter);
 export default new VueRouter({
   mode: "hash",
-  routes: [...constantRoutes,...dynamicRoutes]
+  routes: [...constantRoutes, ...dynamicRoutes]
 });

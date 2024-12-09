@@ -96,7 +96,6 @@ const user = {
     //   })
     // },
     LogOut({commit, state }){
-      debugger
       commit('SET_ROLES', [])
       commit('SET_PERMISSIONS', [])
     }

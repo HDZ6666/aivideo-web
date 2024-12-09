@@ -46,9 +46,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     }
   },
   plugins: [
-    new BundleAnalyzerPlugin({
-      openAnalyzer:false
-    }),
+    new BundleAnalyzerPlugin(),
     new webpack.DefinePlugin({
       'process.env': require('../config/dev.env')
     }),

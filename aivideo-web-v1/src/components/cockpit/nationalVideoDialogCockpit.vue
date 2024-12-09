@@ -7,21 +7,27 @@
       <div class="close-box" @click="close">
         <i class="el-icon-close"></i>
       </div>
-      <dv-border-box-11 class="dialog-border" title="监控详情" backgroundColor="rgba(67,79,103,1)">
+      <dv-border-box-11
+        class="dialog-border"
+        title="监控详情"
+        backgroundColor="rgba(67,79,103,1)"
+      >
         <div
           class="video-box"
           v-loading="player.loading"
           :loading.sync="player.loading"
           element-loading-text="加载中..."
           element-loading-background="#000"
-          v-if="playerType==='liveplayer'"
+          v-if="playerType === 'liveplayer'"
         >
-          <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
+          <div class="video-title" v-if="player.name && !player.loading">
+            {{ player.name }}
+          </div>
           <LivePlayer
             ref="livePlayer"
             :videoUrl="player.videoUrl"
             :hasaudio="false"
-            :alt="player.error?'视频加载失败':'无信号'"
+            :alt="player.error ? '视频加载失败' : '无信号'"
             live
             stretch
             aspect="fullscreen"
@@ -30,8 +36,10 @@
             @error="onPlayerError($event)"
           ></LivePlayer>
         </div>
-        <div class="video-box" v-if="playerType==='jessibuca'">
-          <div class="video-title" v-if="player.name && !player.loading">{{player.name}}</div>
+        <div class="video-box" v-if="playerType === 'jessibuca'">
+          <div class="video-title" v-if="player.name && !player.loading">
+            {{ player.name }}
+          </div>
           <player ref="player" :videoUrl="player.videoUrl" screen autoplay />
         </div>
       </dv-border-box-11>
@@ -43,6 +51,7 @@
 import LivePlayer from "@liveqing/liveplayer";
 import player from "../common/jessibuca.vue";
 import { mixin } from "../../utils/mixin";
+import EventBus from "../../utils/eventBus";
 export default {
   name: "videoDialog",
   mixins: [mixin],
@@ -62,11 +71,18 @@ export default {
   methods: {
     open: function(data) {
       if (data.userData && data.userData.aiStreamInfo) {
-        const url = data.userData.aiStreamInfo.WS_FLV;
+        EventBus.$emit("openVideoDialog", true);
+        let videoUrl;
+        if (location.protocol === "https:") {
+          videoUrl = data.userData.aiStreamInfo.WSS_FLV;
+        } else {
+          videoUrl = data.userData.aiStreamInfo.WS_FLV;
+        }
+        // const url = data.userData.aiStreamInfo.WS_FLV;
         this.showDetail = true;
         this.player = {
           name: data.name,
-          videoUrl: url,
+          videoUrl: videoUrl,
           loading: true,
           error: false
         };
@@ -81,6 +97,7 @@ export default {
         error: false
       };
       this.showDetail = false;
+      EventBus.$emit("openVideoDialog", false);
     },
     // 播放器加载完成
     onPlayerPlay: function(e) {

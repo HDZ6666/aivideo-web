@@ -1,6 +1,0 @@
-mian.js
-router/index.js
-package.json
-Login.vue
-addUser.vue
-UiHeader.vue
