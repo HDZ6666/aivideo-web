@@ -4,8 +4,14 @@
       <div class="device_list">
         <div class="list">
           <div class="rows">
-            <t-tree ref="tree" value-mode="all" :data="bind.deviceTree" :activable="true" @active="changeDeviceTree"
-              @expand="deviceTreeExpand">
+            <t-tree
+              ref="tree"
+              value-mode="all"
+              :data="bind.deviceTree"
+              :activable="true"
+              @active="changeDeviceTree"
+              @expand="deviceTreeExpand"
+            >
               <template #label="{ node }">
                 <span @dblclick.stop="() => searchDeviceTree(node)">{{ node.label }}</span>
               </template>
@@ -16,28 +22,28 @@
     </div>
     <div v-if="!cameraFullscreen" class="right">
       <card-box title="告警统计" :height="rightBox1Height" class="box" @more="toggleWarnDialog">
-        <div class="box_content" style="flex-direction: column;">
+        <div class="box_content" style="flex-direction: column">
           <div class="warn_stat_box" v-for="(item, index) in bind.alarmStatistics" :key="index">
             <div class="warn_stat_title">
-              <img src="../assets/imgs/warnstat1.png" alt="">
-              <span class="title title1">{{ item['alarmTypeName'] }}</span>
+              <img src="../assets/imgs/warnstat1.png" alt="" />
+              <span class="title title1">{{ item["alarmTypeName"] }}</span>
             </div>
             <div class="warn_stat">
               <div class="warn_stat_content">
                 <div class="warn_frame">
-                  <p>{{ item['curDateAlarmCount'] }}</p>
+                  <p>{{ item["curDateAlarmCount"] }}</p>
                   <span>当日告警数</span>
                 </div>
                 <div class="warn_frame">
-                  <p style="color:var(--td-untreated-color)">{{ item['curDateAlarmNoHandleCount'] }}</p>
+                  <p style="color: var(--td-untreated-color)">{{ item["curDateAlarmNoHandleCount"] }}</p>
                   <span>当日未处理</span>
                 </div>
                 <div class="warn_frame">
-                  <p>{{ item['sevenDayAlarmCount'] }}</p>
+                  <p>{{ item["sevenDayAlarmCount"] }}</p>
                   <span>近7天告警数</span>
                 </div>
                 <div class="warn_frame">
-                  <p>{{ item['sevenDayAlarmNoHandleCount'] }}</p>
+                  <p>{{ item["sevenDayAlarmNoHandleCount"] }}</p>
                   <span>近7天未处理</span>
                 </div>
               </div>
@@ -49,28 +55,31 @@
         <div class="box_content">
           <div class="camera-warn">
             <div class="camera-item" v-for="(item, index) in bind.warnList" :key="index" @click="cameraDetail(item)">
-              <img :src="item.alarmImg" alt="">
+              <img :src="item.alarmImg" alt="" />
               <div class="camera-addr">【{{ item.alarmTypeName }}】{{ item.deviceName }}</div>
             </div>
           </div>
         </div>
       </card-box>
       <card-box title="告警趋势" more="" :height="rightBox2Height" class="box">
-        <div style="color:var(--chart-title-color);position: absolute;">告警数量：次</div>
+        <div style="color: var(--chart-title-color); position: absolute">告警数量：次</div>
         <div class="box_content">
           <div id="chartGJQS" class="chart"></div>
         </div>
       </card-box>
     </div>
-    <div :class="{ 'center': true, 'center-fullscreen': cameraFullscreen }">
+    <div :class="{ center: true, 'center-fullscreen': cameraFullscreen }">
       <div v-if="!cameraFullscreen" class="nav">
         <div class="item" v-for="item in cameraFullscreenList" :key="item.imgaeUrl">
           <div class="icon"><img :src="item.imgaeUrl" /></div>
           <div class="text">
             <div class="value">
-              <span class="number" :style="item.number=='activedAlarm'?'color:var(--td-untreated-color)':''">{{ bind.stat[item.number] }}</span><span class="unit">个</span>
+              <span class="number" :style="item.number == 'activedAlarm' ? 'color:var(--td-untreated-color)' : ''">{{
+                bind.stat[item.number]
+              }}</span
+              ><span class="unit">个</span>
             </div>
-            <div class="name">{{item.name}}</div>
+            <div class="name">{{ item.name }}</div>
           </div>
         </div>
         <!-- <div class="item">
@@ -102,15 +111,22 @@
         </div> -->
       </div>
       <camera-box title="监控视频" @changePageSize="changePageSize" @changeFullscreen="changeFullscreen">
-        <template #more>
-        </template>
+        <template #more> </template>
         <template #content>
           <div class="videos">
             <div class="row">
               <div
-                :class="{ col: true, col2: pager.pageSize == 4, col3: pager.pageSize == 9, col4: pager.pageSize == 12, col5: pager.pageSize == 16 }"
-                v-for="(row, index) in bind.cameraRows" :key="index">
-                <vol-player :url="row.streamInfo.hls.url" :autoplay="true" @click="selectVideo($event)"></vol-player>
+                :class="{
+                  col: true,
+                  col2: pager.pageSize == 4,
+                  col3: pager.pageSize == 9,
+                  col4: pager.pageSize == 12,
+                  col5: pager.pageSize == 16,
+                }"
+                v-for="(row, index) in bind.cameraRows"
+                :key="row.id"
+              >
+                <vol-player :url="row.videoUrl" :autoplay="true" @click="selectVideo($event)"></vol-player>
                 <div class="video-name">{{ row.name }}</div>
               </div>
             </div>
@@ -128,7 +144,7 @@
 
     <t-dialog v-model:visible="warnDialog.show" width="5rem" class="warnDialog">
       <div class="content">
-        <img src="@/assets/imgs/close.png" class="close" @click="warnDialog.show = false">
+        <img src="@/assets/imgs/close.png" class="close" @click="warnDialog.show = false" />
         <div class="title">{{ warnDialog.data.alarmTypeName }}</div>
         <div class="body">
           <div class="lf">
@@ -142,19 +158,24 @@
             <div>设备名称：{{ warnDialog.data.deviceName }}</div>
             <div>告警ID：{{ warnDialog.data.alarmId }}</div>
             <div>置信度：{{ warnDialog.data.alarmPriority }}</div>
-            <div>处理情况： <t-tag theme="warning" v-if="warnDialog.data.status == 0">未处理</t-tag><t-tag theme="success"
-                v-else>已处理</t-tag></div>
-            <div>通知人员：</div>
-            <div class="buttons">
-
+            <div>
+              处理情况： <t-tag theme="warning" v-if="warnDialog.data.status == 0">未处理</t-tag
+              ><t-tag theme="success" v-else>已处理</t-tag>
             </div>
+            <div>通知人员：</div>
+            <div class="buttons"></div>
           </div>
         </div>
       </div>
     </t-dialog>
     <!--查看视频弹出框-->
-    <t-dialog width="5rem" class="videoDialog" :header="videoDialog.title" v-model:visible="videoDialog.show"
-      @closed="videoDialogClosed">
+    <t-dialog
+      width="5rem"
+      class="videoDialog"
+      :header="videoDialog.title"
+      v-model:visible="videoDialog.show"
+      @closed="videoDialogClosed"
+    >
       <div class="content">
         <vol-player ref="videoPlayer" :url="videoDialog.url" :poster="videoDialog.poster"></vol-player>
       </div>
@@ -170,33 +191,33 @@
   </div>
 </template>
 <script>
-import $ from 'jquery';
-import SwiperCore, { Autoplay, Pagination, Scrollbar } from 'swiper';
-import 'swiper/components/pagination/pagination.min.css';
-import 'swiper/components/scrollbar/scrollbar.min.css';
-import 'swiper/swiper-bundle.css';
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import sound from '../assets/alert.mp3';
+import $ from "jquery";
+import SwiperCore, { Autoplay, Pagination, Scrollbar } from "swiper";
+import "swiper/components/pagination/pagination.min.css";
+import "swiper/components/scrollbar/scrollbar.min.css";
+import "swiper/swiper-bundle.css";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import sound from "../assets/alert.mp3";
 
 import { defineComponent } from "vue";
 import { Vue3SeamlessScroll } from "vue3-seamless-scroll";
 import VolBox from "./box.vue";
-import CardBox from "../components/CardBox.vue"
-import WarnBoxGrid from "../components/WarnBoxGrid.vue"
-import CameraBox from "../components/CameraBox.vue"
+import CardBox from "../components/CardBox.vue";
+import WarnBoxGrid from "../components/WarnBoxGrid.vue";
+import CameraBox from "../components/CameraBox.vue";
 import VolPlayer from "./livePlayer.vue";
-import WarnBox from '../components/WarnBox.vue';
-import WarnDetail from '../components/WarnDetail.vue';
+import WarnBox from "../components/WarnBox.vue";
+import WarnDetail from "../components/WarnDetail.vue";
 import { mapGetters } from "vuex";
-import { gjqsChartCreate, gjqsDestroy, gjqsOption, gjqsReload, gjqsResize } from './monitor/chartGJQS.js';
+import { gjqsChartCreate, gjqsDestroy, gjqsOption, gjqsReload, gjqsResize } from "./monitor/chartGJQS.js";
 import device_total from "@/assets/imgs/device_total.png";
 import device_online from "@/assets/imgs/device_online.png";
 import warn_todo from "@/assets/imgs/warn_todo.png";
-import warn_total from "@/assets/imgs/warn_total.png"
-import { getImageUrl } from "@/utils/imageUrl.js"
-SwiperCore.use([Scrollbar, Pagination, Autoplay])
+import warn_total from "@/assets/imgs/warn_total.png";
+import { getImageUrl } from "@/utils/imageUrl.js";
+SwiperCore.use([Scrollbar, Pagination, Autoplay]);
 
-import { getApiClient } from '@aivideo/rest';
+import { getApiClient } from "@aivideo/rest";
 export default defineComponent({
   components: {
     Swiper,
@@ -207,14 +228,14 @@ export default defineComponent({
     WarnBox,
     WarnBoxGrid,
     WarnDetail,
-    'vol-box': VolBox,
-    'vol-player': VolPlayer
+    "vol-box": VolBox,
+    "vol-player": VolPlayer,
   },
   props: {
     alarmActived: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -222,151 +243,156 @@ export default defineComponent({
       leftBox1Height: 0,
       rightBox1Height: 0,
       rightBox2Height: 0,
-      deviceSelected: '全部设备',
+      deviceSelected: "全部设备",
       cameraFullscreen: false,
       warnDialogShow: false,
       warngridDialogShow: false,
-      pageSize: '4',
-      chart: {
-      },
+      pageSize: "4",
+      chart: {},
       pager: {
         pageIndex: 1,
         pageSize: 4,
-        totalPage: 20
+        totalPage: 20,
       },
       warnDialog: {
         show: false,
-        data: {}
+        data: {},
       },
       videoDialog: {
         show: false,
-        title: '',
-        url: '',
-        poster: ''
+        title: "",
+        url: "",
+        poster: "",
       },
       bind: {
         stat: {
           allDev: 0,
           onlineDev: 0,
           allAlarm: 0,
-          activedAlarm: 0
+          activedAlarm: 0,
         },
         info: {
           channel: {
             online: 0,
-            total: 0
+            total: 0,
           },
           device: {
             online: 0,
-            total: 0
+            total: 0,
           },
           proxy: {
             online: 0,
-            total: 0
+            total: 0,
           },
           push: {
             online: 0,
-            total: 0
-          }
+            total: 0,
+          },
         },
-        warnList: [{
-          alarmTypeName:122,
-          deviceName:212
-        }],
+        warnList: [
+          {
+            alarmTypeName: 122,
+            deviceName: 212,
+          },
+        ],
         deviceData: [],
         deviceTree: [
-          {id:'1',label:'全部设备',value:'全部设备',children:[{id:'1_2',label:'全部设备1',value:'全部设备1'}]},
-          {id:'2',label:'数字大屏',value:'数字大屏'},
-          {id:'3',label:'高新区',value:'高新区'},
-          {id:'4',label:'三水区',value:'三水区'},
-          {id:'5',label:'禅城区',value:'禅城区'},
-          {id:'6',label:'南海区',value:'南海区'},
-          {id:'7',label:'顺德区',value:'顺德区'}
+          { id: "1", label: "全部设备", value: "全部设备", children: [{ id: "1_2", label: "全部设备1", value: "全部设备1" }] },
+          { id: "2", label: "数字大屏", value: "数字大屏" },
+          { id: "3", label: "高新区", value: "高新区" },
+          { id: "4", label: "三水区", value: "三水区" },
+          { id: "5", label: "禅城区", value: "禅城区" },
+          { id: "6", label: "南海区", value: "南海区" },
+          { id: "7", label: "顺德区", value: "顺德区" },
         ],
         cameraList: [],
-        cameraRows: [{
-          name:"模拟数据",
-          streamInfo:{
-            hls:{
-              url:""
-            }
-          }
-        }],
-        alarmStatistics: [{
-          alarmTypeName:"烟雾烟火",
-          curDateAlarmCount:11,
-          curDateAlarmNoHandleCount:12,
-          sevenDayAlarmCount:13,
-          sevenDayAlarmNoHandleCount:14
-        },{
-          alarmTypeName:"通道占用",
-          curDateAlarmCount:11,
-          curDateAlarmNoHandleCount:12,
-          sevenDayAlarmCount:13,
-          sevenDayAlarmNoHandleCount:14
-        }],
+        cameraRows: [
+          {
+            name: "模拟数据",
+            streamInfo: {
+              hls: {
+                url: "",
+              },
+            },
+          },
+        ],
+        alarmStatistics: [
+          {
+            alarmTypeName: "烟雾烟火",
+            curDateAlarmCount: 11,
+            curDateAlarmNoHandleCount: 12,
+            sevenDayAlarmCount: 13,
+            sevenDayAlarmNoHandleCount: 14,
+          },
+          {
+            alarmTypeName: "通道占用",
+            curDateAlarmCount: 11,
+            curDateAlarmNoHandleCount: 12,
+            sevenDayAlarmCount: 13,
+            sevenDayAlarmNoHandleCount: 14,
+          },
+        ],
         intervalId: null,
       },
       detailShow: false,
       alarmDetail: {},
       cameraInfoShow: false,
       cameraInfo: {},
-      cameraFullscreenList:[{
-        imgaeUrl: device_total,
-        name:"设备总数",
-        number:"allDev"
-      },{
-        imgaeUrl:device_online,
-        name:"设备总数",
-        number:"onlineDev"
-      },{
-        imgaeUrl:warn_todo,
-        name:"未处理告警数",
-        number:"activedAlarm"
-      },{
-        imgaeUrl:warn_total,
-        name:"告警总数",
-        number:"allAlarm"
-      }],
-      leftDynameicStyle:{
-        
-      }, //左侧动态样式
-      cardBoxDynameicStyle:{
-
-      },
+      cameraFullscreenList: [
+        {
+          imgaeUrl: device_total,
+          name: "设备总数",
+          number: "allDev",
+        },
+        {
+          imgaeUrl: device_online,
+          name: "设备总数",
+          number: "onlineDev",
+        },
+        {
+          imgaeUrl: warn_todo,
+          name: "未处理告警数",
+          number: "activedAlarm",
+        },
+        {
+          imgaeUrl: warn_total,
+          name: "告警总数",
+          number: "allAlarm",
+        },
+      ],
+      leftDynameicStyle: {}, //左侧动态样式
+      cardBoxDynameicStyle: {},
       //backData:{}
-    }
+    };
   },
-  computed:{
-    ...mapGetters([ "mbData"]),
+  computed: {
+    ...mapGetters(["mbData"]),
   },
-  setup() {
-  },
+  setup() {},
   watch: {
     alarmActived(newVal) {
       if (newVal) {
         this.getAlarmList();
         this.intervalId = setInterval(this.getAlarmList, 13000);
-      }
-      else {
+      } else {
         clearInterval(this.intervalId);
       }
     },
-    mbData(newVal){
+    mbData(newVal) {
       //this.backData = newVal
-      this.getmbList(newVal)
-    }
+      this.getmbList(newVal);
+    },
   },
   methods: {
     toggleFullScreen() {
-      window.top?.dispatchEvent(new CustomEvent("toggleFullScreen"))
+      window.top?.dispatchEvent(new CustomEvent("toggleFullScreen"));
     },
     toggleWarnDialog(show) {
-      this.warnDialogShow = show
+      this.warnDialogShow = show;
     },
     toggleCameraDialog(show) {
-      console.log(show)
-      this.warngridDialogShow = show
+      console.log(show);
+      this.warngridDialogShow = show;
     },
     initBoxHeight() {
       var totalHeight = parseInt($(document).height() - this.$fontSize * 0.5);
@@ -380,48 +406,44 @@ export default defineComponent({
       this.rightBox1Height = totalHeight - this.rightBox2Height * 2 - this.$fontSize * 0.1 * 2.5;
     },
     changePageSize(pageSize) {
-      console.log("changePageSize", pageSize)
-      this.pageSize = pageSize
+      console.log("changePageSize", pageSize);
+      this.pageSize = pageSize;
       this.pager.pageSize = parseInt(this.pageSize);
       this.pager.pageIndex = 1;
       this.pager.totalPage = Math.ceil(this.bind.cameraList.length / this.pager.pageSize);
       this.getCameraPage();
     },
     changeFullscreen(aa) {
-      console.log("changeFullscreen", aa)
-      this.cameraFullscreen = !this.cameraFullscreen
+      console.log("changeFullscreen", aa);
+      this.cameraFullscreen = !this.cameraFullscreen;
     },
     autoPage(event) {
       if ($(event.currentTarget).hasClass("active")) {
-        $(event.currentTarget).removeClass("active")
-      }
-      else {
-        $(event.currentTarget).addClass("active")
+        $(event.currentTarget).removeClass("active");
+      } else {
+        $(event.currentTarget).addClass("active");
       }
     },
     onPage(val) {
       if (val > 0) {
         if (this.pager.pageIndex + 1 > this.pager.totalPage) {
           this.$message.error("没有下一页了");
-        }
-        else {
+        } else {
           this.pager.pageIndex++;
           this.getCameraPage();
         }
-      }
-      else {
+      } else {
         if (this.pager.pageIndex - 1 < 1) {
           this.$message.error("没有上一页了");
-        }
-        else {
+        } else {
           this.pager.pageIndex--;
           this.getCameraPage();
         }
       }
     },
     selectVideo(event) {
-      $(event.currentTarget).parent().parent().parent().find(".player").removeClass("active")
-      $(event.currentTarget).addClass("active")
+      $(event.currentTarget).parent().parent().parent().find(".player").removeClass("active");
+      $(event.currentTarget).addClass("active");
     },
     viewWarnInfo(row) {
       this.warnDialog.show = true;
@@ -429,11 +451,11 @@ export default defineComponent({
       console.log(row);
     },
     searchDeviceTree(node) {
-      console.log("searchDeviceTree", node)
-      this.getCameraList(node.value)
+      console.log("searchDeviceTree", node);
+      this.getCameraList(node.value);
     },
     changeDeviceTree(values, context) {
-      console.log(context.node.data.id)
+      console.log(context.node.data.id);
       // this.getCameraList(context.node.data.id)
       return;
       this.deviceSelected = context.node.data.label;
@@ -451,18 +473,21 @@ export default defineComponent({
       }
     },
     videoDialogClosed() {
-      this.$refs['videoPlayer'].onHide();
+      this.$refs["videoPlayer"].onHide();
     },
     getCameraList(categoryId = 0) {
       // this.bind.deviceTree = [];
       const apiClient = getApiClient();
-      var apiUrl = `/api/cockpit/proxy/list?page=1&pageSize=1000`
+      var apiUrl = `/api/cockpit/proxy/list?page=1&pageSize=1000`;
       if (categoryId) {
-        apiUrl += `&categoryId=${categoryId}`
+        apiUrl += `&categoryId=${categoryId}`;
       }
-      apiClient.GET(apiUrl).then(r => {
+      apiClient.GET(apiUrl).then((r) => {
         if (r.data.code == "0") {
-          this.bind.cameraList = r.data.data.list;
+          this.bind.cameraList = r.data.data.list.map((item) => {
+            const videoUrl = location.protocol === "https:" ? data.streamInfo.https_flv.url : data.streamInfo.flv.url;
+            return item;
+          });
           this.pager.pageIndex = 1;
           this.pager.totalPage = Math.ceil(this.bind.cameraList.length / this.pager.pageSize);
           this.getCameraPage();
@@ -477,7 +502,7 @@ export default defineComponent({
           // }
           // this.bind.deviceTree = tree;
         }
-      })
+      });
     },
     getCameraPage() {
       let rows = [];
@@ -491,7 +516,7 @@ export default defineComponent({
     },
     getDeviceGroupList() {
       const apiClient = getApiClient();
-      apiClient.GET("/ai/api/device/group/cameraGroupList?parentId=0").then(r => {
+      apiClient.GET("/ai/api/device/group/cameraGroupList?parentId=0").then((r) => {
         if (r.data.code == "0") {
           let tree = JSON.parse(JSON.stringify(this.bind.deviceTree));
           this.bind.deviceData = r.data.data;
@@ -500,12 +525,12 @@ export default defineComponent({
               id: r.data.data[i].id,
               label: r.data.data[i].group_name,
               value: r.data.data[i].id.toString(),
-              children: this.getDeviceChilren(r.data.data[i].children)
+              children: this.getDeviceChilren(r.data.data[i].children),
             });
           }
           this.bind.deviceTree = tree;
         }
-      })
+      });
     },
     getDeviceChilren(data) {
       if (data.length == 0) {
@@ -515,15 +540,14 @@ export default defineComponent({
         //     value:''
         //   }];
         return true;
-      }
-      else {
+      } else {
         let tree = [];
         for (let i = 0; i < data.length; i++) {
           tree.push({
             id: data[i].id,
             label: data[i].group_name,
             value: data[i].id.toString(),
-            children: this.getDeviceChilren(data[i].children)
+            children: this.getDeviceChilren(data[i].children),
           });
         }
         return tree;
@@ -531,7 +555,7 @@ export default defineComponent({
     },
     getDeviceChilrenList(node) {
       const apiClient = getApiClient();
-      apiClient.GET("/ai/api/device/queryManager/list?page=1&pageSize=9999&categoryId=" + node.value).then(r => {
+      apiClient.GET("/ai/api/device/queryManager/list?page=1&pageSize=9999&categoryId=" + node.value).then((r) => {
         if (r.data.code == "0") {
           let children = [];
           for (let i = 0; i < r.data.data.list.length; i++) {
@@ -539,7 +563,10 @@ export default defineComponent({
               id: r.data.data.list[i].id,
               label: r.data.data.list[i].name,
               value: r.data.data.list[i].id.toString(),
-              url: r.data.data.list[i].streamInfo.hls.url
+              url:
+                location.protocol === "https:"
+                  ? r.data.data.list[i].streamInfo.https_flv.url
+                  : r.data.data.list[i].streamInfo.flv.url,
             });
           }
           // let nodes=node.getChildren();
@@ -548,123 +575,127 @@ export default defineComponent({
           // }
           this.$refs.tree.appendTo(node.value, children);
         }
-      })
+      });
     },
     getInfo() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/cockpit/proxy/resource/info").then(r => {
+      apiClient.GET("/api/cockpit/proxy/resource/info").then((r) => {
         if (r.data.code == "0") {
           this.bind.info = r.data.data;
         }
-      })
+      });
     },
     getAllDev() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/deviceInfo/deviceCount").then(r => {
+      apiClient.GET("/api/alarm/v2/deviceInfo/deviceCount").then((r) => {
         if (r.data.code == "0") {
           this.bind.stat.allDev = r.data.data.deviceCount;
         }
-      })
+      });
     },
     getOnlineDev() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/deviceInfo/onlineDeviceCount").then(r => {
+      apiClient.GET("/api/alarm/v2/deviceInfo/onlineDeviceCount").then((r) => {
         if (r.data.code == "0") {
           this.bind.stat.onlineDev = r.data.data.onlineDeviceCount;
         }
-      })
+      });
     },
     getAlarmList() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2&status=0").then(r => {
+      apiClient.GET("/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2&status=0").then((r) => {
         if (r.data.code == "0") {
           this.bind.warnList = r.data.data.records;
           if (this.alarmActived) {
-            this.alarmDetail = this.bind.warnList.find(item => item.status == 0)
+            this.alarmDetail = this.bind.warnList.find((item) => item.status == 0);
             this.$refs.alertSound.play();
-            this.detailShow = true
+            this.detailShow = true;
             setTimeout(() => {
-              this.detailShow = false
-            }, 10000)
+              this.detailShow = false;
+            }, 10000);
           }
         }
-      })
+      });
     },
     getAlarmTrend() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/stat/statAlarmCountByTime?startTime=" + this.getDateDaysAgo(-7) + "&endTime=" + this.getDateDaysAgo(0)).then(r => {
-        if (r.data.code == "0") {
-          let xAxiData = [];
-          let serieData = [];
-          for (let i = 0; i < r.data.data.length; i++) {
-            xAxiData.push(r.data.data[i].alarmDate.substr(5, 5));
-            serieData.push(r.data.data[i].alarmCount);
+      apiClient
+        .GET(
+          "/api/alarm/v2/stat/statAlarmCountByTime?startTime=" + this.getDateDaysAgo(-7) + "&endTime=" + this.getDateDaysAgo(0)
+        )
+        .then((r) => {
+          if (r.data.code == "0") {
+            let xAxiData = [];
+            let serieData = [];
+            for (let i = 0; i < r.data.data.length; i++) {
+              xAxiData.push(r.data.data[i].alarmDate.substr(5, 5));
+              serieData.push(r.data.data[i].alarmCount);
+            }
+            gjqsOption.xAxis[0].data = xAxiData;
+            gjqsOption.series[0].data = serieData;
+            gjqsReload();
           }
-          gjqsOption.xAxis[0].data = xAxiData;
-          gjqsOption.series[0].data = serieData;
-          gjqsReload();
-        }
-      })
+        });
     },
     getAlarmStatistics() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/stat/screenAlarmStatistics").then(r => {
+      apiClient.GET("/api/alarm/v2/stat/screenAlarmStatistics").then((r) => {
         if (r.data.code == "0") {
           r.data.data.sort((a, b) => b.sevenDayAlarmCount - a.sevenDayAlarmCount);
           this.bind.stat.allAlarm = r.data.data.reduce((t, current) => {
-            return t + current.sevenDayAlarmCount
-          }, 0)
+            return t + current.sevenDayAlarmCount;
+          }, 0);
           this.bind.stat.activedAlarm = r.data.data.reduce((t, current) => {
-            return t + current.sevenDayAlarmNoHandleCount
-          }, 0)
-          this.bind.alarmStatistics = r.data.data.slice(0, 2)
+            return t + current.sevenDayAlarmNoHandleCount;
+          }, 0);
+          this.bind.alarmStatistics = r.data.data.slice(0, 2);
         }
-      })
+      });
     },
     getDateDaysAgo(days) {
-      const date = new Date(); // 获取当前日期  
-      date.setDate(date.getDate() + days); // 根据传入的参数调整日期  
+      const date = new Date(); // 获取当前日期
+      date.setDate(date.getDate() + days); // 根据传入的参数调整日期
 
-      const year = date.getFullYear(); // 获取年份  
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份并确保是两位数  
-      const day = String(date.getDate()).padStart(2, '0'); // 获取日期并确保是两位数  
+      const year = date.getFullYear(); // 获取年份
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // 获取月份并确保是两位数
+      const day = String(date.getDate()).padStart(2, "0"); // 获取日期并确保是两位数
 
-      return `${year}-${month}-${day}`; // 返回格式化后的日期字符串  
+      return `${year}-${month}-${day}`; // 返回格式化后的日期字符串
     },
     cameraDetail(item) {
-      this.cameraInfo = item
-      this.cameraInfoShow = true
+      this.cameraInfo = item;
+      this.cameraInfoShow = true;
     },
-    getmbList(item){
-      debugger
-      if(item.deviceBackgroundBase64){
-        const deviceBackgroundBase64 = getImageUrl(item.deviceBackgroundBase64)
+    getmbList(item) {
+      debugger;
+      if (item.deviceBackgroundBase64) {
+        const deviceBackgroundBase64 = getImageUrl(item.deviceBackgroundBase64);
         this.leftDynameicStyle = {
           background: `url(${deviceBackgroundBase64}) no-repeat center`,
-          backgroundSize:"100% 100%"
-        }
-        console.log(this.leftDynameicStyle,"leftDynameicStyle")
+          backgroundSize: "100% 100%",
+        };
+        console.log(this.leftDynameicStyle, "leftDynameicStyle");
       }
-      if(item.device_total){
-        this.cameraFullscreenList[0].imgaeUrl = getImageUrl(item.device_total) 
+      if (item.device_total) {
+        this.cameraFullscreenList[0].imgaeUrl = getImageUrl(item.device_total);
       }
-      if(item.device_online){
-        this.cameraFullscreenList[1].imgaeUrl = getImageUrl(item.device_online) 
+      if (item.device_online) {
+        this.cameraFullscreenList[1].imgaeUrl = getImageUrl(item.device_online);
       }
-      if(item.warn_todo){
-        this.cameraFullscreenList[2].imgaeUrl = getImageUrl(item.warn_todo) 
+      if (item.warn_todo) {
+        this.cameraFullscreenList[2].imgaeUrl = getImageUrl(item.warn_todo);
       }
-      if(item.warn_total){
-        this.cameraFullscreenList[3].imgaeUrl = getImageUrl(item.warn_total) 
+      if (item.warn_total) {
+        this.cameraFullscreenList[3].imgaeUrl = getImageUrl(item.warn_total);
       }
-    }
+    },
   },
   created() {
     this.initBoxHeight();
     window.addEventListener("resize", this.initBoxHeight);
   },
   mounted() {
-    gjqsChartCreate(this.$echart, 'chartGJQS');
+    gjqsChartCreate(this.$echart, "chartGJQS");
     // this.getInfo();
     // this.getAllDev();
     // this.getOnlineDev();
@@ -681,9 +712,8 @@ export default defineComponent({
   activated() {
     gjqsResize();
   },
-  deactivated() {
-  }
-})
+  deactivated() {},
+});
 </script>
 <style lang="less" scoped>
 #monitor {
@@ -887,7 +917,7 @@ export default defineComponent({
 
         .col {
           float: left;
-          
+
           // background-color: #000000;
           // margin: 0.06rem;
           overflow: hidden;
@@ -895,7 +925,7 @@ export default defineComponent({
           box-sizing: border-box;
 
           .active {
-            border: 2px solid var(--border-row-col-color)
+            border: 2px solid var(--border-row-col-color);
           }
 
           :deep(.player) {
@@ -1035,7 +1065,7 @@ export default defineComponent({
     }
 
     .title {
-      font-family: 'YouSheBiaoTiHei';
+      font-family: "YouSheBiaoTiHei";
       font-style: normal;
       font-weight: 400;
       font-size: 0.1rem;
@@ -1046,7 +1076,7 @@ export default defineComponent({
     }
 
     .title1 {
-      background: linear-gradient(180deg, #FFA06B 0%, #FF3426 100%);
+      background: linear-gradient(180deg, #ffa06b 0%, #ff3426 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -1055,7 +1085,7 @@ export default defineComponent({
     }
 
     .title2 {
-      background: linear-gradient(180deg, #FFC700 0%, #FF8B04 100%);
+      background: linear-gradient(180deg, #ffc700 0%, #ff8b04 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -1122,7 +1152,7 @@ export default defineComponent({
   }
 
   .warn_frame p {
-    color: var(--vi-00-a-0-e-9, #00A0E9);
+    color: var(--vi-00-a-0-e-9, #00a0e9);
     font-family: DINPro;
     font-size: 0.13rem;
     font-style: normal;
@@ -1132,7 +1162,7 @@ export default defineComponent({
   }
 
   .warn_frame span {
-    color: var(--warn__frame__span, #C6D1DB);
+    color: var(--warn__frame__span, #c6d1db);
     font-family: "PingFang SC";
     font-size: 0.08rem;
     font-style: normal;
@@ -1144,7 +1174,7 @@ export default defineComponent({
   .warn_stat::after,
   .warn_stat_content::before,
   .warn_stat_content::after {
-    content: '';
+    content: "";
     position: absolute;
     width: 0.06rem;
     height: 0.06rem;
@@ -1309,7 +1339,7 @@ export default defineComponent({
         :deep(.t-tree__icon) {
           path {
             //fill: #fff;
-            fill: var(--icon-tree-fill-color)
+            fill: var(--icon-tree-fill-color);
           }
         }
       }
@@ -1334,7 +1364,7 @@ export default defineComponent({
     .content {
       width: 5rem;
       height: 3.15rem;
-      background: url('../assets/imgs/dialog_bg.png') no-repeat center;
+      background: url("../assets/imgs/dialog_bg.png") no-repeat center;
       background-size: 100% 100%;
       position: relative;
       padding: 0.1rem 0.2rem;
@@ -1349,7 +1379,7 @@ export default defineComponent({
 
       .title {
         //color: #fff;
-        color:var(--text-dialog-header-title-color);
+        color: var(--text-dialog-header-title-color);
         padding-left: 0.2rem;
         line-height: 0.42rem;
         font-size: 0.1rem;
@@ -1394,7 +1424,7 @@ export default defineComponent({
     .t-dialog__header {
       padding-top: 0.06rem;
       //color: #fff;
-      color:var(--text-dialog-header-title-color)
+      color: var(--text-dialog-header-title-color);
     }
 
     .t-dialog--default {
@@ -1407,7 +1437,9 @@ export default defineComponent({
 
   .slide-enter-active,
   .slide-leave-active {
-    transition: transform 0.5s ease, opacity 0.5s ease;
+    transition:
+      transform 0.5s ease,
+      opacity 0.5s ease;
   }
 
   .slide-enter {
@@ -1423,6 +1455,5 @@ export default defineComponent({
     opacity: 0;
     /* 透明度为零 */
   }
-
 }
 </style>
