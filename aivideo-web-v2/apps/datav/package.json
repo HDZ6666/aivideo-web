@@ -23,7 +23,8 @@
     "vue": "^3.4.37",
     "vue-router": "^4.4.5",
     "vue3-seamless-scroll": "^2.0.1",
-    "vuex": "^4.1.0"
+    "vuex": "^4.1.0",
+    "tvision-color": "^1.6.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.2",

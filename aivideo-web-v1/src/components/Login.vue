@@ -30,7 +30,7 @@
               <button class="login100-form-btn" @click="login">登录</button>
             </div>
           </div>
-          <div  class="login100-dispatcher"><a href="/pc/">pc</a><a href="/mobile/">mobile</a><a href="/datav/">datav</a></div>
+          <div  class="login100-dispatcher"><a href="/pc/">pc</a><a href="/mobile/">mobile</a><a href="/datav/">datav</a><a href="/react/">react</a></div>
       </div>
 
     </div>

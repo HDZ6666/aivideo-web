@@ -112,7 +112,7 @@ export const routedata = [
     //     "component": "Layout",
     //     "alwaysShow": true,
     //     "meta": {
-    //         "title": "AI卫士",
+    //         "title": "AI视界",
     //         "icon": "#",
     //         "noCache": false,
     //         "link": null

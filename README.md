@@ -22,7 +22,7 @@ aivideo-web-v1的登录页有pc、mobile、datav链接，并将请求代理到ai
 npm run dev
 ```
 ### aivideo-web-react
-aivideo-web-react为AI卫士页面
+aivideo-web-react为AI视界页面
 #### 开发
 ```
 npm run dev

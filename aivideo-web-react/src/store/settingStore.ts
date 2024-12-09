@@ -32,7 +32,7 @@ const useSettingStore = create<SettingStore>((set) => ({
     breadCrumb: true,
     multiTab: true,
     keepAlive: true,
-    appName: 'AI卫士',
+    appName: 'AI视界',
   },
   actions: {
     setSettings: (settings) => {

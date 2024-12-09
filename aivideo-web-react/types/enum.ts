@@ -69,6 +69,6 @@ export enum AlarmType {
 }
 
 export const baseApiUrl =
-  import.meta.env.MODE === 'production'
+  import.meta.env.MODE === 'development'
     ? import.meta.env.VITE_APP_VIDEO_API
-    : window.baseApiUrl || import.meta.env.VITE_APP_VIDEO_API;
+    : window.baseApiUrl || '';

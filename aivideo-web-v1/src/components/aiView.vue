@@ -9,25 +9,25 @@ import userService from "./service/UserService";
 export default {
   name: "fence",
   components: {
-    FramePage
+    FramePage,
   },
   data() {
     return {
       // frameUrl: "http://183.239.58.24:10666//#/iframe/fence"
       // frameUrl: "http://192.168.1.106:8066/#/iframe/fence"
-      frameUrl: `${window.iframeBaseUrl}`,
-      redirectUrl: "/dashboard/workbench"
+      frameUrl: "",
+      redirectUrl: "/dashboard/workbench",
     };
   },
   mounted() {
     if (userService.getToken()) {
       this.frameUrl = `${
-        window.iframeBaseUrl
+        process.env.NODE_ENV === "development" ? "/react/" : window.iframeBaseUrl
       }#/redirect?RedirectUrl=${encodeURIComponent(
         this.redirectUrl
       )}&token=${userService.getToken()}`;
     }
-  }
+  },
 };
 </script>
 

@@ -12,7 +12,6 @@ import router from "./router/index.js";
 
 import Fingerprint2 from "fingerprintjs2";
 import VueClipboard from "vue-clipboard2";
-import VueClipboards from "vue-clipboards";
 import Contextmenu from "vue-contextmenujs";
 import userService from "./components/service/UserService";
 import plugins from './plugins'
@@ -39,7 +38,6 @@ Fingerprint2.get(function(components) {
 Vue.use(VueClipboard);
 Vue.use(ElementUI);
 Vue.use(VueCookies);
-Vue.use(VueClipboards);
 Vue.prototype.$notify = Notification;
 Vue.use(Contextmenu);
 Vue.use(VCharts);
@@ -48,6 +46,7 @@ Vue.use(plugins)
 Vue.prototype.handleTree = handleTree
 Vue.prototype.parseTime = parseTime
 Vue.prototype.resetForm = resetForm
+console.log("环境：" + process.env.BASE_API);
 axios.defaults.baseURL =
   process.env.NODE_ENV === "development"
     ? process.env.BASE_API

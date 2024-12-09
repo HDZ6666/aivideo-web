@@ -41,7 +41,8 @@ const authMiddleware: Middleware = {
 
 
 export function getApiClient(clientOptions?: ClientOptions) {
-    const baseUrl = "http://8.138.1.223:18080";
+    // const baseUrl = "http://8.138.1.223:18080";
+    const baseUrl = "";
     const client = createClient<paths>({baseUrl, ...clientOptions });
     client.use(authMiddleware)
     return client;

@@ -26,18 +26,7 @@ module.exports = {
           "^/debug": "/"
         }
       },
-      "/static/snap": {
-        target: apiProxy,
-        // target: "http://172.16.1.106:18080",
-        // target: "http://192.168.1.105:18080",
-        // target: "http://172.16.66.77:18080",
-        changeOrigin: true
-        // pathRewrite: {
-        //   '^/static/snap': '/static/snap'
-        // }
-      },
       "/api": {
-        // target: 'http://localhost:18080',
         target: apiProxy,
         changeOrigin: true
       },
@@ -46,6 +35,14 @@ module.exports = {
         changeOrigin: true
       },
       "/cockpit/api": {
+        target: apiProxy,
+        changeOrigin: true
+      },
+      "/v1": {
+        target: apiProxy,
+        changeOrigin: true
+      },
+      "/modelSettings": {
         target: apiProxy,
         changeOrigin: true
       },
@@ -60,19 +57,15 @@ module.exports = {
         ws: true
       },
       "/datav": {
-        target: "http://localhost:3003",
+        target: "http://localhost:3005",
         changeOrigin: true,
         ws: true
       },
       "/react": {
-        target: "http://localhost:8066",
+        target: "http://localhost:3006",
         changeOrigin: true,
         ws: true
       },
-      "/livePlayer": {
-        target: "http://localhost:8066",
-        changeOrigin: true
-      }
     },
 
     // Various Dev Server settings
@@ -80,7 +73,7 @@ module.exports = {
     host: "127.0.0.1",
     useLocalIp: false, // can be overwritten by process.env.HOST
     // port: 8088, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
-    port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 81, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -109,10 +102,10 @@ module.exports = {
     //   "../../src/main/resources/static/index.html"
     // ),
 
-    index: path.resolve(__dirname, "../dist/index.html"),
+    index: path.resolve(__dirname, "../../dist/video/index.html"),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, "../../dist/"),
+    assetsRoot: path.resolve(__dirname, "../../dist/video"),
     // assetsRoot:  path.resolve(__dirname, "../../src/main/resources/static/"),
     // assetsRoot:'dist',
     assetsSubDirectory: "./static",

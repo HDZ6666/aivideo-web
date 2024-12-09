@@ -15,14 +15,14 @@
         :item="route"
         :base-path="route.path"
       />
-      <!-- <el-submenu>
+      <el-submenu index="1">
         <template slot="title">数据大屏</template>
         <el-menu-item index="/videoCockpitV1">V1</el-menu-item>
         <el-menu-item index="/videoCockpitV2">V2</el-menu-item>
       </el-submenu>
       <el-menu-item index="/aiView" v-if="aiType">AI视界</el-menu-item>
       <el-menu-item index="/live">分屏监控</el-menu-item>
-      <el-submenu index="1">
+      <el-submenu index="2">
         <template slot="title">国标对接</template>
         <el-menu-item index="/deviceList">设备列表</el-menu-item>
         <el-menu-item index="/deviceGroup">分组</el-menu-item>
@@ -34,12 +34,15 @@
         <el-menu-item index="/cloudRecord">云端录像</el-menu-item>
         <el-menu-item index="/mediaServerManger">节点管理</el-menu-item>
         <el-menu-item index="/parentPlatformList/15/1">国标级联</el-menu-item>
+        <!-- <el-menu-item index="/map">电子地图</el-menu-item>
+        <el-menu-item index="/pushVideoList">推流列表</el-menu-item> -->
         <el-menu-item index="/userManager">用户管理</el-menu-item>
         <el-menu-item index="/roleManager">角色管理</el-menu-item>
         <el-menu-item index="/menuManager">菜单管理</el-menu-item>
         <el-menu-item index="/logManager">日志管理</el-menu-item>
-      </el-submenu> -->
-      <el-submenu index style="float: right; position: absolute; right: 0px">
+      </el-submenu>
+      <el-menu-item index="/patrol">智慧巡逻</el-menu-item>
+      <el-submenu index=4 style="float: right; position: absolute; right: 0px">
         <template slot="title">欢迎，{{ username }}</template>
         <el-menu-item @click="openDoc">在线文档</el-menu-item>
         <el-menu-item @click="changePassword">修改密码</el-menu-item>

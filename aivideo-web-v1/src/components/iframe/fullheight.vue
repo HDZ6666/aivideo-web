@@ -6,7 +6,7 @@
       class="iframe"
       ref="frameRef"
       frameborder="no"
-      border="0"
+      :border="0"
       marginwidth="0"
       marginheight="0"
       allowtransparency="yes"

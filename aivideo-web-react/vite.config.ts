@@ -9,7 +9,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default (ConfigEnv: ConfigEnv) => {
   const { VITE_APP_VIDEO_API, VITE_APP_VIDEO_API_TARGET } = loadEnv(ConfigEnv.mode, process.cwd());
   return defineConfig({
-    base: './',
+    base: '/react',
     esbuild: {
       // drop: ['console', 'debugger'],
     },
@@ -32,7 +32,7 @@ export default (ConfigEnv: ConfigEnv) => {
       // 自动打开浏览器
       open: true,
       host: true,
-      port: 3001,
+      port: 3006,
       proxy: {
         [VITE_APP_VIDEO_API]: {
           target: VITE_APP_VIDEO_API_TARGET,
@@ -56,6 +56,7 @@ export default (ConfigEnv: ConfigEnv) => {
           drop_debugger: true,
         },
       },
+      outDir: path.resolve(__dirname, '../dist/react'),
     },
   });
 };
