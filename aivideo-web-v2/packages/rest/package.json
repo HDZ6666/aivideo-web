@@ -1,0 +1,19 @@
+{
+  "name": "@aivideo/rest",
+  "private": true,
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "generate": "openapi-typescript http://localhost:18080/v3/api-docs/1.%20全部 > src/openapi/schema.d.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.4.1"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.12.2"
+  }
+}
