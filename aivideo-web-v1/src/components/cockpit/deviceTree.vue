@@ -36,7 +36,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .device-box {
   position: relative;
   width: 100%;

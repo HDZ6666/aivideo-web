@@ -11,6 +11,7 @@
                   prefix-icon="el-icon-search" v-model="search"  clearable></el-input>
         开始时间:
         <el-date-picker
+        size="mini"
             v-model="startTime"
             type="datetime"
             value-format="yyyy-MM-dd HH:mm:ss"
@@ -19,6 +20,7 @@
         </el-date-picker>
         结束时间:
         <el-date-picker
+        size="mini"
             v-model="endTime"
             type="datetime"
             value-format="yyyy-MM-dd HH:mm:ss"
@@ -132,7 +134,7 @@ export default {
       chooseRecord: null, // 媒体服务
 
       updateLooper: 0, //数据刷新轮训标志
-      winHeight: window.innerHeight - 250,
+      winHeight: window.innerHeight - 170,
       currentPage: 1,
       count: 15,
       total: 0,

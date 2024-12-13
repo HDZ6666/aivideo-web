@@ -2,13 +2,13 @@
 
     <div id="app" style="width: 100%">
       <div class="page-header">
-  
+
         <div class="page-title">权限列表</div>
         <div class="page-header-btn">
           <el-button icon="el-icon-plus" size="mini" style="margin-right: 1rem;" type="primary" @click="handleAdd">
             添加
           </el-button>
-  
+
         </div>
       </div>
       <div class="flex">
@@ -16,7 +16,7 @@
         <div class="leftchoose">
           <el-card class="box-card">
           <div v-for="item in sideList" :key="$route.path+item.name" class="box-card-text box-card-item">
-            <span :style="{color: $route.path==item.url?'#1890FF':'',cursor:'pointer'}" @click="$route.path!=item.url&&$router.push(item.url)">{{item.name }}</span> 
+            <span :style="{color: $route.path==item.url?'#1890FF':'',cursor:'pointer'}" @click="$route.path!=item.url&&$router.push(item.url)">{{item.name }}</span>
           </div>
         </el-card>
         </div>
@@ -51,7 +51,7 @@
             </template>
           </el-table-column>
         </el-table>
-        
+
       </div>
       <el-pagination
           style="float: right"
@@ -116,7 +116,7 @@
       </el-dialog>
     </div>
   </template>
-  
+
   <script>
   import uiHeader from '../layout/UiHeader.vue'
   import { mapGetters } from "vuex";
@@ -130,11 +130,11 @@
       return {
         roleList: [], // 权限列表
         currentUser: {}, // 当前操作设备对象
-  
+
         videoComponentList: [],
         updateLooper: 0, //数据刷新轮训标志
         currentUserLenth: 0,
-        winHeight: window.innerHeight - 200,
+        winHeight: window.innerHeight - 170,
         currentPage: 1,
         count: 15,
         total: 0,
@@ -263,7 +263,7 @@
         }).catch(function (error) {
           that.getRoleListLoading  = false;
         });
-  
+
       },
       deleteUser: function (row) {
         let msg = `确定删除${row.roleName}？`
@@ -290,10 +290,10 @@
             console.error(error);
           });
         }).catch(() => {
-  
+
         });
-  
-  
+
+
       },
       /** 根据角色ID查询菜单树结构 */
       getRoleMenuTreeselect(roleId) {
@@ -306,7 +306,7 @@
           response = res;
           return response
         })
-        
+
       },
       // 角色状态修改
       handleStatusChange(row) {
@@ -412,7 +412,7 @@
         this.$refs["form"].validate(valid => {
           if (valid) {
             if (this.form.id != undefined) {
-              
+
               this.form.menuIds = this.getMenuAllCheckedKeys();
               this.$axios({
                 method:"put",
@@ -468,7 +468,7 @@
             this.menuOptions = res.data.data;
           }
         }).catch(()=>{
-          
+
         })
       },
     }
@@ -494,7 +494,7 @@
     margin-right: 1rem;
     background-color: #000000;
   }
-  
+
   .video-item-img {
     position: absolute;
     top: 0;
@@ -505,7 +505,7 @@
     width: 100%;
     height: 100%;
   }
-  
+
   .video-item-img:after {
     content: "";
     display: inline-block;
@@ -522,7 +522,7 @@
     background-size: cover;
     background-color: #000000;
   }
-  
+
   .video-item-title {
     position: absolute;
     bottom: 0;
@@ -536,7 +536,7 @@
   width: calc(10% - 20px);
   margin-right: 20px;
   min-height: 100%;
-  
+
 }
 .box-card{
     height: 100%;
@@ -553,4 +553,3 @@
 }
 
   </style>
-  

@@ -156,8 +156,8 @@ export default {
 
 <style>
 .screen-device-tree {
-  background: transparent;
-  color: #f1f4f7;
+  background: transparent !important;
+  color: #f1f4f7 !important;
   font-weight: 400;
 }
 .screen-device-tree .el-tree-node__expand-icon {

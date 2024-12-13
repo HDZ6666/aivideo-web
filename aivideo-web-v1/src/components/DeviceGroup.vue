@@ -90,7 +90,7 @@ export default {
   data() {
     return {
       deviceGroupList: [], //设备列表
-      winHeight: window.innerHeight - 200,
+      winHeight: window.innerHeight - 170,
       currentPage: 1,
       count: 15,
       total: 0,

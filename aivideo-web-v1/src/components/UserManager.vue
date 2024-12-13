@@ -23,6 +23,7 @@
     <!--用户列表-->
     <el-table :data="userList" style="width: 90%;font-size: 12px;" :height="winHeight">
       <el-table-column prop="username" label="用户名" min-width="160"/>
+      <el-table-column prop="mobile" label="手机号" min-width="160" />
       <el-table-column prop="pushKey" label="pushkey" min-width="160"/>
       <el-table-column prop="role.name" label="类型" min-width="160"/>
       <el-table-column label="操作" min-width="450" fixed="right">
@@ -77,7 +78,7 @@ export default {
       videoComponentList: [],
       updateLooper: 0, //数据刷新轮训标志
       currentUserLenth: 0,
-      winHeight: window.innerHeight - 200,
+      winHeight: window.innerHeight - 170,
       currentPage: 1,
       count: 15,
       total: 0,
