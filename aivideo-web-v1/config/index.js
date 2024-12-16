@@ -108,8 +108,8 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, "../../dist/video"),
     // assetsRoot:  path.resolve(__dirname, "../../src/main/resources/static/"),
     // assetsRoot:'dist',
-    assetsSubDirectory: "./static",
-    assetsPublicPath: "/",
+    assetsSubDirectory: "static",
+    assetsPublicPath: "./",
 
     /**
      * Source Maps
