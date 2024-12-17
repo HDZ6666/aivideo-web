@@ -696,14 +696,14 @@ export default defineComponent({
   },
   mounted() {
     gjqsChartCreate(this.$echart, "chartGJQS");
-    // this.getInfo();
-    // this.getAllDev();
-    // this.getOnlineDev();
-    // this.getCameraList();
-    // this.getDeviceGroupList();
-    // this.getAlarmList();
-    // this.getAlarmTrend();
-    // setInterval(this.getAlarmStatistics, 5000)
+    this.getInfo();
+    this.getAllDev();
+    this.getOnlineDev();
+    this.getCameraList();
+    this.getDeviceGroupList();
+    this.getAlarmList();
+    this.getAlarmTrend();
+    setInterval(this.getAlarmStatistics, 5000)
   },
   unmounted() {
     gjqsDestroy();

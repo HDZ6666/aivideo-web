@@ -157,12 +157,13 @@ export default {
     getAllRole: function() {
       this.$axios({
         method: "get",
-        url: "/api/role/all"
+        url: "/api/role/optionselect"
       })
         .then(res => {
           this.loading = true;
+          console.log(res,11111111111111)
           if (res.data.code === 0) {
-            this.options = res.data.data;
+            this.options = res.data.data.list;
           }
         })
         .catch(error => {

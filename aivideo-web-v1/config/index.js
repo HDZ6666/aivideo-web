@@ -21,6 +21,7 @@ module.exports = {
         // target: "https://fyict.cn:18080",
         // target: "http://172.16.66.77:18080",
         // target: "http://192.168.0.151:18080",
+        //target:"http://8.138.1.223:18080",
         changeOrigin: true,
         pathRewrite: {
           "^/debug": "/"

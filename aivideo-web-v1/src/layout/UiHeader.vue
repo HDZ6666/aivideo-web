@@ -97,7 +97,7 @@ export default {
   },
   mounted() {
     // console.log(!localStorage.getItem("alarmSwitchStatus"));
-    console.log(this.sidebarRouters);
+    console.log(this.sidebarRouters,'11111111122222222');
     // debugger
     console.log(localStorage.getItem("alarmSwitchStatus"));
     // this.window = window;
