@@ -20,6 +20,11 @@ export const constantRoutes = [
     redirect: "/live",
   },
   {
+    path: "/videoCockpitV1",
+    name: "驾驶舱",
+    component: () => import("../components/videoCockpit.vue"), // 大屏v1
+  },
+  {
     path: "/channelList/:deviceId/:parentChannelId/",
     name: "channelList",
     component: () => import("../components/channelList.vue") // channelList

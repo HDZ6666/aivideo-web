@@ -297,13 +297,7 @@ export default defineComponent({
         ],
         deviceData: [],
         deviceTree: [
-          { id: "1", label: "全部设备", value: "全部设备", children: [{ id: "1_2", label: "全部设备1", value: "全部设备1" }] },
-          { id: "2", label: "数字大屏", value: "数字大屏" },
-          { id: "3", label: "高新区", value: "高新区" },
-          { id: "4", label: "三水区", value: "三水区" },
-          { id: "5", label: "禅城区", value: "禅城区" },
-          { id: "6", label: "南海区", value: "南海区" },
-          { id: "7", label: "顺德区", value: "顺德区" },
+          { id: "1", label: "全部设备", value: "0",},
         ],
         cameraList: [],
         cameraRows: [
@@ -485,7 +479,11 @@ export default defineComponent({
       apiClient.GET(apiUrl).then((r) => {
         if (r.data.code == "0") {
           this.bind.cameraList = r.data.data.list.map((item) => {
-            const videoUrl = location.protocol === "https:" ? data.streamInfo.https_flv.url : data.streamInfo.flv.url;
+            item.videoUrl = item.streamInfo
+              ? location.protocol === "https:"
+                ? item.streamInfo.https_flv.url
+                : item.streamInfo.flv.url
+              : "";
             return item;
           });
           this.pager.pageIndex = 1;
@@ -703,7 +701,7 @@ export default defineComponent({
     this.getDeviceGroupList();
     this.getAlarmList();
     this.getAlarmTrend();
-    setInterval(this.getAlarmStatistics, 5000)
+    setInterval(this.getAlarmStatistics, 5000);
   },
   unmounted() {
     gjqsDestroy();
