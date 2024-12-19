@@ -87,7 +87,7 @@ export default {
     return {
       platformList: [], //设备列表
 
-      winHeight: window.innerHeight - 260,
+      winHeight: window.innerHeight - 170,
       currentPage:1,
       count:15,
       total:0

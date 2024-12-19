@@ -15,7 +15,7 @@
         :item="route"
         :base-path="route.path"
       />
-      <el-submenu index="1">
+      <!-- <el-submenu index="1">
         <template slot="title">数据大屏</template>
         <el-menu-item index="/videoCockpitV1">V1</el-menu-item>
         <el-menu-item index="/videoCockpitV2">V2</el-menu-item>
@@ -28,21 +28,21 @@
         <el-menu-item index="/deviceGroup">分组</el-menu-item>
       </el-submenu>
       <el-menu-item index="/streamProxyList">非国标对接</el-menu-item>
+      <el-menu-item index="/map">电子地图</el-menu-item>
+      <el-menu-item index="/pushVideoList">推流列表</el-menu-item>
       <el-submenu index="3">
         <template slot="title">系统管理</template>
         <el-menu-item index="/console">控制台</el-menu-item>
         <el-menu-item index="/cloudRecord">云端录像</el-menu-item>
         <el-menu-item index="/mediaServerManger">节点管理</el-menu-item>
         <el-menu-item index="/parentPlatformList/15/1">国标级联</el-menu-item>
-        <!-- <el-menu-item index="/map">电子地图</el-menu-item>
-        <el-menu-item index="/pushVideoList">推流列表</el-menu-item> -->
         <el-menu-item index="/userManager">用户管理</el-menu-item>
         <el-menu-item index="/roleManager">角色管理</el-menu-item>
         <el-menu-item index="/menuManager">菜单管理</el-menu-item>
         <el-menu-item index="/logManager">日志管理</el-menu-item>
       </el-submenu>
-      <el-menu-item index="/patrol">智慧巡逻</el-menu-item>
-      <el-submenu index=4 style="float: right; position: absolute; right: 0px">
+      <el-menu-item index="/patrol">智慧巡逻</el-menu-item> -->
+      <el-submenu index=4 style="margin-left: auto">
         <template slot="title">欢迎，{{ username }}</template>
         <el-menu-item @click="openDoc">在线文档</el-menu-item>
         <el-menu-item @click="changePassword">修改密码</el-menu-item>
@@ -97,7 +97,7 @@ export default {
   },
   mounted() {
     // console.log(!localStorage.getItem("alarmSwitchStatus"));
-    console.log(this.sidebarRouters);
+    console.log(this.sidebarRouters,'11111111122222222');
     // debugger
     console.log(localStorage.getItem("alarmSwitchStatus"));
     // this.window = window;

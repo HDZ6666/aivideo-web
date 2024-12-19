@@ -1,6 +1,6 @@
 <template>
   <el-tree
-    :class="isScreen?'screen-device-tree':'device-tree'"
+    :class="isScreen ? 'screen-device-tree' : 'device-tree'"
     ref="gdTree"
     :data="deviceGroupList"
     :props="defaultProps"
@@ -8,7 +8,7 @@
     lazy
     @node-click="handleNodeClick"
     node-key="id"
-    style="width: 100%; display:inline-block !important;"
+    style="width: 100%; display: inline-block !important"
   >
     <span class="custom-tree-node" slot-scope="{ node, data }">
       <div class="tree-node-label">{{ node.label }}</div>
@@ -18,7 +18,7 @@
         class="device-online el-icon-video-camera-solid"
       ></span>
       <span
-        v-if="data.nodeType === 'device' && !data.online "
+        v-if="data.nodeType === 'device' && !data.online"
         title="离线设备"
         class="device-offline el-icon-video-camera-solid"
       ></span>
@@ -31,18 +31,18 @@ export default {
   name: "DeviceTree",
   props: {
     isScreen: Boolean,
-    clickEvent: Function
+    clickEvent: Function,
   },
   data() {
     return {
       defaultProps: {
         children: "children",
         label: "name",
-        isLeaf: "isLeaf"
+        isLeaf: "isLeaf",
       },
       deviceLoad: false,
       deviceGroupList: [],
-      groupObj: {}
+      groupObj: {},
     };
   },
   mounted() {},
@@ -56,7 +56,7 @@ export default {
         }
       }
     },
-    loadNode: function(node, resolve) {
+    loadNode: function (node, resolve) {
       // 初始化
       if (node.level === 0) {
         this.getGroupTree(node.level, resolve);
@@ -73,17 +73,17 @@ export default {
         }
       }
     },
-    getGroupTree: function(parentId, resolve) {
+    getGroupTree: function (parentId, resolve) {
       this.$axios({
         method: "get",
         url: `/ai/api/device/group/cameraGroupList`,
         params: {
-          parentId: parentId
-        }
+          parentId: parentId,
+        },
       })
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
-            const list = res.data.data.map(item => {
+            const list = res.data.data.map((item) => {
               return {
                 name: item.group_name,
                 nodeType: "group", //类型
@@ -91,7 +91,7 @@ export default {
                 isLeaf: false,
                 online: false,
                 hasChildren: item.children && item.children.length > 0, //是否有子节点
-                userData: item
+                userData: item,
               };
             });
             if (parentId === 0) {
@@ -102,7 +102,7 @@ export default {
                 isLeaf: false,
                 online: false,
                 hasChildren: false,
-                userData: null
+                userData: null,
               };
               list.unshift(all); // 把全部添加到数组第一
             }
@@ -111,30 +111,30 @@ export default {
             resolve([]);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           resolve([]);
         });
     },
-    getDeviceTree: function(categoryId, resolve) {
+    getDeviceTree: function (categoryId, resolve) {
       this.$axios({
         method: "get",
         url: `/ai/api/device/queryManager/list`,
         params: {
           page: 1,
           pageSize: 9999,
-          categoryId: categoryId
-        }
+          categoryId: categoryId,
+        },
       })
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
-            const list = res.data.data.list.map(item => {
+            const list = res.data.data.list.map((item) => {
               return {
                 name: item.name,
                 nodeType: "device",
                 id: item.streamKey,
                 isLeaf: true,
                 online: true,
-                userData: item
+                userData: item,
               };
             });
             resolve(list);
@@ -142,22 +142,22 @@ export default {
             resolve([]);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           resolve([]);
         });
     },
-    reset: function() {
+    reset: function () {
       this.$forceUpdate();
-    }
+    },
   },
-  destroyed() {}
+  destroyed() {},
 };
 </script>
 
 <style>
 .screen-device-tree {
-  background: transparent;
-  color: #f1f4f7;
+  background: transparent !important;
+  color: #f1f4f7 !important;
   font-weight: 400;
 }
 .screen-device-tree .el-tree-node__expand-icon {

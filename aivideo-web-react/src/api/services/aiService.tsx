@@ -48,6 +48,7 @@ export interface AlarmDetailRes {
   address?: string;
   notice_type?: string;
   notice_unames?: string[];
+  videoUrl?: string;
 }
 
 export interface AlarmDetailchannel {

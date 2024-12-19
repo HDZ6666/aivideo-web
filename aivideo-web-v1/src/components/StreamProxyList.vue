@@ -220,7 +220,7 @@ export default {
       currentPusher: {}, //当前操作设备对象
       updateLooper: 0, //数据刷新轮训标志
       currentDeviceChannelsLenth: 0,
-      winHeight: window.innerHeight - 200,
+      winHeight: window.innerHeight - 170,
       currentPage: 1,
       count: 15,
       total: 0,
@@ -473,7 +473,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .videoList {
   display: flex;
   flex-wrap: wrap;

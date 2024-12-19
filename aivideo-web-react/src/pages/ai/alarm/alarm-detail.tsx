@@ -11,10 +11,12 @@ import {
   message,
   Empty,
   Flex,
+  Radio,
 } from 'antd';
-// import Image from 'rc-image';
+import { useState } from 'react';
 
 import aiService, { AlarmListItem } from '@/api/services/aiService';
+import LivePlayer from '@/components/live-player';
 
 export type AlarmDetailModalProps = {
   alarmItem: AlarmListItem | undefined;
@@ -23,6 +25,33 @@ export type AlarmDetailModalProps = {
 };
 
 export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetailModalProps) {
+  const queryClient = useQueryClient();
+  const [type, setType] = useState('image'); // image or video
+  const options = [
+    { label: '查看图片', value: 'image' },
+    { label: '查看回放', value: 'video' },
+  ];
+
+  const { data: alarmDetail, isLoading } = useQuery({
+    queryKey: ['alarmDetail', { alarmID: alarmItem?.id }],
+    queryFn: () => aiService.getAlarmDetailByID({ alarm_id: alarmItem!.id }),
+    enabled: show,
+    staleTime: 10 * 1000,
+  });
+
+  const { isLoading: updateLoading, mutate } = useMutation(aiService.updateAlarmStatusByID, {
+    onSuccess: (_data, variables) => {
+      message.success('操作成功');
+      // 直接修改缓存的数据状态，减少重复请求
+      const currentAlarmDetail = { ...alarmDetail, status: variables.status };
+      queryClient.setQueryData(['alarmDetail', { alarmID: variables.alarmId }], currentAlarmDetail);
+    },
+  });
+
+  const onAlarmHandle = (status: number) => {
+    mutate({ alarmId: alarmItem!.id, status });
+  };
+
   const footer = () => {
     const footerBtn = [
       [
@@ -46,27 +75,6 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
     ];
     return alarmDetail ? footerBtn[alarmDetail.status] : null;
   };
-  const queryClient = useQueryClient();
-
-  const { data: alarmDetail, isLoading } = useQuery({
-    queryKey: ['alarmDetail', { alarmID: alarmItem?.id }],
-    queryFn: () => aiService.getAlarmDetailByID({ alarm_id: alarmItem!.id }),
-    enabled: show,
-    staleTime: 10 * 1000,
-  });
-
-  const { isLoading: updateLoading, mutate } = useMutation(aiService.updateAlarmStatusByID, {
-    onSuccess: (_data, variables) => {
-      message.success('操作成功');
-      // 直接修改缓存的数据状态，减少重复请求
-      const currentAlarmDetail = { ...alarmDetail, status: variables.status };
-      queryClient.setQueryData(['alarmDetail', { alarmID: variables.alarmId }], currentAlarmDetail);
-    },
-  });
-
-  const onAlarmHandle = (status: number) => {
-    mutate({ alarmId: alarmItem!.id, status });
-  };
 
   return (
     <Modal
@@ -77,29 +85,46 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
       width={900}
       loading={isLoading}
       getContainer={false}
+      afterOpenChange={() => {
+        setType('image');
+      }}
     >
       {alarmDetail ? (
         <Row gutter={[16, 0]}>
           <Col span={14}>
-            <Flex>
-              <Image.PreviewGroup>
-                <Image
-                  width="100%"
-                  height="280px"
-                  className="bg-black object-cover"
-                  src={alarmDetail.alarm_img}
-                />
-              </Image.PreviewGroup>
-            </Flex>
-            <Flex>
-              <Image
-                width="80px"
-                height="60px"
-                className="bg-black object-cover"
-                src={alarmDetail.alarm_img}
-                preview={false}
+            <Flex className="mb-2">
+              <Radio.Group
+                value={type}
+                buttonStyle="solid"
+                onChange={(e) => setType(e.target.value)}
+                options={options}
+                optionType="button"
               />
             </Flex>
+            {type === 'image' && (
+              <>
+                <Flex>
+                  <Image.PreviewGroup>
+                    <Image
+                      width="100%"
+                      height="280px"
+                      className="bg-black object-cover"
+                      src={alarmDetail.alarm_img}
+                    />
+                  </Image.PreviewGroup>
+                </Flex>
+                {/* <Flex>
+                  <Image
+                    width="80px"
+                    height="60px"
+                    className="object-cover bg-black"
+                    src={alarmDetail.alarm_img}
+                    preview={false}
+                  />
+                </Flex> */}
+              </>
+            )}
+            {type === 'video' && <LivePlayer videoUrl={alarmDetail.videoUrl} />}
           </Col>
           <Col span={10}>
             <Descriptions title="告警信息" column={1}>
