@@ -18,6 +18,23 @@ export const constantRoutes = [
     name: "home",
     component: Layout,
     redirect: "/live",
+    children:[{
+      path: "/patrol",
+      name: "patrol",
+      component: () => import("../components/patrol.vue"), // 巡逻
+      children: [
+        {
+          path: "",
+          name: "patrolManager",
+          component: () => import("../components/patrolManager.vue"), // 巡逻任务
+        },
+        {
+          path: "/patrolReport",
+          name: "patrolReport",
+          component: () => import("../components/patrolReport.vue"), // 巡逻报告
+        },
+      ],
+    }]
   },
   {
     path: "/videoCockpitV1",
