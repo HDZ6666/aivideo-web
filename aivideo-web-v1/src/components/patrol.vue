@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="menu-container">
-            <el-menu default-active="1" class="el-menu-demo custom-menu" mode="vertical">
+            <el-menu class="el-menu-demo custom-menu" mode="vertical">
                 <div class="menu-title" style="text-align: center; font-size: 20px; padding: 20px 0px;">
                     <span>智慧</span><span>巡逻</span>
                 </div>
@@ -16,7 +16,8 @@
             </el-menu>
         </div>
         <div class="manager-container">
-            <router-view></router-view>
+            <router-view>
+            </router-view>
         </div>
     </div>
 </template>

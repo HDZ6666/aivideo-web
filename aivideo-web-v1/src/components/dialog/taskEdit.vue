@@ -24,19 +24,29 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-form-item label="所选摄像头：">
+            <el-form-item label="选择摄像头:">  
                 <div class="device-tree-main-box">
-                <DeviceTreeNational
-                    v-if="playerAction === 'national'"
-                ></DeviceTreeNational>
-                <DeviceTreeProxy ref="deviceComponent" @checkEvent="handleDeviceSelected"
-                    v-if="playerAction === 'proxy'"
-                ></DeviceTreeProxy>
-                <DeviceTreeNationalCockpit
-                    v-if="playerAction === 'nationalCockpit'"
-                ></DeviceTreeNationalCockpit>
+                  <el-tabs v-model="activeTab" type="card" class="device-tree-tabs">
+                    <el-tab-pane label="国标设备" name="global">
+                      <DeviceTreeNational 
+                          ref="deviceComponent" 
+                          @checkEvent="handleDeviceChecked" 
+                          v-if="playerAction === 'national'"
+                      ></DeviceTreeNational>
+                      <!-- <DeviceTreeNationalCockpit
+                          v-if="playerAction === 'nationalCockpit'"
+                      ></DeviceTreeNationalCockpit>  -->
+                    </el-tab-pane>
+                    <el-tab-pane label="非国标设备" name="fox">
+                      <DeviceTreeProxy 
+                          ref="deviceComponent" 
+                          @checkEvent="handleDeviceChecked" 
+                          v-if="playerAction === 'proxy'">
+                      </DeviceTreeProxy>
+                    </el-tab-pane>
+                  </el-tabs>
                 </div>
-            </el-form-item>
+            </el-form-item> 
           </el-row>
           <el-row>
              <!-- <el-col :span="20"> -->
@@ -87,8 +97,8 @@
 <script>
 import { ref, defineComponent } from "vue";
 import Day from "../Day.vue";
-import DeviceTreeNational from "../common/DeviceTreeNational.vue";
-import DeviceTreeNationalCockpit from "../common/DeviceTreeNationalCockpit.vue";
+import DeviceTreeNational from "../common/DeviceTreeNational_patrol.vue";
+// import DeviceTreeNationalCockpit from "../common/DeviceTreeNationalCockpit.vue";
 import DeviceTreeProxy from "../common/DeviceTreeProxy_patrol.vue";
 import { mixin } from "../../utils/mixin";
 import axios from "axios";
@@ -98,7 +108,7 @@ export default defineComponent({
   components: {
     Day,
     DeviceTreeNational,
-    DeviceTreeNationalCockpit,
+    // DeviceTreeNationalCockpit,
     DeviceTreeProxy,
   },
   mixins: [mixin],
@@ -114,8 +124,7 @@ export default defineComponent({
       taskRule: '0',
       selectedCameras: [],
     });
-
-    const selectedDevice = ref([]);
+    const selectedDeviceIds = ref([]);
     const playerAction = ref("national");
     const deviceComponent = ref(null);
     const dayComponent = ref(null);
@@ -132,7 +141,7 @@ export default defineComponent({
       taskForm.value.taskRule = "0";
       console.log("任务编辑：", taskForm.value);
       if(deviceComponent.value){
-        deviceComponent.value.refresh();
+        deviceComponent.value.resetSelection();
       };
       if (dayComponent.value) {
         dayComponent.value.resetSelection();
@@ -151,7 +160,7 @@ export default defineComponent({
         taskRule: 0,
         selectedCameras: [],
       };
-      selectedDevice.value = [];
+      selectedDeviceIds.value = [];
       emit("success");
     };
 
@@ -163,10 +172,23 @@ export default defineComponent({
       handleClose();
     };
 
-    const handleDeviceSelected = (id) => {
-      selectedDevice.value.push(id);
-      taskForm.value.selectedCameras = selectedDevice.value.join(',');
-      console.log("选中的摄像头：", taskForm.value.selectedCameras);
+    const handleDeviceChecked = (event) => {
+      const { deviceId, channelId, checked } = event;
+      const newId = deviceId+'-'+channelId+'-国标';
+      const index = selectedDeviceIds.value.indexOf(newId);
+      if (checked && index === -1) {
+        selectedDeviceIds.value.push(newId);
+      } else if (!checked && index !== -1) {
+        selectedDeviceIds.value.splice(index, 1);
+      }
+      taskForm.value.selectedCameras = selectedDeviceIds.value.join(',');
+      console.log("选中摄像头：", selectedDeviceIds.value);
+    };
+    // 切换事件
+    const activeTab = ref('global');
+    const handleTabChange = (tabName) => {
+      activeTab.value = tabName;
+      console.log("切换到：", activeTab.value);
     };
     // 处理日期选择事件，任务结束日期不能早于开始日期，且范围在当天之后的一年范围内，如超出则提醒用户
     const handleDateSelected = (value) => {
@@ -197,6 +219,22 @@ export default defineComponent({
     // };
 
     const handleSave = () => {
+      if (selectedDeviceIds.value.length === 0) {  
+          alert('请选择摄像头');  
+          return;  
+        }  
+      if (taskForm.value.startDate === '') {  
+        alert('请选择任务排期');  
+        return;  
+      }  
+      if (taskForm.value.endDate === '') {  
+        alert('请选择任务排期');  
+        return; 
+      }  
+      if (taskForm.value.selectedHours.length === 0) {  
+        alert('请选择时间段');  
+        return;   
+      }  
       axios.post("/api/patrol/route_task/edit", taskForm.value).then((res) => {
         closeDialog();
         alert("修改任务成功");
@@ -210,14 +248,16 @@ export default defineComponent({
       dialogVisible,
       taskForm,
       pickerOptions,
-      selectedDevice,
       openDialog,
       closeDialog,
       playerAction,
       handleClose,
       handleCancel,
       handleSave,
-      handleDeviceSelected,
+      handleDeviceChecked,
+      activeTab,
+      handleTabChange,
+      selectedDeviceIds,
       handleTimeSelected,
       // handleUnlimitedChange,
       deviceComponent,
@@ -260,6 +300,10 @@ export default defineComponent({
   padding: 10px;
   background-color: #f2f2f2;
   margin-top: 10px;
+}
+
+.device-tree-tabs {
+  margin-top: -10px;
 }
 
 .date-picker-box {
