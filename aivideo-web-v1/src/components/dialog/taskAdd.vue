@@ -164,11 +164,11 @@ export default defineComponent({
       // 关闭对话框（无论是否保存）  
       handleClose()  
     };  
-  
+    
     // 处理摄像头选择事件  
     const handleDeviceChecked = (event) => {
-      const { id, checked } = event;
-      const newId = id+'-国标';
+      const { deviceId, channelId,checked } = event;
+      const newId = deviceId+'-'+channelId+'-国标';
       const index = selectedDeviceIds.value.indexOf(newId);
       if (checked && index === -1) {
         selectedDeviceIds.value.push(newId);
@@ -225,6 +225,27 @@ export default defineComponent({
     const handleSave = async () => {  
       // 表单验证  
       try {  
+        if (taskForm.value.taskName === '') {  
+          alert('请输入任务名称');  
+          return;  
+        }  
+        if (selectedDeviceIds.value.length === 0) {  
+          alert('请选择摄像头');  
+          return;  
+        }  
+        if (taskForm.value.startDate === '') {  
+          alert('请选择任务排期');  
+          return;  
+        }  
+        if (taskForm.value.endDate === '') {  
+          alert('请选择任务排期');  
+          return; 
+        }  
+        if (taskForm.value.selectedHours.length === 0) {  
+          alert('请选择时间段');  
+          return;   
+        }  
+        // 发送请求保存数据  
         const response = await axios.post('/api/patrol/route_task/add',  
           { 
             ...taskForm.value,  
@@ -244,8 +265,8 @@ export default defineComponent({
           taskRule: '0'
         };
       } catch (error) {  
-        console.error('保存数据时发生错误:', error);  
-        alert('添加任务失败:');
+        console.log(error);  
+        alert('添加任务失败');  
       }  
     };  
 

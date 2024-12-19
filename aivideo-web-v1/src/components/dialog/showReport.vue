@@ -12,19 +12,24 @@
         <el-divider></el-divider>  
         <el-form :model="reportForm" class="form-container" label-position="left">  
           <el-row> 
-            <el-col :span="7">  
+            <el-col :span="5">  
               <el-form-item label="报告编号:" :label-width="formLabelWidth">  
                 <span class="form-item">{{ reportForm.reportId }}</span>  
               </el-form-item>  
             </el-col>  
-            <el-col :span="7">  
+            <el-col :span="6">  
               <el-form-item label="任务名称:" :label-width="formLabelWidth">  
                 <span class="form-item">{{ reportForm.taskName }}</span>  
               </el-form-item>  
             </el-col>   
-            <el-col :span="10">  
-              <el-form-item label="执行时间:" :label-width="formLabelWidth">  
+            <el-col :span="8">  
+              <el-form-item label="生成时间:" :label-width="formLabelWidth">  
                 <span class="form-item">{{ reportForm.createTime }}</span>  
+              </el-form-item>  
+            </el-col>
+            <el-col :span="5">  
+              <el-form-item label="报告状态:" :label-width="formLabelWidth">  
+                <span class="form-item">{{ reportForm.reportStatusStr }}</span>  
               </el-form-item>  
             </el-col>
           </el-row>  
@@ -68,7 +73,7 @@
               </el-table-column>  
               <el-table-column label="告警时间" width="210">  
                 <template slot-scope="scope">  
-                  <el-tag :type="scope.row.alarmName !== null ? 'danger' : 'success'">{{ scope.row.createTime }}</el-tag>
+                  <el-tag :type="scope.row.alarmName !== null ? 'danger' : 'success'">{{ scope.row.alarmTime }}</el-tag>
                 </template>  
               </el-table-column>
             </el-table> 
@@ -122,7 +127,6 @@ export default {
       reportForm.value = { ...reportData }; 
       filteredReportList.value = reportData.detailList; 
       originalReport.value = {...reportData };
-      handleSummarize(); 
     };  
 
     // 点击图片时打开查看图片对话框  
@@ -142,20 +146,20 @@ export default {
     };  
 
     // 处理总结并调整输入框高度  
-    const handleSummarize = () => {  
-      const abnormalityCount = reportForm.value.detailList.filter(item => item.alarmName !== null).length;  
-      const cameraCount = reportForm.value.detailList.length;  
-      let summarize = '';  
-      if (abnormalityCount > 0) {  
-        const uniqueAlarmNames = new Set(reportForm.value.detailList.filter(item => item.alarmName !== null).map(item => item.alarmName));  
-        const alarmNameList = Array.from(uniqueAlarmNames); // 将 Set 转换回数组  
-        const alarmName = alarmNameList.join('、');   
-        summarize = `本次成功对${cameraCount}个摄像头进行自动巡逻，其中${abnormalityCount}个摄像头发现告警，告警内容包括${alarmName}等，请速通知负责人前往现场核实确认。`;  
-      } else {  
-        summarize = `本次成功对${cameraCount}个摄像头进行自动巡逻，未发现告警。`;  
-      }  
-      reportForm.value.summarize = summarize;  
-    }; 
+    // const handleSummarize = () => {  
+    //   const abnormalityCount = reportForm.value.detailList.filter(item => item.alarmName !== null).length;  
+    //   const cameraCount = reportForm.value.detailList.length;  
+    //   let summarize = '';  
+    //   if (abnormalityCount > 0) {  
+    //     const uniqueAlarmNames = new Set(reportForm.value.detailList.filter(item => item.alarmName !== null).map(item => item.alarmName));  
+    //     const alarmNameList = Array.from(uniqueAlarmNames); // 将 Set 转换回数组  
+    //     const alarmName = alarmNameList.join('、');   
+    //     summarize = `本次成功对${cameraCount}个摄像头进行自动巡逻，其中${abnormalityCount}个摄像头发现告警，告警内容包括${alarmName}等，请速通知负责人前往现场核实确认。`;  
+    //   } else {  
+    //     summarize = `本次成功对${cameraCount}个摄像头进行自动巡逻，未发现告警。`;  
+    //   }  
+    //   reportForm.value.summarize = summarize;  
+    // }; 
 
     // 根据reportId从后端API（/api/patrol/report/download）获取url下载报告
     async function exportReport() {
@@ -189,7 +193,7 @@ export default {
 
     return { 
       dialogVisible, showImageDialogVisible, imageSrc, reportForm, originalReport, filteredReportList, formLabelWidth, 
-       openDialog, handleClick, handleImageClose, handleClose, handleSummarize, exportReport,
+       openDialog, handleClick, handleImageClose, handleClose, exportReport,
     };
   }  
 };  

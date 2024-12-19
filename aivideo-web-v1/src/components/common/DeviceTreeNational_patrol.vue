@@ -64,24 +64,25 @@ export default {
       if (node.level > 0) {
         // 类型是分组并且有子分组
         if (node.data.nodeType === "group" && node.data.hasChildren) {
-          this.getGroupTree(node.data.id, resolve);
+          this.getGroupTree(node.data.deviceId, resolve);
         }
         // 类型是分组并且没有子分组
         if (node.data.nodeType === "group" && !node.data.hasChildren) {
           // 请求NVR
-          this.getDeviceTree(node.data.id, resolve);
+          this.getDeviceTree(node.data.deviceId, resolve);
         }
         // 类型是设备
         if (node.data.nodeType === "device") {
           // 请求通道
-          this.getChannelTree(node.data.id, resolve);
+          this.getChannelTree(node.data.deviceId, resolve);
         }
       }
     },
     handleCheckboxChange(node, event) {
-      const id = node.data.id; // 确保使用的是节点的 id
+      const deviceId = node.data.deviceId; // 确保使用的是节点的 deviceId
+      const channelId = node.data.channelId; // 确保使用的是节点的 channelId
       // 触发自定义事件，将选中的ID传递给父组件
-      this.$emit('checkEvent', { id: id, checked: event });
+      this.$emit('checkEvent', { deviceId: deviceId, channelId: channelId, checked: event });
     },
     getGroupTree: function(parentId, resolve) {
       this.$axios({
@@ -97,7 +98,7 @@ export default {
               return {
                 name: item.group_name,
                 nodeType: "group", //类型
-                id: item.id,
+                deviceId: item.deviceId,
                 isLeaf: false,
                 online: false,
                 hasChildren: item.children && item.children.length > 0, //是否有子节点
@@ -141,7 +142,7 @@ export default {
               return {
                 name: item.name || item.deviceId,
                 isLeaf: false,
-                id: item.deviceId,
+                deviceId: item.deviceId,
                 nodeType: "device",
                 type: 1,
                 online: item.onLine,
@@ -217,9 +218,10 @@ export default {
           let node = {
             name: item.name || item.basicData.channelId,
             isLeaf: type !== 2,
-            id: item.id,
+            id: item.basicData.id,
             nodeType: "channel",
             deviceId: item.deviceId,
+            channelId: item.basicData.channelId,
             type: type,
             online: item.basicData.status,
             hasGPS: item.basicData.longitude * item.basicData.latitude !== 0,
@@ -237,15 +239,15 @@ export default {
     resetSelection: function() {
       this.$refs.gdTree.setCheckedKeys([]);
     },
-
+   
   },
 };
 </script>
 
 <style>
 .screen-device-tree {
-  background: transparent !important;
-  color: #f1f4f7 !important;
+  background: transparent;
+  color: #f1f4f7;
   font-weight: 400;
 }
 .screen-device-tree .el-tree-node__expand-icon {

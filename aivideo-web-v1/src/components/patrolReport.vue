@@ -27,10 +27,10 @@
                     placeholder="选择是否异常" 
                 > 
                     <el-option 
-                        v-for="status in uniqueAbnormalities" 
-                        :key="status" 
-                        :label="status" 
-                        :value="status" 
+                        v-for="item in uniqueAbnormalities" 
+                        :key="item" 
+                        :label="item" 
+                        :value="item" 
                     ></el-option> 
                 </el-select> 
 
@@ -46,17 +46,34 @@
                     style="font-size: 12px;overflow-y: auto; /* 允许垂直滚动 */ "
                     :header-cell-style="headerCellStyle"
                 >
-                    <el-table-column prop="reportId" label="报告编号" width=80 align="center"></el-table-column>
-                    <el-table-column prop="taskName" label="任务名称" width="120" align="center"></el-table-column >
-                    <el-table-column prop="selectedCameras" label="选择的摄像头" width="300" align="center"></el-table-column>
-                    <el-table-column prop="createTime" label="执行时间" width="200" align="center"></el-table-column>
-                    <el-table-column prop="abnormality" label="是否异常" width="100" align="center">
+                    <el-table-column prop="reportId" label="报告编号" width=90 align="center"></el-table-column>
+                    <el-table-column prop="taskName" label="任务名称" width="160" align="center"></el-table-column >
+                    <el-table-column prop="selectedCameras" label="选择的摄像头" width="200" align="center" v-slot:default="scope">
+                        <template>
+                            <div style="display: flex;align-items: center;color:#409eff;">
+                                <el-button type="text" size="mini" @click="toggleCameras(scope.$index)">
+                                    <i :class="scope.row.showAllCameras ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+                                </el-button>
+                                <div v-if="scope.row.showAllCameras">
+                                    <div v-for="(camera, index) in scope.row.selectedCamerasArray" :key="index">
+                                        {{ camera.cameraId }}
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    {{ getFirstCamera(scope.row.selectedCameras) }}
+                                </div>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="createTime" label="报告生成时间" width="200" align="center"></el-table-column>
+                    <el-table-column prop="reportStatusStr" label="报告状态" width="150" align="center"></el-table-column>
+                    <el-table-column prop="abnormalityStr" label="是否异常" width="80" align="center">
                         <template slot-scope="scope">
-                            <span v-if="scope.row.abnormality === '是'" style="color: red">异常</span>
+                            <span v-if="scope.row.abnormalityStr === '异常'" style="color: red">异常</span>
                             <span v-else>正常</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="巡逻报告" width="380" align="center">
+                    <el-table-column label="巡逻报告" width="300" align="center">
                         <template slot-scope="scope">
                             <el-divider direction="vertical"></el-divider>
                             <el-button size="medium" icon="el-icon-document" type="text" @click="viewReport(scope.row)">查看报告</el-button>
@@ -97,7 +114,7 @@ export default {
         const reportList = ref([]);
         const reportId = ref('');
         const createTime = ref('');
-        const abnormality = ref('');
+        const abnormalityStr = ref('');
         const taskName = ref('');
         const selectedCameras = ref('');
         const paginatedreportList = ref([]); 
@@ -110,31 +127,33 @@ export default {
         const filterSelectedCameras = ref('');
         const filterAbnormality = ref('');
 
-        // 根据abnormalityStr去重获取异常状态列表
-        const getAbnormalityList = () => {
-            axios.get('/api/patrol/report/list')  
-            .then(res => {  
-                const abnormalityList = res.data.data.list.map(item => item.abnormalityStr);  
-                uniqueAbnormalities.value = [...new Set(abnormalityList)];  
-            })  
-            .catch(err => {  
-                console.log(err);  
-            }); 
+        // 按照“正常”和“异常”筛选
+        const abnormalityOptions = ['正常', '异常'];
+        uniqueAbnormalities.value = abnormalityOptions;
+        
+        // 处理filterDate为日期格式
+        const handleFilterDate = (date) => {
+            if (date) {
+                const year = date.getFullYear();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            return '';
         };
-
         // 应用筛选条件
-        const applyFilter = () => {  
-            // 根据筛选条件过滤数据 
+       const applyFilter = () => {
+            // 根据筛选条件过滤数据
             const filteredList = reportList.value.filter(report => { 
-                const dateMatch = !filterDate || new Date(report.createTime.split(' ')[0]).toDateString() === new Date(filterDate).toDateString(); 
-                const taskNameMatch = !filterTaskName || report.taskName.toLowerCase().includes(filterTaskName.toLowerCase()); 
-                const selectedCamerasMatch = !filterSelectedCameras || report.selectedCameras.toLowerCase().includes(filterSelectedCameras.toLowerCase()); 
-                const abnormalityMatch = !filterAbnormality || report.abnormality === filterAbnormality; 
-                return dateMatch && taskNameMatch && selectedCamerasMatch && abnormalityMatch; 
-            }); 
-            // 更新分页后的数据 
-            paginatedreportList.value = filteredList; 
-        };  
+                const dateMatch = !filterDate.value || report.createTime.split(' ')[0] === handleFilterDate(filterDate.value);          
+                const taskNameMatch = !filterTaskName.value || report.taskName.toLowerCase().includes(filterTaskName.value.toLowerCase());      
+                const selectedCamerasMatch = !filterSelectedCameras.value || report.selectedCameras.toLowerCase().includes(filterSelectedCameras.value.toLowerCase());      
+                const abnormalityMatch = !filterAbnormality.value || report.abnormalityStr === filterAbnormality.value;     
+                return dateMatch && taskNameMatch && selectedCamerasMatch && abnormalityMatch;
+            });
+            // 更新分页后的数据
+            paginatedreportList.value = filteredList;
+        };
 
         // 重置筛选条件
         const resetFilter = () => {  
@@ -148,11 +167,11 @@ export default {
         // 根据前端筛选条件直接导出报告列表，不需要分页
         const exportList = () => {
             const filteredList = reportList.value.filter(report => { 
-                const dateMatch = !filterDate || new Date(report.createTime.split(' ')[0]).toDateString() === new Date(filterDate).toDateString(); 
-                const taskNameMatch = !filterTaskName || report.taskName.toLowerCase().includes(filterTaskName.toLowerCase()); 
-                const selectedCamerasMatch = !filterSelectedCameras || report.selectedCameras.toLowerCase().includes(filterSelectedCameras.toLowerCase()); 
-                const abnormalityMatch = !filterAbnormality || report.abnormality === filterAbnormality; 
-                return dateMatch && taskNameMatch && selectedCamerasMatch && abnormalityMatch; 
+                const dateMatch = !filterDate.value || report.createTime.split(' ')[0] === handleFilterDate(filterDate.value);          
+                const taskNameMatch = !filterTaskName.value || report.taskName.toLowerCase().includes(filterTaskName.value.toLowerCase());      
+                const selectedCamerasMatch = !filterSelectedCameras.value || report.selectedCameras.toLowerCase().includes(filterSelectedCameras.value.toLowerCase());      
+                const abnormalityMatch = !filterAbnormality.value || report.abnormality === filterAbnormality.value;     
+                return dateMatch && taskNameMatch && selectedCamerasMatch && abnormalityMatch;
             });
             // 将过滤后的报告列表转换为 CSV 内容  
             const csvContent = reportListToCsv(filteredList);  
@@ -168,18 +187,23 @@ export default {
             document.body.appendChild(link);  
             link.click();  
             document.body.removeChild(link);  
+            URL.revokeObjectURL(url); // 清理对象URL
         };  
         // 报告列表转换为 CSV 内容  
         const reportListToCsv = (reportList) => {  
-            const header = ['报告编号', '任务名称', '选择的摄像头', '执行时间', '是否异常', '巡逻报告'];  
+            const header = ['报告编号', '任务名称', '选择的摄像头', '报告生成时间', '是否异常'];  
+            const escapeCsvValue = (value) => {
+                // 如果字段值包含逗号、换行符或引号，则需要用双引号包围，并转义内部的双引号
+                if (/[,"\n]/.test(value)) {
+                    return `"${value.replace(/"/g, '""')}"`;
+                }
+                return value;
+            };
             const rows = reportList.map(report => {  
-                const detailList = report.detailList.map(detail => {  
-                    return [detail.cameraName, detail.startTime, detail.endTime, detail.duration, detail.status];  
-                });  
-                const detailCsv = detailList.map(detail => detail.join(',')).join('\n');  
-                return [report.reportId, report.taskName, report.selectedCameras, report.createTime, report.abnormalityStr, detailCsv];  
+                return [report.reportId, report.taskName, escapeCsvValue(report.selectedCameras), report.createTime, report.abnormalityStr];  
             });  
             const csvContent = [header.join(','), ...rows.map(row => row.join(','))].join('\n');  
+            console.log(csvContent);
             return csvContent;  
         };
 
@@ -194,14 +218,20 @@ export default {
             .then(res => {  
                 reportList.value = res.data.data.list;  
                 total_report.value = res.data.data.total;  
-                paginatedreportList.value = reportList.value.map(item => {  
+                paginatedreportList.value = reportList.value.map(item => { 
+                     // 拆分 selectedCameras
+                     const selectedCamerasArray = parseSelectedCameras(item.selectedCameras); 
                     return {  
                         reportId: item.reportId, 
                         taskName: item.taskName, 
                         selectedCameras: item.selectedCameras, 
                         createTime: item.createTime, 
-                        abnormality: item.abnormalityStr,
+                        abnormalityStr: item.abnormalityStr,
                         detailList: item.detailList,
+                        selectedCamerasArray: selectedCamerasArray,
+                        showAllCameras: false,
+                        summarize: item.summarize,
+                        reportStatusStr: item.reportStatusStr,
                     };  
                 });  
             })  
@@ -218,6 +248,27 @@ export default {
         const handleCurrentChange_report = (page) => {  
             currentPage_report.value = page;  
             getReportList();  
+        };
+
+        //解析 selectedCameras 字符串为数组
+        const parseSelectedCameras = (selectedCameras) => {
+            const result = [];
+            const selectedCamerasArray = selectedCameras.split(',');
+            selectedCamerasArray.forEach(cameraId => {
+                result.push({
+                    cameraId: cameraId,
+                });
+            });
+            return result;
+        };
+        // 获取第一个摄像头
+        const getFirstCamera = (selectedCameras) => {
+            const selectedCamerasArray = parseSelectedCameras(selectedCameras);
+            return selectedCamerasArray[0].cameraId;
+        };
+        //展开/收起摄像头
+        const toggleCameras = (index) => {
+            paginatedreportList.value[index].showAllCameras = !paginatedreportList.value[index].showAllCameras;
         };
 
         // 查看报告
@@ -263,14 +314,13 @@ export default {
         // 初始化
         onMounted(() => {  
             getReportList();
-            getAbnormalityList(); 
         }); 
 
         return {
             reportId, 
             taskName, 
             createTime, 
-            abnormality, 
+            abnormalityStr, 
             selectedCameras, 
             reportList, 
             getReportList, 
@@ -280,7 +330,6 @@ export default {
             total_report, 
             handleSizeChange_report, 
             handleCurrentChange_report,
-            getAbnormalityList,
             uniqueAbnormalities,
             filterDate,
             filterTaskName,
@@ -293,6 +342,10 @@ export default {
             reportListToCsv,
             exportReport,
             headerCellStyle,
+            handleFilterDate,
+            parseSelectedCameras,
+            getFirstCamera,
+            toggleCameras,
         }; 
     }, 
 

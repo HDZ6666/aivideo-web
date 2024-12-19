@@ -47,7 +47,7 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="updateTime" label="更新时间"  width="140" align="center"></el-table-column>
+                    <el-table-column prop="updateTime" label="更新时间"  width="150" align="center"></el-table-column>
                     <el-table-column label="任务状态" width="140" align="center">
                         <template v-slot:default="scope">
                             <el-switch
