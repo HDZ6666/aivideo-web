@@ -86,7 +86,7 @@ export default {
         username: [
           { required: true, trigger: "blur", message: "请输入用户名" }
         ],
-        phone: [{ required: true, trigger: "blur", validator: validatePhone }],
+        mobile: [{ required: true, trigger: "blur", validator: validatePhone }],
         roleId: [
           { required: true, trigger: "change", message: "请选择用户类型" }
         ],
