@@ -21,6 +21,17 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       },
     },
     build:{
+      rollupOptions: {
+        plugins: [
+          copy({
+            targets: [
+              {src: 'src/assets/imgs/blue2', dest: path.resolve(__dirname, '../../../dist/datav/assets/imgs')},
+              {src: 'src/assets/imgs/blue3', dest: path.resolve(__dirname, '../../../dist/datav/assets/imgs')},
+              {src: 'src/assets/imgs/violet', dest: path.resolve(__dirname, '../../../dist/datav/assets/imgs')},
+            ]
+          })
+        ]
+      },
       outDir: path.resolve(__dirname, '../../../dist/datav'),
     },
     server: {
