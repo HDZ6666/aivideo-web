@@ -2,6 +2,7 @@ import apiClient from '../videoApiClient';
 
 export interface TaskInfoReq {
   identifier: string;
+  alarmTypeId: number;
 }
 
 export interface TaskInfoRes {
@@ -41,6 +42,7 @@ export interface InitTaskReq {
 export type InitTaskRes = TaskInfoRes;
 
 export interface PreSignUrlReq {
+  alarmTypeId: number;
   identifier: string;
   partNumber: number;
 }
@@ -102,7 +104,7 @@ export enum FileUploadApi {
  * @returns {Promise<AxiosResponse<any>>}
  */
 const taskInfo = (params: TaskInfoReq) =>
-  apiClient.get<TaskInfoRes>({ url: `${FileUploadApi.taskInfo}/${params.identifier}` });
+  apiClient.get<TaskInfoRes>({ url: `${FileUploadApi.taskInfo}/${params.alarmTypeId}/${params.identifier}` });
 
 /**
  * 初始化一个分片上传任务
@@ -123,7 +125,7 @@ const initTask = (data: InitTaskReq) =>
  */
 const preSignUrl = (params: PreSignUrlReq) =>
   apiClient.get<string>({
-    url: `${FileUploadApi.preSignUrl}/${params.identifier}/${params.partNumber}`,
+    url: `${FileUploadApi.preSignUrl}/${params.alarmTypeId}/${params.identifier}/${params.partNumber}`,
   });
 
 /**

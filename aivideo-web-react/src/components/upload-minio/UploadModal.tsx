@@ -122,7 +122,7 @@ function UploadModal(props: UploadModalProps) {
     console.log('上传文件', item);
     // 根据 md5 查询上传记录
     let taskInfo;
-    taskInfo = await uploadService.taskInfo({ identifier: item.md5 });
+    taskInfo = await uploadService.taskInfo({ alarmTypeId,identifier: item.md5 });
     if (!taskInfo) {
       // 没有记录则初始化
       const initTaskData = {
@@ -208,6 +208,7 @@ function UploadModal(props: UploadModalProps) {
   ): Promise<void> => {
     const { fileIdentifier, partNumber, file } = chunkItem;
     const url = await uploadService.preSignUrl({
+      alarmTypeId,
       identifier: fileIdentifier,
       partNumber,
     });
