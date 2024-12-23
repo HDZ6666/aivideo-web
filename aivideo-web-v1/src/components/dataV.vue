@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import FramePage from "./iframe/index.vue";
+import FramePage from "./iframe/fullheight.vue";
 import userService from "./service/UserService";
 export default {
   name: "fence",
