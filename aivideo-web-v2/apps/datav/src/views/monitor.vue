@@ -611,10 +611,8 @@ export default defineComponent({
            var hasNew = false;
            this.bind.warnList.forEach(w => {
              const today = new Date();
-             console.log(today)
              const date = new Date(w.alarmTime);
-             console.log(date)
-             if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
+             if (today - date < 86400000) {
                hasNew = true;
              }
            })
