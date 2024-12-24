@@ -242,6 +242,7 @@ export default defineComponent({
             //background: #0071bc;
             // border: var(--td-bg-color-specialcomponent);
             border: 1px solid var(--td-brand-color);
+            background: transparent;
           }
 
           :deep(input) {
