@@ -164,7 +164,7 @@ function UploadModal(props: UploadModalProps) {
     }
 
     try {
-      await uploadService.merge({ identifier: item.md5 });
+      await uploadService.merge({ alarmTypeId, identifier: item.md5 });
       state.dataSource[index].status = 'success';
       state.dataSource[index].progress = 100;
     } catch (error) {

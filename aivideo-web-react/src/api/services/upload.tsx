@@ -53,6 +53,7 @@ export interface UploadPartReq {
 }
 
 export interface MergeReq {
+  alarmTypeId: number;
   identifier: string;
 }
 
@@ -134,7 +135,7 @@ const preSignUrl = (params: PreSignUrlReq) =>
  * @returns {Promise<AxiosResponse<any>>}
  */
 const merge = (params: MergeReq) =>
-  apiClient.post({ url: `${FileUploadApi.merge}/${params.identifier}` });
+  apiClient.post({ url: `${FileUploadApi.merge}/${params.alarmTypeId}/${params.identifier}` });
 
 /**
  * 上传单文件
