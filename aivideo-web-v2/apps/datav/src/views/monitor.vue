@@ -601,25 +601,23 @@ export default defineComponent({
     },
     getAlarmList() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2&status=0").then((r) => {
+      apiClient.GET(`/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2&status=0&startTime=${this.getDateDaysAgo(0)} 00:00:00&endTime=${this.getDateDaysAgo(0)} 23:59:59`).then((r) => {
         if (r.data.code == "0") {
           this.bind.warnList = r.data.data.records;
           if (this.bind.warnList.length == 0) {
            return
          }
-         else {
-           var hasNew = false;
-           this.bind.warnList.forEach(w => {
-             const today = new Date();
-             console.log(today)
-             const date = new Date(w.alarmTime);
-             console.log(date)
-             if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
-               hasNew = true;
-             }
-           })
-         }
-         if (this.alarmActived && hasNew) {
+        //  else {
+        //    var hasNew = false;
+        //    this.bind.warnList.forEach(w => {
+        //      const today = new Date();
+        //      const date = new Date(w.alarmTime);
+        //      if (today - date < 86400000) {
+        //        hasNew = true;
+        //      }
+        //    })
+        //  }
+         if (this.alarmActived) {
             this.alarmDetail = this.bind.warnList.find((item) => item.status == 0);
             this.$refs.alertSound.play();
             this.detailShow = true;
