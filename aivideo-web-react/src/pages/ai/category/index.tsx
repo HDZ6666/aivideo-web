@@ -136,9 +136,10 @@ export default function CaregoryPage() {
 
   const columns: ColumnsType<CategoryItem> = [
     {
-      title: 'ID',
+      title: '序号',
       dataIndex: 'id',
-      align: 'center',
+      width: 50,
+      render: (_value, _record, index) => index + 1 + (queryParams.page - 1) * queryParams.pageSize,
     },
     {
       title: '算法名称',
@@ -186,7 +187,7 @@ export default function CaregoryPage() {
       align: 'center',
       width: 100,
       render: (_, record) => (
-        <div className="flex w-full justify-center text-gray">
+        <div className="flex justify-center w-full text-gray">
           <Button type="link" onClick={() => handleSourceFile(record)}>
             源文件管理
           </Button>

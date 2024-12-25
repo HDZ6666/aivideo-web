@@ -15,7 +15,7 @@
                 </div>
                 <div class="info-item">告警描述：</div>
                 <div style="padding:0 0.05rem 0.1rem 0.05rem;font-size: 0.09rem;">
-                    {{ info.alarmDescription??'好的硒鼓好的硒鼓好的硒鼓好的硒鼓硒鼓好的硒鼓好的硒鼓好的硒鼓' }}
+                    {{ info.alarmDescription?info.alarmDescription:'' }}
                 </div>
             </div>
             <div v-if="info.status==0" class="info-action">

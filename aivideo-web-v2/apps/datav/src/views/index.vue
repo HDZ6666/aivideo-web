@@ -11,7 +11,7 @@
         </div>
         <div class="buttons">
           <div class="new-item">
-            <span @click="toggleFullScreen">关闭告警</span>
+            <span @click="toggleFullScreen">{{currentProps.alarmActived?'开启':'关闭'}}告警</span>
             <t-switch v-model="currentProps.alarmActived" style="margin-left: 0.05rem;" />
           </div>
           <!-- <div class="new-item">

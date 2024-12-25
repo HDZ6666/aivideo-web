@@ -110,7 +110,7 @@ export default function BaseSetComponent({
         </>
       )}
       <Form.Item name="alarmTime" label="同一告警间隔通知时间">
-        <InputNumber min={1} precision={0} suffix="分钟" controls={false} />
+        <InputNumber min={0} precision={0} suffix="分钟" controls={false} />
       </Form.Item>
       <Form.Item name="confidence" label="置信度">
         <Slider style={{ width: 500 }} />

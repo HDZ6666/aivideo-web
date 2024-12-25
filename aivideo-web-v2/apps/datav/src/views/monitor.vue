@@ -313,17 +313,17 @@ export default defineComponent({
         alarmStatistics: [
           {
             alarmTypeName: "烟雾烟火",
-            curDateAlarmCount: 11,
-            curDateAlarmNoHandleCount: 12,
-            sevenDayAlarmCount: 13,
-            sevenDayAlarmNoHandleCount: 14,
+            curDateAlarmCount: 0,
+            curDateAlarmNoHandleCount: 0,
+            sevenDayAlarmCount: 0,
+            sevenDayAlarmNoHandleCount: 0,
           },
           {
             alarmTypeName: "通道占用",
-            curDateAlarmCount: 11,
-            curDateAlarmNoHandleCount: 12,
-            sevenDayAlarmCount: 13,
-            sevenDayAlarmNoHandleCount: 14,
+            curDateAlarmCount: 0,
+            curDateAlarmNoHandleCount: 0,
+            sevenDayAlarmCount: 0,
+            sevenDayAlarmNoHandleCount: 0,
           },
         ],
         intervalId: null,
@@ -601,10 +601,23 @@ export default defineComponent({
     },
     getAlarmList() {
       const apiClient = getApiClient();
-      apiClient.GET("/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2&status=0").then((r) => {
+      apiClient.GET(`/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2&status=0&startTime=${this.getDateDaysAgo(0)} 00:00:00&endTime=${this.getDateDaysAgo(0)} 23:59:59`).then((r) => {
         if (r.data.code == "0") {
           this.bind.warnList = r.data.data.records;
-          if (this.alarmActived) {
+          if (this.bind.warnList.length == 0) {
+           return
+         }
+        //  else {
+        //    var hasNew = false;
+        //    this.bind.warnList.forEach(w => {
+        //      const today = new Date();
+        //      const date = new Date(w.alarmTime);
+        //      if (today - date < 86400000) {
+        //        hasNew = true;
+        //      }
+        //    })
+        //  }
+         if (this.alarmActived) {
             this.alarmDetail = this.bind.warnList.find((item) => item.status == 0);
             this.$refs.alertSound.play();
             this.detailShow = true;

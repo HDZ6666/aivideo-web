@@ -36,17 +36,20 @@ export default function RuleList({ alarmTypeId, title }: RuleListProps) {
   const selectedRowKeys = selectedRows.map((item) => item.id);
 
   const columns: ColumnsType<RuleItem> = [
-    { title: '编号', dataIndex: 'id', width: 100 },
+    {
+      title: '序号',
+      dataIndex: 'id',
+      width: 50,
+      render: (_value, _record, index) => index + 1 + (queryParams.page - 1) * queryParams.pageSize,
+    },
     {
       title: '设备名称',
       dataIndex: 'device',
-      width: 100,
       render: (_text, record) => record?.device?.length && record.device[0].name,
     },
     {
       title: '设备ID',
       dataIndex: 'device',
-      width: 100,
       render: (_text, record) => record?.device?.length && record.device[0].channelId,
     },
     {
@@ -79,7 +82,7 @@ export default function RuleList({ alarmTypeId, title }: RuleListProps) {
       align: 'center',
       width: 100,
       render: (_, record) => (
-        <div className="flex w-full justify-center text-gray">
+        <div className="flex justify-center w-full text-gray">
           <Button type="link" onClick={() => handleEditRule(record)}>
             编辑
           </Button>
