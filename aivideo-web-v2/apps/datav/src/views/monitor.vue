@@ -462,6 +462,7 @@ export default defineComponent({
       }
     },
     deviceTreeExpand(value, context) {
+      return
       if (context.node.data.children === true) {
         this.getDeviceChilrenList(context.node);
       }
