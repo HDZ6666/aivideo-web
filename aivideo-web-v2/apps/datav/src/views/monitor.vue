@@ -446,7 +446,7 @@ export default defineComponent({
     },
     searchDeviceTree(node) {
       console.log("searchDeviceTree", node);
-      this.getCameraList(node.value);
+      this.getCameraList(node.value, node.type);
     },
     changeDeviceTree(values, context) {
       console.log(context.node.data.id);
@@ -462,7 +462,6 @@ export default defineComponent({
       }
     },
     deviceTreeExpand(value, context) {
-      return
       if (context.node.data.children === true) {
         this.getDeviceChilrenList(context.node);
       }
@@ -470,12 +469,17 @@ export default defineComponent({
     videoDialogClosed() {
       this.$refs["videoPlayer"].onHide();
     },
-    getCameraList(categoryId = 0) {
+    getCameraList(categoryId = 0, type = 'group') {
       // this.bind.deviceTree = [];
       const apiClient = getApiClient();
       var apiUrl = `/api/cockpit/proxy/list?page=1&pageSize=1000`;
       if (categoryId) {
-        apiUrl += `&categoryId=${categoryId}`;
+        if (type == 'device') {
+          apiUrl += `&deviceId=${categoryId}`;
+        }
+        else {
+          apiUrl += `&categoryId=${categoryId}`;
+        }
       }
       apiClient.GET(apiUrl).then((r) => {
         if (r.data.code == "0") {
@@ -554,24 +558,26 @@ export default defineComponent({
     },
     getDeviceChilrenList(node) {
       const apiClient = getApiClient();
-      apiClient.GET("/ai/api/device/queryManager/list?page=1&pageSize=9999&categoryId=" + node.value).then((r) => {
+      apiClient.GET("/api/device/query/devices?page=1&count=9999&groupId=" + node.value).then((r) => {
         if (r.data.code == "0") {
           let children = [];
           for (let i = 0; i < r.data.data.list.length; i++) {
             children.push({
-              id: r.data.data.list[i].id,
+              id: r.data.data.list[i].deviceId,
               label: r.data.data.list[i].name,
-              value: r.data.data.list[i].id.toString(),
-              url:
-                location.protocol === "https:"
-                  ? r.data.data.list[i].streamInfo.https_flv.url
-                  : r.data.data.list[i].streamInfo.flv.url,
+              value: r.data.data.list[i].deviceId,
+              type: 'device'
+              // url:
+              //   location.protocol === "https:"
+              //     ? r.data.data.list[i].streamInfo.https_flv.url
+              //     : r.data.data.list[i].streamInfo.flv.url,
             });
           }
           // let nodes=node.getChildren();
           // for(let i=0;i<nodes.length;i++){
           //   nodes[i].remove();
           // }
+          console.log("childrenchildren", children)
           this.$refs.tree.appendTo(node.value, children);
         }
       });
