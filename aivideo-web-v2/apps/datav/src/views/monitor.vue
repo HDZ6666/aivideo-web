@@ -297,7 +297,7 @@ export default defineComponent({
         ],
         deviceData: [],
         deviceTree: [
-          { id: "1", label: "全部设备", value: "0",},
+          { id: "1", label: "全部设备", value: "0", type: "group"},
         ],
         cameraList: [],
         cameraRows: [
@@ -446,7 +446,7 @@ export default defineComponent({
     },
     searchDeviceTree(node) {
       console.log("searchDeviceTree", node);
-      this.getCameraList(node.value, node.type);
+      this.getCameraList(node.value, node.data.type);
     },
     changeDeviceTree(values, context) {
       console.log(context.node.data.id);
@@ -528,6 +528,7 @@ export default defineComponent({
               id: r.data.data[i].id,
               label: r.data.data[i].group_name,
               value: r.data.data[i].id.toString(),
+              type: 'group',
               children: this.getDeviceChilren(r.data.data[i].children),
             });
           }
