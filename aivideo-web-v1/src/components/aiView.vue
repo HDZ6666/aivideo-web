@@ -16,7 +16,7 @@ export default {
       // frameUrl: "http://183.239.58.24:10666//#/iframe/fence"
       // frameUrl: "http://192.168.1.106:8066/#/iframe/fence"
       frameUrl: "",
-      redirectUrl: "/dashboard/workbench",
+      redirectUrl: "/ai/alarm",
     };
   },
   mounted() {
