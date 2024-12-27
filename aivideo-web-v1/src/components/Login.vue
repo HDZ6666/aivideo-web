@@ -97,7 +97,7 @@ export default {
           if (res.data.code === 0 ) {
             //登录成功后
             that.cancelEnterkeyDefaultAction();
-            that.$router.push('/live');
+            that.$router.push('/dataV');
           }else{
             that.isLoging = false;
             that.$message({
