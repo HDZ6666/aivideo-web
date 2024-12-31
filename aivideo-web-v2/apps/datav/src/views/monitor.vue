@@ -54,7 +54,7 @@
       <card-box class="box" title="摄像头告警" more="详情" :height="rightBox2Height" @more="toggleCameraDialog">
         <div class="box_content">
           <div class="camera-warn">
-            <div class="camera-item" v-for="(item, index) in bind.warnList" :key="index" @click="cameraDetail(item)">
+            <div class="camera-item" v-for="(item, index) in bind.cameraWarnList" :key="index" @click="cameraDetail(item)">
               <img :src="item.alarmImg" alt="" />
               <div class="camera-addr">【{{ item.alarmTypeName }}】{{ item.deviceName }}</div>
             </div>
@@ -187,7 +187,7 @@
       <warn-detail v-if="detailShow" :info="alarmDetail" @close="detailShow = false"></warn-detail>
     </transition>
     <audio id="alertSound" ref="alertSound" :src="soundSrc"></audio>
-    <warn-detail v-if="cameraInfoShow" :info="cameraInfo" @close="cameraInfoShow = false"></warn-detail>
+    <warn-detail v-if="cameraInfoShow" :info="cameraInfo" @close="cameraDetailClose()"></warn-detail>
   </div>
 </template>
 <script>
@@ -289,12 +289,8 @@ export default defineComponent({
             total: 0,
           },
         },
-        warnList: [
-          {
-            alarmTypeName: 122,
-            deviceName: 212,
-          },
-        ],
+        warnList: [],
+        cameraWarnList: [],
         deviceData: [],
         deviceTree: [
           { id: "1", label: "全部设备", value: "0", type: "group"},
@@ -446,7 +442,7 @@ export default defineComponent({
     },
     searchDeviceTree(node) {
       console.log("searchDeviceTree", node);
-      this.getCameraList(node.value, node.data.type);
+      this.getCameraList(node.value, node.data.type, node.data.deviceType);
     },
     changeDeviceTree(values, context) {
       console.log(context.node.data.id);
@@ -469,13 +465,13 @@ export default defineComponent({
     videoDialogClosed() {
       this.$refs["videoPlayer"].onHide();
     },
-    getCameraList(categoryId = 0, type = 'group') {
+    getCameraList(categoryId = 0, type = 'group', deviceType = 'DEVICE') {
       // this.bind.deviceTree = [];
       const apiClient = getApiClient();
       var apiUrl = `/api/cockpit/proxy/list?page=1&pageSize=1000`;
       if (categoryId) {
         if (type == 'device') {
-          apiUrl += `&deviceId=${categoryId}`;
+          apiUrl += `&deviceId=${categoryId}&type=${deviceType}`;
         }
         else {
           apiUrl += `&categoryId=${categoryId}`;
@@ -510,8 +506,10 @@ export default defineComponent({
     getCameraPage() {
       let rows = [];
       this.bind.cameraRows = [];
+      console.log(this.pager)
       for (let i = 0; i < this.bind.cameraList.length; i++) {
-        if ((i >= this.pager.pageIndex - 1) * this.pager.pageSize && i < this.pager.pageIndex * this.pager.pageSize) {
+        if (i >= (this.pager.pageIndex - 1) * this.pager.pageSize && i < this.pager.pageIndex * this.pager.pageSize) {
+          console.log(i)
           rows.push(this.bind.cameraList[i]);
         }
       }
@@ -559,20 +557,29 @@ export default defineComponent({
     },
     getDeviceChilrenList(node) {
       const apiClient = getApiClient();
-      apiClient.GET("/api/device/query/devices?page=1&count=9999&groupId=" + node.value).then((r) => {
+      var url = "/api/device/query/devices-and-streams?groupId=" + node.value
+      if (node.data.deviceType == "DEVICE") {
+        url = "/api/device/query/devices-and-streams?deviceId=" + node.value
+      }
+      apiClient.GET(url).then((r) => {
         if (r.data.code == "0") {
           let children = [];
-          for (let i = 0; i < r.data.data.list.length; i++) {
-            children.push({
-              id: r.data.data.list[i].deviceId,
-              label: r.data.data.list[i].name,
-              value: r.data.data.list[i].deviceId,
-              type: 'device'
+          for (let i = 0; i < r.data.data.length; i++) {
+            const cItem = {
+              id: r.data.data[i].deviceId,
+              label: r.data.data[i].name,
+              value: r.data.data[i].deviceId,
+              type: 'device',
+              deviceType: r.data.data[i].type,
               // url:
               //   location.protocol === "https:"
               //     ? r.data.data.list[i].streamInfo.https_flv.url
               //     : r.data.data.list[i].streamInfo.flv.url,
-            });
+            };
+            if (r.data.data[i].type == 'DEVICE') {
+              cItem['children'] = true
+            }
+            children.push(cItem);
           }
           // let nodes=node.getChildren();
           // for(let i=0;i<nodes.length;i++){
@@ -636,6 +643,17 @@ export default defineComponent({
         }
       });
     },
+    getCameraAlarmList() {
+      const apiClient = getApiClient();
+      apiClient.GET(`/api/alarm/v2/stat/findAlarmInfoPage?page=0&size=2&status=0`).then((r) => {
+        if (r.data.code == "0") {
+          this.bind.cameraWarnList = r.data.data.records;
+          if (this.bind.cameraWarnList.length == 0) {
+           return
+         }
+        }
+      });
+    },
     getAlarmTrend() {
       const apiClient = getApiClient();
       apiClient
@@ -685,6 +703,10 @@ export default defineComponent({
       this.cameraInfo = item;
       this.cameraInfoShow = true;
     },
+    cameraDetailClose() {
+      this.getCameraAlarmList();
+      this.cameraInfoShow = false;
+    },
     getmbList(item) {
       debugger;
       if (item.deviceBackgroundBase64) {
@@ -721,6 +743,7 @@ export default defineComponent({
     this.getCameraList();
     this.getDeviceGroupList();
     this.getAlarmList();
+    this.getCameraAlarmList();
     this.getAlarmTrend();
     setInterval(this.getAlarmStatistics, 5000);
   },
@@ -951,6 +974,13 @@ export default defineComponent({
             padding: 0.06rem 0.03rem;
             background: url(../assets/imgs/video_bg.png) no-repeat;
             background-size: 100% 100%;
+          }
+
+          :deep(.video-wrapper) {
+            border: 1px solid #1fc6ff;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            // clip-path: polygon(0 5px, 5px 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%);
           }
 
           :deep(.vjs-control-bar) {

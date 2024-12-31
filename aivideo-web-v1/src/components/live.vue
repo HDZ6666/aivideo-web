@@ -107,7 +107,9 @@ export default {
       loading: false
     };
   },
-  mounted() {},
+  mounted() {
+    window.dispatchEvent(new CustomEvent("exitFullScreen"));
+  },
   created() {
     this.checkPlayByParam();
   },

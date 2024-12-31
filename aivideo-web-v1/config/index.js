@@ -4,7 +4,7 @@
 
 const path = require("path");
 // const apiProxy = 'http://localhost:18080'
-// const apiProxy = "http://192.168.124.5:18080"
+// const apiProxy = "http://192.168.124.7:18080"
 // const apiProxy = "http://192.168.0.152:18080"  //佛山本地测试环境
 const apiProxy = "http://183.239.58.24:18080" //佛山测试服务器
 module.exports = {

@@ -79,7 +79,7 @@ export default defineComponent({
   },
   methods:{
     gotoDashboard(){
-      window.top.location.href="/";
+      window.top.location.href="/#/aiView";
     },
     link(url,event){
       $(event.target).parent().parent().find(".item").removeClass("active");
