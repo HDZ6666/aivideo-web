@@ -442,7 +442,7 @@ export default defineComponent({
     },
     searchDeviceTree(node) {
       console.log("searchDeviceTree", node);
-      this.getCameraList(node.value, node.data.type, node.data.channel);
+      this.getCameraList(node.value, node.data.type, node.data.deviceType);
     },
     changeDeviceTree(values, context) {
       console.log(context.node.data.id);
@@ -465,16 +465,13 @@ export default defineComponent({
     videoDialogClosed() {
       this.$refs["videoPlayer"].onHide();
     },
-    getCameraList(categoryId = 0, type = 'group', channel = false) {
+    getCameraList(categoryId = 0, type = 'group', deviceType = 'DEVICE') {
       // this.bind.deviceTree = [];
       const apiClient = getApiClient();
       var apiUrl = `/api/cockpit/proxy/list?page=1&pageSize=1000`;
       if (categoryId) {
         if (type == 'device') {
-          apiUrl += `&deviceId=${categoryId}`;
-          if (channel) {
-            apiUrl += `&channel=${channel}`;
-          }
+          apiUrl += `&deviceId=${categoryId}&type=${deviceType}`;
         }
         else {
           apiUrl += `&categoryId=${categoryId}`;
@@ -509,8 +506,10 @@ export default defineComponent({
     getCameraPage() {
       let rows = [];
       this.bind.cameraRows = [];
+      console.log(this.pager)
       for (let i = 0; i < this.bind.cameraList.length; i++) {
-        if ((i >= this.pager.pageIndex - 1) * this.pager.pageSize && i < this.pager.pageIndex * this.pager.pageSize) {
+        if (i >= (this.pager.pageIndex - 1) * this.pager.pageSize && i < this.pager.pageIndex * this.pager.pageSize) {
+          console.log(i)
           rows.push(this.bind.cameraList[i]);
         }
       }
@@ -558,21 +557,29 @@ export default defineComponent({
     },
     getDeviceChilrenList(node) {
       const apiClient = getApiClient();
-      apiClient.GET("/api/device/query/devices-and-streams?groupId=" + node.value).then((r) => {
+      var url = "/api/device/query/devices-and-streams?groupId=" + node.value
+      if (node.data.deviceType == "DEVICE") {
+        url = "/api/device/query/devices-and-streams?deviceId=" + node.value
+      }
+      apiClient.GET(url).then((r) => {
         if (r.data.code == "0") {
           let children = [];
           for (let i = 0; i < r.data.data.length; i++) {
-            children.push({
+            const cItem = {
               id: r.data.data[i].deviceId,
               label: r.data.data[i].name,
               value: r.data.data[i].deviceId,
               type: 'device',
-              channel: r.data.data[i].channel,
+              deviceType: r.data.data[i].type,
               // url:
               //   location.protocol === "https:"
               //     ? r.data.data.list[i].streamInfo.https_flv.url
               //     : r.data.data.list[i].streamInfo.flv.url,
-            });
+            };
+            if (r.data.data[i].type == 'DEVICE') {
+              cItem['children'] = true
+            }
+            children.push(cItem);
           }
           // let nodes=node.getChildren();
           // for(let i=0;i<nodes.length;i++){
