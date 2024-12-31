@@ -318,7 +318,8 @@ export default defineComponent({
 }
 
 .day-container {
-  width: 70%;
+  width: 100%; 
+  max-width: 300px;
 }
 
 .el-radio-group {
