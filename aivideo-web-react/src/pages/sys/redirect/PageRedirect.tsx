@@ -32,10 +32,9 @@ export default function PageRedirect() {
         navigatge('/login', { replace: true });
         return;
       }
-      if (!accessToken) {
-        setUserToken({ accessToken: token });
-        getAiPremissionRoute();
-      } else if (aiPermission) {
+      setUserToken({ accessToken: token });
+      getAiPremissionRoute();
+      if (aiPermission) {
         navigatge(URL, { replace: true });
       }
     };
