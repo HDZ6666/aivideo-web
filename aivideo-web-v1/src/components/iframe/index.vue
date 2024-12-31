@@ -37,6 +37,9 @@ export default {
       };
     }
   },
+  mounted() {
+    window.dispatchEvent(new CustomEvent("exitFullScreen"));
+  },
   data() {
     return {
       loading: true
