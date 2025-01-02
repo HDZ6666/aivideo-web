@@ -10,7 +10,6 @@ import { varBounce } from '@/components/animate/variants/bounce';
 import {
   useUserActions,
   useUserAiPermission,
-  useUserToken,
   useAiPremissionRoute,
 } from '@/store/userStore';
 import { getUrlParams } from '@/utils/url';
@@ -18,7 +17,7 @@ import { getUrlParams } from '@/utils/url';
 const { VITE_APP_HOMEPAGE: HOMEPAGE } = import.meta.env;
 
 export default function PageRedirect() {
-  const { accessToken } = useUserToken();
+  // const { accessToken } = useUserToken();
   const aiPermission = useUserAiPermission();
   const navigatge = useNavigate();
   const { token, RedirectUrl } = getUrlParams(window.location.href);
