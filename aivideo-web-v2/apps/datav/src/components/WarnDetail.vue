@@ -91,7 +91,7 @@ export default defineComponent({
     justify-content: center; 
     align-items: center;
     .box {
-        background: url(../assets/imgs/warn_detail_bg.png);
+        background: url(../assets/imgs/warn_detail_bg.png), #061A40;;
         width: 5rem;
         height: 3.29rem;
         background-size: 100% 100%;

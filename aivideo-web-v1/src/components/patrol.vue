@@ -1,30 +1,71 @@
 <template>
     <div class="container">
         <div class="menu-container">
-            <el-menu class="el-menu-demo custom-menu" mode="vertical">
+            <el-menu class="el-menu-demo custom-menu" mode="vertical" default-active="1">
                 <div class="menu-title" style="text-align: center; font-size: 20px; padding: 20px 0px;">
                     <span>智慧</span><span>巡逻</span>
                 </div>
                 <el-menu-item index="1">
-                    <el-icon class="el-icon-setting" color="#000"></el-icon>
-                    <router-link to="/patrol">任务管理</router-link>
+                    <template slot="title"> 
+                        <div @click.prevent="currentComponent='patrolManagerVue'">
+                            <el-icon class="el-icon-setting" color="#000"></el-icon>
+                            <span>任务管理</span>
+                        </div>
+                        
+                    </template>
+                   
+                    <!-- <router-link to="/patrol" @click.prevent="currentComponent='patrolManagerVue'">任务管理</router-link> -->
+                    
                 </el-menu-item>
                 <el-menu-item index="2">
-                    <el-icon class="el-icon-document"></el-icon>
-                    <router-link to="/patrolReport">巡逻结果</router-link>
+                    <template slot="title"> 
+                        <div @click.prevent="currentComponent='patrolReportVue'">
+                            <el-icon class="el-icon-document"></el-icon>
+                            <span>巡逻结果</span>
+                        </div>
+                        
+                    </template>
+                   
+                    <!-- <router-link to="/patrolReport" @click.prevent="currentComponent='patrolReportVue'">巡逻结果</router-link> -->
+                    
                 </el-menu-item>
             </el-menu>
         </div>
         <div class="manager-container">
-            <router-view>
-            </router-view>
+            <!-- <router-view>
+            </router-view> -->
+            <component :is="currentComponent">
+
+            </component>
         </div>
     </div>
 </template>
 
 <script>
+import patrolManagerVue from './patrolManager.vue';
+import patrolReportVue from './patrolReport.vue';
 export default {
     name: 'patrol',
+    components:{
+        patrolManagerVue,
+        patrolReportVue
+    },
+    data(){
+        return{
+            currentComponent:"patrolManagerVue",
+            menuList:[{
+                name:"任务管理",
+                className:"el-icon-setting",
+                component:'patrolManagerVue',
+                color:"#000"
+            },{
+                name:"巡逻结果",
+                className:"el-icon-document",
+                component:'patrolReportVue',
+                color:""
+            }]
+        }
+    }
 };
 </script>
 
@@ -77,7 +118,12 @@ export default {
 .el-menu-item.is-active i {
     color: #000;
 }
-
+.el-menu-item.is-active span {
+    color: #409eff;
+}
+.el-menu-item span {
+    color: #000;
+}
 .el-menu-item.is-active,
 .el-submenu.is-opened .el-submenu__title,
 .el-menu-item:hover,

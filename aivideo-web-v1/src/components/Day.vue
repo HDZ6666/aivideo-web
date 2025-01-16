@@ -202,7 +202,7 @@ export default {
 
   /* 表格样式调整 */
   table {
-      width: 140%;
+      width: 100%;
       border-collapse: collapse;
   }
 

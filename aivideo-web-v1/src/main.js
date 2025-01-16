@@ -1,4 +1,4 @@
-import store from '@/store/index';
+import store from "@/store/index";
 import { handleTree, parseTime, resetForm } from "@/utils/index";
 import dataV from "@jiaminghi/data-view";
 import axios from "axios";
@@ -14,13 +14,13 @@ import Fingerprint2 from "fingerprintjs2";
 import VueClipboard from "vue-clipboard2";
 import Contextmenu from "vue-contextmenujs";
 import userService from "./components/service/UserService";
-import plugins from './plugins'
+import plugins from "./plugins";
 Vue.config.productionTip = false;
 Vue._watchers = Vue.prototype._watchers = [];
 
 // 生成唯一ID
-Fingerprint2.get(function(components) {
-  const values = components.map(function(component, index) {
+Fingerprint2.get(function (components) {
+  const values = components.map(function (component, index) {
     if (index === 0) {
       //把微信浏览器里UA的wifi或4G等网络替换成空,不然切换网络会ID不一样
       return component.value.replace(/\bNetType\/\w+\b/, "");
@@ -42,10 +42,10 @@ Vue.prototype.$notify = Notification;
 Vue.use(Contextmenu);
 Vue.use(VCharts);
 Vue.use(dataV);
-Vue.use(plugins)
-Vue.prototype.handleTree = handleTree
-Vue.prototype.parseTime = parseTime
-Vue.prototype.resetForm = resetForm
+Vue.use(plugins);
+Vue.prototype.handleTree = handleTree;
+Vue.prototype.parseTime = parseTime;
+Vue.prototype.resetForm = resetForm;
 console.log("环境：" + process.env.BASE_API);
 axios.defaults.baseURL =
   process.env.NODE_ENV === "development"
@@ -56,7 +56,7 @@ axios.defaults.baseURL =
 axios.defaults.withCredentials = true;
 // api 返回401自动回登陆页面
 axios.interceptors.response.use(
-  response => {
+  (response) => {
     // 对响应数据做点什么
     let token = response.headers["access-token"];
     if (token) {
@@ -64,29 +64,30 @@ axios.interceptors.response.use(
     }
     return response;
   },
-  error => {
+  (error) => {
     if (axios.isCancel(error)) {
       return Promise.reject(error);
     }
-    // Message.error(error.message || "请求错误");
-    console.log(error);
     // 对响应错误做点什么
     if (error.response.status === 401 || error.response.status === 400) {
-      console.log("登录失效");
-      router.push("/login");
+      if (error.response.config.url !== "/api/user/getInfo") {
+        userService.clearUserInfo();
+        store.dispatch("LogOut");
+        router.push("/login");
+      }
     }
     return Promise.reject(error);
   }
 );
 axios.interceptors.request.use(
-  config => {
+  (config) => {
     if (userService.getToken() != null && config.url !== "/api/user/login") {
       config.headers["access-token"] = `${userService.getToken()}`;
     }
     // console.log(config);
     return config;
   },
-  error => {
+  (error) => {
     return Promise.reject(error);
   }
 );
@@ -95,6 +96,78 @@ router.beforeEach((to, from, next) => {
   if (to.path === "/login") {
     next();
     return;
+  }
+  if (userService.getToken() == null) {
+    if (to.path === "/videoCockpitV1" && to.query && to.query.token) {
+      axios({
+        method: "post",
+        url: "/api/user/oneClickLogin",
+        data: {
+          authorization: decodeURIComponent(to.query.token),
+        },
+      })
+        .then(function (res) {
+          if (res.data.code === 0) {
+            userService.setToken(res.data.data.accessToken);
+            userService.setUser(res.data.data);
+            //登录成功后
+            next();
+          } else {
+            Message.error("登录失败");
+            next("/login");
+          }
+        })
+        .catch(function (error) {
+          Message.error(error.response.data.msg);
+          next("/login");
+        });
+    } else {
+      next("/login");
+    }
+  } else {
+    if (store.getters.roles.length === 0) {
+      // 判断当前用户是否已拉取完user_info信息
+      store
+        .dispatch("GetInfo")
+        .then(() => {
+          store.dispatch("GenerateRoutes").then((accessRoutes) => {
+            // 根据roles权限生成可访问的路由表
+            router.addRoutes(accessRoutes); // 动态添加可访问路由表
+            console.log(router);
+            // debugger
+            const side = ["用户管理", "角色管理", "菜单管理", "日志管理"];
+            const sideList = []; // 用户管理权限管理右侧菜单栏数据
+            accessRoutes &&
+              accessRoutes.map((item) => {
+                if (item.meta && item.meta.title == "系统管理") {
+                  item.children &&
+                    item.children.map((childrenItem) => {
+                      if (
+                        childrenItem.meta &&
+                        side.find((i) => i == childrenItem.meta.title)
+                      ) {
+                        sideList.push({
+                          name: childrenItem.meta.title,
+                          url: `${item.path}/${childrenItem.path}`,
+                        });
+                      }
+                    });
+                }
+              });
+            // debugger
+            store.commit("SET_SIDELIST", sideList);
+            console.log(router.getRoutes());
+            next({ ...to, replace: true }); // hack方法 确保addRoutes已完成
+          });
+        })
+        .catch((err) => {
+          userService.clearUserInfo();
+          store.dispatch("LogOut");
+          next({ path: "/login" });
+        });
+    } else {
+      next();
+    }
   }
   // debugger
   // store.dispatch('GetInfo').then(() => {
@@ -111,78 +184,16 @@ router.beforeEach((to, from, next) => {
   //     // })
   //   })
   // debugger
-  if (store.getters.roles.length === 0) {
-    // 判断当前用户是否已拉取完user_info信息
-    store.dispatch('GetInfo').then(() => {
-      store.dispatch('GenerateRoutes').then(accessRoutes => {
-        // 根据roles权限生成可访问的路由表
-        router.addRoutes(accessRoutes) // 动态添加可访问路由表
-        console.log(router)
-        // debugger
-        const side = ['用户管理','角色管理','菜单管理','日志管理'];
-        const sideList = []; // 用户管理权限管理右侧菜单栏数据
-        accessRoutes&&accessRoutes.map((item)=>{
-          if(item.meta&&item.meta.title=="系统管理"){
-            item.children&&item.children.map((childrenItem)=>{
-              if(childrenItem.meta&&side.find((i)=>i==childrenItem.meta.title)){
-                sideList.push({
-                  name:childrenItem.meta.title,
-                  url:`${item.path}/${childrenItem.path}`
-                })
-              }
-            })
-          }
-        })
-        // debugger
-        store.commit('SET_SIDELIST', sideList);
-        console.log(router.getRoutes())
-
-        next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
-      })
-    }).catch(err => {
-        // store.dispatch('LogOut').then(() => {
-        //   Message.error(err)
-        //   next({ path: '/' })
-        // })
-      })
-  }
-  if (userService.getToken() == null) {
-
-    if (to.path === "/videoCockpitV1" && to.query && to.query.token) {
-      axios({
-        method: "post",
-        url: "/api/user/oneClickLogin",
-        data: {
-          authorization: decodeURIComponent(to.query.token)
-        }
-      })
-        .then(function(res) {
-          if (res.data.code === 0) {
-            userService.setToken(res.data.data.accessToken);
-            userService.setUser(res.data.data);
-            //登录成功后
-            next();
-          } else {
-            Message.error("登录失败");
-            next("/login");
-          }
-        })
-        .catch(function(error) {
-          Message.error(error.response.data.msg);
-          next("/login");
-        });
-    } else {
-      next("/login");
-    }
-  } else {
-    next();
-  }
 });
 
-window.addEventListener("unauthorized", function(_) {
-  console.log("receive unauthorized");
-  router.push("/login");
-},false)
+window.addEventListener(
+  "unauthorized",
+  function (_) {
+    console.log("receive unauthorized");
+    router.push("/login");
+  },
+  false
+);
 
 Vue.prototype.$axios = axios;
 Vue.prototype.$cookies.config(60 * 30);
@@ -190,5 +201,5 @@ Vue.prototype.$cookies.config(60 * 30);
 new Vue({
   store,
   router: router,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount("#app");
