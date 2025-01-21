@@ -148,7 +148,7 @@ function EditRulePage({ alarmTypeId, ruleId, setActionType }: EditRulePageProps)
         <Form form={form} onFinish={FormSubmit}>
           <div className={type === 'a' ? 'block' : 'hidden'}>
             <Form.Item name="areaSet" label="">
-              <KonvasCanvas bgImage={bgImage} buttons={buttons} mtype="area" />
+              <KonvasCanvas bgImage={bgImage} buttons={buttons} mtype="all" />
             </Form.Item>
           </div>
           <div className={type === 'b' ? 'block' : 'hidden'}>

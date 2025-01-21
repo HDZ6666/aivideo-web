@@ -29,6 +29,7 @@ interface KonvaCanvasProps {
   value?: KonvasFormType;
   bgImage?: ImgProps;
   mtype?: string; // 绘图 all area line
+  lineTextList?: string[];
   buttons?: React.ReactNode;
   onChange?: (value: KonvasFormType) => void;
 }
@@ -40,21 +41,31 @@ const konvasDefaultData: KonvasFormType = {
   list: [],
 };
 
-const areaOptions = [
-  { value: 'all', label: '全屏监控' },
-  { value: 'polygon', label: '自定义监控区域' },
-  { value: 'big', label: '最大区域' },
-  { value: 'except', label: '排除区域' },
-];
-
-const lineOptions = [
-  { value: 'linesegment', label: '线段(A ↔ B)' },
-  { value: 'linesegmentBA', label: '线段(B → A)' },
-  { value: 'linesegmentAB', label: '线段(A → B)' },
-];
-
 const KonvasCanvas = forwardRef(
-  ({ value, bgImage, mtype = 'all', buttons, onChange }: KonvaCanvasProps, ref) => {
+  (
+    {
+      value,
+      bgImage,
+      mtype = 'all',
+      lineTextList = ['进', '出'],
+      buttons,
+      onChange,
+    }: KonvaCanvasProps,
+    ref,
+  ) => {
+    const areaOptions = [
+      { value: 'all', label: '全屏监控' },
+      { value: 'polygon', label: '自定义监控区域' },
+      { value: 'big', label: '最大区域' },
+      { value: 'except', label: '排除区域' },
+    ];
+
+    const lineOptions = [
+      { value: 'linesegment', label: `线段(${lineTextList[0]} ↔ ${lineTextList[1]})` },
+      { value: 'linesegmentBA', label: `线段(${lineTextList[1]} → ${lineTextList[0]})` },
+      { value: 'linesegmentAB', label: `线段(${lineTextList[0]} → ${lineTextList[1]})` },
+    ];
+
     const konvasData = value || konvasDefaultData;
     const { width, height, canvasType, list } = konvasData;
     const lineType = lineOptions.findIndex((item) => item.value === canvasType);
@@ -87,10 +98,10 @@ const KonvasCanvas = forwardRef(
             ]);
             const arrowPoints = getVerticalPoint(line.points, 50, 1 / 2);
             const textPoints = getVerticalPoint(line.points, 70, 1 / 2);
-            const arrowListN = ['A', 'B'].map((_arrow, index) => {
+            const arrowListN = lineTextList.map((_arrow, index) => {
               return createArrow(arrowPoints[index], lineType === index + 1 || lineType === 0);
             });
-            const textListN = ['A', 'B'].map((text, index) => {
+            const textListN = lineTextList.map((text, index) => {
               return createText(textPoints[index][2], textPoints[index][3], text, true);
             });
 
@@ -101,7 +112,6 @@ const KonvasCanvas = forwardRef(
             break;
         }
       }
-      console.log('改变数据', list);
     }, [canvasType, lineType, list]);
 
     const SelectOptions = useMemo(() => {
@@ -167,7 +177,7 @@ const KonvasCanvas = forwardRef(
         case 'linesegment':
         case 'linesegmentAB':
         case 'linesegmentBA':
-          return <LineSegment {...shape} lineType={lineType} />;
+          return <LineSegment {...shape} lineType={lineType} lineTextList={lineTextList} />;
         default:
           return null;
       }

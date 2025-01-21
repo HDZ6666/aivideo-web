@@ -1,6 +1,6 @@
 import { CircleType, LineType, ArrowType, TextType, RectType, KonvasFormType } from './interface';
 
-const color = 'rgba(255,0,0,0.5)';
+const color = 'rgba(255,0,0,0.65)';
 
 export const createCircle = (x: number, y: number, radius = 2): CircleType => {
   return {

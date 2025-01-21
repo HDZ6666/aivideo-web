@@ -13,7 +13,7 @@ import {
   Flex,
   Radio,
 } from 'antd';
-import { useState } from 'react';
+import { CSSProperties, useState } from 'react';
 
 import aiService, { AlarmListItem } from '@/api/services/aiService';
 import LivePlayer from '@/components/live-player';
@@ -76,6 +76,14 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
     return alarmDetail ? footerBtn[alarmDetail.status] : null;
   };
 
+  const style: CSSProperties = {
+    width: '480px',
+    height: '280px',
+    backgroundColor: '#000',
+    padding: '5px',
+    boxSizing: 'border-box',
+  };
+
   return (
     <Modal
       title="告警详情"
@@ -103,25 +111,32 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
             </Flex>
             {type === 'image' && (
               <>
-                <Flex>
+                <Flex style={{ ...style }}>
                   <Image.PreviewGroup>
                     <Image
                       width="100%"
-                      height="280px"
-                      className="bg-black object-cover"
+                      height="100%"
+                      className="object-contain bg-black"
                       src={alarmDetail.alarm_img}
                     />
                   </Image.PreviewGroup>
                 </Flex>
-                {/* <Flex>
+                <Flex wrap>
                   <Image
                     width="80px"
                     height="60px"
-                    className="object-cover bg-black"
+                    className="object-cover bg-black hover:cursor-pointer hover:opacity-80"
                     src={alarmDetail.alarm_img}
                     preview={false}
                   />
-                </Flex> */}
+                  {/* <Image
+                    width="80px"
+                    height="60px"
+                    className="object-cover bg-black hover:cursor-pointer hover:opacity-80"
+                    src={alarmDetail.alarm_img}
+                    preview={false}
+                  /> */}
+                </Flex>
               </>
             )}
             {type === 'video' && <LivePlayer videoUrl={alarmDetail.videoUrl} />}
@@ -129,12 +144,20 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
           <Col span={10}>
             <Descriptions title="告警信息" column={1}>
               <Descriptions.Item label="检测类型">
-                {alarmDetail.modelname || 'AI检测'}
+                <span className="font-bold">{alarmDetail.modelname}</span>
               </Descriptions.Item>
-              <Descriptions.Item label="告警时间">{alarmDetail.alarm_time}</Descriptions.Item>
               <Descriptions.Item label="置信度">90%</Descriptions.Item>
+              {/* <Descriptions.Item label="区域统计">
+                <span className="font-bold text-error">80</span>
+              </Descriptions.Item> */}
+              {/* <Descriptions.Item label="进入数量">
+                <span className="font-bold text-error">80</span>
+              </Descriptions.Item>
+              <Descriptions.Item label="出去数量">
+                <span className="font-bold text-error">80</span>
+              </Descriptions.Item> */}
               <Descriptions.Item label="设备名称">
-                {alarmDetail.device_name || '摄像头#1'}
+                {alarmDetail.device_name || ''}
               </Descriptions.Item>
               <Descriptions.Item label="通知方式">
                 {alarmDetail.notice_type || '微信'}
@@ -146,7 +169,8 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
                   })}
                 </Space>
               </Descriptions.Item>
-              <Descriptions.Item label="处理人">admin</Descriptions.Item>
+              <Descriptions.Item label="告警时间">{alarmDetail.alarm_time}</Descriptions.Item>
+              {/* <Descriptions.Item label="处理人"></Descriptions.Item> */}
             </Descriptions>
           </Col>
         </Row>

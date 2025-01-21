@@ -79,7 +79,7 @@ function EditDeviceRulePage({ alarmTypeId, selectedRows, setActionType }: EditRu
         <Form form={form} onFinish={FormSubmit} initialValues={formInitValue}>
           <div className={type === 'a' ? 'block' : 'hidden'}>
             <Form.Item name="areaSet" label="">
-              <KonvasCanvas bgImage={bgImage} mtype="area" />
+              <KonvasCanvas bgImage={bgImage} mtype="all" />
             </Form.Item>
           </div>
           <div className={type === 'b' ? 'block' : 'hidden'}>

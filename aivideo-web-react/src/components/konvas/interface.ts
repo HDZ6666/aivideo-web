@@ -76,6 +76,7 @@ export interface PolygonProps extends KonvaProps {
 
 export interface LineProps extends KonvaProps {
   lineType: number;
+  lineTextList: string[];
   groupList: GroupType[];
   setGroupList: (groupList: GroupType[]) => void;
 }

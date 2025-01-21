@@ -16,6 +16,7 @@ import {
 import type { ArrowType, CircleType, LineProps, LineType, TextType } from './interface';
 
 function LineSegment({
+  lineTextList,
   lineType,
   width,
   height,
@@ -56,11 +57,11 @@ function LineSegment({
       // 创建线
       const line = createLine([offsetX, offsetY, offsetX, offsetY]);
       // 创建箭头
-      const arrows: ArrowType[] = ['A', 'B'].map((_item) => {
+      const arrows: ArrowType[] = lineTextList.map((_item) => {
         return createArrow([0, 0, 0, 0]);
       });
       // 创建字体
-      const texts: TextType[] = ['A', 'B'].map((item) => {
+      const texts: TextType[] = lineTextList.map((item) => {
         return createText(0, 0, item);
       });
       setGroupList([...groupList, ...arrows, ...texts, circle, line]);
