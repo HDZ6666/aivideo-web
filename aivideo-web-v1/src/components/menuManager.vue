@@ -1,7 +1,7 @@
 <template>
     <div id="app" class="app-container" style="width: 100%;">
         <div class="page-header">
-  
+
             <div class="page-title">菜单列表</div>
             <div class="page-header-btn">
                 <el-button icon="el-icon-plus" size="mini" type="primary" @click="handleAdd">
@@ -15,7 +15,7 @@
           <div class="leftchoose">
             <el-card class="box-card">
             <div v-for="item in sideList" :key="$route.path+item.name" class="box-card-text box-card-item">
-              <span :style="{color: $route.path==item.url?'#1890FF':'',cursor:'pointer'}" @click="$route.path!=item.url&&$router.push(item.url)">{{item.name }}</span> 
+              <span :style="{color: $route.path==item.url?'#1890FF':'',cursor:'pointer'}" @click="$route.path!=item.url&&$router.push(item.url)">{{item.name }}</span>
             </div>
             </el-card>
           </div>
@@ -74,8 +74,8 @@
             </el-table-column>
           </el-table>
         </div>
-       
-  
+
+
         <!-- 添加或修改菜单对话框 -->
         <el-dialog :title="title" :visible.sync="open" width="680px" append-to-body>
             <el-form ref="form" :model="form" :rules="rules" label-width="100px">
@@ -178,7 +178,7 @@
                     </span>
                 </el-form-item>
                 </el-col>
-                
+
                 <!-- <el-col :span="12" v-if="form.menuType == 'C'">
                 <el-form-item prop="isCache">
                     <span slot="label">
@@ -247,13 +247,13 @@
         </el-dialog>
     </div>
   </template>
-  
+
   <script>
   import Treeselect from "@riophae/vue-treeselect";
   import "@riophae/vue-treeselect/dist/vue-treeselect.css";
   import { mapGetters } from "vuex";
 //   import IconSelect from "@/components/IconSelect";
-  
+
   export default {
     name: "Menu",
     dicts: ['sys_show_hide', 'sys_normal_disable'],
@@ -363,7 +363,7 @@
       getTreeselect() {
         this.$axios({
             method:"get",
-            url:"api/menu/list"
+            url:"/api/menu/list"
         }).then(response => {
           this.menuOptions = [];
           const menu = { id: 0, menuName: '主类目', children: [] };
@@ -435,7 +435,7 @@
                 this.open = true;
                 this.title = "修改菜单";
             }
-          
+
         });
       },
       /** 提交按钮 */
@@ -528,7 +528,7 @@
               });
             })
         })
-          
+
       }
     }
   };
@@ -538,7 +538,7 @@
   width: calc(10% - 20px);
   margin-right: 20px;
   min-height: 100%;
-  
+
 }
 .box-card{
     height: 100%;
