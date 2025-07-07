@@ -91,10 +91,10 @@ export interface BingAlarmCategoryReq {
 }
 
 export enum FileUploadApi {
-  taskInfo = 'v1/minio/tasks',
-  initTask = 'v1/minio/tasks',
-  preSignUrl = 'v1/minio/tasks',
-  merge = 'v1/minio/tasks/merge',
+  taskInfo = '/v1/minio/tasks',
+  initTask = '/v1/minio/tasks',
+  preSignUrl = '/v1/minio/tasks',
+  merge = '/v1/minio/tasks/merge',
   fileList = '/v1/minio/tasks/fileList',
   deleteFile = '/v1/minio/tasks/deleteAlarmCategoryFile',
   bingAlarmCategory = '/v1/minio/tasks/bingAlarmCategory',

@@ -30,8 +30,8 @@ export interface GetPushUserListItem {
 }
 
 export enum UserApi {
-  SignIn = 'api/user/login',
-  getPushUser = 'api/user/users',
+  SignIn = '/api/user/login',
+  getPushUser = '/api/user/users',
 }
 
 const signin = (params: SignInReq) => apiClient.get<SignInRes>({ url: UserApi.SignIn, params });
