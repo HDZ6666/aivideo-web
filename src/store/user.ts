@@ -20,13 +20,10 @@ export const useUserStore = defineStore(
     const permissions = ref<string[]>([])
     // 登录状态
     const isLoading = ref(false)
-    // 是否已登录 - 同时检查 Store 和本地存储
-    const isLoggedIn = computed(() => {
-      const storeToken = !!token.value
-      const localToken = !!getToken()
-      // 只有当两者都存在且一致时才认为已登录
-      return storeToken && localToken && token.value === getToken()
-    })
+    // 是否已登录
+    const isLoggedIn = computed(() =>
+      !!token.value,
+    )
     // 用户名
     const userName = computed(() => userInfo.value?.username || '')
     // 用户ID
@@ -110,15 +107,12 @@ export const useUserStore = defineStore(
 
         // 调用登录接口
         const response = await login(encryptedParams)
-        console.log('登录接口返回数据', response)
-        return
-
         if (response?.accessToken) {
           setTokenValue(response.accessToken)
         }
 
         // 获取完整的用户信息
-        // await getUserInfoData()
+        await getUserInfoData()
 
         return { success: true, message: '登录成功' }
       }
@@ -206,15 +200,14 @@ export const useUserStore = defineStore(
     }
   },
   {
-    persist: false,
-    // persist: {
-    //   key: 'user-store',
-    //   storage: {
-    //     getItem: uni.getStorageSync,
-    //     setItem: uni.setStorageSync,
-    //   },
-    //   // 只持久化必要的状态
-    //   paths: ['token'],
-    // },
+    persist: {
+      key: 'user-store',
+      storage: {
+        getItem: uni.getStorageSync,
+        setItem: uni.setStorageSync,
+      },
+      // 只持久化必要的状态
+      paths: ['token'],
+    },
   },
 )

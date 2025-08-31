@@ -13,7 +13,6 @@
 import type { ILoginParams } from '@/api/auth'
 import { computed, onMounted, ref } from 'vue'
 import { useUserStore } from '@/store/user'
-import { getToken } from '@/utils/auth'
 
 // ==================== 页面配置 ====================
 defineOptions({
@@ -101,21 +100,12 @@ onMounted(() => {
     redirectUrl.value = decodeURIComponent(options.redirect)
   }
 
-  // 检查是否已登录 - 同时检查 Store 和本地存储
-  const hasStoreToken = userStore.isLoggedIn
-  const hasLocalToken = !!getToken()
-
-  // 只有当 Store 和本地存储都有 token 时才认为已登录
-  if (hasStoreToken && hasLocalToken) {
+  if (userStore.isLoggedIn) {
+    console.log('用户已登录，跳转到目标页面')
     const targetUrl = redirectUrl.value || '/pages/home/index'
     uni.reLaunch({
       url: targetUrl,
     })
-  }
-  else if (hasStoreToken !== hasLocalToken) {
-    // 如果 Store 和本地存储状态不一致，清理所有状态
-    console.log('登录状态不一致，清理所有状态')
-    userStore.clearUserStore()
   }
 })
 </script>

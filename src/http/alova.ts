@@ -4,7 +4,8 @@ import AdapterUniapp from '@alova/adapter-uniapp'
 import { createAlova } from 'alova'
 import { createServerTokenAuthentication } from 'alova/client'
 import VueHook from 'alova/vue'
-import { getToken, setToken } from '@/utils/auth'
+import { useUserStore } from '@/store'
+import { getToken } from '@/utils/auth'
 import { toast } from '@/utils/toast'
 import { ContentTypeEnum, ResultEnum, ShowMessage } from './enum'
 
@@ -12,6 +13,11 @@ import { ContentTypeEnum, ResultEnum, ShowMessage } from './enum'
 export const API_DOMAINS = {
   DEFAULT: import.meta.env.VITE_SERVER_BASEURL,
   SECONDARY: import.meta.env.VITE_API_SECONDARY_URL,
+}
+
+function clearUserState() {
+  const userStore = useUserStore()
+  userStore.clearUserStore()
 }
 
 /**
@@ -26,44 +32,12 @@ const { onAuthRequired, onResponseRefreshToken } = createServerTokenAuthenticati
       return response.statusCode === ResultEnum.Unauthorized
     },
     handler: async (response, method) => {
+      clearUserState()
       const loginUrl = import.meta.env.VITE_LOGIN_URL || '/pages/login/index'
-      console.log('Token已过期，请重新登录', loginUrl)
-
-      // 清除本地存储的 token
-      setToken('')
-
-      // 清除 Store 中的用户状态
-      // 动态导入避免循环依赖
-      const { useUserStore } = await import('@/store/user')
-      const userStore = useUserStore()
-      userStore.clearUserStore()
-
       await uni.reLaunch({ url: loginUrl })
       throw new Error('Token已过期，请重新登录')
     },
   },
-
-  // uniapp 的适配器不进去这里
-  // refreshTokenOnError: {
-  //   isExpired: (error) => {
-  //     console.log('请求失败1', error)
-  //     return error.response?.status === ResultEnum.Unauthorized
-  //   },
-  //   handler: async () => {
-  //     try {
-  //       console.log('请求失败2')
-  //       // TODO: 实现刷新token逻辑
-  //       throw new Error('Token已过期，请重新登录')
-  //     }
-  //     catch (error) {
-  //       console.error('刷新Token失败:', error)
-  //       // 切换到登录页
-  //       const loginUrl = import.meta.env.VITE_LOGIN_URL || '/pages/login/index'
-  //       await uni.reLaunch({ url: loginUrl })
-  //       throw error
-  //     }
-  //   },
-  // },
 })
 
 /**
