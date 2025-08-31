@@ -70,6 +70,9 @@ importers:
       '@dcloudio/uni-quickapp-webview':
         specifier: 3.0.0-4060620250520001
         version: 3.0.0-4060620250520001(postcss@8.5.6)(rollup@4.46.1)(vue@3.5.18(typescript@5.8.3))
+      '@videojs/http-streaming':
+        specifier: ^3.17.2
+        version: 3.17.2(video.js@8.23.4)
       abortcontroller-polyfill:
         specifier: ^1.7.8
         version: 1.7.8
@@ -79,9 +82,15 @@ importers:
       dayjs:
         specifier: 1.11.10
         version: 1.11.10
+      hls.js:
+        specifier: ^1.6.9
+        version: 1.6.9
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
+      js-md5:
+        specifier: ^0.8.3
+        version: 0.8.3
       pinia:
         specifier: 2.0.36
         version: 2.0.36(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
@@ -91,6 +100,9 @@ importers:
       sard-uniapp:
         specifier: ^1.22.1
         version: 1.23.0(@dcloudio/types@3.4.16)(vue@3.5.18(typescript@5.8.3))
+      video.js:
+        specifier: ^8.23.4
+        version: 8.23.4
       vue:
         specifier: ^3.4.21
         version: 3.5.18(typescript@5.8.3)
@@ -151,7 +163,7 @@ importers:
         version: 1.0.0-alpha.3(@uni-helper/uni-app-types@1.0.0-alpha.3(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)))(@uni-helper/uni-cloud-types@1.0.0-alpha.3(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)))(@uni-helper/uni-ui-types@1.0.0-alpha.3(@uni-helper/uni-app-types@1.0.0-alpha.3(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)))(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)))(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
       '@uni-helper/unocss-preset-uni':
         specifier: ^0.2.11
-        version: 0.2.11(@unocss/preset-legacy-compat@0.59.4)(@unocss/preset-mini@65.4.2)(@unocss/rule-utils@66.3.3)(@unocss/vite@65.4.2(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3)))(unocss-applet@0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@65.4.2)(@unocss/preset-wind3@66.3.3)(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3))))(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3)))
+        version: 0.2.11(@unocss/preset-legacy-compat@0.59.4)(@unocss/preset-mini@66.3.3)(@unocss/rule-utils@66.3.3)(@unocss/vite@65.4.2(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3)))(unocss-applet@0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@66.3.3)(@unocss/preset-wind3@66.3.3)(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3))))(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3)))
       '@uni-helper/vite-plugin-uni-components':
         specifier: 0.2.0
         version: 0.2.0(rollup@4.46.1)
@@ -1202,7 +1214,6 @@ packages:
   '@esbuild/darwin-arm64@0.20.2':
     resolution: {integrity: sha512-4J6IRT+10J3aJH3l1yzEg9y3wkTDgDk7TSDFX+wKFiWjqWp/iCfLIYzGyasx9l0SAFPT1HwSCR+0w/h1ES/MjA==}
     engines: {node: '>=12'}
-    cpu: [arm64]
     os: [darwin]
 
   '@esbuild/darwin-arm64@0.23.1':
@@ -1220,7 +1231,6 @@ packages:
   '@esbuild/darwin-x64@0.20.2':
     resolution: {integrity: sha512-tBcXp9KNphnNH0dfhv8KYkZhjc+H3XBkF5DKtswJblV7KlT9EI2+jeA8DgBjp908WEuYll6pF+UStUCfEpdysA==}
     engines: {node: '>=12'}
-    cpu: [x64]
     os: [darwin]
 
   '@esbuild/darwin-x64@0.23.1':
@@ -2089,7 +2099,6 @@ packages:
 
   '@rollup/rollup-darwin-x64@4.46.1':
     resolution: {integrity: sha512-ZaNH06O1KeTug9WI2+GRBE5Ujt9kZw4a1+OIwnBHal92I8PxSsl5KpsrPvthRynkhMck4XPdvY0z26Cym/b7oA==}
-    cpu: [x64]
     os: [darwin]
 
   '@rollup/rollup-freebsd-arm64@4.46.1':
@@ -2578,6 +2587,19 @@ packages:
     peerDependencies:
       vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0-0 || ^6.0.0-0
 
+  '@videojs/http-streaming@3.17.2':
+    resolution: {integrity: sha512-VBQ3W4wnKnVKb/limLdtSD2rAd5cmHN70xoMf4OmuDd0t2kfJX04G+sfw6u2j8oOm2BXYM9E1f4acHruqKnM1g==}
+    engines: {node: '>=8', npm: '>=5'}
+    peerDependencies:
+      video.js: ^8.19.0
+
+  '@videojs/vhs-utils@4.1.1':
+    resolution: {integrity: sha512-5iLX6sR2ownbv4Mtejw6Ax+naosGvoT9kY+gcuHzANyUZZ+4NpeNdKMUhb6ag0acYej1Y7cmr/F2+4PrggMiVA==}
+    engines: {node: '>=8', npm: '>=5'}
+
+  '@videojs/xhr@2.7.0':
+    resolution: {integrity: sha512-giab+EVRanChIupZK7gXjHy90y3nncA2phIOyG3Ne5fvpiMJzvqYwiTOnEVW2S4CoYcuKJkomat7bMXA/UoUZQ==}
+
   '@vitejs/plugin-legacy@5.3.2':
     resolution: {integrity: sha512-8moCOrIMaZ/Rjln0Q6GsH6s8fAt1JOI3k8nmfX4tXUxE5KAExVctSyOBk+A25GClsdSWqIk2yaUthH3KJ2X4tg==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -2711,6 +2733,10 @@ packages:
       '@types/node':
         optional: true
 
+  '@xmldom/xmldom@0.8.10':
+    resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
+    engines: {node: '>=10.0.0'}
+
   JSONStream@1.3.5:
     resolution: {integrity: sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ==}
     hasBin: true
@@ -2758,6 +2784,9 @@ packages:
   adm-zip@0.5.16:
     resolution: {integrity: sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==}
     engines: {node: '>=12.0'}
+
+  aes-decrypter@4.0.2:
+    resolution: {integrity: sha512-lc+/9s6iJvuaRe5qDlMTpCFjnwpkeOXp8qP3oiZ5jsj1MRg+SBVUmmICrhxHvc8OELSmc+fEyyxAuppY6hrWzw==}
 
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
@@ -4064,6 +4093,9 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
 
+  hls.js@1.6.9:
+    resolution: {integrity: sha512-q7qPrri6GRwjcNd7EkFCmhiJ6PBIxeUsdxKbquBkQZpg9jAnp6zSAeN9eEWFlOB09J8JfzAQGoXL5ZEAltjO9g==}
+
   html-encoding-sniffer@2.0.1:
     resolution: {integrity: sha512-D5JbOMBIR/TVZkubHT+OyT2705QvogUW4IBn6nHd756OwieSF9aDYFj4dv6HHEVGYbHaLETa3WggZYWWMyy3ZQ==}
     engines: {node: '>=10'}
@@ -4455,6 +4487,9 @@ packages:
     resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
     engines: {node: '>=14'}
 
+  js-md5@0.8.3:
+    resolution: {integrity: sha512-qR0HB5uP6wCuRMrWPTrkMaev7MJZwJuuw4fnwAzRgP4J4/F8RwtodOKpGp4XpqsLBFzzgqIO42efFAyz2Et6KQ==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -4670,6 +4705,9 @@ packages:
 
   lru-queue@0.1.0:
     resolution: {integrity: sha512-BpdYkt9EvGl8OfWHDQPISVpcl5xZthb+XPsbELj5AQXxIC8IriDZIQYjBJPEm5rS420sjZ0TLEzRcq5KdBhYrQ==}
+
+  m3u8-parser@7.2.0:
+    resolution: {integrity: sha512-CRatFqpjVtMiMaKXxNvuI3I++vUumIXVVT/JpCpdU/FynV/ceVw1qpPyyBNindL+JlPMSesx+WX1QJaZEJSaMQ==}
 
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
@@ -4952,6 +4990,10 @@ packages:
   module-alias@2.2.3:
     resolution: {integrity: sha512-23g5BFj4zdQL/b6tor7Ji+QY4pEfNH784BMslY9Qb0UnJWRAt+lQGLYmRaM0KDBwIG23ffEBELhZDP2rhi9f/Q==}
 
+  mpd-parser@1.3.1:
+    resolution: {integrity: sha512-1FuyEWI5k2HcmhS1HkKnUAQV7yFPfXPht2DnRRGtoiiAAW+ESTbtEXIDpRkwdU+XyrQuwrIym7UkoPKsZ0SyFw==}
+    hasBin: true
+
   mrmime@2.0.1:
     resolution: {integrity: sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==}
     engines: {node: '>=10'}
@@ -4964,6 +5006,11 @@ packages:
 
   muggle-string@0.4.1:
     resolution: {integrity: sha512-VNTrAak/KhO2i8dqqnqnAHOa3cYBwXEZe9h+D5h/1ZqFSTEFHdM65lR7RoIqq3tBBYavsOXV84NoHXZ0AkPyqQ==}
+
+  mux.js@7.1.0:
+    resolution: {integrity: sha512-NTxawK/BBELJrYsZThEulyUMDVlLizKdxyAsMuzoCD1eFj97BVaA8D/CvKsKu6FOLYkFojN5CbM9h++ZTZtknA==}
+    engines: {node: '>=8', npm: '>=5'}
+    hasBin: true
 
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
@@ -5292,6 +5339,10 @@ packages:
 
   pixelmatch@4.0.2:
     resolution: {integrity: sha512-J8B6xqiO37sU/gkcMglv6h5Jbd9xNER7aHzpfRdNmV4IbQBzBpe4l9XmbG+xPF/znacgu2jfEw+wHffaq/YkXA==}
+    hasBin: true
+
+  pkcs7@1.0.4:
+    resolution: {integrity: sha512-afRERtHn54AlwaF2/+LFszyAANTCggGilmcmILUzEjvs3XgFZT+xE6+QWQcAGmu4xajy+Xtj7acLOPdx5/eXWQ==}
     hasBin: true
 
   pkg-dir@4.2.0:
@@ -6164,6 +6215,21 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+
+  video.js@8.23.4:
+    resolution: {integrity: sha512-qI0VTlYmKzEqRsz1Nppdfcaww4RSxZAq77z2oNSl3cNg2h6do5C8Ffl0KqWQ1OpD8desWXsCrde7tKJ9gGTEyQ==}
+
+  videojs-contrib-quality-levels@4.1.0:
+    resolution: {integrity: sha512-TfrXJJg1Bv4t6TOCMEVMwF/CoS8iENYsWNKip8zfhB5kTcegiFYezEA0eHAJPU64ZC8NQbxQgOwAsYU8VXbOWA==}
+    engines: {node: '>=16', npm: '>=8'}
+    peerDependencies:
+      video.js: ^8
+
+  videojs-font@4.2.0:
+    resolution: {integrity: sha512-YPq+wiKoGy2/M7ccjmlvwi58z2xsykkkfNMyIg4xb7EZQQNwB71hcSsB3o75CqQV7/y5lXkXhI/rsGAS7jfEmQ==}
+
+  videojs-vtt.js@0.15.5:
+    resolution: {integrity: sha512-yZbBxvA7QMYn15Lr/ZfhhLPrNpI/RmCSCqgIff57GC2gIrV5YfyzLfLyZMj0NnZSAz8syB4N0nHXpZg9MyrMOQ==}
 
   vite-plugin-restart@0.4.2:
     resolution: {integrity: sha512-9aWN2ScJ8hbT7aC8SDeZnsbWapnslz1vhNq6Vgf2GU9WdN4NExlrWhtnu7pmtOUG3Guj8y6lPcUZ+ls7SVP33w==}
@@ -9356,15 +9422,15 @@ snapshots:
       typescript: 5.8.3
       vue: 3.5.18(typescript@5.8.3)
 
-  '@uni-helper/unocss-preset-uni@0.2.11(@unocss/preset-legacy-compat@0.59.4)(@unocss/preset-mini@65.4.2)(@unocss/rule-utils@66.3.3)(@unocss/vite@65.4.2(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3)))(unocss-applet@0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@65.4.2)(@unocss/preset-wind3@66.3.3)(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3))))(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3)))':
+  '@uni-helper/unocss-preset-uni@0.2.11(@unocss/preset-legacy-compat@0.59.4)(@unocss/preset-mini@66.3.3)(@unocss/rule-utils@66.3.3)(@unocss/vite@65.4.2(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3)))(unocss-applet@0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@66.3.3)(@unocss/preset-wind3@66.3.3)(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3))))(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3)))':
     dependencies:
       '@uni-helper/uni-env': 0.1.7
       '@unocss/preset-legacy-compat': 0.59.4
       '@unocss/rule-utils': 66.3.3
       unocss: 65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3))
-      unocss-applet: 0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@65.4.2)(@unocss/preset-wind3@66.3.3)(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3)))
+      unocss-applet: 0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@66.3.3)(@unocss/preset-wind3@66.3.3)(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3)))
     optionalDependencies:
-      '@unocss/preset-mini': 65.4.2
+      '@unocss/preset-mini': 66.3.3
       '@unocss/vite': 65.4.2(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3))
 
   '@uni-helper/vite-plugin-uni-components@0.2.0(rollup@4.46.1)':
@@ -9445,10 +9511,10 @@ snapshots:
       - ts-node
       - vue
 
-  '@unocss-applet/preset-applet@0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@65.4.2)(@unocss/preset-wind3@66.3.3)':
+  '@unocss-applet/preset-applet@0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@66.3.3)(@unocss/preset-wind3@66.3.3)':
     dependencies:
       '@unocss/core': 66.3.3
-      '@unocss/preset-mini': 65.4.2
+      '@unocss/preset-mini': 66.3.3
       '@unocss/preset-wind3': 66.3.3
       '@unocss/preset-wind4': 66.3.3
 
@@ -9666,6 +9732,28 @@ snapshots:
       - supports-color
       - vue
 
+  '@videojs/http-streaming@3.17.2(video.js@8.23.4)':
+    dependencies:
+      '@babel/runtime': 7.28.2
+      '@videojs/vhs-utils': 4.1.1
+      aes-decrypter: 4.0.2
+      global: 4.4.0
+      m3u8-parser: 7.2.0
+      mpd-parser: 1.3.1
+      mux.js: 7.1.0
+      video.js: 8.23.4
+
+  '@videojs/vhs-utils@4.1.1':
+    dependencies:
+      '@babel/runtime': 7.28.2
+      global: 4.4.0
+
+  '@videojs/xhr@2.7.0':
+    dependencies:
+      '@babel/runtime': 7.28.2
+      global: 4.4.0
+      is-function: 1.0.2
+
   '@vitejs/plugin-legacy@5.3.2(terser@5.43.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))':
     dependencies:
       '@babel/core': 7.28.0
@@ -9864,6 +9952,8 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.19.9
 
+  '@xmldom/xmldom@0.8.10': {}
+
   JSONStream@1.3.5:
     dependencies:
       jsonparse: 1.3.1
@@ -9898,6 +9988,13 @@ snapshots:
   address@1.2.2: {}
 
   adm-zip@0.5.16: {}
+
+  aes-decrypter@4.0.2:
+    dependencies:
+      '@babel/runtime': 7.28.2
+      '@videojs/vhs-utils': 4.1.1
+      global: 4.4.0
+      pkcs7: 1.0.4
 
   agent-base@6.0.2:
     dependencies:
@@ -11399,6 +11496,8 @@ snapshots:
 
   he@1.2.0: {}
 
+  hls.js@1.6.9: {}
+
   html-encoding-sniffer@2.0.1:
     dependencies:
       whatwg-encoding: 1.0.5
@@ -11995,6 +12094,8 @@ snapshots:
 
   js-cookie@3.0.5: {}
 
+  js-md5@0.8.3: {}
+
   js-tokens@4.0.0: {}
 
   js-tokens@9.0.1: {}
@@ -12219,6 +12320,12 @@ snapshots:
   lru-queue@0.1.0:
     dependencies:
       es5-ext: 0.10.64
+
+  m3u8-parser@7.2.0:
+    dependencies:
+      '@babel/runtime': 7.28.2
+      '@videojs/vhs-utils': 4.1.1
+      global: 4.4.0
 
   magic-string@0.30.17:
     dependencies:
@@ -12659,6 +12766,13 @@ snapshots:
 
   module-alias@2.2.3: {}
 
+  mpd-parser@1.3.1:
+    dependencies:
+      '@babel/runtime': 7.28.2
+      '@videojs/vhs-utils': 4.1.1
+      '@xmldom/xmldom': 0.8.10
+      global: 4.4.0
+
   mrmime@2.0.1: {}
 
   ms@2.0.0: {}
@@ -12666,6 +12780,11 @@ snapshots:
   ms@2.1.3: {}
 
   muggle-string@0.4.1: {}
+
+  mux.js@7.1.0:
+    dependencies:
+      '@babel/runtime': 7.28.2
+      global: 4.4.0
 
   nanoid@3.3.11: {}
 
@@ -12991,6 +13110,10 @@ snapshots:
   pixelmatch@4.0.2:
     dependencies:
       pngjs: 3.4.0
+
+  pkcs7@1.0.4:
+    dependencies:
+      '@babel/runtime': 7.28.2
 
   pkg-dir@4.2.0:
     dependencies:
@@ -13810,9 +13933,9 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unocss-applet@0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@65.4.2)(@unocss/preset-wind3@66.3.3)(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3))):
+  unocss-applet@0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@66.3.3)(@unocss/preset-wind3@66.3.3)(unocss@65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3))):
     dependencies:
-      '@unocss-applet/preset-applet': 0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@65.4.2)(@unocss/preset-wind3@66.3.3)
+      '@unocss-applet/preset-applet': 0.10.0(@unocss/core@66.3.3)(@unocss/preset-mini@66.3.3)(@unocss/preset-wind3@66.3.3)
       '@unocss-applet/preset-rem-rpx': 0.10.0(@unocss/core@66.3.3)
       '@unocss-applet/transformer-attributify': 0.10.0(@unocss/core@66.3.3)
       unocss: 65.4.2(postcss@8.5.6)(rollup@4.46.1)(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1))(vue@3.5.18(typescript@5.8.3))
@@ -13933,6 +14056,32 @@ snapshots:
       source-map: 0.7.6
 
   vary@1.1.2: {}
+
+  video.js@8.23.4:
+    dependencies:
+      '@babel/runtime': 7.28.2
+      '@videojs/http-streaming': 3.17.2(video.js@8.23.4)
+      '@videojs/vhs-utils': 4.1.1
+      '@videojs/xhr': 2.7.0
+      aes-decrypter: 4.0.2
+      global: 4.4.0
+      m3u8-parser: 7.2.0
+      mpd-parser: 1.3.1
+      mux.js: 7.1.0
+      videojs-contrib-quality-levels: 4.1.0(video.js@8.23.4)
+      videojs-font: 4.2.0
+      videojs-vtt.js: 0.15.5
+
+  videojs-contrib-quality-levels@4.1.0(video.js@8.23.4):
+    dependencies:
+      global: 4.4.0
+      video.js: 8.23.4
+
+  videojs-font@4.2.0: {}
+
+  videojs-vtt.js@0.15.5:
+    dependencies:
+      global: 4.4.0
 
   vite-plugin-restart@0.4.2(vite@5.2.8(@types/node@20.19.9)(sass@1.77.8)(terser@5.43.1)):
     dependencies:

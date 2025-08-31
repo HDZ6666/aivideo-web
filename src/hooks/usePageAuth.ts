@@ -10,9 +10,12 @@ function isLogined() {
 }
 // 检查当前页面是否需要登录
 export function usePageAuth() {
+  console.log('onLoad', 1)
   onLoad((options) => {
+    console.log('onLoad', 1)
     // 获取当前页面路径
     const pages = getCurrentPages()
+
     const currentPage = pages[pages.length - 1]
     const currentPath = `/${currentPage.route}`
 

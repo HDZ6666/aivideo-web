@@ -4,6 +4,7 @@ import AdapterUniapp from '@alova/adapter-uniapp'
 import { createAlova } from 'alova'
 import { createServerTokenAuthentication } from 'alova/client'
 import VueHook from 'alova/vue'
+import { getToken, setToken } from '@/utils/auth'
 import { toast } from '@/utils/toast'
 import { ContentTypeEnum, ResultEnum, ShowMessage } from './enum'
 
@@ -20,28 +21,56 @@ const { onAuthRequired, onResponseRefreshToken } = createServerTokenAuthenticati
   typeof VueHook,
   typeof uniappRequestAdapter
 >({
-  refreshTokenOnError: {
-    isExpired: (error) => {
-      return error.response?.status === ResultEnum.Unauthorized
+  refreshTokenOnSuccess: {
+    isExpired: (response, method) => {
+      return response.statusCode === ResultEnum.Unauthorized
     },
-    handler: async () => {
-      try {
-        // await authLogin();
-      }
-      catch (error) {
-        // 切换到登录页
-        await uni.reLaunch({ url: '/pages/common/login/index' })
-        throw error
-      }
+    handler: async (response, method) => {
+      const loginUrl = import.meta.env.VITE_LOGIN_URL || '/pages/login/index'
+      console.log('Token已过期，请重新登录', loginUrl)
+
+      // 清除本地存储的 token
+      setToken('')
+
+      // 清除 Store 中的用户状态
+      // 动态导入避免循环依赖
+      const { useUserStore } = await import('@/store/user')
+      const userStore = useUserStore()
+      userStore.clearUserStore()
+
+      await uni.reLaunch({ url: loginUrl })
+      throw new Error('Token已过期，请重新登录')
     },
   },
+
+  // uniapp 的适配器不进去这里
+  // refreshTokenOnError: {
+  //   isExpired: (error) => {
+  //     console.log('请求失败1', error)
+  //     return error.response?.status === ResultEnum.Unauthorized
+  //   },
+  //   handler: async () => {
+  //     try {
+  //       console.log('请求失败2')
+  //       // TODO: 实现刷新token逻辑
+  //       throw new Error('Token已过期，请重新登录')
+  //     }
+  //     catch (error) {
+  //       console.error('刷新Token失败:', error)
+  //       // 切换到登录页
+  //       const loginUrl = import.meta.env.VITE_LOGIN_URL || '/pages/login/index'
+  //       await uni.reLaunch({ url: loginUrl })
+  //       throw error
+  //     }
+  //   },
+  // },
 })
 
 /**
  * alova 请求实例
  */
 const alovaInstance = createAlova({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_APP_PROXY_PREFIX,
   ...AdapterUniapp(),
   timeout: 5000,
   statesHook: VueHook,
@@ -55,15 +84,14 @@ const alovaInstance = createAlova({
     }
 
     const { config } = method
-    const ignoreAuth = !config.meta?.ignoreAuth
-    console.log('ignoreAuth===>', ignoreAuth)
-    // 处理认证信息   自行处理认证问题
-    if (ignoreAuth) {
-      const token = 'getToken()'
-      if (!token) {
-        throw new Error('[请求错误]：未登录')
+    const ignoreAuth = config.meta?.ignoreAuth === true
+
+    // 处理认证信息
+    if (!ignoreAuth) {
+      const token = getToken()
+      if (token) {
+        method.config.headers['access-token'] = `${token}`
       }
-      // method.config.headers.token = token;
     }
 
     // 处理动态域名
@@ -73,38 +101,43 @@ const alovaInstance = createAlova({
     }
   }),
 
-  responded: onResponseRefreshToken((response, method) => {
-    const { config } = method
-    const { requestType } = config
-    const {
-      statusCode,
-      data: rawData,
-      errMsg,
-    } = response as UniNamespace.RequestSuccessCallbackResult
+  responded: onResponseRefreshToken({
+    onSuccess: (response, method) => {
+      console.log('请求成功2', response)
+      const { config } = method
+      const { requestType } = config
+      const {
+        statusCode,
+        data: rawData,
+        errMsg,
+      } = response as UniNamespace.RequestSuccessCallbackResult
 
-    // 处理特殊请求类型（上传/下载）
-    if (requestType === 'upload' || requestType === 'download') {
-      return response
-    }
-
-    // 处理 HTTP 状态码错误
-    if (statusCode !== 200) {
-      const errorMessage = ShowMessage(statusCode) || `HTTP请求错误[${statusCode}]`
-      console.error('errorMessage===>', errorMessage)
-      toast.error(errorMessage)
-      throw new Error(`${errorMessage}：${errMsg}`)
-    }
-
-    // 处理业务逻辑错误
-    const { code, message, data } = rawData as IResponse
-    if (code !== ResultEnum.Success) {
-      if (config.meta?.toast !== false) {
-        toast.warning(message)
+      // 处理特殊请求类型（上传/下载）
+      if (requestType === 'upload' || requestType === 'download') {
+        return response
       }
-      throw new Error(`请求错误[${code}]：${message}`)
-    }
-    // 处理成功响应，返回业务数据
-    return data
+
+      // 处理 HTTP 状态码错误
+      if (statusCode !== 200) {
+        const errorMessage = ShowMessage(statusCode) || `HTTP请求错误[${statusCode}]`
+        toast.error(errorMessage)
+        throw new Error(`${errorMessage}：${errMsg}`)
+      }
+
+      // 处理业务逻辑错误
+      const { code, message, data } = rawData as IResponse
+      if (code !== ResultEnum.Success) {
+        if (config.meta?.toast !== false) {
+          toast.warning(message)
+        }
+        throw new Error(`请求错误[${code}]：${message}`)
+      }
+      // 处理成功响应，返回业务数据
+      return data
+    },
+    onError: (error, method) => {
+      throw error
+    },
   }),
 })
 

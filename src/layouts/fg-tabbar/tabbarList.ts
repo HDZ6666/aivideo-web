@@ -21,42 +21,46 @@ export const TABBAR_MAP = {
   CUSTOM_TABBAR_WITHOUT_CACHE: 3,
 }
 // TODO：通过这里切换使用tabbar的策略
-export const selectedTabbarStrategy = TABBAR_MAP.CUSTOM_TABBAR_WITH_CACHE
+export const selectedTabbarStrategy = TABBAR_MAP.CUSTOM_TABBAR_WITHOUT_CACHE
 
 // selectedTabbarStrategy==NATIVE_TABBAR(1) 时，需要填 iconPath 和 selectedIconPath
 // selectedTabbarStrategy==CUSTOM_TABBAR(2,3) 时，需要填 icon 和 iconType
 // selectedTabbarStrategy==NO_TABBAR(0) 时，tabbarList 不生效
 export const tabbarList: FgTabBarItem[] = [
   {
-    iconPath: 'static/tabbar/home.png',
-    selectedIconPath: 'static/tabbar/homeHL.png',
-    pagePath: 'pages/index/index',
-    text: '首页',
+    iconPath: '',
+    selectedIconPath: '',
+    pagePath: 'pages/home/index',
+    text: '工作台',
     icon: 'i-carbon-home',
     // 选用 UI 框架自带的 icon 时，iconType 为 uiLib
     iconType: 'unocss',
   },
   {
-    iconPath: 'static/tabbar/example.png',
-    selectedIconPath: 'static/tabbar/exampleHL.png',
-    pagePath: 'pages/about/about',
-    text: '关于',
-    icon: 'i-carbon-code',
-    // 注意 unocss 的图标需要在 页面上引入一下，或者配置到 unocss.config.ts 的 safelist 中
+    iconPath: '',
+    selectedIconPath: '',
+    pagePath: 'pages/alarm/index',
+    text: '告警',
+    icon: 'i-carbon-warning',
+    // 选用 UI 框架自带的 icon 时，iconType 为 uiLib
     iconType: 'unocss',
   },
-  // {
-  //   pagePath: 'pages/my/index',
-  //   text: '我的',
-  //   icon: '/static/logo.svg',
-  //   iconType: 'local',
-  // },
-  // {
-  //   pagePath: 'pages/mine/index',
-  //   text: '我的',
-  //   icon: 'iconfont icon-my',
-  //   iconType: 'iconfont',
-  // },
+  {
+    iconPath: '',
+    selectedIconPath: '',
+    pagePath: 'pages/device/index',
+    text: '设备',
+    icon: 'i-carbon-video',
+    iconType: 'unocss',
+  },
+  {
+    iconPath: '',
+    selectedIconPath: '',
+    pagePath: 'pages/profile/index',
+    text: '我的',
+    icon: 'i-carbon-user',
+    iconType: 'unocss',
+  },
 ]
 
 // NATIVE_TABBAR(1) 和 CUSTOM_TABBAR_WITH_CACHE(2) 时，需要tabbar缓存

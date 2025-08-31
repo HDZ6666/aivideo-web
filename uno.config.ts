@@ -39,7 +39,30 @@ export default defineConfig({
       center: 'flex justify-center items-center',
     },
   ],
-  safelist: [],
+  safelist: [
+    // tabbar 图标
+    'i-carbon-home',
+    'i-carbon-video',
+    'i-carbon-code',
+    'i-carbon-user',
+    // 设备管理相关图标
+    'i-carbon-folder',
+    'i-carbon-chevron-down',
+    'i-carbon-chevron-right',
+    'i-carbon-search',
+    'i-carbon-close',
+    // 个人信息页面图标
+    'i-carbon-identification',
+    'i-carbon-security',
+    'i-carbon-time',
+    'i-carbon-logout',
+    // 首页图标
+    'i-carbon-devices',
+    'i-carbon-warning',
+    'i-carbon-grid',
+    'i-carbon-checkmark',
+    'i-carbon-play',
+  ],
   rules: [
     [
       'p-safe',

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { tabbarStore } from './tabbar'
-// 'i-carbon-code','i-carbon-home'
 import { tabbarList as _tabBarList, cacheTabbarEnable, selectedTabbarStrategy, TABBAR_MAP } from './tabbarList'
 
 const customTabbarEnable
@@ -34,6 +33,14 @@ onLoad(() => {
       console.log('hideTabBar success: ', res)
     },
   })
+})
+
+// 确保 tabbarStore 已初始化
+onMounted(() => {
+  // 确保 tabbar 索引正确初始化
+  if (typeof tabbarStore.curIdx !== 'number') {
+    tabbarStore.setCurIdx(0)
+  }
 })
 </script>
 

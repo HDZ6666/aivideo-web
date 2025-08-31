@@ -1,55 +1,220 @@
+import type { ILoginParams, IUserInfo } from '@/api/auth'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { getUserInfo, login, logout } from '@/api/auth'
+import { clearUserInfo, encryptPassword, getToken, getUserData, setToken } from '@/utils/auth'
 
-export interface IUserInfoVo {
-  id: number
-  username: string
-  avatar: string
-  token: string
-}
-
-// 初始化状态
-const userInfoState: IUserInfoVo = {
-  id: 0,
-  username: '',
-  avatar: '/static/images/default-avatar.png',
-  token: '',
-}
-
+/**
+ * 用户状态管理
+ */
 export const useUserStore = defineStore(
   'user',
   () => {
-    // 定义用户信息
-    const userInfo = ref<IUserInfoVo>({ ...userInfoState })
-    // 设置用户信息
-    const setUserInfo = (val: IUserInfoVo) => {
-      console.log('设置用户信息', val)
-      // 若头像为空 则使用默认头像
-      if (!val.avatar) {
-        val.avatar = userInfoState.avatar
+    // 登录token
+    const token = ref<string>(getToken() || '')
+    // 用户信息
+    const userInfo = ref<IUserInfo | null>(getUserData())
+    // 用户角色
+    const roles = ref<string[]>([])
+    // 用户权限
+    const permissions = ref<string[]>([])
+    // 登录状态
+    const isLoading = ref(false)
+    // 是否已登录 - 同时检查 Store 和本地存储
+    const isLoggedIn = computed(() => {
+      const storeToken = !!token.value
+      const localToken = !!getToken()
+      // 只有当两者都存在且一致时才认为已登录
+      return storeToken && localToken && token.value === getToken()
+    })
+    // 用户名
+    const userName = computed(() => userInfo.value?.username || '')
+    // 用户ID
+    const userId = computed(() => userInfo.value?.id || '')
+    // 用户头像
+    const avatar = computed(() => '/static/images/default-avatar.png')
+
+    /**
+     * 设置token
+     */
+    const setTokenValue = (newToken: string) => {
+      token.value = newToken
+      setToken(newToken)
+    }
+
+    /**
+     * 设置用户信息
+     */
+    const setUserInfo = (user: IUserInfo) => {
+      userInfo.value = user
+    }
+
+    /**
+     * 设置用户角色
+     */
+    const setRoles = (newRoles: string[]) => {
+      roles.value = newRoles
+    }
+
+    /**
+     * 设置用户权限
+     */
+    const setPermissions = (newPermissions: string[]) => {
+      permissions.value = newPermissions
+    }
+
+    /**
+     * 获取用户信息
+     */
+    const getUserInfoData = async () => {
+      try {
+        const response = await getUserInfo()
+        const { user, roles: userRoles, permissions: userPermissions } = response
+
+        // 设置用户信息
+        setUserInfo(user)
+
+        // 设置角色和权限
+        if (userRoles && userRoles.length > 0) {
+          setRoles(userRoles)
+          setPermissions(userPermissions || ['*:*:*'])
+        }
+        else {
+          setRoles(['ROLE_DEFAULT'])
+          setPermissions(['*:*:*'])
+        }
+
+        return { success: true, data: response }
       }
-      else {
-        val.avatar = 'https://oss.laf.run/ukw0y1-site/avatar.jpg?feige'
+      catch (error: any) {
+        console.error('获取用户信息失败:', error)
+        return {
+          success: false,
+          message: error.message || '获取用户信息失败',
+        }
       }
-      userInfo.value = val
     }
-    const setUserAvatar = (avatar: string) => {
-      userInfo.value.avatar = avatar
-      console.log('设置用户头像', avatar)
-      console.log('userInfo', userInfo.value)
+
+    /**
+     * 用户登录
+     */
+    const loginUser = async (loginParams: ILoginParams) => {
+      try {
+        isLoading.value = true
+
+        // 加密密码
+        const encryptedParams = {
+          ...loginParams,
+          password: encryptPassword(loginParams.password),
+        }
+
+        // 调用登录接口
+        const response = await login(encryptedParams)
+        console.log('登录接口返回数据', response)
+        return
+
+        if (response?.accessToken) {
+          setTokenValue(response.accessToken)
+        }
+
+        // 获取完整的用户信息
+        // await getUserInfoData()
+
+        return { success: true, message: '登录成功' }
+      }
+      catch (error: any) {
+        console.error('登录失败:', error)
+        return {
+          success: false,
+          message: error.message || '登录失败，请检查网络连接',
+        }
+      }
+      finally {
+        isLoading.value = false
+      }
     }
-    // 删除用户信息
-    const removeUserInfo = () => {
-      userInfo.value = { ...userInfoState }
-      uni.removeStorageSync('userInfo')
-      uni.removeStorageSync('token')
+
+    /**
+     * 清除用户store状态
+     */
+    const clearUserStore = () => {
+      token.value = ''
+      userInfo.value = null
+      roles.value = []
+      permissions.value = []
+
+      // 清理本地存储
+      clearUserInfo()
     }
+
+    /**
+     * 用户退出登录
+     */
+    const logoutUser = async () => {
+      try {
+        // 调用退出接口
+        await logout()
+      }
+      catch (error) {
+        console.error('退出登录接口调用失败:', error)
+      }
+      finally {
+        // 无论接口是否成功，都清理本地数据
+        clearUserStore()
+      }
+    }
+
+    /**
+     * 检查用户权限
+     */
+    const hasPermission = (permission: string): boolean => {
+      return permissions.value.includes('*:*:*') || permissions.value.includes(permission)
+    }
+
+    /**
+     * 检查用户角色
+     */
+    const hasRole = (role: string): boolean => {
+      return roles.value.includes(role)
+    }
+
     return {
+      // 状态
+      token,
       userInfo,
-      setUserAvatar,
+      roles,
+      permissions,
+      isLoading,
+
+      // 计算属性
+      isLoggedIn,
+      userName,
+      userId,
+      avatar,
+
+      // 方法
+      setTokenValue,
+      setUserInfo,
+      setRoles,
+      setPermissions,
+      loginUser,
+      getUserInfoData,
+      clearUserStore,
+      logoutUser,
+      hasPermission,
+      hasRole,
     }
   },
   {
-    persist: true,
+    persist: false,
+    // persist: {
+    //   key: 'user-store',
+    //   storage: {
+    //     getItem: uni.getStorageSync,
+    //     setItem: uni.setStorageSync,
+    //   },
+    //   // 只持久化必要的状态
+    //   paths: ['token'],
+    // },
   },
 )

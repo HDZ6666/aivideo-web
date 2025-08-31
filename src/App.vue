@@ -1,18 +1,15 @@
 <script setup lang="ts">
 import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
-import { usePageAuth } from '@/hooks/usePageAuth'
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
 
-usePageAuth()
-
 onLaunch(() => {
-  console.log('App Launch')
+  // console.log('App Launch')
 })
 onShow(() => {
-  console.log('App Show')
+  // console.log('App Show')
 })
 onHide(() => {
-  console.log('App Hide')
+  // console.log('App Hide')
 })
 </script>
 
