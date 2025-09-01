@@ -9,6 +9,7 @@
 </route>
 
 <script lang="ts" setup>
+import { logout } from '@/api/auth'
 import { useUserStore } from '@/store/user'
 
 defineOptions({
@@ -31,12 +32,14 @@ async function handleLogout() {
             mask: true,
           })
 
-          await userStore.logoutUser()
+          // 调用退出登录接口
+          await logout()
 
           uni.hideLoading()
           uni.showToast({
             title: '退出成功',
             icon: 'success',
+            duration: 1500,
           })
 
           // 跳转到登录页
@@ -44,15 +47,28 @@ async function handleLogout() {
             uni.reLaunch({
               url: '/pages/login/index',
             })
-          }, 1500)
+          }, 1000)
         }
-        catch (error) {
+        catch (error: any) {
+          console.error('退出登录接口调用失败:', error)
+          // 即使接口失败，也显示退出成功（因为要清理本地数据）
           uni.hideLoading()
           uni.showToast({
-            title: '退出失败',
-            icon: 'error',
+            title: '退出成功',
+            icon: 'success',
+            duration: 1500,
           })
-          console.error('退出登录失败:', error)
+
+          // 跳转到登录页
+          setTimeout(() => {
+            uni.reLaunch({
+              url: '/pages/login/index',
+            })
+          }, 1000)
+        }
+        finally {
+          // 无论接口是否成功，都清理本地数据
+          userStore.clearUserStore()
         }
       }
     },

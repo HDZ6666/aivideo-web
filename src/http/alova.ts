@@ -5,7 +5,6 @@ import { createAlova } from 'alova'
 import { createServerTokenAuthentication } from 'alova/client'
 import VueHook from 'alova/vue'
 import { useUserStore } from '@/store'
-import { getToken } from '@/utils/auth'
 import { toast } from '@/utils/toast'
 import { ContentTypeEnum, ResultEnum, ShowMessage } from './enum'
 
@@ -13,11 +12,6 @@ import { ContentTypeEnum, ResultEnum, ShowMessage } from './enum'
 export const API_DOMAINS = {
   DEFAULT: import.meta.env.VITE_SERVER_BASEURL,
   SECONDARY: import.meta.env.VITE_API_SECONDARY_URL,
-}
-
-function clearUserState() {
-  const userStore = useUserStore()
-  userStore.clearUserStore()
 }
 
 /**
@@ -32,7 +26,7 @@ const { onAuthRequired, onResponseRefreshToken } = createServerTokenAuthenticati
       return response.statusCode === ResultEnum.Unauthorized
     },
     handler: async (response, method) => {
-      clearUserState()
+      useUserStore().clearUserStore()
       const loginUrl = import.meta.env.VITE_LOGIN_URL || '/pages/login/index'
       await uni.reLaunch({ url: loginUrl })
       throw new Error('Token已过期，请重新登录')
@@ -62,7 +56,7 @@ const alovaInstance = createAlova({
 
     // 处理认证信息
     if (!ignoreAuth) {
-      const token = getToken()
+      const token = useUserStore().token
       if (token) {
         method.config.headers['access-token'] = `${token}`
       }
@@ -110,6 +104,7 @@ const alovaInstance = createAlova({
       return data
     },
     onError: (error, method) => {
+      console.log('请求失败', error)
       throw error
     },
   }),

@@ -12,10 +12,14 @@ import type { IAlarmDetailRes } from '@/api/alarm'
 import { AlarmStatus, getAlarmDetailByID, updateAlarmStatusByID } from '@/api/alarm'
 import { LoadingState } from '@/components/loading-state'
 import { mockGetAlarmDetailByID, mockUpdateAlarmStatusByID } from '@/mock/alarm'
+import { useAlarmStore } from '@/store/alarm'
 
 defineOptions({
   name: 'AlarmDetail',
 })
+
+// 使用告警状态管理
+const alarmStore = useAlarmStore()
 
 const alarmDetail = ref<IAlarmDetailRes | null>(null)
 const loading = ref(false)
@@ -94,29 +98,16 @@ async function loadAlarmDetail() {
     return
   }
 
+  const id = Number.parseInt(alarmId.value)
   try {
     loading.value = true
-
-    const id = Number.parseInt(alarmId.value)
-
-    // 尝试调用真实 API，失败时使用 mock 数据
-    try {
-      const response = await getAlarmDetailByID({ alarm_id: id })
-      alarmDetail.value = response
-    }
-    catch (error) {
-      console.warn('API 调用失败，使用 mock 数据:', error)
-      const response = await mockGetAlarmDetailByID(id)
-      alarmDetail.value = response
-      console.log(alarmDetail.value)
-    }
+    const response = await getAlarmDetailByID({ alarm_id: id })
+    alarmDetail.value = response
   }
   catch (error) {
     console.error('加载告警详情失败:', error)
-    uni.showToast({
-      title: '加载告警详情失败',
-      icon: 'error',
-    })
+    const response = await mockGetAlarmDetailByID(id)
+    alarmDetail.value = response
   }
   finally {
     loading.value = false
@@ -131,21 +122,19 @@ async function updateStatus(newStatus: AlarmStatus) {
   try {
     updatingStatus.value = true
 
-    // 尝试调用真实 API，失败时使用 mock
-    try {
-      await updateAlarmStatusByID({
-        alarmId: alarmDetail.value.alarm_id,
+    await updateAlarmStatusByID({
+      alarmId: alarmDetail.value.alarm_id,
+      status: newStatus,
+    })
+    // 更新本地状态
+    alarmDetail.value.status = newStatus
+    // 同步更新 store 中的选中告警状态
+    if (alarmStore.selectedAlarm && alarmStore.selectedAlarm.id === alarmDetail.value.alarm_id) {
+      alarmStore.setSelectedAlarm({
+        ...alarmStore.selectedAlarm,
         status: newStatus,
       })
     }
-    catch (error) {
-      console.warn('API 调用失败，使用 mock 数据:', error)
-      await mockUpdateAlarmStatusByID(alarmDetail.value.alarm_id, newStatus)
-    }
-
-    // 更新本地状态
-    alarmDetail.value.status = newStatus
-
     uni.showToast({
       title: '状态更新成功',
       icon: 'success',
@@ -153,6 +142,7 @@ async function updateStatus(newStatus: AlarmStatus) {
   }
   catch (error) {
     console.error('更新告警状态失败:', error)
+    await mockUpdateAlarmStatusByID(alarmDetail.value.alarm_id, newStatus)
     uni.showToast({
       title: '状态更新失败',
       icon: 'error',
@@ -217,9 +207,8 @@ function goBack() {
 }
 
 onLoad((options) => {
-  if (options.id) {
-    // 从路由参数获取 ID
-    alarmId.value = options.id
+  if (alarmStore.selectedAlarm && alarmStore.selectedAlarm.id === Number.parseInt(options.id)) {
+    // 仍然调用详情接口获取完整信息（如地址、视频等）
     loadAlarmDetail()
   }
 })
@@ -237,16 +226,10 @@ onLoad((options) => {
     </sar-navbar>
 
     <!-- 加载状态 -->
-    <LoadingState
-      v-if="loading"
-      state="loading"
-      loading-text="正在加载告警详情..."
-    />
+    <LoadingState v-if="loading" state="loading" loading-text="正在加载告警详情..." />
 
     <!-- 主要内容区域 -->
-    <view
-      v-else-if="alarmDetail" class="main -content"
-    >
+    <view v-else-if="alarmDetail" class="main -content">
       <view class="content-wrapper">
         <!-- 告警头部 -->
         <view class="alarm-media-section mb-32rpx">
@@ -259,8 +242,7 @@ onLoad((options) => {
                   <!-- 滑块背景 -->
                   <view
                     class="switch-slider absolute h-full rounded-full bg-blue-500 transition-all duration-300"
-                    :class="showVideo ? 'translate-x-full' : 'translate-x-0'"
-                    :style="{ width: '50%' }"
+                    :class="showVideo ? 'translate-x-full' : 'translate-x-0'" :style="{ width: '50%' }"
                   />
 
                   <!-- 图片选项 -->
@@ -272,10 +254,7 @@ onLoad((options) => {
                       class="mr-6rpx h-20rpx w-20rpx"
                       :class="!showVideo ? 'i-carbon-image text-white' : 'i-carbon-image text-gray-600'"
                     />
-                    <text
-                      class="text-24rpx font-medium"
-                      :class="!showVideo ? 'text-white' : 'text-gray-600'"
-                    >
+                    <text class="text-24rpx font-medium" :class="!showVideo ? 'text-white' : 'text-gray-600'">
                       图片
                     </text>
                   </view>
@@ -289,10 +268,7 @@ onLoad((options) => {
                       class="mr-6rpx h-20rpx w-20rpx"
                       :class="showVideo ? 'i-carbon-video text-white' : 'i-carbon-video text-gray-600'"
                     />
-                    <text
-                      class="text-24rpx font-medium"
-                      :class="showVideo ? 'text-white' : 'text-gray-600'"
-                    >
+                    <text class="text-24rpx font-medium" :class="showVideo ? 'text-white' : 'text-gray-600'">
                       视频
                     </text>
                   </view>
@@ -306,17 +282,10 @@ onLoad((options) => {
               <view v-if="!showVideo" class="thumbnail-container">
                 <view class="thumbnail-list">
                   <view
-                    v-for="(image, index) in alarmImages"
-                    :key="index"
-                    class="thumbnail-item"
-                    :class="{ active: index === currentImageIndex }"
-                    @click="switchToImage(index)"
+                    v-for="(image, index) in alarmImages" :key="index" class="thumbnail-item"
+                    :class="{ active: index === currentImageIndex }" @click="switchToImage(index)"
                   >
-                    <image
-                      :src="image"
-                      class="thumbnail-image"
-                      mode="aspectFill"
-                    />
+                    <image :src="image" class="thumbnail-image" mode="aspectFill" />
                   </view>
                 </view>
               </view>
@@ -324,7 +293,7 @@ onLoad((options) => {
               <!-- 视频模式：固定高度提示区域 -->
               <view v-else class="video-info">
                 <view class="video-content">
-                  <view class="video-icon i-carbon-video" />
+                  <view class="i-carbon-video video-icon" />
                   <text class="video-text">
                     视频模式
                   </text>
@@ -340,10 +309,8 @@ onLoad((options) => {
               <!-- 主图片容器 - 固定高度 -->
               <view class="main-media-container rounded-24rpx bg-white shadow-gray-200/60 shadow-lg">
                 <image
-                  :src="currentImage"
-                  class="alarm-image h-400rpx w-full rounded-24rpx object-cover"
-                  mode="aspectFill"
-                  @click="previewImage"
+                  :src="currentImage" class="alarm-image h-400rpx w-full rounded-24rpx object-cover"
+                  mode="aspectFill" @click="previewImage"
                 />
               </view>
             </view>
@@ -353,14 +320,13 @@ onLoad((options) => {
               <!-- 视频容器 - 与图片容器相同高度 -->
               <view class="main-media-container rounded-24rpx bg-white shadow-gray-200/60 shadow-lg">
                 <video
-                  v-if="alarmDetail.videoUrl"
-                  :src="alarmDetail.videoUrl"
-                  class="alarm-video h-400rpx w-full rounded-24rpx"
-                  controls
-                  object-fit="cover"
-                  poster=""
+                  v-if="alarmDetail.videoUrl" :src="alarmDetail.videoUrl"
+                  class="alarm-video h-400rpx w-full rounded-24rpx" controls object-fit="cover" poster=""
                 />
-                <view v-else class="no-video h-400rpx w-full flex items-center justify-center rounded-24rpx bg-gray-100">
+                <view
+                  v-else
+                  class="no-video h-400rpx w-full flex items-center justify-center rounded-24rpx bg-gray-100"
+                >
                   <text class="text-gray-500">
                     暂无视频资源
                   </text>
@@ -396,8 +362,7 @@ onLoad((options) => {
             <!-- 告警状态指示器 -->
             <view class="status-indicator flex items-center">
               <view
-                class="status-dot mr-12rpx h-20rpx w-20rpx rounded-full"
-                :class="getStatusInfo(alarmDetail.status).color === 'text-green-600' ? 'bg-green-500'
+                class="status-dot mr-12rpx h-20rpx w-20rpx rounded-full" :class="getStatusInfo(alarmDetail.status).color === 'text-green-600' ? 'bg-green-500'
                   : getStatusInfo(alarmDetail.status).color === 'text-orange-600' ? 'bg-orange-500' : 'bg-red-500'"
               />
               <text class="status-text text-28rpx font-medium" :class="getStatusInfo(alarmDetail.status).color">
@@ -489,12 +454,7 @@ onLoad((options) => {
     </view>
 
     <!-- 错误状态 -->
-    <LoadingState
-      v-else-if="!alarmDetail"
-      state="error"
-      error-text="告警详情加载失败"
-      @retry="loadAlarmDetail"
-    />
+    <LoadingState v-else-if="!alarmDetail" state="error" error-text="告警详情加载失败" @retry="loadAlarmDetail" />
   </view>
 </template>
 
@@ -581,6 +541,7 @@ onLoad((options) => {
           align-items: center;
           height: 100%;
           overflow-x: auto;
+
           // 隐藏滚动条
           &::-webkit-scrollbar {
             display: none;

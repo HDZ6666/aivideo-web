@@ -11,7 +11,9 @@
 
 <script lang="ts" setup>
 import type { ILoginParams } from '@/api/auth'
+import { md5 } from 'js-md5'
 import { computed, onMounted, ref } from 'vue'
+import { getUserInfo, login } from '@/api/auth'
 import { useUserStore } from '@/store/user'
 
 // ==================== 页面配置 ====================
@@ -32,7 +34,7 @@ const loginForm = ref<ILoginParams>({
 })
 
 // 是否正在加载
-const isLoading = computed(() => userStore.isLoading)
+const isLoading = ref(false)
 
 // 是否可以登录
 const canLogin = computed(() => {
@@ -40,8 +42,6 @@ const canLogin = computed(() => {
     && loginForm.value.password.trim() !== ''
     && !isLoading.value
 })
-
-// ==================== 方法定义 ====================
 
 /**
  * 处理登录
@@ -52,40 +52,69 @@ async function handleLogin() {
   }
 
   try {
-    const result = await userStore.loginUser(loginForm.value)
+    isLoading.value = true
 
-    if (result.success) {
-      uni.showToast({
-        title: '登录成功',
-        icon: 'success',
-        duration: 2000,
-      })
+    // 加密密码
+    const encryptedParams = {
+      ...loginForm.value,
+      password: md5(loginForm.value.password),
+    }
 
-      // 延迟跳转，让用户看到成功提示
-      setTimeout(() => {
-        // 如果有重定向URL，跳转到指定页面，否则跳转到首页
-        const targetUrl = redirectUrl.value || '/pages/home/index'
-        uni.reLaunch({
-          url: targetUrl,
-        })
-      }, 1500)
+    // 调用登录接口
+    const response = await login(encryptedParams)
+    if (response?.accessToken) {
+      userStore.setTokenValue(response.accessToken)
     }
-    else {
-      uni.showToast({
-        title: result.message || '登录失败',
-        icon: 'error',
-        duration: 3000,
-      })
-    }
-  }
-  catch (error) {
-    console.error('登录异常:', error)
+
+    // 获取完整的用户信息
+    await getUserUserInfo()
 
     uni.showToast({
-      title: '登录失败，请重试',
+      title: '登录成功',
+      icon: 'success',
+      duration: 2000,
+    })
+
+    // 延迟跳转，让用户看到成功提示
+    setTimeout(() => {
+      // 如果有重定向URL，跳转到指定页面，否则跳转到首页
+      const targetUrl = redirectUrl.value || '/pages/home/index'
+      uni.reLaunch({
+        url: targetUrl,
+      })
+    }, 1500)
+  }
+  catch (error: any) {
+    console.error('登录异常:', error)
+    uni.showToast({
+      title: error.message || '登录失败，请重试',
       icon: 'error',
       duration: 3000,
     })
+  }
+  finally {
+    isLoading.value = false
+  }
+}
+
+/**
+ * 获取用户信息
+ */
+async function getUserUserInfo() {
+  const response = await getUserInfo()
+  const { user, roles: userRoles, permissions: userPermissions } = response
+
+  // 设置用户信息
+  userStore.setUserInfo(user)
+
+  // 设置角色和权限
+  if (userRoles && userRoles.length > 0) {
+    userStore.setRoles(userRoles)
+    userStore.setPermissions(userPermissions || ['*:*:*'])
+  }
+  else {
+    userStore.setRoles(['ROLE_DEFAULT'])
+    userStore.setPermissions(['*:*:*'])
   }
 }
 
@@ -153,7 +182,10 @@ onMounted(() => {
         <!-- 表单卡片容器 - 新拟态浮起效果 -->
         <view class="mb-64rpx rounded-32rpx bg-white p-64rpx shadow-gray-200/60 shadow-xl">
           <!-- 用户名输入 - 使用 sard-uniapp 输入框 -->
-          <sar-input v-model="loginForm.username" placeholder="请输入用户名" :disabled="isLoading" clearable class="mb-32rpx" />
+          <sar-input
+            v-model="loginForm.username" placeholder="请输入用户名" :disabled="isLoading" clearable
+            class="mb-32rpx"
+          />
 
           <!-- 密码输入 - 使用 sard-uniapp 输入框 -->
           <sar-input

@@ -89,6 +89,6 @@ export const useDeviceStore = defineStore(
   },
   {
     // 关闭持久化存储
-    persist: false,
+    persist: true,
   },
 )

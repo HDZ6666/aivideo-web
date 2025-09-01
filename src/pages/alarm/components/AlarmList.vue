@@ -3,6 +3,7 @@
 import type { IAlarmListItem } from '@/api/alarm'
 import { AlarmStatus } from '@/api/alarm'
 import { LoadingState } from '@/components/loading-state'
+import { useAlarmStore } from '@/store/alarm'
 
 interface Props {
   alarmList: IAlarmListItem[]
@@ -12,6 +13,9 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
 })
+
+// 使用告警状态管理
+const alarmStore = useAlarmStore()
 
 // 获取状态显示信息 - 使用 sar-tag 组件
 function getStatusInfo(status: AlarmStatus) {
@@ -136,8 +140,12 @@ function formatTime(timeStr: string) {
   }
 }
 
-// 处理告警项点击 - 直接跳转到详情页面
+// 处理告警项点击 - 设置选中状态并跳转到详情页面
 function handleAlarmClick(alarm: IAlarmListItem) {
+  // 设置选中的告警到store
+  alarmStore.setSelectedAlarm(alarm)
+
+  // 跳转到详情页
   uni.navigateTo({
     url: `/pages/alarm/detail?id=${alarm.id}`,
   })
