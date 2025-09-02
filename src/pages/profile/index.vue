@@ -36,11 +36,7 @@ async function handleLogout() {
           await logout()
 
           uni.hideLoading()
-          uni.showToast({
-            title: '退出成功',
-            icon: 'success',
-            duration: 1500,
-          })
+          console.log('退出成功')
 
           // 跳转到登录页
           setTimeout(() => {
@@ -51,13 +47,9 @@ async function handleLogout() {
         }
         catch (error: any) {
           console.error('退出登录接口调用失败:', error)
-          // 即使接口失败，也显示退出成功（因为要清理本地数据）
+          // 即使接口失败，也清理本地数据
           uni.hideLoading()
-          uni.showToast({
-            title: '退出成功',
-            icon: 'success',
-            duration: 1500,
-          })
+          console.log('退出成功')
 
           // 跳转到登录页
           setTimeout(() => {

@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import type { INationalDevice, IProxyDevice } from '@/api/device'
 import { getNationalDevices, getProxyDevices } from '@/api/device'
-import { mockGetNationalDevices, mockGetProxyDevices } from '@/mock/device'
+
 import { DeviceType, useDeviceStore } from '@/store/device'
 import DeviceSearchFilter from './components/DeviceSearchFilter.vue'
 import NationalDeviceList from './components/NationalDeviceList.vue'
@@ -50,10 +50,7 @@ async function loadDeviceData() {
     }
   }
   catch (error) {
-    uni.showToast({
-      title: '加载设备数据失败',
-      icon: 'error',
-    })
+    console.error('加载设备数据失败:', error)
   }
   finally {
     loading.value = false
@@ -66,8 +63,7 @@ async function loadNationalDevices() {
     nationalDeviceList.value = response.list
   }
   catch (error) {
-    const response = await mockGetNationalDevices(1, 50, searchKeyword.value)
-    nationalDeviceList.value = response.list
+    console.error('加载国标设备失败:', error)
   }
 }
 
@@ -77,24 +73,16 @@ async function loadProxyDevices() {
     proxyDeviceList.value = response.list
   }
   catch (error) {
-    const response = await mockGetProxyDevices(1, 50, searchKeyword.value)
-    proxyDeviceList.value = response.list
+    console.error('加载代理设备失败:', error)
   }
 }
 
 async function onRefresh() {
   try {
     await loadDeviceData()
-    uni.showToast({
-      title: '刷新成功',
-      icon: 'success',
-    })
   }
   catch (error) {
-    uni.showToast({
-      title: '刷新失败',
-      icon: 'error',
-    })
+    console.error('刷新失败:', error)
   }
   finally {
     paging.value?.complete()

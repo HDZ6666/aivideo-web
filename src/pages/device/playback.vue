@@ -18,7 +18,7 @@ import { getNationalRecordList, getRecordPlayUrl } from '@/api/record'
 import { DeviceSelector } from '@/components/device-selector'
 import { LoadingState } from '@/components/loading-state'
 import { HlsPlayer } from '@/components/player'
-import { mockGetNationalRecordList, mockGetRecordPlayUrl } from '@/mock/record'
+
 import { DeviceType, useDeviceStore } from '@/store/device'
 
 defineOptions({
@@ -105,20 +105,16 @@ function handleDeviceChange(newDeviceChannelInfo: DeviceChannelInfo) {
  */
 function showCalendar() {
   if (!deviceChannelInfo.value) {
-    uni.showToast({
-      title: '请先选择设备通道',
-      icon: 'none',
-    })
+    console.error('请先选择设备通道')
     return
   }
   calendarVisible.value = true
 }
 
 /**
- * 日历选择确认
+ * 日历选择变化
  */
-function handleCalendarConfirm() {
-  calendarVisible.value = false
+function handleCalendarChange(date: Date) {
   loadRecordSegments()
 }
 
@@ -126,8 +122,9 @@ function handleCalendarConfirm() {
  * 加载录像片段列表
  */
 async function loadRecordSegments() {
-  if (!deviceChannelInfo.value || !selectedDate.value)
+  if (!deviceChannelInfo.value || !selectedDate.value) {
     return
+  }
 
   const deviceId = deviceChannelInfo.value.deviceId || ''
   const channelId = deviceChannelInfo.value.channelId || ''
@@ -135,16 +132,12 @@ async function loadRecordSegments() {
   const startTime = `${dateStr} 00:00:00`
   const endTime = `${dateStr} 23:59:59`
 
-  // 先尝试正式接口，失败后使用mock数据
   try {
     const response = await getNationalRecordList(deviceId, channelId, startTime, endTime)
     recordSegments.value = response.recordList
   }
   catch (error) {
-    console.warn('正式接口请求失败，使用mock数据:', error)
-    const response = await mockGetNationalRecordList(deviceId, channelId, startTime, endTime)
-    recordSegments.value = response.recordList
-    console.log('recordSegments', recordSegments.value)
+    console.error('获取录像列表失败:', error)
   }
 }
 
@@ -160,7 +153,6 @@ async function playRecordSegment(segment: IRecordSegment) {
   const startTime = segment.startTime
   const endTime = segment.endTime
 
-  // 先尝试正式接口，失败后使用mock数据
   try {
     const response = await getRecordPlayUrl(deviceId, channelId, startTime, endTime)
     hlsUrl.value = response.hls
@@ -168,11 +160,7 @@ async function playRecordSegment(segment: IRecordSegment) {
     currentPlayingSegment.value = segment
   }
   catch (error) {
-    console.warn('正式接口请求失败，使用mock数据:', error)
-    const response = await mockGetRecordPlayUrl(deviceId, channelId, startTime, endTime)
-    hlsUrl.value = response.hls
-    playInfo.value = response
-    currentPlayingSegment.value = segment
+    console.error('获取录像播放地址失败:', error)
   }
 }
 
@@ -281,10 +269,7 @@ async function initPlayUrl() {
     }
   }
   catch (error) {
-    uni.showToast({
-      title: '初始化失败',
-      icon: 'error',
-    })
+    console.error('初始化失败:', error)
   }
 }
 
@@ -420,7 +405,7 @@ onMounted(() => {
     <!-- 日历选择器弹窗 -->
     <sar-calendar-popout
       v-model="selectedDate" v-model:visible="calendarVisible" title="选择日期"
-      @confirm="handleCalendarConfirm"
+      @change="handleCalendarChange"
     />
   </view>
 </template>

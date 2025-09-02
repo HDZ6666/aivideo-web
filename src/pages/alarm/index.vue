@@ -11,19 +11,13 @@
 <script lang="ts" setup>
 import type { AlarmStatus, IAlarmListItem } from '@/api/alarm'
 import { getAlarmList } from '@/api/alarm'
-import { mockGetAlarmList } from '@/mock/alarm'
 
-import { useUserStore } from '@/store/user'
 import AlarmList from './components/AlarmList.vue'
 import AlarmSearchFilter from './components/AlarmSearchFilter.vue'
 
 defineOptions({
   name: 'AlarmManagement',
 })
-
-const userStore = useUserStore()
-
-console.log('userStore', userStore.token)
 
 const alarmList = ref<IAlarmListItem[]>([])
 const searchKeyword = ref('')
@@ -59,8 +53,8 @@ async function loadAlarmList(pageNo: number = 1, pageSize: number = 10) {
     paging.value?.complete(response.list)
   }
   catch (error) {
-    const response = await mockGetAlarmList(params)
-    paging.value?.complete(response.list)
+    console.error('加载告警列表失败:', error)
+    paging.value?.complete([])
   }
   finally {
     loading.value = false

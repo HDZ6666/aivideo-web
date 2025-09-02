@@ -14,15 +14,11 @@ import type { INationalChannel } from '@/api/device'
 import { computed, onMounted, ref } from 'vue'
 import { useDeviceStore } from '@/store/device'
 
-// ==================== 页面配置 ====================
 defineOptions({
   name: 'ChannelDetail',
 })
 
-// ==================== 状态管理 ====================
 const deviceStore = useDeviceStore()
-
-// ==================== 计算属性 ====================
 
 // 当前通道设备
 const channelDevice = computed(() => deviceStore.selectedChannel)
@@ -31,8 +27,6 @@ const channelDevice = computed(() => deviceStore.selectedChannel)
 const deviceName = computed(() => {
   return '国标通道详情'
 })
-
-// ==================== 方法定义 ====================
 
 /**
  * 返回上一页
@@ -46,10 +40,7 @@ function handleBack() {
  */
 function handleLiveVideo() {
   if (!channelDevice.value?.status) {
-    uni.showToast({
-      title: '通道离线，无法播放',
-      icon: 'error',
-    })
+    console.error('通道离线，无法播放')
     return
   }
 
@@ -66,10 +57,7 @@ function handleLiveVideo() {
  */
 function handleDeviceRecording() {
   if (!channelDevice.value?.status) {
-    uni.showToast({
-      title: '通道离线，无法查看录像',
-      icon: 'error',
-    })
+    console.error('通道离线，无法查看录像')
     return
   }
 
@@ -349,7 +337,7 @@ onMounted(() => {
               </view>
 
               <!-- 云端录像按钮 -->
-              <view
+              <!-- <view
                 class="function-btn rounded-24rpx bg-white p-32rpx shadow-gray-200/60 shadow-lg transition-all duration-300"
                 @click="handleCloudRecording"
               >
@@ -363,7 +351,7 @@ onMounted(() => {
                     云端录像
                   </text>
                 </view>
-              </view>
+              </view> -->
             </view>
           </view>
         </view>

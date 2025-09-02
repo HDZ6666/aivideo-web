@@ -14,8 +14,7 @@ import type { IAlarmStatItem, IDeviceResourceInfo } from '@/api/home'
 import { computed, onMounted, ref } from 'vue'
 import { getDeviceResourceInfo, getScreenAlarmStatistics } from '@/api/home'
 import { LoadingState } from '@/components/loading-state'
-import { getAlarmStats } from '@/mock/alarm'
-import { getDeviceStats } from '@/mock/device'
+
 import AlarmStatsCard from './components/AlarmStatsCard.vue'
 import StatsCard from './components/StatsCard.vue'
 
@@ -87,8 +86,12 @@ const deviceStats = computed(() => {
     }
   }
   else {
-    // 接口失败时使用 mock 数据
-    return getDeviceStats()
+    // 接口失败时返回空数据
+    return {
+      nationalDevices: 0,
+      onlineChannels: 0,
+      proxyDevices: 0,
+    }
   }
 })
 
@@ -112,8 +115,8 @@ const alarmStats = computed(() => {
     return totalStats
   }
   else {
-    // 接口失败时使用 mock 数据
-    return getAlarmStats()
+    // 接口失败时返回空数据
+    return []
   }
 })
 
@@ -126,18 +129,9 @@ async function onRefresh() {
       fetchDeviceData(),
       fetchAlarmData(),
     ])
-
-    uni.showToast({
-      title: '刷新成功',
-      icon: 'success',
-    })
   }
   catch (error) {
     console.error('刷新失败:', error)
-    uni.showToast({
-      title: '刷新失败',
-      icon: 'error',
-    })
   }
   finally {
     paging.value?.complete()
@@ -188,7 +182,7 @@ onMounted(() => {
           <!-- 告警统计卡片 -->
           <view class="section-header">
             <view class="section-title">
-              <view class="i-carbon-warning section-icon" />
+              <view class="section-icon i-carbon-warning" />
               <text>告警统计</text>
             </view>
           </view>

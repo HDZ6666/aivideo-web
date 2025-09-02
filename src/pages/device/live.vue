@@ -1,4 +1,3 @@
-<!-- 简化版实时视频播放页面 - 上下布局 -->
 <route lang="jsonc" type="page">
 {
   "layout": "default",
@@ -17,7 +16,7 @@ import { getNationalPlayUrl, getProxyPlayUrl } from '@/api/device'
 import { DeviceSelector } from '@/components/device-selector'
 import { HlsPlayer } from '@/components/player'
 import { PtzController } from '@/components/ptz-control'
-import { mockGetNationalPlayUrl, mockGetProxyPlayUrl } from '@/mock/device'
+
 import { DeviceType, useDeviceStore } from '@/store/device'
 
 defineOptions({
@@ -39,17 +38,12 @@ async function getNationalDevicePlayUrl(deviceId: string, channelId: string) {
   }
 
   try {
-    // 先请求正确的接口
     const response = await getNationalPlayUrl(deviceId, channelId, false)
     hlsUrl.value = response.hls
     playInfo.value = response
   }
   catch (error) {
-    // 在catch中请求mock数据
-    console.warn('正式接口请求失败，使用mock数据:', error)
-    const response = await mockGetNationalPlayUrl(deviceId, channelId, false)
-    hlsUrl.value = response.hls
-    playInfo.value = response
+    console.error('获取国标设备播放地址失败:', error)
   }
 }
 
@@ -59,17 +53,12 @@ async function getProxyDevicePlayUrl(app: string, stream: string, mediaServerId?
   }
 
   try {
-    // 先请求正确的接口
     const response = await getProxyPlayUrl(app, stream, mediaServerId)
     hlsUrl.value = response.hls
     playInfo.value = response
   }
   catch (error) {
-    // 在catch中请求mock数据
-    console.warn('正式接口请求失败，使用mock数据:', error)
-    const response = await mockGetProxyPlayUrl(app, stream, mediaServerId)
-    hlsUrl.value = response.hls
-    playInfo.value = response
+    console.error('获取拉流设备播放地址失败:', error)
   }
 }
 
@@ -124,6 +113,7 @@ async function initPlayUrl() {
 }
 
 function handleBack() {
+  console.log(getCurrentPages())
   uni.navigateBack()
 }
 
@@ -165,17 +155,6 @@ function onHlsError() {
   console.log('视频播放错误')
 }
 
-// 云台控制成功处理
-function onControlSuccess(result: { type: 'ptz' | 'device', action: string, data?: any }) {
-  // 可以根据需要添加成功提示或日志
-  console.log('控制操作成功:', result)
-}
-
-// 云台控制错误处理
-function onControlError(error: { type: 'ptz' | 'device', action: string, message: string }) {
-  console.log('控制操作失败:', error)
-}
-
 onMounted(() => {
   initPlayUrl()
 })
@@ -183,7 +162,6 @@ onMounted(() => {
 
 <template>
   <view class="live-page bg-gray-50">
-    <!-- 导航栏 - 参考 national-detail 样式 -->
     <sar-navbar :title="channelName" class="navbar-custom">
       <template #left>
         <view class="back-button">
@@ -192,30 +170,23 @@ onMounted(() => {
       </template>
     </sar-navbar>
 
-    <!-- 主要内容区域 -->
     <view class="main-content">
-      <!-- 视频播放区域 -->
       <view class="video-section">
         <view class="video-container">
-          <!-- HLS视频播放器 -->
           <HlsPlayer ref="hlsPlayerRef" :src="hlsUrl" @ready="onHlsReady" @error="onHlsError" />
         </view>
       </view>
 
-      <!-- 设备通道选择区域 -->
       <view class="device-selector-section">
         <view class="content-wrapper">
           <DeviceSelector @device-type-change="handleDeviceTypeChange" @device-change="handleDeviceChange" />
         </view>
       </view>
 
-      <!-- 云台控制区域 -->
       <view class="ptz-section">
         <view class="content-wrapper">
           <PtzController
             :device-channel-info="deviceChannelInfo"
-            @control-success="onControlSuccess"
-            @control-error="onControlError"
           />
         </view>
       </view>

@@ -11,7 +11,7 @@
 import type { IAlarmDetailRes } from '@/api/alarm'
 import { AlarmStatus, getAlarmDetailByID, updateAlarmStatusByID } from '@/api/alarm'
 import { LoadingState } from '@/components/loading-state'
-import { mockGetAlarmDetailByID, mockUpdateAlarmStatusByID } from '@/mock/alarm'
+
 import { useAlarmStore } from '@/store/alarm'
 
 defineOptions({
@@ -91,10 +91,7 @@ function formatDateTime(timeStr: string) {
 // 加载告警详情
 async function loadAlarmDetail() {
   if (!alarmId.value) {
-    uni.showToast({
-      title: '告警ID不能为空',
-      icon: 'error',
-    })
+    console.error('告警ID不能为空')
     return
   }
 
@@ -106,8 +103,6 @@ async function loadAlarmDetail() {
   }
   catch (error) {
     console.error('加载告警详情失败:', error)
-    const response = await mockGetAlarmDetailByID(id)
-    alarmDetail.value = response
   }
   finally {
     loading.value = false
@@ -135,18 +130,9 @@ async function updateStatus(newStatus: AlarmStatus) {
         status: newStatus,
       })
     }
-    uni.showToast({
-      title: '状态更新成功',
-      icon: 'success',
-    })
   }
   catch (error) {
     console.error('更新告警状态失败:', error)
-    await mockUpdateAlarmStatusByID(alarmDetail.value.alarm_id, newStatus)
-    uni.showToast({
-      title: '状态更新失败',
-      icon: 'error',
-    })
   }
   finally {
     updatingStatus.value = false
@@ -207,10 +193,8 @@ function goBack() {
 }
 
 onLoad((options) => {
-  if (alarmStore.selectedAlarm && alarmStore.selectedAlarm.id === Number.parseInt(options.id)) {
-    // 仍然调用详情接口获取完整信息（如地址、视频等）
-    loadAlarmDetail()
-  }
+  alarmId.value = options.id || ''
+  loadAlarmDetail()
 })
 </script>
 
@@ -293,7 +277,7 @@ onLoad((options) => {
               <!-- 视频模式：固定高度提示区域 -->
               <view v-else class="video-info">
                 <view class="video-content">
-                  <view class="i-carbon-video video-icon" />
+                  <view class="video-icon i-carbon-video" />
                   <text class="video-text">
                     视频模式
                   </text>

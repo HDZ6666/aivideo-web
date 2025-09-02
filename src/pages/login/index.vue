@@ -69,11 +69,7 @@ async function handleLogin() {
     // 获取完整的用户信息
     await getUserUserInfo()
 
-    uni.showToast({
-      title: '登录成功',
-      icon: 'success',
-      duration: 2000,
-    })
+    console.log('登录成功')
 
     // 延迟跳转，让用户看到成功提示
     setTimeout(() => {
@@ -86,11 +82,6 @@ async function handleLogin() {
   }
   catch (error: any) {
     console.error('登录异常:', error)
-    uni.showToast({
-      title: error.message || '登录失败，请重试',
-      icon: 'error',
-      duration: 3000,
-    })
   }
   finally {
     isLoading.value = false

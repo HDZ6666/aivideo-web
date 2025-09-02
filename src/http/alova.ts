@@ -40,7 +40,8 @@ const { onAuthRequired, onResponseRefreshToken } = createServerTokenAuthenticati
 const alovaInstance = createAlova({
   baseURL: import.meta.env.VITE_APP_PROXY_PREFIX,
   ...AdapterUniapp(),
-  timeout: 5000,
+  timeout: 60000,
+  cacheFor: null,
   statesHook: VueHook,
 
   beforeRequest: onAuthRequired((method) => {
@@ -93,12 +94,12 @@ const alovaInstance = createAlova({
       }
 
       // 处理业务逻辑错误
-      const { code, message, data } = rawData as IResponse
+      const { code, msg, data } = rawData as IResponse
       if (code !== ResultEnum.Success) {
         if (config.meta?.toast !== false) {
-          toast.warning(message)
+          toast.error(msg)
         }
-        throw new Error(`请求错误[${code}]：${message}`)
+        throw new Error(`请求错误[${code}]：${msg}`)
       }
       // 处理成功响应，返回业务数据
       return data

@@ -57,10 +57,7 @@ function formatTime(timeStr?: string) {
  */
 function handlePlayStream() {
   if (!proxyDevice.value?.status) {
-    uni.showToast({
-      title: '设备离线，无法播放',
-      icon: 'error',
-    })
+    console.error('设备离线，无法播放')
     return
   }
 
@@ -77,10 +74,7 @@ function handlePlayStream() {
  */
 function handleCloudRecording() {
   if (!proxyDevice.value?.status) {
-    uni.showToast({
-      title: '设备离线，无法查看录像',
-      icon: 'error',
-    })
+    console.error('设备离线，无法查看录像')
     return
   }
 
@@ -96,10 +90,7 @@ function handleCloudRecording() {
 onMounted(() => {
   // 检查是否有拉流设备数据
   if (!proxyDevice.value) {
-    uni.showToast({
-      title: '请先选择拉流设备',
-      icon: 'error',
-    })
+    console.error('请先选择拉流设备')
   }
 })
 </script>

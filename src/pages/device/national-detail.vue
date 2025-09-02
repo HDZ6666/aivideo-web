@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import type { INationalChannel } from '@/api/device'
 import { getDeviceChannels } from '@/api/device'
-import { mockGetDeviceChannels } from '@/mock/device'
+
 import { useDeviceStore } from '@/store/device'
 import NationalChannelList from './components/NationalChannelList.vue'
 
@@ -43,17 +43,10 @@ async function onRefresh() {
     const deviceId = nationalDevice.value.deviceId
     if (deviceId) {
       await loadChannelData()
-      uni.showToast({
-        title: '刷新成功',
-        icon: 'success',
-      })
     }
   }
   catch (error) {
-    uni.showToast({
-      title: '刷新失败',
-      icon: 'error',
-    })
+    console.error('刷新失败:', error)
   }
   finally {
     paging.value?.complete()
@@ -68,21 +61,12 @@ async function loadChannelData() {
     channelLoading.value = true
     const deviceId = nationalDevice.value.deviceId
     if (deviceId) {
-      try {
-        const response = await getDeviceChannels(deviceId, 1, 50)
-        channelList.value = response.list
-      }
-      catch (error) {
-        const response = await mockGetDeviceChannels(deviceId, 1, 50)
-        channelList.value = response.list
-      }
+      const response = await getDeviceChannels(deviceId, 1, 50)
+      channelList.value = response.list
     }
   }
   catch (error) {
-    uni.showToast({
-      title: '加载通道数据失败',
-      icon: 'error',
-    })
+    console.error('加载通道数据失败:', error)
   }
   finally {
     channelLoading.value = false
@@ -91,10 +75,7 @@ async function loadChannelData() {
 
 onMounted(() => {
   if (!nationalDevice.value) {
-    uni.showToast({
-      title: '请先选择设备',
-      icon: 'error',
-    })
+    console.error('请先选择设备')
     return
   }
 
