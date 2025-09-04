@@ -41,17 +41,6 @@ function handleDeviceSelect(device: IProxyDevice) {
         compact
       />
 
-      <!-- 空状态 -->
-      <LoadingState
-        v-else-if="!props.loading && props.deviceList.length === 0"
-        state="empty"
-        empty-text="暂无拉流设备"
-        empty-description="请检查设备连接状态或刷新重试"
-        :show-retry="false"
-        custom-icon="i-carbon-network-4"
-        compact
-      />
-
       <template v-else>
         <view
           v-for="device in props.deviceList" :key="device.id" class="device-list-item mb-24rpx"

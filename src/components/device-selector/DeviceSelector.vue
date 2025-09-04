@@ -2,7 +2,7 @@
 import type { DeviceChannelInfo } from './types'
 import type { INationalDevice, IProxyDevice } from '@/api/device'
 import { getDeviceChannels, getNationalDevices, getProxyDevices } from '@/api/device'
-import { mockGetDeviceChannels, mockGetNationalDevices, mockGetProxyDevices } from '@/mock/device'
+
 import { DeviceType, useDeviceStore } from '@/store/device'
 
 // 内部类型定义（不对外导出）
@@ -154,8 +154,7 @@ async function loadNationalDevices() {
     cascaderOptions.value = formatOptions(response.list, 'national-device')
   }
   catch (error) {
-    const response = await mockGetNationalDevices(1, 50)
-    cascaderOptions.value = formatOptions(response.list, 'national-device')
+    console.error('加载国标设备失败:', error)
   }
 }
 
@@ -168,8 +167,7 @@ async function loadProxyDevices() {
     cascaderOptions.value = formatOptions(response.list, 'proxy-device')
   }
   catch (error) {
-    const response = await mockGetProxyDevices(1, 50)
-    cascaderOptions.value = formatOptions(response.list, 'proxy-device')
+    console.error('加载拉流设备失败:', error)
   }
 }
 
@@ -193,16 +191,6 @@ async function loadChannelData(deviceId: string) {
     })
   }
   catch (error) {
-    const response = await mockGetDeviceChannels(deviceId, 1, 50)
-    cascaderOptions.value = cascaderOptions.value.map((option) => {
-      if (option.value === deviceId) {
-        return {
-          ...option,
-          children: formatOptions(response.list, 'channel'),
-        }
-      }
-      return option
-    })
     console.error('加载通道数据失败:', error)
   }
 }

@@ -66,7 +66,7 @@ async function loadAlarmList(pageNo: number = 1, pageSize: number = 10) {
   <view class="alarm-management-page bg-gray-50">
     <sar-navbar title="告警管理" class="navbar-custom" />
     <view class="main-content">
-      <z-paging ref="paging" v-model="alarmList" :fixed="false" @query="loadAlarmList">
+      <z-paging ref="paging" v-model="alarmList" :fixed="false" auto-show-back-to-top @query="loadAlarmList">
         <view class="content-wrapper">
           <view class="mb-32rpx">
             <AlarmSearchFilter @search-change="handleSearchChange" @alarm-type-change="handleAlarmTypeChange" />

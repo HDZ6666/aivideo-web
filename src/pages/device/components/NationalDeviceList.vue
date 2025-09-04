@@ -41,16 +41,6 @@ function handleDeviceSelect(device: INationalDevice) {
         compact
       />
 
-      <!-- 空状态 -->
-      <LoadingState
-        v-else-if="!props.loading && props.deviceList.length === 0"
-        state="empty"
-        empty-text="暂无国标设备"
-        empty-description="请检查设备连接状态或刷新重试"
-        :show-retry="false"
-        compact
-      />
-
       <template v-else>
         <view
           v-for="device in props.deviceList"

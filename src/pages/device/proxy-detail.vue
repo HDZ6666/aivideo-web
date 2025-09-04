@@ -250,7 +250,7 @@ onMounted(() => {
             </view>
 
             <!-- 云端录像按钮 -->
-            <view
+            <!-- <view
               class="function-btn rounded-24rpx bg-white p-32rpx shadow-gray-200/60 shadow-lg transition-all duration-300"
               @click="handleCloudRecording"
             >
@@ -264,7 +264,7 @@ onMounted(() => {
                   云端录像
                 </text>
               </view>
-            </view>
+            </view> -->
           </view>
         </view>
 

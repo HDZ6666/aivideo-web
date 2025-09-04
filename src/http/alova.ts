@@ -32,6 +32,15 @@ const { onAuthRequired, onResponseRefreshToken } = createServerTokenAuthenticati
       throw new Error('Token已过期，请重新登录')
     },
   },
+  // refreshTokenOnError: {
+  //   isExpired: (error, method) => {
+  //     console.log('refreshTokenOnError', error)
+  //     return error.response.status === ResultEnum.Unauthorized
+  //   },
+  //   handler: (response, method) => {
+  //     throw new Error('Token刷新失败，请重新登录')
+  //   },
+  // },
 })
 
 /**
@@ -58,9 +67,10 @@ const alovaInstance = createAlova({
     // 处理认证信息
     if (!ignoreAuth) {
       const token = useUserStore().token
-      if (token) {
-        method.config.headers['access-token'] = `${token}`
+      if (!token) {
+        throw new Error('USER_NOT_LOGGED_IN')
       }
+      method.config.headers['access-token'] = `${token}`
     }
 
     // 处理动态域名

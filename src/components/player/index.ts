@@ -2,7 +2,7 @@
  * 播放器组件统一导出
  */
 
-// 主要播放器组件导出（基于实际使用情况）
+// 通用视频播放器组件导出（支持 HLS 和普通视频格式）
 export { default as HlsPlayer } from './components/hls-player.vue'
 
 // 导出类型定义

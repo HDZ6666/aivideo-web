@@ -170,3 +170,40 @@ export function getEnvBaseUploadUrl() {
 
   return baseUploadUrl
 }
+
+// 格式化时间
+export function formatTime(timeStr: string) {
+  try {
+    const date = new Date(timeStr)
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+
+    // 小于1分钟
+    if (diff < 60 * 1000) {
+      return '刚刚'
+    }
+
+    // 小于1小时
+    if (diff < 60 * 60 * 1000) {
+      const minutes = Math.floor(diff / (60 * 1000))
+      return `${minutes}分钟前`
+    }
+
+    // 小于1天
+    if (diff < 24 * 60 * 60 * 1000) {
+      const hours = Math.floor(diff / (60 * 60 * 1000))
+      return `${hours}小时前`
+    }
+
+    // 超过1天，显示具体日期
+    return date.toLocaleDateString('zh-CN', {
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+  catch (error) {
+    return timeStr
+  }
+}

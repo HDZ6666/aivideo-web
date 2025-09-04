@@ -14,7 +14,6 @@ import type { IAlarmStatItem, IDeviceResourceInfo } from '@/api/home'
 import { computed, onMounted, ref } from 'vue'
 import { getDeviceResourceInfo, getScreenAlarmStatistics } from '@/api/home'
 import { LoadingState } from '@/components/loading-state'
-
 import AlarmStatsCard from './components/AlarmStatsCard.vue'
 import StatsCard from './components/StatsCard.vue'
 
@@ -22,7 +21,6 @@ defineOptions({
   name: 'Home',
 })
 
-// z-paging 引用
 const paging = ref()
 
 // 数据状态
@@ -67,7 +65,6 @@ async function initData() {
   }
   catch (error) {
     console.error('初始化数据失败:', error)
-    hasError.value = true
   }
   finally {
     loading.value = false
@@ -76,6 +73,12 @@ async function initData() {
 
 // 计算设备统计数据
 const deviceStats = computed(() => {
+  const initDeviceStats = {
+    nationalDevices: 0,
+    totalChannels: 0,
+    onlineChannels: 0,
+    proxyDevices: 0,
+  }
   if (deviceResourceData.value) {
     // 使用真实接口数据
     return {
@@ -87,36 +90,30 @@ const deviceStats = computed(() => {
   }
   else {
     // 接口失败时返回空数据
-    return {
-      nationalDevices: 0,
-      onlineChannels: 0,
-      proxyDevices: 0,
-    }
+    return initDeviceStats
   }
 })
 
 // 计算告警统计数据
 const alarmStats = computed(() => {
+  const initTotalStats = {
+    todayAlarms: 0,
+    todayUnprocessed: 0,
+    last7DaysAlarms: 0,
+    last7DaysUnprocessed: 0,
+  }
   if (alarmData.value && alarmData.value.length > 0) {
     // 使用真实接口数据，汇总所有告警类型的统计
-    const totalStats = alarmData.value.reduce((acc, item) => {
+    return alarmData.value.reduce((acc, item) => {
       acc.todayAlarms += item.curDateAlarmCount
       acc.todayUnprocessed += item.curDateAlarmNoHandleCount
       acc.last7DaysAlarms += item.sevenDayAlarmCount
       acc.last7DaysUnprocessed += item.sevenDayAlarmNoHandleCount
       return acc
-    }, {
-      todayAlarms: 0,
-      todayUnprocessed: 0,
-      last7DaysAlarms: 0,
-      last7DaysUnprocessed: 0,
-    })
-
-    return totalStats
+    }, initTotalStats)
   }
   else {
-    // 接口失败时返回空数据
-    return []
+    return initTotalStats
   }
 })
 
@@ -131,7 +128,7 @@ async function onRefresh() {
     ])
   }
   catch (error) {
-    console.error('刷新失败:', error)
+    console.log('刷新失败:', error)
   }
   finally {
     paging.value?.complete()
@@ -149,19 +146,7 @@ onMounted(() => {
     <sar-navbar title="工作台" class="navbar-custom" />
     <view class="main-content">
       <!-- 加载状态 -->
-      <LoadingState
-        v-if="loading"
-        state="loading"
-        loading-text="正在加载数据..."
-      />
-
-      <!-- 错误状态 -->
-      <LoadingState
-        v-else-if="hasError"
-        state="error"
-        error-text="数据加载失败"
-        @retry="initData"
-      />
+      <LoadingState v-if="loading" state="loading" loading-text="正在加载数据..." />
 
       <!-- 正常内容 -->
       <z-paging v-else ref="paging" :fixed="false" refresher-only @on-refresh="onRefresh">

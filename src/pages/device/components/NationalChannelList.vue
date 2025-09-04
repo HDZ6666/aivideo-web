@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { INationalChannel } from '@/api/device'
-import { ref } from 'vue'
 import { LoadingState } from '@/components/loading-state'
+import { SmartImage } from '@/components/smart-image'
 import { useDeviceStore } from '@/store/device'
 
 interface Props {
@@ -43,32 +43,14 @@ function handleChannelSelect(channel: INationalChannel) {
   })
 }
 
-// 快照URL状态管理
-const snapshotUrls = ref<Record<string, string>>({})
-
 /**
  * 生成快照URL
  * @param channel 通道信息
  * @returns 快照图片URL
  */
 function getSnapshotUrl(channel: INationalChannel): string {
-  const channelKey = `${channel.deviceId}_${channel.channelId}`
-  // 如果已经标记为失败，直接返回默认图片
-  if (snapshotUrls.value[channelKey] === 'error') {
-    return '/static/images/channel_snap.png'
-  }
-  return `/api/device/query/snap/${channel.deviceId}/${channel.channelId}`
-}
-
-/**
- * 处理快照加载错误
- * @param channel 通道信息
- */
-function handleSnapshotError(channel: INationalChannel) {
-  console.warn('快照加载失败:', channel.deviceId, channel.channelId)
-  // 标记该通道的快照为失败状态，使用默认图片
-  const channelKey = `${channel.deviceId}_${channel.channelId}`
-  snapshotUrls.value[channelKey] = 'error'
+  const prefix = import.meta.env.VITE_APP_PROXY_PREFIX || ''
+  return `${prefix}/api/device/query/snap/${channel.deviceId}/${channel.channelId}`
 }
 </script>
 
@@ -140,12 +122,17 @@ function handleSnapshotError(channel: INationalChannel) {
               <view v-if="channel.online ?? channel.status" class="snapshot-row mt-16rpx">
                 <view class="snapshot-container w-full">
                   <view class="snapshot-wrapper relative h-350rpx w-full overflow-hidden rounded-12rpx bg-gray-100">
-                    <image
+                    <SmartImage
                       :src="getSnapshotUrl(channel)"
-                      class="h-full w-full transition-all duration-300"
+                      class="smart-image-snapshot"
+                      height="350rpx"
+                      width="100%"
                       mode="aspectFit"
-                      lazy-load
-                      @error="handleSnapshotError(channel)"
+                      border-radius="12rpx"
+                      :icon-size="128"
+                      :text-size="30"
+                      :show-state-text="true"
+                      :enable-preview="false"
                     />
                   </view>
                 </view>
@@ -258,6 +245,15 @@ function handleSnapshotError(channel: INationalChannel) {
 .snapshot-container {
   .snapshot-wrapper {
     border: 2rpx solid rgba(229, 231, 235, 0.6);
+  }
+}
+
+// SmartImage 样式优化
+.smart-image-snapshot {
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: scale(0.98);
   }
 }
 </style>

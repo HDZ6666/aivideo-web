@@ -126,6 +126,8 @@ async function loadRecordSegments() {
     return
   }
 
+  loading.value = true
+
   const deviceId = deviceChannelInfo.value.deviceId || ''
   const channelId = deviceChannelInfo.value.channelId || ''
   const dateStr = formatDate(selectedDate.value, 'YYYY-MM-DD')
@@ -138,6 +140,9 @@ async function loadRecordSegments() {
   }
   catch (error) {
     console.error('获取录像列表失败:', error)
+  }
+  finally {
+    loading.value = false
   }
 }
 
@@ -152,15 +157,23 @@ async function playRecordSegment(segment: IRecordSegment) {
   const channelId = deviceChannelInfo.value.channelId || ''
   const startTime = segment.startTime
   const endTime = segment.endTime
+  currentPlayingSegment.value = segment
+
+  uni.showLoading({
+    title: '视频加载中...',
+    mask: true,
+  })
 
   try {
     const response = await getRecordPlayUrl(deviceId, channelId, startTime, endTime)
     hlsUrl.value = response.hls
     playInfo.value = response
-    currentPlayingSegment.value = segment
   }
   catch (error) {
     console.error('获取录像播放地址失败:', error)
+  }
+  finally {
+    uni.hideLoading()
   }
 }
 

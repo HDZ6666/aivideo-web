@@ -1,7 +1,6 @@
 <!-- 告警搜索筛选组件 -->
 <script setup lang="ts">
 import { getAlarmCategory } from '@/api/alarm'
-import { mockGetAlarmCategory } from '@/mock/alarm'
 
 interface AlarmTypeOption {
   label: string
@@ -37,25 +36,8 @@ async function loadAlarmTypeOptions() {
     ]
   }
   catch (error) {
-    console.warn('API 调用失败，使用 mock 数据:', error)
-    // 使用 mock 数据
-    try {
-      const response = await mockGetAlarmCategory(1, 100)
-      const options = response.list
-        .map(item => ({
-          label: item.alarmTypeName,
-          value: item.alarmTypeName,
-        }))
-
-      alarmTypeOptions.value = [
-        { label: '全部类型', value: '' },
-        ...options,
-      ]
-    }
-    catch (mockError) {
-      console.error('加载告警类型选项失败:', mockError)
-      // 保持默认选项
-    }
+    console.error('加载告警类型选项失败:', error)
+    // 保持默认选项
   }
 }
 

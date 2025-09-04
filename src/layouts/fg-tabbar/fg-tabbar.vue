@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { currRoute } from '@/utils'
 import { tabbarStore } from './tabbar'
 import { tabbarList as _tabBarList, cacheTabbarEnable, selectedTabbarStrategy, TABBAR_MAP } from './tabbarList'
 
 const customTabbarEnable
-= selectedTabbarStrategy === TABBAR_MAP.CUSTOM_TABBAR_WITH_CACHE
-  || selectedTabbarStrategy === TABBAR_MAP.CUSTOM_TABBAR_WITHOUT_CACHE
+  = selectedTabbarStrategy === TABBAR_MAP.CUSTOM_TABBAR_WITH_CACHE
+    || selectedTabbarStrategy === TABBAR_MAP.CUSTOM_TABBAR_WITHOUT_CACHE
 
 /** tabbarList 里面的 path 从 pages.config.ts 得到 */
 const tabbarList = _tabBarList.map(item => ({ ...item, path: `/${item.pagePath}` }))
@@ -38,35 +39,32 @@ onLoad(() => {
 // 确保 tabbarStore 已初始化
 onMounted(() => {
   // 确保 tabbar 索引正确初始化
-  if (typeof tabbarStore.curIdx !== 'number') {
-    tabbarStore.setCurIdx(0)
+  const { path } = currRoute()
+  if (path) {
+    const tabbarIndex = tabbarList.findIndex(item => item.path === path)
+    if (tabbarIndex !== -1 && tabbarIndex !== tabbarStore.curIdx) {
+      tabbarStore.setCurIdx(tabbarIndex)
+    }
   }
+  // if (typeof tabbarStore.curIdx !== 'number') {
+  //   tabbarStore.setCurIdx(0)
+  // }
 })
 </script>
 
 <template>
   <sar-tabbar
-    v-if="customTabbarEnable"
-    v-model:current="tabbarStore.curIdx"
-    bordered
-    safe-area-inset-bottom
-    placeholder
-    fixed
-    @change="onChange"
+    v-if="customTabbarEnable" v-model:current="tabbarStore.curIdx" bordered safe-area-inset-bottom placeholder
+    fixed @change="onChange"
   >
     <block v-for="(item, idx) in tabbarList" :key="item.path">
       <sar-tabbar-item v-if="item.iconType === 'uiLib'" :name="idx" :text="item.text" :icon="item.icon" />
       <sar-tabbar-item
-        v-else-if="item.iconType === 'unocss' || item.iconType === 'iconfont'"
-        :name="idx"
+        v-else-if="item.iconType === 'unocss' || item.iconType === 'iconfont'" :name="idx"
         :text="item.text"
       >
         <template #icon>
-          <view
-            h-40rpx
-            w-40rpx
-            :class="[item.icon, idx === tabbarStore.curIdx ? 'is-active' : 'is-inactive']"
-          />
+          <view h-40rpx w-40rpx :class="[item.icon, idx === tabbarStore.curIdx ? 'is-active' : 'is-inactive']" />
         </template>
       </sar-tabbar-item>
       <sar-tabbar-item v-else-if="item.iconType === 'local'" :name="idx" :text="item.text">

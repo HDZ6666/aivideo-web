@@ -33,54 +33,33 @@ function handleBack() {
   uni.navigateBack()
 }
 
-async function onRefresh() {
+// 统一的通道数据加载函数
+async function loadChannelData(pageNo: number = 1, pageSize: number = 10) {
   if (!nationalDevice.value) {
-    paging.value?.complete()
+    paging.value?.complete([])
     return
   }
-
-  try {
-    const deviceId = nationalDevice.value.deviceId
-    if (deviceId) {
-      await loadChannelData()
-    }
-  }
-  catch (error) {
-    console.error('刷新失败:', error)
-  }
-  finally {
-    paging.value?.complete()
-  }
-}
-
-async function loadChannelData() {
-  if (!nationalDevice.value)
-    return
 
   try {
     channelLoading.value = true
     const deviceId = nationalDevice.value.deviceId
     if (deviceId) {
-      const response = await getDeviceChannels(deviceId, 1, 50)
-      channelList.value = response.list
+      const response = await getDeviceChannels(deviceId, pageNo, pageSize)
+      // z-paging 会自动处理数据追加
+      paging.value?.complete(response.list)
+    }
+    else {
+      paging.value?.complete([])
     }
   }
   catch (error) {
     console.error('加载通道数据失败:', error)
+    paging.value?.complete([])
   }
   finally {
     channelLoading.value = false
   }
 }
-
-onMounted(() => {
-  if (!nationalDevice.value) {
-    console.error('请先选择设备')
-    return
-  }
-
-  loadChannelData()
-})
 </script>
 
 <template>
@@ -94,7 +73,13 @@ onMounted(() => {
     </sar-navbar>
 
     <view class="main-content">
-      <z-paging ref="paging" :fixed="false" refresher-only @on-refresh="onRefresh">
+      <z-paging
+        ref="paging"
+        v-model="channelList"
+        :fixed="false"
+        auto-show-back-to-top
+        @query="loadChannelData"
+      >
         <view class="content-wrapper">
           <view
             v-if="nationalDevice"

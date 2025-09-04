@@ -11,7 +11,8 @@
 
 <script lang="ts" setup>
 import type { INationalChannel } from '@/api/device'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
+import { SmartImage } from '@/components/smart-image'
 import { useDeviceStore } from '@/store/device'
 
 defineOptions({
@@ -91,77 +92,14 @@ function handleCloudRecording() {
 
 // ==================== 快照相关功能 ====================
 
-// 快照URL状态管理
-const snapshotUrls = ref<Record<string, string>>({})
-
 /**
  * 生成快照URL
  * @param channel 通道信息
  * @returns 快照图片URL
  */
 function getSnapshotUrl(channel: INationalChannel): string {
-  const channelKey = `${channel.deviceId}_${channel.channelId}`
-  // 如果已经标记为失败，直接返回默认图片
-  if (snapshotUrls.value[channelKey] === 'error') {
-    return '/static/images/channel_snap.png'
-  }
-  return `/api/device/query/snap/${channel.deviceId}/${channel.channelId}`
-}
-
-/**
- * 处理快照加载错误
- * @param channel 通道信息
- */
-function handleSnapshotError(channel: INationalChannel) {
-  console.warn('快照加载失败:', channel.deviceId, channel.channelId)
-  // 标记该通道的快照为失败状态，使用默认图片
-  const channelKey = `${channel.deviceId}_${channel.channelId}`
-  snapshotUrls.value[channelKey] = 'error'
-}
-
-/**
- * 快照预览功能
- * @param channel 通道信息
- * @param event 点击事件
- */
-function handleSnapshotPreview(channel: INationalChannel, event: Event) {
-  // 阻止事件冒泡
-  event.stopPropagation()
-
-  const channelKey = `${channel.deviceId}_${channel.channelId}`
-  let snapUrl = `/api/device/query/snap/${channel.deviceId}/${channel.channelId}`
-
-  // 如果快照已经标记为失败，直接预览默认图片
-  if (snapshotUrls.value[channelKey] === 'error') {
-    snapUrl = '/static/images/channel_snap.png'
-  }
-
-  uni.previewImage({
-    urls: [snapUrl],
-    current: snapUrl,
-    fail: (err) => {
-      console.error('预览快照失败:', err)
-      // 如果预览原始快照失败，尝试预览默认图片
-      if (snapUrl !== '/static/images/channel_snap.png') {
-        uni.previewImage({
-          urls: ['/static/images/channel_snap.png'],
-          current: '/static/images/channel_snap.png',
-          fail: () => {
-            uni.showToast({
-              title: '快照预览失败',
-              icon: 'error',
-            })
-          },
-        })
-      }
-      else {
-        uni.showToast({
-          title: '快照预览失败',
-          icon: 'error',
-        })
-      }
-    },
-  })
+  const prefix = import.meta.env.VITE_APP_PROXY_PREFIX || ''
+  return `${prefix}/api/device/query/snap/${channel.deviceId}/${channel.channelId}`
 }
 
 // ==================== 生命周期 ====================
@@ -277,22 +215,19 @@ onMounted(() => {
 
               <!-- 快照行 -->
               <view v-if="channelDevice.status" class="snapshot-row mt-16rpx">
-                <view
-                  class="snapshot-container w-full"
-                  @click="handleSnapshotPreview(channelDevice, $event)"
-                >
+                <view class="snapshot-container w-full">
                   <view class="snapshot-wrapper relative h-350rpx w-full overflow-hidden rounded-12rpx bg-gray-100">
-                    <image
+                    <SmartImage
                       :src="getSnapshotUrl(channelDevice)"
-                      class="h-full w-full transition-all duration-300"
-                      mode="aspectFit"
-                      lazy-load
-                      @error="handleSnapshotError(channelDevice)"
+                      class="smart-image-snapshot"
+                      height="350rpx"
+                      width="100%" mode="aspectFit"
+                      border-radius="12rpx"
+                      :icon-size="128"
+                      :text-size="28"
+                      :show-state-text="true"
+                      :enable-preview="true"
                     />
-                    <!-- 预览图标覆盖层 -->
-                    <view class="snapshot-overlay absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity duration-200">
-                      <view class="i-carbon-view h-48rpx w-48rpx text-white" />
-                    </view>
                   </view>
                 </view>
               </view>
@@ -502,6 +437,15 @@ onMounted(() => {
 
   .snapshot-overlay {
     backdrop-filter: blur(2rpx);
+  }
+}
+
+// SmartImage 样式优化
+.smart-image-snapshot {
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: scale(0.98);
   }
 }
 </style>

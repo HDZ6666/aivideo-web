@@ -85,6 +85,9 @@ export interface IUserInfoResponse {
 export function login(params: ILoginParams) {
   return http.Get<ILoginResponse>('/api/user/login', {
     params,
+    meta: {
+      ignoreAuth: true,
+    },
   })
 }
 
