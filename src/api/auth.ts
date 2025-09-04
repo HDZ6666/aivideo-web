@@ -102,5 +102,5 @@ export function getUserInfo() {
  * 用户退出登录
  */
 export function logout() {
-  return http.Post<{ code: number, message: string }>('/api/user/logout')
+  return http.Get<{ code: number, message: string }>('/api/user/logout')
 }

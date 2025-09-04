@@ -27,40 +27,25 @@ async function handleLogout() {
     success: async (res) => {
       if (res.confirm) {
         try {
-          uni.showLoading({
-            title: '退出中...',
-            mask: true,
-          })
-
           // 调用退出登录接口
           await logout()
-
-          uni.hideLoading()
-          console.log('退出成功')
-
-          // 跳转到登录页
-          setTimeout(() => {
-            uni.reLaunch({
-              url: '/pages/login/index',
-            })
-          }, 1000)
         }
         catch (error: any) {
           console.error('退出登录接口调用失败:', error)
-          // 即使接口失败，也清理本地数据
-          uni.hideLoading()
-          console.log('退出成功')
-
+        }
+        finally {
+          // 无论接口是否成功，都清理本地数据
+          uni.showToast({
+            title: '退出成功',
+            icon: 'success',
+          })
+          userStore.clearUserStore()
           // 跳转到登录页
           setTimeout(() => {
             uni.reLaunch({
               url: '/pages/login/index',
             })
           }, 1000)
-        }
-        finally {
-          // 无论接口是否成功，都清理本地数据
-          userStore.clearUserStore()
         }
       }
     },
@@ -76,11 +61,7 @@ async function handleLogout() {
         <!-- 用户头像和基本信息 -->
         <view class="user-header">
           <view class="avatar-container">
-            <image
-              :src="userStore.avatar"
-              class="user-avatar"
-              mode="aspectFill"
-            />
+            <image :src="userStore.avatar" class="user-avatar" mode="aspectFill" />
           </view>
           <view class="user-basic-info">
             <text class="username">
@@ -94,11 +75,7 @@ async function handleLogout() {
 
         <!-- 操作按钮区域 -->
         <view class="action-section">
-          <button
-            class="logout-btn"
-            type="default"
-            @click="handleLogout"
-          >
+          <button class="logout-btn" type="default" @click="handleLogout">
             <view class="logout-icon i-carbon-logout" />
             <text>退出登录</text>
           </button>
