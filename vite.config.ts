@@ -164,17 +164,6 @@ export default ({ command, mode }) => {
               changeOrigin: true,
               rewrite: path => path.replace(new RegExp(`^${VITE_APP_PROXY_PREFIX}`), ''),
             },
-            '/hls-proxy': {
-              target: 'http://192.168.208.103:20001',
-              changeOrigin: true,
-              rewrite: path => path.replace(/^\/hls-proxy/, ''),
-              configure: (proxy, _options) => {
-                proxy.on('proxyReq', (proxyReq, req, _res) => {
-                  // 添加必要的请求头
-                  proxyReq.setHeader('User-Agent', 'Mozilla/5.0 (compatible; HLS-Player)')
-                })
-              },
-            },
           }
         : undefined,
     },

@@ -33,6 +33,7 @@ const paging = ref() // z-paging 引用
 const hlsPlayerRef = ref() // HLS播放器引用
 
 const alarmItem = computed(() => alarmStore.selectedAlarm)
+const alarmId = ref(undefined)
 
 // 计算属性：获取告警图片列表
 const alarmImages = computed(() => {
@@ -76,7 +77,7 @@ function getStatusInfo(status: AlarmStatus) {
 
 // 下拉刷新
 async function onRefresh() {
-  if (!alarmItem.value) {
+  if (!alarmId.value) {
     paging.value?.complete()
     return
   }
@@ -96,7 +97,7 @@ async function onRefresh() {
 async function loadAlarmDetail() {
   try {
     loading.value = true
-    const response = await getAlarmDetailByID({ alarm_id: alarmItem.value.id })
+    const response = await getAlarmDetailByID({ alarm_id: alarmId.value })
     alarmDetail.value = response
   }
   catch (error) {
@@ -109,9 +110,6 @@ async function loadAlarmDetail() {
 
 // 更新告警状态
 async function updateStatus(newStatus: AlarmStatus) {
-  if (!alarmDetail.value || updatingStatus.value)
-    return
-
   try {
     updatingStatus.value = true
 
@@ -168,15 +166,27 @@ function onHlsError(error: any) {
 
 // 返回上一页
 function goBack() {
-  uni.navigateBack()
+  // 获取当前页面栈
+  const pages = getCurrentPages()
+  console.log('pages:', pages)
+
+  // 如果页面栈长度大于1，说明有历史记录，可以返回
+  if (pages.length > 1) {
+    uni.navigateBack()
+  }
+  else {
+    // 没有历史记录，跳转到告警列表页
+    uni.reLaunch({
+      url: '/pages/alarm/index',
+    })
+  }
 }
 
-onLoad(() => {
-  if (!alarmItem.value) {
-    console.error('请先选择告警')
-    return
+onLoad((options) => {
+  if (alarmItem.value || options.id) {
+    alarmId.value = options.id ? Number.parseInt(options.id) : alarmItem.value.id
+    loadAlarmDetail()
   }
-  loadAlarmDetail()
 })
 </script>
 
@@ -269,7 +279,7 @@ onLoad(() => {
                 <!-- 视频模式：固定高度提示区域 -->
                 <view v-else class="video-info">
                   <view class="video-content">
-                    <view class="video-icon i-carbon-video" />
+                    <view class="i-carbon-video video-icon" />
                     <text class="video-text">
                       视频模式
                     </text>

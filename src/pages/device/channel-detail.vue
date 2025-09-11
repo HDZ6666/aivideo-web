@@ -98,8 +98,7 @@ function handleCloudRecording() {
  * @returns 快照图片URL
  */
 function getSnapshotUrl(channel: INationalChannel): string {
-  const prefix = import.meta.env.VITE_APP_PROXY_PREFIX || ''
-  return `${prefix}/api/device/query/snap/${channel.deviceId}/${channel.channelId}`
+  return `${import.meta.env.VITE_APP_PROXY_PREFIX}/api/device/query/snap/${channel.deviceId}/${channel.channelId}`
 }
 
 // ==================== 生命周期 ====================

@@ -161,7 +161,7 @@ onMounted(() => {
 
         <!-- 标题文字 -->
         <text class="mb-24rpx block text-48rpx text-gray-800 font-bold">
-          视频+AI管理平台
+          AI视界
         </text>
         <text class="text-32rpx text-gray-600">
           移动端管理系统

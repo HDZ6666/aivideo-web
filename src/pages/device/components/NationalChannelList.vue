@@ -49,8 +49,7 @@ function handleChannelSelect(channel: INationalChannel) {
  * @returns 快照图片URL
  */
 function getSnapshotUrl(channel: INationalChannel): string {
-  const prefix = import.meta.env.VITE_APP_PROXY_PREFIX || ''
-  return `${prefix}/api/device/query/snap/${channel.deviceId}/${channel.channelId}`
+  return `${import.meta.env.VITE_APP_PROXY_PREFIX}/api/device/query/snap/${channel.deviceId}/${channel.channelId}`
 }
 </script>
 
@@ -59,32 +58,25 @@ function getSnapshotUrl(channel: INationalChannel): string {
     <view class="channel-list-section">
       <!-- 加载状态 -->
       <LoadingState
-        v-if="props.loading && props.channelList.length === 0"
-        state="loading"
-        loading-text="正在加载通道数据..."
+        v-if="props.loading && props.channelList.length === 0" state="loading" loading-text="正在加载通道数据..."
         compact
       />
 
       <!-- 空状态 -->
       <LoadingState
-        v-else-if="!props.loading && props.channelList.length === 0"
-        state="empty"
-        empty-text="暂无通道数据"
-        empty-description="请检查设备连接状态或刷新重试"
-        :show-retry="false"
-        custom-icon="i-carbon-video"
-        compact
+        v-else-if="!props.loading && props.channelList.length === 0" state="empty" empty-text="暂无通道数据"
+        empty-description="请检查设备连接状态或刷新重试" :show-retry="false" custom-icon="i-carbon-video" compact
       />
 
       <template v-else>
         <view
-          v-for="channel in props.channelList"
-          :key="channel.id"
-          class="channel-list-item mb-24rpx"
+          v-for="channel in props.channelList" :key="channel.id" class="channel-list-item mb-24rpx"
           :class="{ 'channel-list-item--offline': !(channel.online ?? channel.status) }"
           @click="handleChannelSelect(channel)"
         >
-          <view class="channel-card rounded-24rpx bg-white p-32rpx shadow-gray-200/60 shadow-lg transition-all duration-300">
+          <view
+            class="channel-card rounded-24rpx bg-white p-32rpx shadow-gray-200/60 shadow-lg transition-all duration-300"
+          >
             <view
               class="card-gradient absolute h-128rpx w-128rpx rounded-full opacity-10 -right-32rpx -top-32rpx"
               :class="(channel.online ?? channel.status) ? 'bg-gradient-to-br from-green-400 to-green-600' : 'bg-gradient-to-br from-red-400 to-red-600'"
@@ -123,15 +115,8 @@ function getSnapshotUrl(channel: INationalChannel): string {
                 <view class="snapshot-container w-full">
                   <view class="snapshot-wrapper relative h-350rpx w-full overflow-hidden rounded-12rpx bg-gray-100">
                     <SmartImage
-                      :src="getSnapshotUrl(channel)"
-                      class="smart-image-snapshot"
-                      height="350rpx"
-                      width="100%"
-                      mode="aspectFit"
-                      border-radius="12rpx"
-                      :icon-size="128"
-                      :text-size="30"
-                      :show-state-text="true"
+                      :src="getSnapshotUrl(channel)" class="smart-image-snapshot" height="350rpx" width="100%"
+                      mode="aspectFit" border-radius="12rpx" :icon-size="128" :text-size="30" :show-state-text="true"
                       :enable-preview="false"
                     />
                   </view>

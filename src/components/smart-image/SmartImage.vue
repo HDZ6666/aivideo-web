@@ -188,6 +188,7 @@ function handlePreview() {
 watch(() => props.src, (newSrc, oldSrc) => {
   // 清除之前的定时器
   clearLoadingTimer()
+  // console.log('图片地址发生变化:', props.src)
 
   // 如果 src 为空，直接显示默认状态
   if (!newSrc) {
