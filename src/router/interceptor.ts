@@ -68,13 +68,14 @@ function pageAuthCheck() {
   const pages = getCurrentPages()
   if (pages.length === 0)
     return
-
-  const currentRoute = `/${pages[pages.length - 1].route}`
-
+  const getLastPage = pages[pages.length - 1] as any
+  const currentRoute = `/${getLastPage.route}`
   if (!checkPageAuth(currentRoute)) {
     console.log('用户未登录，重定向到登录页:', currentRoute)
+    const fullpath = getLastPage?.$page?.fullPath || currentRoute
+    console.log('fullpath:', fullpath)
     uni.reLaunch({
-      url: `${loginRoute}?redirect=${encodeURIComponent(currentRoute)}`,
+      url: `${loginRoute}?redirect=${encodeURIComponent(fullpath)}`,
     })
   }
 }
