@@ -88,6 +88,20 @@ export interface BatchUpdateAlarmStatusReq {
   status: number;
 }
 
+/* **********************************实时视频播放**************************************************** */
+
+// 实时视频播放请求参数
+export interface LiveVideoStartReq {
+  national_num: string;
+  channel: string;
+}
+
+// 实时视频播放响应数据
+export interface LiveVideoStartRes {
+  ws_flv?: string;
+  wss_flv?: string;
+}
+
 /* **********************************告警配置**************************************************** */
 
 // 规则类型
@@ -227,6 +241,8 @@ export enum AiApi {
   AlarmStatusByID = '/ai/api/alarm/handle',
   AlarmCategory = '/ai/api/ruleAlarm/getAlarmCategory',
   BatchUpdateAlarmStatus = '/ai/api/alarm/batchHandleAlarm',
+  // 实时视频播放
+  LiveVideoStart = '/api/play/start',
   // 规则
 
   GetRuleListByAlarmType = '/ai/api/ruleAlarm/deviceAlarmRuleList',
@@ -298,6 +314,12 @@ const getSnapshotSave = (params: GetDeviceSnapReq) =>
 const snapshotDelete = (params: SnapshotDeleteReq) =>
   apiClient.delete({ url: AiApi.SnapshotDelete, params });
 
+// 获取实时视频播放地址
+const getLiveVideoStart = (params: LiveVideoStartReq) =>
+  apiClient.get<LiveVideoStartRes>({
+    url: `${AiApi.LiveVideoStart}/${params.national_num}/${params.channel}`,
+  });
+
 export default {
   getAlarmList,
   getAlarmDetailByID,
@@ -316,4 +338,5 @@ export default {
   getSnapshotList,
   getSnapshotSave,
   snapshotDelete,
+  getLiveVideoStart,
 };

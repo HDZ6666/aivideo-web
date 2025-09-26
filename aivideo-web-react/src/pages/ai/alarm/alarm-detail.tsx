@@ -26,10 +26,12 @@ export type AlarmDetailModalProps = {
 
 export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetailModalProps) {
   const queryClient = useQueryClient();
-  const [type, setType] = useState('image'); // image or video
+  const [type, setType] = useState('image'); // image, video, live
+  const [liveVideoUrl, setLiveVideoUrl] = useState(''); // 实时视频URL
   const options = [
     { label: '查看图片', value: 'image' },
     { label: '查看回放', value: 'video' },
+    { label: '实时视频', value: 'live' },
   ];
 
   const { data: alarmDetail, isLoading } = useQuery({
@@ -48,8 +50,53 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
     },
   });
 
+  // 实时视频播放 mutation
+  const { isLoading: liveVideoLoading, mutate: getLiveVideoMutation } = useMutation(
+    aiService.getLiveVideoStart,
+    {
+      onSuccess: (response) => {
+        // 根据当前协议选择视频流URL
+        let videoUrl = '';
+        if (window.location.protocol === 'https:') {
+          videoUrl = response.wss_flv || '';
+        } else {
+          videoUrl = response.ws_flv || '';
+        }
+
+        if (videoUrl) {
+          setLiveVideoUrl(videoUrl);
+        } else {
+          message.error('获取实时视频流失败');
+        }
+      },
+    },
+  );
+
   const onAlarmHandle = (status: number) => {
     mutate({ alarmId: alarmItem!.id, status });
+  };
+
+  // 获取实时视频流地址
+  const getLiveVideoUrl = () => {
+    if (!alarmDetail?.detail?.national_num || !alarmDetail?.detail?.channel) {
+      message.error('缺少设备参数，无法获取实时视频');
+      return;
+    }
+
+    // 使用 mutation 调用接口
+    getLiveVideoMutation({
+      national_num: alarmDetail.detail.national_num,
+      channel: alarmDetail.detail.channel,
+    });
+  };
+
+  // 处理类型切换
+  const handleTypeChange = (newType: string) => {
+    setType(newType);
+    // 当切换到实时视频时，自动获取视频流
+    if (newType === 'live') {
+      getLiveVideoUrl();
+    }
   };
 
   const footer = () => {
@@ -95,6 +142,7 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
       getContainer={false}
       afterOpenChange={() => {
         setType('image');
+        setLiveVideoUrl(''); // 重置实时视频URL
       }}
     >
       {alarmDetail ? (
@@ -104,7 +152,7 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
               <Radio.Group
                 value={type}
                 buttonStyle="solid"
-                onChange={(e) => setType(e.target.value)}
+                onChange={(e) => handleTypeChange(e.target.value)}
                 options={options}
                 optionType="button"
               />
@@ -116,7 +164,7 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
                     <Image
                       width="100%"
                       height="100%"
-                      className="object-contain bg-black"
+                      className="bg-black object-contain"
                       src={alarmDetail.alarm_img}
                     />
                   </Image.PreviewGroup>
@@ -125,7 +173,7 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
                   <Image
                     width="80px"
                     height="60px"
-                    className="object-cover bg-black hover:cursor-pointer hover:opacity-80"
+                    className="bg-black object-cover hover:cursor-pointer hover:opacity-80"
                     src={alarmDetail.alarm_img}
                     preview={false}
                   />
@@ -140,6 +188,7 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
               </>
             )}
             {type === 'video' && <LivePlayer videoUrl={alarmDetail.videoUrl} />}
+            {type === 'live' && <LivePlayer videoUrl={liveVideoUrl} live />}
           </Col>
           <Col span={10}>
             <Descriptions title="告警信息" column={1}>

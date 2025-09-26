@@ -79,7 +79,10 @@ export default defineComponent({
   },
   methods:{
     gotoDashboard(){
-      window.top.location.href="/#/aiView";
+      const currentHref = window.top.location.href;
+      const newUrl = currentHref.replace(/#.*$/, '#/aiView');
+      window.top.location.href = newUrl;
+      // window.top.location.href="/#/aiView";
     },
     link(url,event){
       $(event.target).parent().parent().find(".item").removeClass("active");
