@@ -112,6 +112,33 @@ export default function BaseSetComponent({
       <Form.Item name="alarmTime" label="同一告警间隔通知时间">
         <InputNumber min={0} precision={0} suffix="分钟" controls={false} />
       </Form.Item>
+      {/* 目标追踪配置 */}
+      <Form.Item label="目标追踪">
+        <Space>
+          <Form.Item name="trackingEnabled" noStyle initialValue={1}>
+            <Radio.Group>
+              <Radio value={0}>禁用</Radio>
+              <Radio value={1}>启用</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item shouldUpdate noStyle>
+            {({ getFieldValue }) => {
+              return getFieldValue('trackingEnabled') === 1 ? (
+                <Form.Item name="trackingDuration" noStyle>
+                  <InputNumber
+                    style={{ width: 120 }}
+                    min={0}
+                    precision={0}
+                    suffix="分钟"
+                    controls={false}
+                    placeholder="停留时间"
+                  />
+                </Form.Item>
+              ) : null;
+            }}
+          </Form.Item>
+        </Space>
+      </Form.Item>
       <Form.Item name="confidence" label="置信度">
         <Slider style={{ width: 500 }} />
       </Form.Item>
