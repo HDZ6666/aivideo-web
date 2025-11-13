@@ -1,5 +1,12 @@
 export type GroupType = RectType | CircleType | TextType | ArrowType | LineType;
 
+// 图案组接口，包含完成状态
+export interface PatternGroup {
+  id: string; // 图案唯一标识
+  completed: boolean; // 是否完成绘制
+  elements: GroupType[]; // 图案中的所有元素
+}
+
 export interface RectType {
   x: number;
   y: number;
@@ -46,7 +53,7 @@ export interface KonvasFormType {
   width: number;
   height: number;
   canvasType: string;
-  list: CircleFormType[];
+  list: CircleFormType[][]; // 修改为二维数组，支持多个图案
 }
 
 export interface CircleFormType {
@@ -61,22 +68,22 @@ export interface KonvaProps {
   complete: boolean;
   setStart: (start: boolean) => void;
   setComplete: (complete: boolean) => void;
-  onComplete?: (compete: CircleType[]) => void;
+  onComplete?: (compete: PatternGroup[]) => void;
 }
 
 export interface RectangleProps extends KonvaProps {
-  groupList: GroupType[];
-  setGroupList: (groupList: GroupType[]) => void;
+  groupList: PatternGroup[];
+  setGroupList: (groupList: PatternGroup[]) => void;
 }
 
 export interface PolygonProps extends KonvaProps {
-  groupList: (GroupType | LineType)[];
-  setGroupList: (groupList: GroupType[]) => void;
+  groupList: PatternGroup[];
+  setGroupList: (groupList: PatternGroup[]) => void;
 }
 
 export interface LineProps extends KonvaProps {
   lineType: number;
   lineTextList: string[];
-  groupList: GroupType[];
-  setGroupList: (groupList: GroupType[]) => void;
+  groupList: PatternGroup[];
+  setGroupList: (groupList: PatternGroup[]) => void;
 }

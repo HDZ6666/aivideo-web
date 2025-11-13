@@ -60,8 +60,14 @@ export const createCompeteType = (
   width = 500,
   height = 300,
 ): KonvasFormType => {
+  // 将一维数组转换为二维数组格式，以适配新的数据结构
+  const formattedList = list.map(circle => ({
+    x: circle.x,
+    y: circle.y,
+  }));
+
   return {
-    list,
+    list: [formattedList], // 包装为二维数组
     canvasType,
     width,
     height,

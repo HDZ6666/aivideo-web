@@ -51,7 +51,7 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
   });
 
   // 实时视频播放 mutation
-  const { isLoading: liveVideoLoading, mutate: getLiveVideoMutation } = useMutation(
+  const {mutate: getLiveVideoMutation } = useMutation(
     aiService.getLiveVideoStart,
     {
       onSuccess: (response) => {
@@ -164,7 +164,7 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
                     <Image
                       width="100%"
                       height="100%"
-                      className="bg-black object-contain"
+                      className="object-contain bg-black"
                       src={alarmDetail.alarm_img}
                     />
                   </Image.PreviewGroup>
@@ -173,7 +173,7 @@ export default function AlarmDetailModal({ show, alarmItem, close }: AlarmDetail
                   <Image
                     width="80px"
                     height="60px"
-                    className="bg-black object-cover hover:cursor-pointer hover:opacity-80"
+                    className="object-cover bg-black hover:cursor-pointer hover:opacity-80"
                     src={alarmDetail.alarm_img}
                     preview={false}
                   />

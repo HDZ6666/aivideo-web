@@ -216,6 +216,7 @@ import warn_todo from "@/assets/imgs/warn_todo.png";
 import warn_total from "@/assets/imgs/warn_total.png";
 import { getImageUrl } from "@/utils/imageUrl.js";
 SwiperCore.use([Scrollbar, Pagination, Autoplay]);
+import video from "@/assets/video/video.mp4";
 
 import { getApiClient } from "@aivideo/rest";
 export default defineComponent({
@@ -296,16 +297,42 @@ export default defineComponent({
           { id: "1", label: "全部设备", value: "0", type: "group"},
         ],
         cameraList: [],
-        cameraRows: [
-          {
-            name: "模拟数据",
+        cameraRows: [{
+            name: "模拟数据1",
+            videoUrl: video,
             streamInfo: {
               hls: {
-                url: "",
+                url: '',
               },
             },
           },
-        ],
+          {
+            name: "模拟数据2",
+            videoUrl: video,
+            streamInfo: {
+              hls: {
+                url: '',
+              },
+            },
+          },
+          {
+            name: "模拟数据3",
+            videoUrl: video,
+            streamInfo: {
+              hls: {
+                url: '',
+              },
+            },
+          },
+          {
+            name: "模拟数据4",
+            videoUrl: video,
+            streamInfo: {
+              hls: {
+                url: '',
+              },
+            },
+        }],
         alarmStatistics: [
           {
             alarmTypeName: "烟雾烟火",
@@ -336,7 +363,7 @@ export default defineComponent({
         },
         {
           imgaeUrl: device_online,
-          name: "设备总数",
+          name: "在线设备数",
           number: "onlineDev",
         },
         {
@@ -479,14 +506,52 @@ export default defineComponent({
       }
       apiClient.GET(apiUrl).then((r) => {
         if (r.data.code == "0") {
-          this.bind.cameraList = r.data.data.list.map((item) => {
-            item.videoUrl = item.streamInfo
-              ? location.protocol === "https:"
-                ? item.streamInfo.https_flv.url
-                : item.streamInfo.flv.url
-              : "";
-            return item;
-          });
+          // this.bind.cameraList = r.data.data.list.map((item) => {
+          //   item.videoUrl = item.streamInfo
+          //     ? location.protocol === "https:"
+          //       ? item.streamInfo.https_flv.url
+          //       : item.streamInfo.flv.url
+          //     : "";
+          //   return item;
+          // });
+          // 暂时使用模拟数据
+          this.bind.cameraList = [{
+            name: "模拟数据1",
+            videoUrl: video,
+            streamInfo: {
+              hls: {
+                url: '',
+              },
+            },
+          },
+          {
+            name: "模拟数据2",
+            videoUrl: video,
+            streamInfo: {
+              hls: {
+                url: '',
+              },
+            },
+          },
+          {
+            name: "模拟数据3",
+            videoUrl: video,
+            streamInfo: {
+              hls: {
+                url: '',
+              },
+            },
+          },
+          {
+            name: "模拟数据4",
+            videoUrl: video,
+            streamInfo: {
+              hls: {
+                url: '',
+              },
+            },
+          }]
+        // this.bind.stat.onlineDev = 10;
           this.pager.pageIndex = 1;
           this.pager.totalPage = Math.ceil(this.bind.cameraList.length / this.pager.pageSize);
           this.getCameraPage();
@@ -602,7 +667,8 @@ export default defineComponent({
       const apiClient = getApiClient();
       apiClient.GET("/api/alarm/v2/deviceInfo/deviceCount").then((r) => {
         if (r.data.code == "0") {
-          this.bind.stat.allDev = r.data.data.deviceCount;
+          // this.bind.stat.allDev = r.data.data.deviceCount;
+          this.bind.stat.allDev = 4;
         }
       });
     },
@@ -610,7 +676,8 @@ export default defineComponent({
       const apiClient = getApiClient();
       apiClient.GET("/api/alarm/v2/deviceInfo/onlineDeviceCount").then((r) => {
         if (r.data.code == "0") {
-          this.bind.stat.onlineDev = r.data.data.onlineDeviceCount;
+          // this.bind.stat.onlineDev = r.data.data.onlineDeviceCount;
+          this.bind.stat.onlineDev = 4;
         }
       });
     },
