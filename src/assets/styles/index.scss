@@ -5,6 +5,23 @@
 @use './btn.scss';
 @use './ruoyi.scss';
 
+// 大屏字体
+@font-face {
+  font-family: 'ysbthFont';
+  src: url('@/assets/datav/font/ysbthFont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'electronicFont';
+  src: url('@/assets/datav/font/electronicFont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
 body {
   height: 100%;
   margin: 0;

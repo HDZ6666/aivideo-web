@@ -1,6 +1,7 @@
 import { createWebHistory, createRouter } from 'vue-router'
 /* Layout */
 import Layout from '@/layout'
+import ParentView from '@/components/ParentView'
 
 /**
  * Note: 路由配置项
@@ -71,6 +72,93 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/viid',
+    component: Layout,
+    redirect: 'noredirect',
+    name: 'Viid',
+    meta: { title: '视图库', icon: 'monitor', alwaysShow: true },
+    children: [
+      // 二级路由：数据采集
+      {
+        path: 'dataCollection',
+        component: ParentView,
+        redirect: 'noredirect',
+        name: 'DataCollection',
+        meta: { title: '数据采集', icon: 'dashboard' },
+        children: [
+          {
+            path: 'face',
+            component: () => import('@/views/viid/dataCollection/face/index.vue'),
+            name: 'Face',
+            meta: { title: '人脸采集', icon: 'user' }
+          },
+          {
+            path: 'person',
+            component: () => import('@/views/viid/dataCollection/person/index.vue'),
+            name: 'Person',
+            meta: { title: '人员采集', icon: 'peoples' }
+          },
+          {
+            path: 'vehicle',
+            component: () => import('@/views/viid/dataCollection/vehicle/index.vue'),
+            name: 'Vehicle',
+            meta: { title: '车辆采集', icon: 'guide' }
+          },
+          {
+            path: 'nonMotorVehicle',
+            component: () => import('@/views/viid/dataCollection/nonMotorVehicle/index.vue'),
+            name: 'NonMotorVehicle',
+            meta: { title: '非机动车采集', icon: 'shopping' }
+          }
+        ]
+      },
+      // 二级路由：AI搜索
+      {
+        path: 'aiSearch',
+        component: ParentView,
+        redirect: 'noredirect',
+        name: 'AiSearch',
+        meta: { title: 'AI搜索', icon: 'search' },
+        children: [
+          {
+            path: 'imageSearch',
+            component: () => import('@/views/viid/aiSearch/imageSearch/index.vue'),
+            name: 'ImageSearch',
+            meta: { title: '图片搜索', icon: 'example' }
+          },
+          {
+            path: 'textSearch',
+            component: () => import('@/views/viid/aiSearch/textSearch/index.vue'),
+            name: 'TextSearch',
+            meta: { title: '文本搜索', icon: 'edit' }
+          }
+        ]
+      },
+      // 二级路由：轨迹追踪
+      {
+        path: 'trackTrace',
+        component: ParentView,
+        redirect: 'noredirect',
+        name: 'TrackTrace',
+        meta: { title: '轨迹追踪', icon: 'location' },
+        children: [
+          {
+            path: 'faceTrace',
+            component: () => import('@/views/viid/trackTrace/faceTrace/index.vue'),
+            name: 'FaceTrace',
+            meta: { title: '人脸轨迹', icon: 'user' }
+          },
+          {
+            path: 'vehicleTrace',
+            component: () => import('@/views/viid/trackTrace/vehicleTrace/index.vue'),
+            name: 'VehicleTrace',
+            meta: { title: '车辆轨迹', icon: 'truck' }
+          }
+        ]
+      }
+    ]
+  },
+  {
     path: '/user',
     component: Layout,
     hidden: true,
@@ -83,6 +171,14 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  // 数据可视化大屏 v1
+  {
+    path: '/datav/v1',
+    component: () => import('@/views/datav/v1/index.vue'),
+    hidden: true,
+    name: 'DatavV1',
+    meta: { title: '监控驾驶舱', icon: 'monitor' }
   }
 ]
 
