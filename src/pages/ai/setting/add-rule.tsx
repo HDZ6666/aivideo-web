@@ -49,7 +49,7 @@ function AddRulePage({ alarmTypeId, setActionType }: AddRulePageProps) {
       </Flex>
       <Spin spinning={isLoading}>
         <Form form={form} onFinish={FormSubmit}>
-          <BaseSet frameSetAble={false} />
+          <BaseSet frameSetAble={false} alarmTypeId={Number(alarmTypeId)} />
           <Space>
             <Button type="default" onClick={handleRouteBack}>
               返回

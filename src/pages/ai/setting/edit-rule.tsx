@@ -51,99 +51,6 @@ function EditRulePage({ alarmTypeId, ruleId, setActionType }: EditRulePageProps)
       } else {
         setBgImage((pre) => ({ ...pre, loaded: true }));
       }
-      // const data2 = {
-      //   ...data,
-      //   areaSet: {
-      //     width: 500,
-      //     height: 300,
-      //     canvasType: 'polygon',
-      //     list: [
-      //       [
-      //         {
-      //           x: 58,
-      //           y: 67,
-      //         },
-      //         {
-      //           x: 194,
-      //           y: 25,
-      //         },
-      //         {
-      //           x: 208,
-      //           y: 113,
-      //         },
-      //         {
-      //           x: 166,
-      //           y: 218,
-      //         },
-      //         {
-      //           x: 83,
-      //           y: 172,
-      //         },
-      //       ],
-      //       [
-      //         {
-      //           x: 357,
-      //           y: 77,
-      //         },
-      //         {
-      //           x: 499,
-      //           y: 67,
-      //         },
-      //         {
-      //           x: 408,
-      //           y: 208,
-      //         },
-      //         {
-      //           x: 348,
-      //           y: 232,
-      //         },
-      //       ],
-      //     ],
-      //   },
-      //   // areaSet: {
-      //   //   canvasType: 'big',
-      //   //   height: 300,
-      //   //   list: [
-      //   //     [
-      //   //       {
-      //   //         x: 81,
-      //   //         y: 51,
-      //   //       },
-      //   //       {
-      //   //         x: 231,
-      //   //         y: 51,
-      //   //       },
-      //   //       {
-      //   //         x: 231,
-      //   //         y: 198,
-      //   //       },
-      //   //       {
-      //   //         x: 81,
-      //   //         y: 198,
-      //   //       },
-      //   //     ],
-      //   //     [
-      //   //       {
-      //   //         x: 288,
-      //   //         y: 106,
-      //   //       },
-      //   //       {
-      //   //         x: 448,
-      //   //         y: 106,
-      //   //       },
-      //   //       {
-      //   //         x: 448,
-      //   //         y: 261,
-      //   //       },
-      //   //       {
-      //   //         x: 288,
-      //   //         y: 261,
-      //   //       },
-      //   //     ],
-      //   //   ],
-      //   //   width: 500,
-      //   // },
-      // };
       form.setFieldsValue(data);
     },
   });
@@ -245,7 +152,7 @@ function EditRulePage({ alarmTypeId, ruleId, setActionType }: EditRulePageProps)
             </Form.Item>
           </div>
           <div className={type === 'b' ? 'block' : 'hidden'}>
-            <BaseSet selectDeviceable={false} />
+            <BaseSet selectDeviceable={false} alarmTypeId={Number(alarmTypeId)} />
           </div>
           <Space>
             <Button type="default" onClick={handleRouteBack}>
