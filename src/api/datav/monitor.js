@@ -99,3 +99,15 @@ export function getScreenAlarmStatistics() {
         method: 'get'
     });
 }
+
+/**
+ * 告警处理
+ * @param {Object} params - { status, alarmId, alarmDescription }
+ */
+export function handleAlarm(params) {
+    return request({
+        url: '/ai/api/alarm/handle',
+        method: 'get',
+        params: params
+    });
+}

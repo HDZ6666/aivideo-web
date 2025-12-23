@@ -18,23 +18,33 @@
             <div class="info-bottom">
                 <div class="info-row">
                     <div class="info-item">告警时间：<span>{{ info.alarmTime }}</span></div>
-                    <div class="info-item">状态：<span>{{ info.status == 0 ? '未处理' : '已处理' }}</span></div>
+                    <div class="info-item">状态：<span :class="getStatusClass(localStatus)">{{ getStatusText(localStatus)
+                    }}</span>
+                    </div>
                 </div>
                 <div class="info-item">告警描述：</div>
                 <div class="info-desc">
                     {{ info.alarmDescription || '' }}
                 </div>
             </div>
-            <div v-if="info.status == 0" class="info-action">
-                <div class="desc">
-                    <span>处理说明：</span>
-                    <el-input v-model="desc" type="textarea" placeholder="请输入处理说明" :rows="2" resize="none" />
-                </div>
-                <div class="button" @click="alarmHandle(1)">
-                    处理
-                </div>
-                <div class="button" @click="alarmHandle(2)">
-                    误报
+            <div class="info-action">
+                <!-- 未处理状态：显示输入框和按钮 -->
+                <template v-if="localStatus == 0">
+                    <div class="desc">
+                        <span>处理说明：</span>
+                        <el-input v-model="desc" type="textarea" placeholder="请输入处理说明" :rows="2" resize="none" />
+                    </div>
+                    <div class="button" @click="alarmHandle(1)">
+                        处理
+                    </div>
+                    <div class="button" @click="alarmHandle(2)">
+                        误报
+                    </div>
+                </template>
+                <!-- 已处理/误报状态：显示处理说明文本 -->
+                <div v-else class="desc-show">
+                    <span class="label">处理说明：</span>
+                    <span class="content">{{ localDesc || '无' }}</span>
                 </div>
             </div>
         </div>
@@ -42,8 +52,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-// import { ElMessage } from 'element-plus'
+import { ref, watch } from 'vue'
+import { ElMessage } from 'element-plus'
+import { handleAlarm } from '@/api/datav/monitor.js'
 
 const props = defineProps({
     info: {
@@ -52,24 +63,72 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['close', 'handle'])
+const emit = defineEmits(['close', 'handle', 'action-start'])
 
 const desc = ref('')
+const localStatus = ref(props.info?.status ?? 0)
+const localDesc = ref(props.info?.handleDescription || '')
+
+// 监听数据变化，实现组件常驻时的内容刷新
+watch(() => props.info, (newInfo) => {
+    if (newInfo) {
+        localStatus.value = newInfo.status ?? 0
+        localDesc.value = newInfo.handleDescription || ''
+        desc.value = '' // 重置输入框
+    }
+}, { deep: true, immediate: true })
+
+// 获取状态文本
+const getStatusText = (status) => {
+    const statusMap = {
+        0: '未处理',
+        1: '已处理',
+        2: '误报'
+    }
+    return statusMap[status] || '-'
+}
+
+// 获取状态样式类
+const getStatusClass = (status) => {
+    const classMap = {
+        0: 'status-pending',
+        1: 'status-handled',
+        2: 'status-false-alarm'
+    }
+    return classMap[status] || ''
+}
 
 const close = () => {
     emit('close')
 }
 
 const alarmHandle = (status) => {
-    // 模拟 API 调用
-    // const apiClient = getApiClient();
-    // const apiUrl = `/ai/api/alarm/handle?status=${status}&alarmId=${props.info.id}&alarmDescription=${desc.value}`
-    // apiClient.GET(apiUrl).then(...)
+    // 通知父组件停止 10s 的自动计时器
+    emit('action-start')
 
-    // 暂时直接成功
-    // ElMessage.success("操作成功")
-    emit("handle", true)
-    close()
+    const params = {
+        status: status,
+        alarmId: props.info.id,
+        alarmDescription: desc.value || ''
+    }
+
+    handleAlarm(params).then(res => {
+        if (res.code === 200 || res.code === 0 || res.code === '0') {
+            ElMessage.success("操作成功")
+            localStatus.value = status
+            localDesc.value = desc.value
+            emit("handle", true)
+        } else {
+            ElMessage.error(res.msg || "操作失败")
+        }
+    }).catch(err => {
+        ElMessage.error("系统繁忙，请稍后再试")
+    }).finally(() => {
+        // 请求完毕后，等待3秒关闭（通过 emit 通知父组件隐藏）
+        setTimeout(() => {
+            close()
+        }, 3000)
+    })
 }
 </script>
 
@@ -190,9 +249,14 @@ const alarmHandle = (status) => {
         }
 
         :deep(.el-textarea__inner) {
-            border: 1px solid rgba(0, 113, 188, 0.5);
-            color: #fff;
+            background-color: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(0, 113, 188, 0.5) !important;
+            color: #fff !important;
             padding: 5px 10px;
+
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.4);
+            }
         }
     }
 
@@ -211,5 +275,37 @@ const alarmHandle = (status) => {
             background: #0091ff;
         }
     }
+
+    .desc-show {
+        width: 100%;
+        display: flex;
+        font-size: 17.3px;
+        color: #fff;
+
+        .label {
+            color: rgba(255, 255, 255, 0.7);
+            white-space: nowrap;
+        }
+
+        .content {
+            word-break: break-all;
+        }
+    }
+}
+
+.status-pending {
+    color: #ff6b6b !important;
+}
+
+.status-handled {
+    color: #52c41a !important;
+}
+
+.status-false-alarm {
+    color: #faad14 !important;
+}
+
+.handled-desc {
+    color: #fff;
 }
 </style>

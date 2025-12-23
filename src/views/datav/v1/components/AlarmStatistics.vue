@@ -33,15 +33,12 @@
             </div>
         </div>
 
-        <!-- 告警统计详情弹窗 -->
-        <AlarmStatisticsDialog ref="dialogRef" v-if="dialogVisible" @close="dialogVisible = false"
-            @show-detail="(row) => $emit('show-detail', row)" />
+
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import AlarmStatisticsDialog from './AlarmStatisticsDialog.vue'
 
 // Props
 defineProps({
@@ -51,23 +48,11 @@ defineProps({
     }
 })
 
-// Emits
-const emit = defineEmits(['more-click'])
-
-// 弹窗显示状态
-const dialogVisible = ref(false)
-const dialogRef = ref(null)
-
-// 暴露刷新内部列表的方法
-defineExpose({
-    refreshList: () => dialogRef.value?.refreshList()
-})
+// 弹窗显示状态已移除，上移至 index.vue
+const emit = defineEmits(['more-click', 'show-detail'])
 
 // 点击"详情"按钮
 const handleMoreClick = () => {
-    console.log('AlarmStatistics - 点击详情按钮')
-    dialogVisible.value = true
-    console.log('AlarmStatistics - dialogVisible:', dialogVisible.value)
     emit('more-click')
 }
 </script>

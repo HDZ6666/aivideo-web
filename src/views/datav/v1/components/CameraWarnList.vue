@@ -12,8 +12,7 @@
                 </div>
             </div>
         </div>
-        <CameraWarnGridDialog ref="dialogRef" v-if="warnGridVisible" @close="warnGridVisible = false"
-            @show-detail="(data) => $emit('show-detail', data)" />
+
     </div>
 </template>
 
@@ -26,24 +25,11 @@ defineProps({
     }
 })
 
-// Emits
-const emit = defineEmits(['item-click', 'show-detail'])
-
-import { ref } from 'vue'
-import CameraWarnGridDialog from './CameraWarnGridDialog.vue'
-
-const warnGridVisible = ref(false)
-const dialogRef = ref(null)
-
-// 暴露刷新内部列表的方法
-defineExpose({
-    refreshList: () => dialogRef.value?.refreshList()
-})
+const emit = defineEmits(['more-click', 'show-detail'])
 
 // 点击详情
 const openWarnGrid = () => {
-    console.log("点击详情，打开弹窗");
-    warnGridVisible.value = true
+    emit('more-click')
 }
 
 // 点击告警项

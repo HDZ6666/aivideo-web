@@ -12,9 +12,9 @@
         </div>
 
         <div class="header-right">
-            <div class="action-item">
+            <div class="action-item" @click="toggleAlarm">
                 <span>{{ alarmActive ? '开启' : '关闭' }}告警</span>
-                <el-switch v-model="alarmActiveModel" class="alarm-switch" />
+                <el-switch v-model="alarmActiveModel" class="alarm-switch" @click.stop />
             </div>
             <div class="action-item map-btn" @click="$emit('map-screen')">
                 <span>地图大屏</span>
@@ -51,6 +51,10 @@ const alarmActiveModel = computed({
     get: () => props.alarmActive,
     set: (val) => emit('update:alarmActive', val)
 })
+
+const toggleAlarm = () => {
+    alarmActiveModel.value = !alarmActiveModel.value
+}
 
 // 日期时间状态
 const dateStr = ref('')
