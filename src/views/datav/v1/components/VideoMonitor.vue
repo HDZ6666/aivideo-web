@@ -37,12 +37,10 @@
                         }" v-for="(item, index) in displayCameraList" :key="index" @click="handleVideoClick(item)">
                             <div class="player">
                                 <div class="video-wrapper">
-                                    <!-- 使用 JessibucaPlayer 播放视频 -->
                                     <JessibucaPlayer v-if="item.streamUrl"
                                         :key="`player-${item.id}-${item.selectedStreamType}`"
                                         :video-url="item.streamUrl" :auto-play="true" :muted="true" :debug="false"
                                         :show-operate-btns="true" @error="handlePlayerError(item, $event)" />
-                                    <!-- 无视频流时显示占位符 -->
                                     <div v-else class="video-placeholder">
                                         <span class="no-video-text">无视频资源</span>
                                     </div>
@@ -78,7 +76,6 @@
                 </div>
             </div>
         </div>
-        <!-- 分页器 - 在 video-box 外面 -->
         <div class="pager">
             <div class="rt">
                 <div class="button" @click="handlePage(-1)">上一屏</div>
@@ -91,6 +88,8 @@
 
 <script setup>
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useDatavStore } from '@/store/modules/datav'
 import JessibucaPlayer from '@/components/player/JessibucaPlayer.vue'
 import { listCamera } from '@/api/datav/monitor.js'
 
@@ -120,14 +119,16 @@ const streamTypeOptions = [
     { label: 'HTTPS-HLS', value: 'https_hls' }
 ]
 
+// 注入 Pinia Store
+const datavStore = useDatavStore()
+const { videoAutoPlay: autoPlay, videoPageSize: pageSize } = storeToRefs(datavStore)
+
 // 内部状态管理
 const isLoading = ref(false)
-const autoPlay = ref(false)
-const pageSize = ref('4')
 const cameraList = ref([])
 const pager = ref({
     pageIndex: 1,
-    pageSize: 4,
+    pageSize: parseInt(pageSize.value),
     totalPage: 1
 })
 
@@ -142,7 +143,6 @@ const displayCameraList = computed(() => {
     return cameraList.value.slice(start, end)
 })
 
-// 获取摄像头列表
 const getCameraList = (categoryId = null, options = {}) => {
     const params = {
         page: options.page || 1,
@@ -175,19 +175,17 @@ const getCameraList = (categoryId = null, options = {}) => {
             ...item
         }))
 
-        // 更新分页信息
         const total = cameraList.value.length
-        pager.value.pageIndex = 1 // 刷新列表后重置到第一页
+        pager.value.pageIndex = 1
         pager.value.totalPage = Math.ceil(total / pager.value.pageSize) || 1
         isLoading.value = false
     }).catch(err => {
         isLoading.value = false
-        // 获取摄像头列表失败
     })
 }
 
-// 页面大小变化处理
 const handlePageSizeChange = (val) => {
+    datavStore.updateVideoPageSize(val)
     const newPageSize = parseInt(val)
     pager.value.pageSize = newPageSize
     pager.value.pageIndex = 1
@@ -201,7 +199,6 @@ const handlePageSizeChange = (val) => {
     }
 }
 
-// 分页切换
 const handlePage = (direction) => {
     if (direction > 0) {
         if (pager.value.pageIndex < pager.value.totalPage) {
@@ -219,19 +216,15 @@ const handlePage = (direction) => {
     }
 }
 
-// 播放器错误处理
 const handlePlayerError = (camera, error) => {
-    // 播放器错误
 }
 
-// 点击视频处理
 const handleVideoClick = (camera) => {
     if (camera.streamUrl) {
         selectedCameraId.value = camera.id
     }
 }
 
-// 切换播放流类型
 const handleStreamTypeChange = (type, camera) => {
     const url = camera.streamInfo?.[type]?.url
     if (url) {
@@ -242,7 +235,6 @@ const handleStreamTypeChange = (type, camera) => {
     }
 }
 
-// 暴露方法供父组件调用（可选）
 defineExpose({
     getCameraList,
     refreshList: getCameraList
@@ -273,6 +265,7 @@ const stopAutoPlay = () => {
 
 // 监听自动轮播开关
 watch(autoPlay, (newVal) => {
+    datavStore.toggleVideoAutoPlay(newVal)
     if (newVal) {
         startAutoPlay()
     } else {
@@ -288,7 +281,6 @@ onMounted(() => {
     }
 })
 
-// 组件销毁时清除定时器
 onUnmounted(() => {
     stopAutoPlay()
 })

@@ -19,31 +19,34 @@
 
         <!-- 右侧面板 -->
         <div class="right">
-          <AlarmStatistics ref="alarmStatsRef" :statistics="alarmStatistics"
-            @show-detail="(info) => handleShowDetail(info, 'manual')" @more-click="handleOpenLargeDialog('stats')" />
-          <CameraWarnList ref="cameraWarnRef" :warn-list="cameraWarnList"
-            @show-detail="(info) => handleShowDetail(info, 'manual')" @more-click="handleOpenLargeDialog('grid')" />
+          <AlarmStatistics :statistics="alarmStatistics" @show-detail="(info) => datavStore.showDetail(info, 'manual')"
+            @more-click="handleOpenLargeDialog('stats')" />
+          <CameraWarnList :warn-list="cameraWarnList" @show-detail="(info) => datavStore.showDetail(info, 'manual')"
+            @more-click="handleOpenLargeDialog('grid')" />
           <AlarmTrendChart :trend-data="alarmTrendData" />
         </div>
       </div>
 
-      <!-- 全局高层级告警详情弹窗（常驻模式，仅控制显隐） -->
-      <AlarmDetailDialog v-show="detailVisible" :info="detailInfo" @close="handleDetailDialogClose"
-        @handle="handleDetailHandle" @action-start="handleActionStart" />
+      <!-- 全局高层级告警详情弹窗（Pinia 自主管理显隐与数据） -->
+      <AlarmDetailDialog v-show="detailVisible" />
 
       <!-- 告警统计大弹窗 (从子组件移至此处) -->
       <AlarmStatisticsDialog ref="alarmStatsDialogRef" v-if="statsDialogVisible"
-        @close="handleLargeDialogClose('stats')" @show-detail="(info) => handleShowDetail(info, 'manual')" />
+        @close="datavStore.toggleLargeDialog('stats', false)"
+        @show-detail="(info) => datavStore.showDetailManual(info)" />
 
       <!-- 摄像头告警九宫格大弹窗 (从子组件移至此处) -->
-      <CameraWarnGridDialog ref="cameraGridDialogRef" v-if="gridDialogVisible" @close="handleLargeDialogClose('grid')"
-        @show-detail="(info) => handleShowDetail(info, 'manual')" />
+      <CameraWarnGridDialog ref="cameraGridDialogRef" v-if="gridDialogVisible"
+        @close="datavStore.toggleLargeDialog('grid', false)"
+        @show-detail="(info) => datavStore.showDetailManual(info)" />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useDatavStore } from '@/store/modules/datav'
 import autofit from "autofit.js"
 import DatavHeader from './components/DatavHeader.vue'
 import DeviceTree from './components/DeviceTree.vue'
@@ -70,53 +73,41 @@ import deviceTotal from "@/assets/datav/v1/device_total.png"
 import deviceOnline from "@/assets/datav/v1/device_online.png"
 import warnTodo from "@/assets/datav/v1/warn_todo.png"
 import warnTotal from "@/assets/datav/v1/warn_total.png"
-
-// 状态定义
 const title = ref('监控驾驶舱')
-const alarmActive = ref(false)
 const isFullscreen = ref(false)
 const videoMonitorRef = ref(null)
-const alarmStatsRef = ref(null)
-const cameraWarnRef = ref(null)
-
-// 详情弹窗状态
-const detailVisible = ref(false)
-const detailInfo = ref({})
-const isManualMode = ref(false) // 标记详情是否为手动触发
-
-// 大型列表弹窗状态
-const statsDialogVisible = ref(false)
-const gridDialogVisible = ref(false)
 const alarmStatsDialogRef = ref(null)
 const cameraGridDialogRef = ref(null)
 
-// 轮巡调度状态
-let alarmCycleTimer = null
-let alarmCycleIndex = 0 // 轮巡索引
-const ALARM_CYCLE_INTERVAL = 10 * 1000 // 告警轮巡间隔 10s
-
-// 设备树数据
-const defaultProps = {
-  children: 'children',
-  label: 'label',
-  isLeaf: 'isLeaf'  // 在 lazy 模式下必须指定，用于判断是否为叶子节点
-}
-// 设备树数据（由 getDeviceGroupList 填充）
-const deviceTreeData = ref([])
+// 注入 Pinia Store
+const datavStore = useDatavStore()
+const {
+  alarmActive,
+  detailVisible,
+  statsDialogVisible,
+  gridDialogVisible,
+  cameraWarnList,
+  refreshCount
+} = storeToRefs(datavStore)
 
 // 统计导航数据
 const statItems = ref([
-  { icon: deviceTotal, name: '设备总数', value: 4, isWarn: false },
-  { icon: deviceOnline, name: '在线设备数', value: 4, isWarn: false },
+  { icon: deviceTotal, name: '设备总数', value: 0, isWarn: false },
+  { icon: deviceOnline, name: '在线设备数', value: 0, isWarn: false },
   { icon: warnTodo, name: '未处理告警数', value: 0, isWarn: true },
   { icon: warnTotal, name: '告警总数', value: 0, isWarn: false },
 ])
 
-// 告警统计数据（由 getAlarmStats 填充）
+// 告警统计数据
 const alarmStatistics = ref([])
 
-// 摄像头告警列表数据（由 getCameraWarnList 填充）
-const cameraWarnList = ref([])
+// 监控全局刷新信号，同步子组件列表及首页统计
+watch(refreshCount, () => {
+  getAlarmStats()
+  getCameraWarnList()
+  alarmStatsDialogRef.value?.refreshList()
+  cameraGridDialogRef.value?.refreshList()
+})
 
 // 告警趋势数据（由 getAlarmTrend 填充）
 const alarmTrendData = ref([])
@@ -124,58 +115,38 @@ const alarmTrendData = ref([])
 // 定时器
 let statisticsTimer = null
 
-// 获取设备信息（只调用一次）
 const getDeviceInfo = () => {
-  // 1. 设备总数
   getDeviceCount().then(res => {
     if (res.data?.deviceCount !== undefined) {
       statItems.value[0].value = res.data.deviceCount
     }
-  }).catch(err => {
-    // 获取设备总数失败
-  })
+  }).catch(err => { })
 
-  // 2. 在线设备数
   getOnlineDeviceCount().then(res => {
     if (res.data?.onlineDeviceCount !== undefined) {
       statItems.value[1].value = res.data.onlineDeviceCount
     }
-  }).catch(err => {
-    // 获取在线设备数失败
-  })
+  }).catch(err => { })
 }
 
-// 获取告警统计数据（定时刷新）
 const getAlarmStats = () => {
   getScreenAlarmStatistics().then(res => {
     const data = res.data || []
-
-    // 按 sevenDayAlarmCount 降序排列
     data.sort((a, b) => (b.sevenDayAlarmCount || 0) - (a.sevenDayAlarmCount || 0))
-
-    // 告警总数: 累加 sevenDayAlarmCount
     const allAlarm = data.reduce((sum, item) => sum + (item.sevenDayAlarmCount || 0), 0)
     statItems.value[3].value = allAlarm
-    // 未处理告警数: 累加 sevenDayAlarmNoHandleCount
     const activedAlarm = data.reduce((sum, item) => sum + (item.sevenDayAlarmNoHandleCount || 0), 0)
     statItems.value[2].value = activedAlarm
-
-    // 更新告警统计列表（取前2条）
     alarmStatistics.value = data.slice(0, 2)
-  }).catch(err => {
-    // 获取告警统计失败
-  })
+  }).catch(err => { })
 }
 
-// 事件处理
 const handleNodeClick = (data) => {
-  // 单击切换视频源监控
   if (videoMonitorRef.value) {
     let categoryId = data.id
     let options = {}
 
     if (data.type === 'all') {
-      // 全部设备，清除筛选
       categoryId = null
     } else if (data.type === 'group') {
       options.type = 'group'
@@ -198,11 +169,15 @@ const getDateDaysAgo = (days) => {
   return `${year}-${month}-${day}`
 }
 
-
-
 // 获取摄像头告警列表
 const getCameraWarnList = () => {
-  listAlarmInfo({ page: 1, size: 2, status: 0, startTime: `${getDateDaysAgo(0)} 00:00:00`, endTime: `${getDateDaysAgo(0)} 23:59:59` }).then(res => {
+  listAlarmInfo({
+    page: 1,
+    size: 2,
+    status: 0,
+    startTime: `${getDateDaysAgo(0)} 00:00:00`,
+    endTime: `${getDateDaysAgo(0)} 23:59:59`
+  }).then(res => {
     if (res.data?.records) {
       cameraWarnList.value = res.data.records
     }
@@ -228,115 +203,18 @@ const toggleFullscreen = () => {
   isFullscreen.value = !isFullscreen.value
 }
 
-// 告警详情展示控制器
-const handleShowDetail = (info, mode = 'auto') => {
-  detailInfo.value = info
-  detailVisible.value = true
-
-  if (mode === 'manual') {
-    isManualMode.value = true
-    stopAlarmCycle() // 手动查看，物理停止轮巡
-  } else {
-    isManualMode.value = false
-  }
-}
-
-// 详情成功处理后的数据刷新
-const handleDetailHandle = () => {
-  getAlarmStats()
-  getCameraWarnList()
-  // 刷新可能已经打开的大弹窗中的列表
-  alarmStatsDialogRef.value?.refreshList()
-  cameraGridDialogRef.value?.refreshList()
-}
-
-// 弹窗内发起处理动作（开始接口请求）
-const handleActionStart = () => {
-  stopAlarmCycle() // 锁定，防止请求期间弹窗由于定时器关闭
-}
-
-// 详情弹窗彻底关闭
-const handleDetailDialogClose = () => {
-  detailVisible.value = false
-  isManualMode.value = false
-  resumeAlarmCycle() // 恢复自动轮巡（带 3s 缓冲）
-}
 
 // 开启大型弹窗
 const handleOpenLargeDialog = (type) => {
-  stopAlarmCycle()
-  detailVisible.value = false // 大弹窗开启时，详情小窗避让
-
-  if (type === 'stats') statsDialogVisible.value = true
-  if (type === 'grid') gridDialogVisible.value = true
+  datavStore.openLargeDialog(type)
 }
 
-// 关闭大型弹窗
-const handleLargeDialogClose = (type) => {
-  if (type === 'stats') statsDialogVisible.value = false
-  if (type === 'grid') gridDialogVisible.value = false
-  resumeAlarmCycle() // 大窗关闭，恢复轮巡
-}
 
-// --- 轮巡调度核心核心逻辑 ---
-
-// 1. 停止轮巡
-const stopAlarmCycle = () => {
-  if (alarmCycleTimer) {
-    clearTimeout(alarmCycleTimer)
-    alarmCycleTimer = null
-  }
-}
-
-// 2. 准备恢复（带冷却）
-const resumeAlarmCycle = () => {
-  stopAlarmCycle()
-  // 只有当告警总开关开启，且没有大窗遮挡时，才允许 3s 后重启
-  if (alarmActive.value && !statsDialogVisible.value && !gridDialogVisible.value) {
-    alarmCycleTimer = setTimeout(() => {
-      runAlarmCycle()
-    }, 3000)
-  }
-}
-
-// 3. 执行轮巡
-const runAlarmCycle = () => {
-  // 只要有大窗开启，严禁自动弹出
-  if (statsDialogVisible.value || gridDialogVisible.value || !alarmActive.value) return
-
-  if (cameraWarnList.value.length > 0) {
-    // 自动展示第一条
-    handleShowDetail(cameraWarnList.value[0], 'auto')
-
-    // 10 秒后准备执行关闭逻辑
-    stopAlarmCycle()
-    alarmCycleTimer = setTimeout(() => {
-      // 只有在非手动模式下，10s 到期才会自动关
-      if (!isManualMode.value) {
-        detailVisible.value = false
-        resumeAlarmCycle() // 关了之后等 3s 开启下一轮
-      }
-    }, 10000)
-  } else {
-    // 无数据，3s 后重试
-    alarmCycleTimer = setTimeout(runAlarmCycle, 3000)
-  }
-}
 
 // 监听告警开关
 watch(alarmActive, (newVal) => {
-  if (newVal) {
-    runAlarmCycle()
-  } else {
-    // 关闭时清除所有定时器
-    if (alarmCycleTimer) {
-      clearTimeout(alarmCycleTimer)
-      alarmCycleTimer = null
-    }
-    detailVisible.value = false
-  }
-})
-// --- 逻辑优化结束 ---
+  datavStore.toggleAlarmActive(newVal)
+}, { immediate: true })
 
 const gotoDashboard = () => {
   // 原有逻辑：退回到后台管理界面
@@ -375,15 +253,12 @@ onMounted(() => {
 
 onUnmounted(() => {
   autofit.off()
-  // 清除定时刷新定时器
+  // 停止轮巡
+  datavStore.stopAlarmCycle()
+
   if (statisticsTimer) {
     clearInterval(statisticsTimer)
     statisticsTimer = null
-  }
-  // 清除告警轮巡定时器，防止卸载后继续运行
-  if (alarmCycleTimer) {
-    clearTimeout(alarmCycleTimer)
-    alarmCycleTimer = null
   }
 })
 </script>

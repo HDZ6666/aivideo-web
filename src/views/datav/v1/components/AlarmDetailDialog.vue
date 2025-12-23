@@ -1,6 +1,6 @@
 <template>
     <div class="detail-dialog" @click="close">
-        <div class="box" @click.stop>
+        <div class="box" v-loading="loading" element-loading-background="rgba(6, 26, 64, 0.7)" @click.stop>
             <div class="detail-title">摄像头告警详情- 【{{ info.alarmTypeName }}】</div>
             <div class="detail-image">
                 <el-image :src="info.alarmImg" :preview-src-list="[info.alarmImg]" fit="contain"
@@ -19,7 +19,7 @@
                 <div class="info-row">
                     <div class="info-item">告警时间：<span>{{ info.alarmTime }}</span></div>
                     <div class="info-item">状态：<span :class="getStatusClass(localStatus)">{{ getStatusText(localStatus)
-                    }}</span>
+                            }}</span>
                     </div>
                 </div>
                 <div class="info-item">告警描述：</div>
@@ -28,20 +28,18 @@
                 </div>
             </div>
             <div class="info-action">
-                <!-- 未处理状态：显示输入框和按钮 -->
                 <template v-if="localStatus == 0">
                     <div class="desc">
                         <span>处理说明：</span>
                         <el-input v-model="desc" type="textarea" placeholder="请输入处理说明" :rows="2" resize="none" />
                     </div>
-                    <div class="button" @click="alarmHandle(1)">
+                    <div class="button" @click="!loading && alarmHandle(1)">
                         处理
                     </div>
-                    <div class="button" @click="alarmHandle(2)">
+                    <div class="button" @click="!loading && alarmHandle(2)">
                         误报
                     </div>
                 </template>
-                <!-- 已处理/误报状态：显示处理说明文本 -->
                 <div v-else class="desc-show">
                     <span class="label">处理说明：</span>
                     <span class="content">{{ localDesc || '无' }}</span>
@@ -53,30 +51,54 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 import { ElMessage } from 'element-plus'
+import { useDatavStore } from '@/store/modules/datav'
 import { handleAlarm } from '@/api/datav/monitor.js'
+import alertAudio from '@/assets/datav/alert.mp3'
 
-const props = defineProps({
-    info: {
-        type: Object,
-        default: () => ({})
-    }
-})
+const datavStore = useDatavStore()
+const { detailInfo: info, detailVisible } = storeToRefs(datavStore)
 
-const emit = defineEmits(['close', 'handle', 'action-start'])
+// 创建音频对象（全局单例或组件级）
+const audio = new Audio(alertAudio)
 
 const desc = ref('')
-const localStatus = ref(props.info?.status ?? 0)
-const localDesc = ref(props.info?.handleDescription || '')
+const loading = ref(false)
+const localStatus = ref(info.value?.status ?? 0)
+const localDesc = ref(info.value?.handleDescription || '')
 
-// 监听数据变化，实现组件常驻时的内容刷新
-watch(() => props.info, (newInfo) => {
+// 播放音频函数
+const playAlarmSound = () => {
+    try {
+        audio.currentTime = 0
+        audio.play().catch(e => {
+            console.warn('音频播放受限（需用户先交互）:', e)
+        })
+    } catch (e) {
+        console.error('音频播放出错:', e)
+    }
+}
+
+watch(info, (newInfo) => {
     if (newInfo) {
         localStatus.value = newInfo.status ?? 0
         localDesc.value = newInfo.handleDescription || ''
         desc.value = '' // 重置输入框
+
+        // 如果弹窗是开启状态且数据更新，播报告警
+        if (detailVisible.value) {
+            playAlarmSound()
+        }
     }
 }, { deep: true, immediate: true })
+
+// 监听弹窗显示，首次跳出时播放
+watch(detailVisible, (visible) => {
+    if (visible) {
+        playAlarmSound()
+    }
+})
 
 // 获取状态文本
 const getStatusText = (status) => {
@@ -99,16 +121,17 @@ const getStatusClass = (status) => {
 }
 
 const close = () => {
-    emit('close')
+    datavStore.closeDetail()
 }
 
 const alarmHandle = (status) => {
-    // 通知父组件停止 10s 的自动计时器
-    emit('action-start')
+    if (loading.value) return
+    loading.value = true
+    datavStore.onActionStart()
 
     const params = {
         status: status,
-        alarmId: props.info.id,
+        alarmId: info.value.id,
         alarmDescription: desc.value || ''
     }
 
@@ -117,17 +140,21 @@ const alarmHandle = (status) => {
             ElMessage.success("操作成功")
             localStatus.value = status
             localDesc.value = desc.value
-            emit("handle", true)
+            datavStore.triggerRefresh()
         } else {
             ElMessage.error(res.msg || "操作失败")
         }
     }).catch(err => {
         ElMessage.error("系统繁忙，请稍后再试")
     }).finally(() => {
-        // 请求完毕后，等待3秒关闭（通过 emit 通知父组件隐藏）
-        setTimeout(() => {
-            close()
-        }, 3000)
+        loading.value = false
+        // 只有在自动轮巡模式下，处理完毕才自动延迟关闭
+        // 如果是手动点开的详情，则不自动关闭，由用户决定何时关闭
+        if (!datavStore.isManualMode) {
+            setTimeout(() => {
+                datavStore.closeDetail()
+            }, 3000)
+        }
     })
 }
 </script>

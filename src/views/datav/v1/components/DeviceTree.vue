@@ -19,27 +19,19 @@
 import { ref, onMounted } from 'vue'
 import { listDeviceGroup, listDeviceChildren } from '@/api/datav/monitor.js'
 
-// Emits
-const emit = defineEmits(['node-click'])
-
-// 选中的节点 ID
 const selectedNodeId = ref(null)
 
-// 树配置
 const treeProps = {
     children: 'children',
     label: 'label',
     isLeaf: 'isLeaf'
 }
 
-// 设备树数据
 const deviceTreeData = ref([])
 
-// 获取设备分组列表（初始化树根节点）
 const getDeviceGroupList = () => {
     listDeviceGroup({ parentId: 0 }).then(res => {
         const data = res.data || []
-        // 构建树结构，保留默认的"全部设备"根节点结构
         const tree = [
             { id: '0', label: '全部设备', value: '0', type: 'all', isLeaf: true }
         ]
@@ -49,20 +41,16 @@ const getDeviceGroupList = () => {
                 label: item.group_name,
                 value: item.id.toString(),
                 type: 'group',
-                isLeaf: false  // 分组节点有子节点
+                isLeaf: false
             })
         })
         deviceTreeData.value = tree
-    }).catch(err => {
-        // 获取设备分组失败
-    })
+    }).catch(err => { })
 }
 
-// 树节点懒加载函数
 const loadTreeNode = (node, resolve) => {
     const nodeData = node.data
 
-    // 第一层：分组节点 -> 加载设备列表
     if (nodeData.type === 'group') {
         listDeviceChildren({ groupId: nodeData.id }).then(res => {
             const data = res.data || []
@@ -70,15 +58,14 @@ const loadTreeNode = (node, resolve) => {
                 id: item.deviceId,
                 label: item.name,
                 value: item.deviceId,
-                type: item.type,  // 'DEVICE'
-                isLeaf: item.type === 'DEVICE' ? false : true  // DEVICE 还有子节点
+                type: item.type,
+                isLeaf: item.type === 'DEVICE' ? false : true
             }))
             resolve(children)
         }).catch(err => {
             resolve([])
         })
     }
-    // 第二层：DEVICE 节点 -> 加载设备通道
     else if (nodeData.type === 'DEVICE') {
         listDeviceChildren({ deviceId: nodeData.id }).then(res => {
             const data = res.data || []
@@ -86,15 +73,14 @@ const loadTreeNode = (node, resolve) => {
                 id: item.deviceId,
                 label: item.name,
                 value: item.deviceId,
-                type: item.type,  // 'DEVICE_CHANNEL'
-                isLeaf: true  // 通道是叶子节点
+                type: item.type,
+                isLeaf: true
             }))
             resolve(children)
         }).catch(err => {
             resolve([])
         })
     }
-    // 其他情况
     else {
         resolve([])
     }

@@ -53,10 +53,13 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useDatavStore } from '@/store/modules/datav'
 import { ElMessage } from 'element-plus'
 import { listAlarmInfo } from '@/api/datav/monitor.js'
 
-const emit = defineEmits(['close', 'show-detail'])
+const datavStore = useDatavStore()
+
+const emit = defineEmits(['close'])
 
 const statusOptions = [
     { label: '未处理', value: 0 },
@@ -65,8 +68,7 @@ const statusOptions = [
 ]
 
 const warnList = ref([])
-// const detailVisible = ref(false)
-// const detailInfo = ref({})
+
 
 const pager = reactive({
     pageIndex: 1,
@@ -83,81 +85,6 @@ const searchForm = reactive({
 
 const timeRange = ref([])
 
-// 模拟数据 (参考 AlarmStatisticsDialog)
-const mockAlarmData = [
-    {
-        "alarmId": 216614,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/bf931a44-d553-48cf-bbcc-f2aaaadc5f02.jpg",
-        "alarmTime": "2025-12-17 10:25:30",
-        "alarmTypeName": "行人检测",
-        "deviceName": "高铁桥出口底闸机方向",
-        "status": 0,
-        "alarmDescription": "检测到行人闯入禁区"
-    },
-    {
-        "alarmId": 216613,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/e5017870-b856-4cfa-b177-88811f2175f9.jpg",
-        "alarmTime": "2025-12-17 10:19:06",
-        "alarmTypeName": "行人检测",
-        "deviceName": "高铁桥出口底闸机方向",
-        "status": 0,
-        "alarmDescription": "检测到行人闯入禁区"
-    },
-    {
-        "alarmId": 216612,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/ebeda6c8-785c-406c-916b-b4399e79bb83.jpg",
-        "alarmTime": "2025-12-17 10:18:34",
-        "alarmTypeName": "行人检测",
-        "deviceName": "塘美出口方向",
-        "status": 1,
-        "alarmDescription": "检测到行人闯入禁区"
-    },
-    {
-        "alarmId": 216611,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/113505b0-e4f8-454c-a1b3-5a8c7af79b44.jpg",
-        "alarmTime": "2025-12-17 10:10:42",
-        "alarmTypeName": "行人检测",
-        "deviceName": "高铁桥出口底闸机方向",
-        "status": 2,
-        "alarmDescription": "误报，排除"
-    },
-    {
-        "alarmId": 216610,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/9f6d729b-da6c-4279-99e2-9835621afd62.jpg",
-        "alarmTime": "2025-12-17 09:53:50",
-        "alarmTypeName": "车辆检测",
-        "deviceName": "塘美出口方向",
-        "status": 0,
-        "alarmDescription": "检测到车辆违停"
-    },
-    {
-        "alarmId": 216609,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/2ddecafa-ef31-4d97-8589-325310fe51d0.jpg",
-        "alarmTime": "2025-12-17 09:45:59",
-        "alarmTypeName": "烟雾检测",
-        "deviceName": "塘美出口方向",
-        "status": 0,
-        "alarmDescription": "检测到烟雾"
-    },
-    {
-        "alarmId": 216608,
-        "alarmImg": "https://via.placeholder.com/300x200?text=Mock+Image",
-        "alarmTime": "2025-12-17 09:30:00",
-        "alarmTypeName": "火焰检测",
-        "deviceName": "仓库内部",
-        "status": 0,
-        "alarmDescription": "检测到明火"
-    },
-    {
-        "alarmId": 216607,
-        "alarmImg": "https://via.placeholder.com/300x200?text=Mock+Image",
-        "alarmTime": "2025-12-17 09:15:00",
-        "alarmTypeName": "人员聚集",
-        "deviceName": "工厂大门",
-        "status": 1,
-        "alarmDescription": "人员聚集超过阈值"
-    }
-]
 
 onMounted(() => {
     console.log("CameraWarnGridDialog mounted");
@@ -183,43 +110,16 @@ const getAlarmList = async () => {
             const records = res.data?.records || []
             warnList.value = records
             pager.totalPage = res.data?.pages || 1
-        } else {
-            // API 返回失败，使用模拟数据
-            console.warn('API 返回失败，使用模拟数据')
-            useMockData()
         }
     } catch (error) {
         console.error('获取告警列表失败:', error)
-        // 请求失败，使用模拟数据
-        useMockData()
     }
 }
 
-// 使用模拟数据（回退方案）
-const useMockData = () => {
-    let filteredData = [...mockAlarmData]
 
-    // 筛选条件
-    if (searchForm.alarmTypeName) {
-        filteredData = filteredData.filter(item =>
-            item.alarmTypeName?.includes(searchForm.alarmTypeName)
-        )
-    }
-    if (searchForm.status !== null && searchForm.status !== undefined && searchForm.status !== '') {
-        filteredData = filteredData.filter(item => item.status === searchForm.status)
-    }
-
-    // 分页处理
-    const startIndex = (pager.pageIndex - 1) * pager.pageSize
-    const endIndex = startIndex + pager.pageSize
-    const pageData = filteredData.slice(startIndex, endIndex)
-
-    warnList.value = pageData
-    pager.totalPage = Math.ceil(filteredData.length / pager.pageSize) || 1
-}
 
 const handleDetail = (data) => {
-    emit('show-detail', data)
+    datavStore.showDetailManual(data)
 }
 
 // 暴露刷新方法

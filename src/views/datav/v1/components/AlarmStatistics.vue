@@ -40,7 +40,7 @@
 <script setup>
 import { ref } from 'vue'
 
-// Props
+
 defineProps({
     statistics: {
         type: Array,
@@ -48,10 +48,10 @@ defineProps({
     }
 })
 
-// 弹窗显示状态已移除，上移至 index.vue
+
 const emit = defineEmits(['more-click', 'show-detail'])
 
-// 点击"详情"按钮
+
 const handleMoreClick = () => {
     emit('more-click')
 }

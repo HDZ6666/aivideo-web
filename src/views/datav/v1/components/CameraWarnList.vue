@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-// Props
+
 defineProps({
     warnList: {
         type: Array,
@@ -27,12 +27,12 @@ defineProps({
 
 const emit = defineEmits(['more-click', 'show-detail'])
 
-// 点击详情
+
 const openWarnGrid = () => {
     emit('more-click')
 }
 
-// 点击告警项
+
 const handleItemClick = (item) => {
     emit('show-detail', item)
 }

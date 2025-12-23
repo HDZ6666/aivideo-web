@@ -73,19 +73,15 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useDatavStore } from '@/store/modules/datav'
 import { ElMessage } from 'element-plus'
 import { listAlarmInfo } from '@/api/datav/monitor.js'
 
-// Props
-const props = defineProps({
-    visible: {
-        type: Boolean,
-        default: false
-    }
-})
+const datavStore = useDatavStore()
 
-// Emits
-const emit = defineEmits(['close', 'update:visible', 'show-detail'])
+
+
+const emit = defineEmits(['close'])
 
 // 状态选项
 const statusOptions = [
@@ -113,297 +109,9 @@ const pager = reactive({
 // 告警列表
 const alarmList = ref([])
 
-// 详情弹窗（逻辑已上浮，此处可保留引用或移除）
-const detailVisible = ref(false)
-const detailInfo = ref({})
 
-// 模拟数据
-const mockAlarmData = [
-    {
-        "alarmCategory": null,
-        "alarmDescription": "行人检测",
-        "alarmId": 216614,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/bf931a44-d553-48cf-bbcc-f2aaaadc5f02.jpg",
-        "alarmMethod": null,
-        "alarmPriority": null,
-        "alarmTime": "2025-12-17 10:25:30",
-        "alarmType": null,
-        "alarmTypeName": "行人检测",
-        "area": null,
-        "boxId": 0,
-        "channelId": "41010500001320000128",
-        "createTime": "2025-12-17 10:25:30",
-        "deviceChannelNo": null,
-        "deviceId": "41010500001320000128",
-        "deviceIp": null,
-        "deviceName": "高铁桥出口底闸机方向",
-        "deviceTypeId": 0,
-        "id": 216614,
-        "latitude": 0,
-        "longitude": 0,
-        "modelname": "行人检测",
-        "point": null,
-        "status": 0,
-        "updateTime": null,
-        "uuid": "1245457895",
-        "videoDuration": null,
-        "videoUrl": "http://120.237.149.244:19000/ai-videos/2025-12-17/bf931a44-d553-48cf-bbcc-f2aaaadc5f02.mp4"
-    },
-    {
-        "alarmCategory": null,
-        "alarmDescription": "行人检测",
-        "alarmId": 216613,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/e5017870-b856-4cfa-b177-88811f2175f9.jpg",
-        "alarmMethod": null,
-        "alarmPriority": null,
-        "alarmTime": "2025-12-17 10:19:06",
-        "alarmType": null,
-        "alarmTypeName": "行人检测",
-        "area": null,
-        "boxId": 0,
-        "channelId": "41010500001320000128",
-        "createTime": "2025-12-17 10:19:06",
-        "deviceChannelNo": null,
-        "deviceId": "41010500001320000128",
-        "deviceIp": null,
-        "deviceName": "高铁桥出口底闸机方向",
-        "deviceTypeId": 0,
-        "id": 216613,
-        "latitude": 0,
-        "longitude": 0,
-        "modelname": "行人检测",
-        "point": null,
-        "status": 0,
-        "updateTime": null,
-        "uuid": "1245457895",
-        "videoDuration": null,
-        "videoUrl": "http://120.237.149.244:19000/ai-videos/2025-12-17/e5017870-b856-4cfa-b177-88811f2175f9.mp4"
-    },
-    {
-        "alarmCategory": null,
-        "alarmDescription": "行人检测",
-        "alarmId": 216612,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/ebeda6c8-785c-406c-916b-b4399e79bb83.jpg",
-        "alarmMethod": null,
-        "alarmPriority": null,
-        "alarmTime": "2025-12-17 10:18:34",
-        "alarmType": null,
-        "alarmTypeName": "行人检测",
-        "area": null,
-        "boxId": 0,
-        "channelId": "41010500001320000141",
-        "createTime": "2025-12-17 10:18:34",
-        "deviceChannelNo": null,
-        "deviceId": "41010500001320000141",
-        "deviceIp": null,
-        "deviceName": "塘美出口方向",
-        "deviceTypeId": 0,
-        "id": 216612,
-        "latitude": 0,
-        "longitude": 0,
-        "modelname": "行人检测",
-        "point": null,
-        "status": 0,
-        "updateTime": null,
-        "uuid": "1245457895",
-        "videoDuration": null,
-        "videoUrl": "http://120.237.149.244:19000/ai-videos/2025-12-17/ebeda6c8-785c-406c-916b-b4399e79bb83.mp4"
-    },
-    {
-        "alarmCategory": null,
-        "alarmDescription": "行人检测",
-        "alarmId": 216611,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/113505b0-e4f8-454c-a1b3-5a8c7af79b44.jpg",
-        "alarmMethod": null,
-        "alarmPriority": null,
-        "alarmTime": "2025-12-17 10:10:42",
-        "alarmType": null,
-        "alarmTypeName": "行人检测",
-        "area": null,
-        "boxId": 0,
-        "channelId": "41010500001320000128",
-        "createTime": "2025-12-17 10:10:42",
-        "deviceChannelNo": null,
-        "deviceId": "41010500001320000128",
-        "deviceIp": null,
-        "deviceName": "高铁桥出口底闸机方向",
-        "deviceTypeId": 0,
-        "id": 216611,
-        "latitude": 0,
-        "longitude": 0,
-        "modelname": "行人检测",
-        "point": null,
-        "status": 2,
-        "updateTime": null,
-        "uuid": "1245457895",
-        "videoDuration": null,
-        "videoUrl": "http://120.237.149.244:19000/ai-videos/2025-12-17/113505b0-e4f8-454c-a1b3-5a8c7af79b44.mp4"
-    },
-    {
-        "alarmCategory": null,
-        "alarmDescription": "行人检测",
-        "alarmId": 216610,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/9f6d729b-da6c-4279-99e2-9835621afd62.jpg",
-        "alarmMethod": null,
-        "alarmPriority": null,
-        "alarmTime": "2025-12-17 09:53:50",
-        "alarmType": null,
-        "alarmTypeName": "行人检测",
-        "area": null,
-        "boxId": 0,
-        "channelId": "41010500001320000141",
-        "createTime": "2025-12-17 09:53:50",
-        "deviceChannelNo": null,
-        "deviceId": "41010500001320000141",
-        "deviceIp": null,
-        "deviceName": "塘美出口方向",
-        "deviceTypeId": 0,
-        "id": 216610,
-        "latitude": 0,
-        "longitude": 0,
-        "modelname": "行人检测",
-        "point": null,
-        "status": 0,
-        "updateTime": null,
-        "uuid": "1245457895",
-        "videoDuration": null,
-        "videoUrl": "http://120.237.149.244:19000/ai-videos/2025-12-17/9f6d729b-da6c-4279-99e2-9835621afd62.mp4"
-    },
-    {
-        "alarmCategory": null,
-        "alarmDescription": "行人检测",
-        "alarmId": 216609,
-        "alarmImg": "http://120.237.149.244:19000/ai-images/2025-12-17/2ddecafa-ef31-4d97-8589-325310fe51d0.jpg",
-        "alarmMethod": null,
-        "alarmPriority": null,
-        "alarmTime": "2025-12-17 09:45:59",
-        "alarmType": null,
-        "alarmTypeName": "行人检测",
-        "area": null,
-        "boxId": 0,
-        "channelId": "41010500001320000141",
-        "createTime": "2025-12-17 09:45:59",
-        "deviceChannelNo": null,
-        "deviceId": "41010500001320000141",
-        "deviceIp": null,
-        "deviceName": "塘美出口方向",
-        "deviceTypeId": 0,
-        "id": 216609,
-        "latitude": 0,
-        "longitude": 0,
-        "modelname": "行人检测",
-        "point": null,
-        "status": 0,
-        "updateTime": null,
-        "uuid": "1245457895",
-        "videoDuration": null,
-        "videoUrl": "http://120.237.149.244:19000/ai-videos/2025-12-17/2ddecafa-ef31-4d97-8589-325310fe51d0.mp4"
-    }
-]
 
-// 旧数据备份（避免删除冲突）
-const mockAlarmDataOld = [
-    {
-        id: 1,
-        alarmTypeName: '行人检测',
-        modelname: '行人检测',
-        deviceName: '摄像头-001',
-        alarmTime: '2025-12-17 09:31:22',
-        status: 0,
-        alarmImg: 'https://via.placeholder.com/200x150/0953bc/ffffff?text=Alarm+1',
-        alarmDescription: '检测到行人进入禁区'
-    },
-    {
-        id: 2,
-        alarmTypeName: '行人检测',
-        modelname: '行人检测',
-        deviceName: '摄像头-002',
-        alarmTime: '2025-12-17 09:13:19',
-        status: 1,
-        alarmImg: 'https://via.placeholder.com/200x150/0953bc/ffffff?text=Alarm+2',
-        alarmDescription: '检测到行人进入禁区'
-    },
-    {
-        id: 3,
-        alarmTypeName: '行人检测',
-        modelname: '行人检测',
-        deviceName: '摄像头-003',
-        alarmTime: '2025-12-17 09:12:18',
-        status: 0,
-        alarmImg: 'https://via.placeholder.com/200x150/0953bc/ffffff?text=Alarm+3',
-        alarmDescription: '检测到行人进入禁区'
-    },
-    {
-        id: 4,
-        alarmTypeName: '行人检测',
-        modelname: '行人检测',
-        deviceName: '摄像头-004',
-        alarmTime: '2025-12-17 09:12:16',
-        status: 0,
-        alarmImg: 'https://via.placeholder.com/200x150/0953bc/ffffff?text=Alarm+4',
-        alarmDescription: '检测到行人进入禁区'
-    },
-    {
-        id: 5,
-        alarmTypeName: '行人检测',
-        modelname: '行人检测',
-        deviceName: '摄像头-005',
-        alarmTime: '2025-12-17 08:08:38',
-        status: 1,
-        alarmImg: 'https://via.placeholder.com/200x150/0953bc/ffffff?text=Alarm+5',
-        alarmDescription: '检测到行人进入禁区'
-    },
-    {
-        id: 6,
-        alarmTypeName: '行人检测',
-        modelname: '行人检测',
-        deviceName: '摄像头-006',
-        alarmTime: '2025-12-17 08:59:53',
-        status: 0,
-        alarmImg: 'https://via.placeholder.com/200x150/0953bc/ffffff?text=Alarm+6',
-        alarmDescription: '检测到行人进入禁区'
-    },
-    {
-        id: 7,
-        alarmTypeName: '车辆检测',
-        modelname: '车辆检测',
-        deviceName: '摄像头-007',
-        alarmTime: '2025-12-17 08:45:22',
-        status: 2,
-        alarmImg: 'https://via.placeholder.com/200x150/0953bc/ffffff?text=Alarm+7',
-        alarmDescription: '检测到车辆违规停放'
-    },
-    {
-        id: 8,
-        alarmTypeName: '车辆检测',
-        modelname: '车辆检测',
-        deviceName: '摄像头-008',
-        alarmTime: '2025-12-17 08:30:15',
-        status: 0,
-        alarmImg: 'https://via.placeholder.com/200x150/0953bc/ffffff?text=Alarm+8',
-        alarmDescription: '检测到车辆违规停放'
-    },
-    {
-        id: 9,
-        alarmTypeName: '烟雾检测',
-        modelname: '烟雾检测',
-        deviceName: '摄像头-009',
-        alarmTime: '2025-12-17 08:15:08',
-        status: 1,
-        alarmImg: 'https://via.placeholder.com/200x150/0953bc/ffffff?text=Alarm+9',
-        alarmDescription: '检测到烟雾异常'
-    },
-    {
-        id: 10,
-        alarmTypeName: '烟雾检测',
-        modelname: '烟雾检测',
-        deviceName: '摄像头-010',
-        alarmTime: '2025-12-17 08:00:00',
-        status: 0,
-        alarmImg: 'https://via.placeholder.com/200x150/0953bc/ffffff?text=Alarm+10',
-        alarmDescription: '检测到烟雾异常'
-    }
-]
+
 
 // 获取状态文本
 const getStatusText = (status) => {
@@ -443,50 +151,17 @@ const getAlarmList = async () => {
         if (res && (res.code === 0 || res.code === '0')) {
             const records = res.data?.records || []
             alarmList.value = [...records]
-            // 填充空行保证表格高度一致
             while (alarmList.value.length < pager.pageSize) {
                 alarmList.value.push({})
             }
             pager.totalPage = res.data?.pages || 1
-        } else {
-            // API 返回失败，使用模拟数据
-            console.warn('API 返回失败，使用模拟数据')
-            useMockData()
         }
     } catch (error) {
         console.error('获取告警列表失败:', error)
-        // 请求失败，使用模拟数据
-        useMockData()
     }
 }
 
-// 使用模拟数据（回退方案）
-const useMockData = () => {
-    let filteredData = [...mockAlarmData]
 
-    // 筛选条件
-    if (searchForm.alarmTypeName) {
-        filteredData = filteredData.filter(item =>
-            item.alarmTypeName?.includes(searchForm.alarmTypeName)
-        )
-    }
-    if (searchForm.status !== null && searchForm.status !== undefined) {
-        filteredData = filteredData.filter(item => item.status === searchForm.status)
-    }
-
-    // 分页处理
-    const startIndex = (pager.pageIndex - 1) * pager.pageSize
-    const endIndex = startIndex + pager.pageSize
-    const pageData = filteredData.slice(startIndex, endIndex)
-
-    // 填充空行保证表格高度一致
-    alarmList.value = [...pageData]
-    while (alarmList.value.length < pager.pageSize) {
-        alarmList.value.push({})
-    }
-
-    pager.totalPage = Math.ceil(filteredData.length / pager.pageSize) || 1
-}
 
 // 搜索
 const handleSearch = () => {
@@ -522,7 +197,7 @@ const handlePage = (direction) => {
 // 点击行查看详情
 const handleRowClick = (row) => {
     if (!row.alarmTypeName) return
-    emit('show-detail', row)
+    datavStore.showDetailManual(row)
 }
 
 // 暴露刷新方法给父组件，供详情处理完后调用
@@ -530,10 +205,8 @@ defineExpose({
     refreshList: getAlarmList
 })
 
-// 关闭弹窗
 const handleClose = () => {
     emit('close')
-    emit('update:visible', false)
 }
 
 // 组件挂载时获取数据

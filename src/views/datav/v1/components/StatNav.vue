@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-// Props
+
 defineProps({
     items: {
         type: Array,
