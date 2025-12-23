@@ -4,14 +4,8 @@
       <div class="device_list">
         <div class="list">
           <div class="rows">
-            <t-tree
-              ref="tree"
-              value-mode="all"
-              :data="bind.deviceTree"
-              :activable="true"
-              @active="changeDeviceTree"
-              @expand="deviceTreeExpand"
-            >
+            <t-tree ref="tree" value-mode="all" :data="bind.deviceTree" :activable="true" @active="changeDeviceTree"
+              @expand="deviceTreeExpand">
               <template #label="{ node }">
                 <span @dblclick.stop="() => searchDeviceTree(node)">{{ node.label }}</span>
               </template>
@@ -54,7 +48,8 @@
       <card-box class="box" title="摄像头告警" more="详情" :height="rightBox2Height" @more="toggleCameraDialog">
         <div class="box_content">
           <div class="camera-warn">
-            <div class="camera-item" v-for="(item, index) in bind.cameraWarnList" :key="index" @click="cameraDetail(item)">
+            <div class="camera-item" v-for="(item, index) in bind.cameraWarnList" :key="index"
+              @click="cameraDetail(item)">
               <img :src="item.alarmImg" alt="" />
               <div class="camera-addr">【{{ item.alarmTypeName }}】{{ item.deviceName }}</div>
             </div>
@@ -76,8 +71,7 @@
             <div class="value">
               <span class="number" :style="item.number == 'activedAlarm' ? 'color:var(--td-untreated-color)' : ''">{{
                 bind.stat[item.number]
-              }}</span
-              ><span class="unit">个</span>
+              }}</span><span class="unit">个</span>
             </div>
             <div class="name">{{ item.name }}</div>
           </div>
@@ -115,17 +109,13 @@
         <template #content>
           <div class="videos">
             <div class="row">
-              <div
-                :class="{
-                  col: true,
-                  col2: pager.pageSize == 4,
-                  col3: pager.pageSize == 9,
-                  col4: pager.pageSize == 12,
-                  col5: pager.pageSize == 16,
-                }"
-                v-for="(row, index) in bind.cameraRows"
-                :key="row.id"
-              >
+              <div :class="{
+                col: true,
+                col2: pager.pageSize == 4,
+                col3: pager.pageSize == 9,
+                col4: pager.pageSize == 12,
+                col5: pager.pageSize == 16,
+              }" v-for="(row, index) in bind.cameraRows" :key="row.id">
                 <vol-player :url="row.videoUrl" :autoplay="true" @click="selectVideo($event)"></vol-player>
                 <div class="video-name">{{ row.name }}</div>
               </div>
@@ -159,8 +149,8 @@
             <div>告警ID：{{ warnDialog.data.alarmId }}</div>
             <div>置信度：{{ warnDialog.data.alarmPriority }}</div>
             <div>
-              处理情况： <t-tag theme="warning" v-if="warnDialog.data.status == 0">未处理</t-tag
-              ><t-tag theme="success" v-else>已处理</t-tag>
+              处理情况： <t-tag theme="warning" v-if="warnDialog.data.status == 0">未处理</t-tag><t-tag theme="success"
+                v-else>已处理</t-tag>
             </div>
             <div>通知人员：</div>
             <div class="buttons"></div>
@@ -169,13 +159,8 @@
       </div>
     </t-dialog>
     <!--查看视频弹出框-->
-    <t-dialog
-      width="5rem"
-      class="videoDialog"
-      :header="videoDialog.title"
-      v-model:visible="videoDialog.show"
-      @closed="videoDialogClosed"
-    >
+    <t-dialog width="5rem" class="videoDialog" :header="videoDialog.title" v-model:visible="videoDialog.show"
+      @closed="videoDialogClosed">
       <div class="content">
         <vol-player ref="videoPlayer" :url="videoDialog.url" :poster="videoDialog.poster"></vol-player>
       </div>
@@ -294,44 +279,44 @@ export default defineComponent({
         cameraWarnList: [],
         deviceData: [],
         deviceTree: [
-          { id: "1", label: "全部设备", value: "0", type: "group"},
+          { id: "1", label: "全部设备", value: "0", type: "group" },
         ],
         cameraList: [],
         cameraRows: [{
-            name: "模拟数据1",
-            videoUrl: video,
-            streamInfo: {
-              hls: {
-                url: '',
-              },
+          name: "模拟数据1",
+          videoUrl: video,
+          streamInfo: {
+            hls: {
+              url: '',
             },
           },
-          {
-            name: "模拟数据2",
-            videoUrl: video,
-            streamInfo: {
-              hls: {
-                url: '',
-              },
+        },
+        {
+          name: "模拟数据2",
+          videoUrl: video,
+          streamInfo: {
+            hls: {
+              url: '',
             },
           },
-          {
-            name: "模拟数据3",
-            videoUrl: video,
-            streamInfo: {
-              hls: {
-                url: '',
-              },
+        },
+        {
+          name: "模拟数据3",
+          videoUrl: video,
+          streamInfo: {
+            hls: {
+              url: '',
             },
           },
-          {
-            name: "模拟数据4",
-            videoUrl: video,
-            streamInfo: {
-              hls: {
-                url: '',
-              },
+        },
+        {
+          name: "模拟数据4",
+          videoUrl: video,
+          streamInfo: {
+            hls: {
+              url: '',
             },
+          },
         }],
         alarmStatistics: [
           {
@@ -385,7 +370,7 @@ export default defineComponent({
   computed: {
     ...mapGetters(["mbData"]),
   },
-  setup() {},
+  setup() { },
   watch: {
     alarmActived(newVal) {
       if (newVal) {
@@ -551,7 +536,7 @@ export default defineComponent({
               },
             },
           }]
-        // this.bind.stat.onlineDev = 10;
+          // this.bind.stat.onlineDev = 10;
           this.pager.pageIndex = 1;
           this.pager.totalPage = Math.ceil(this.bind.cameraList.length / this.pager.pageSize);
           this.getCameraPage();
@@ -687,19 +672,19 @@ export default defineComponent({
         if (r.data.code == "0") {
           this.bind.warnList = r.data.data.records;
           if (this.bind.warnList.length == 0) {
-           return
-         }
-        //  else {
-        //    var hasNew = false;
-        //    this.bind.warnList.forEach(w => {
-        //      const today = new Date();
-        //      const date = new Date(w.alarmTime);
-        //      if (today - date < 86400000) {
-        //        hasNew = true;
-        //      }
-        //    })
-        //  }
-         if (this.alarmActived) {
+            return
+          }
+          //  else {
+          //    var hasNew = false;
+          //    this.bind.warnList.forEach(w => {
+          //      const today = new Date();
+          //      const date = new Date(w.alarmTime);
+          //      if (today - date < 86400000) {
+          //        hasNew = true;
+          //      }
+          //    })
+          //  }
+          if (this.alarmActived) {
             this.alarmDetail = this.bind.warnList.find((item) => item.status == 0);
             this.$refs.alertSound.play();
             this.detailShow = true;
@@ -716,8 +701,8 @@ export default defineComponent({
         if (r.data.code == "0") {
           this.bind.cameraWarnList = r.data.data.records;
           if (this.bind.cameraWarnList.length == 0) {
-           return
-         }
+            return
+          }
         }
       });
     },
@@ -821,7 +806,7 @@ export default defineComponent({
   activated() {
     gjqsResize();
   },
-  deactivated() {},
+  deactivated() { },
 });
 </script>
 <style lang="less" scoped>

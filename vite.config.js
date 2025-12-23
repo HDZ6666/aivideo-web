@@ -56,6 +56,11 @@ export default defineConfig(({ mode, command }) => {
          '^/v3/api-docs/(.*)': {
           target: baseUrl,
           changeOrigin: true,
+        },
+        '/datav-api': {
+          target: 'http://120.237.149.244:13001',
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/datav-api/, '')
         }
       }
     },
