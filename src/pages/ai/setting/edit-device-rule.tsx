@@ -34,6 +34,12 @@ function EditDeviceRulePage({ alarmTypeId, selectedRows, setActionType }: EditRu
     device: selectedRows.reduce((pre, cur) => {
       return pre.concat(cur.device);
     }, [] as DeviceItem[]),
+    areaSet: {
+      width: 500,
+      height: 300,
+      canvasType: 'all',
+      list: [],
+    },
   };
 
   const options = [

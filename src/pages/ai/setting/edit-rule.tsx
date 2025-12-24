@@ -44,6 +44,15 @@ function EditRulePage({ alarmTypeId, ruleId, setActionType }: EditRulePageProps)
     staleTime: 0,
     cacheTime: 0,
     queryFn: () => aiService.getRuleDetail({ ruleId }),
+    select: (data) => ({
+      ...data,
+      areaSet: data.areaSet || {
+        width: 500,
+        height: 300,
+        canvasType: 'all',
+        list: [],
+      },
+    }),
     onSuccess: (data) => {
       const { imgLink } = data;
       if (imgLink) {
