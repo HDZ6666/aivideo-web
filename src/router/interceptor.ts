@@ -16,6 +16,15 @@ function isLogined() {
   return userStore.isLoggedIn
 }
 
+function buildPathWithQuery(path: string, options?: Record<string, unknown>) {
+  const queryString = Object.entries(options || {})
+    .filter(([, value]) => value !== undefined && value !== null)
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
+    .join('&')
+
+  return queryString ? `${path}?${queryString}` : path
+}
+
 /**
  * 检查页面是否需要登录验证
  */
@@ -64,7 +73,7 @@ const navigateToInterceptor = {
 /**
  * 页面级认证检查 - 处理直接URL访问和页面刷新
  */
-function pageAuthCheck() {
+function pageAuthCheck(options?: Record<string, unknown>) {
   const pages = getCurrentPages()
   if (pages.length === 0)
     return
@@ -72,7 +81,10 @@ function pageAuthCheck() {
   const currentRoute = `/${getLastPage.route}`
   if (!checkPageAuth(currentRoute)) {
     console.log('用户未登录，重定向到登录页:', currentRoute)
-    const fullpath = getLastPage?.$page?.fullPath || currentRoute
+    // H5 direct-open may lose query in $page.fullPath, so prefer rebuilding from onLoad options.
+    const fullpath = Object.keys(options || {}).length > 0
+      ? buildPathWithQuery(currentRoute, options)
+      : (getLastPage?.$page?.fullPath || currentRoute)
     console.log('fullpath:', fullpath)
     uni.reLaunch({
       url: `${loginRoute}?redirect=${encodeURIComponent(fullpath)}`,
