@@ -77,6 +77,14 @@ let jessibuca = null
 const playing = ref(false)
 const loaded = ref(false)
 
+const withBase = (path) => {
+    const base = import.meta.env.BASE_URL || "/"
+    const normalizedBase = base.endsWith("/") ? base : `${base}/`
+    const normalizedPath = path.replace(/^\/+/, "")
+    return normalizedBase + normalizedPath
+}
+
+
 // 创建播放器
 const createPlayer = () => {
     if (!containerRef.value) return
@@ -134,10 +142,10 @@ const createPlayer = () => {
         timeout: props.timeout,
 
         // Decoder 解码器 JS 文件路径
-        decoder: '/jessibuca/decoder.js',
+        decoder: withBase('/jessibuca/decoder.js'),
 
         // WebAssembly 解码器文件路径（性能更好）
-        wasmDecoder: '/jessibuca/decoder.wasm',
+        wasmDecoder: withBase('/jessibuca/decoder.wasm'),
 
         // 是否包含音频流（false 表示纯视频流）
         hasAudio: false,

@@ -175,8 +175,8 @@ const getCameraWarnList = () => {
     page: 1,
     size: 2,
     status: 0,
-    startTime: `${getDateDaysAgo(0)} 00:00:00`,
-    endTime: `${getDateDaysAgo(0)} 23:59:59`
+    // startTime: `${getDateDaysAgo(0)} 00:00:00`,
+    // endTime: `${getDateDaysAgo(0)} 23:59:59`
   }).then(res => {
     if (res.data?.records) {
       cameraWarnList.value = res.data.records
@@ -219,12 +219,16 @@ watch(alarmActive, (newVal) => {
 const gotoDashboard = () => {
   // 原有逻辑：退回到后台管理界面
   const currentHref = window.top.location.href
-  const newUrl = currentHref.replace(/#.*$/, '#/index')
-  window.top.location.href = newUrl
+  // const newUrl = currentHref.replace(/#.*$/, '#/index')
+  // window.top.location.href = newUrl
+  const newUrl = currentHref.replace(/#.*$/, '#/aiView');
+  window.top.location.href = newUrl;
 }
 
 const handleMapScreen = () => {
-  // 跳转地图大屏
+  const currentHref = window.top.location.href
+  const newUrl = currentHref.replace(/#.*$/, '#/mapscreen')
+  window.top.location.href = newUrl
 }
 
 // 统一刷新告警相关数据（统计+列表+趋势）
@@ -236,6 +240,7 @@ const refreshAllAlarmData = () => {
 
 // 生命周期
 onMounted(() => {
+  console.info('[DataV] 页面初始化开始...');
   autofit.init({
     dh: 919,
     dw: 1920,

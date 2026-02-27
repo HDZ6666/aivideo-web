@@ -8,14 +8,15 @@ import { saveAs } from 'file-saver'
 let downloadLoadingInstance
 
 // 硬编码 Token
-const TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjNlNzk2NDZjNGRiYzQwODM4M2E5ZWVkMDlmMmI4NWFlIn0.eyJqdGkiOiIydnQ0ODVKRXRtaHhTT3kxNy1qdnRBIiwiaWF0IjoxNzY1MjQ3MzAyLCJleHAiOjE3Njc4MzkzMDIsIm5iZiI6MTc2NTI0NzMwMiwic3ViIjoibG9naW4iLCJhdWQiOiJBdWRpZW5jZSIsInVzZXJOYW1lIjoiYWRtaW4ifQ.Blzs4aivgzeiXbgbj_hn79KuJ6CJUUidwwY25Xna-7PZSa68ejl_Er1GbV-Kc6MVRW9tTpT9G0l6yFLFcqFe9j5X_1BJ-kQX1C1ELBSEVqwXcM2c3ra_24WYeKzgodW026Kj8Lgq6ckndKrwCqml3mrFvhBV-IfUv5jf5uZmO67ijpp6ikbyYmb49c3qvNt20vxhBKhmCVnYMBH_3QvlH1U00qkkFRoD9wJ_EQqh5zyZz4Tx3tGmeQlYxZSTNqzXO9w4VhSMKU0i0kPnptqFOz5RMPB4QhJdPK3WQswmDiyYFqN_lSrM5aGeafivYJcxRPi7g7wQ9u7T7UZXruqhQQ"
+// 默认 Token（仅作为独立开发/测试时的兜底）
+const DEFAULT_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjNlNzk2NDZjNGRiYzQwODM4M2E5ZWVkMDlmMmI4NWFlIn0.eyJqdGkiOiJ0clU0bkdBOG5xUDdrSlF4Y3RHTUpnIiwiaWF0IjoxNzcyMDc2ODE0LCJleHAiOjE3NzQ2Njg4MTQsIm5iZiI6MTc3MjA3NjgxNCwic3ViIjoibG9naW4iLCJhdWQiOiJBdWRpZW5jZSIsInVzZXJOYW1lIjoiYWRtaW4ifQ.101RWRNuiPj6kxQGVPBJb23PndxKRTL1CITcpcAiTtd-tL8zmI944Yv-YjxIR3YdLkxCcQvaI8xiIt7nf8KLmPVqEyVSjrc7T7T3Jr44fTW7Zqg3zT6M4PRI0pdT6TVDVKwdMdlnGi4C6oKlo6k3khu2PCcnq_hfGwUBauYOUJFFPuddigmiT8q-me4kLK9Ons2oR-mZVDZoMbxIdI4z8cPHKESpCcZovUYiEjrUBOjtGOvKfLj62onMRJr4dHDAfofpV_ECAiMlI9XVU5cSf4SYceQXO3f9T2O3RLHYb3jGmZcdtT14VpNZl_mKU3i-n2zOdBwcqY-HFQr6w-zMLw"
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
 // 创建axios实例
 const service = axios.create({
-  // axios中请求配置有baseURL选项，表示请求URL公共部分
-  baseURL: '/datav-api',
+  // 根据环境配置文件获取 API 前缀
+  baseURL: import.meta.env.VITE_APP_DATAV_API,
   // 超时
   timeout: 10000
 })
@@ -25,8 +26,14 @@ service.interceptors.request.use(config => {
   // 是否需要防止数据重复提交
   const isRepeatSubmit = (config.headers || {}).repeatSubmit === false
   
-  // 设置写死的 Token
-  config.headers['access-token'] = TOKEN
+  // 动态获取 Token，优先从 localStorage 读取主应用的 'wvp-token'
+  const token = localStorage.getItem('wvp-token')
+  if (token) {
+    console.log('[DataV] 成功从 localStorage 获取 wvp-token');
+  } else {
+    console.warn('[DataV] 未发现 wvp-token，使用默认测试 Token');
+  }
+  config.headers['access-token'] = token || DEFAULT_TOKEN
 
   // get请求映射params参数
   if (config.method === 'get' && config.params) {
@@ -81,9 +88,15 @@ service.interceptors.response.use(res => {
       return res.data
     }
     
-    // 如果是 401 也不要跳出，因为这是 DataV 的特定接口
+    // 处理鉴权失效
     if (code === 401) {
-      console.error('DataV Token 无效或过期')
+      console.warn('[DataV] 接口返回 401，准备向 window.top 发送 unauthorized 信号')
+      if (window.top) {
+        window.top.dispatchEvent(new CustomEvent("unauthorized"))
+        console.log('[DataV] 信号已派发至 window.top')
+      } else {
+        console.error('[DataV] 无法找到 window.top，信号发送失败')
+      }
       return Promise.reject('DataV Token 无效或过期')
     } else if (code === 500) {
       ElMessage({ message: msg, type: 'error' })

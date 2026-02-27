@@ -1,4 +1,4 @@
-import { createWebHistory, createRouter } from 'vue-router'
+import { createWebHashHistory, createRouter } from 'vue-router'
 /* Layout */
 import Layout from '@/layout'
 import ParentView from '@/components/ParentView'
@@ -174,11 +174,18 @@ export const constantRoutes = [
   },
   // 数据可视化大屏 v1
   {
-    path: '/datav/v1',
+    path: '/datav',
     component: () => import('@/views/datav/v1/index.vue'),
     hidden: true,
     name: 'DatavV1',
     meta: { title: '监控驾驶舱', icon: 'monitor' }
+  }, 
+  // 地图大屏
+  {
+    path: '/mapscreen',
+    component: () => import('@/views/datav/mapscreen/index.vue'),
+    name: 'DatavMapscreen',
+    meta: { title: '地图大屏', anonymous: true }
   }
 ]
 
@@ -257,7 +264,7 @@ export const dynamicRoutes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes: constantRoutes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

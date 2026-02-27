@@ -19,6 +19,8 @@
 import { ref, onMounted } from 'vue'
 import { listDeviceGroup, listDeviceChildren } from '@/api/datav/monitor.js'
 
+const emit = defineEmits(['node-click'])
+
 const selectedNodeId = ref(null)
 
 const treeProps = {
