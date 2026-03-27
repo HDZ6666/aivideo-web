@@ -17,10 +17,11 @@ import {
   Modal,
   message,
 } from 'antd';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { styled } from 'styled-components';
 
 import aiService, { AlarmListReq } from '@/api/services/aiService';
+import { useUserAiPermission } from '@/store/userStore';
 import ProTag from '@/theme/antd/components/tag';
 
 import AlarmDetailModal, { AlarmDetailModalProps } from './alarm-detail';
@@ -29,7 +30,8 @@ import type { CheckboxProps } from 'antd';
 
 export default function AlarmPage() {
   const [searchForm] = Form.useForm();
-  const [queryParams, setQueryParams] = useState({
+  const aiPermissions = useUserAiPermission();
+  const [queryParams, setQueryParams] = useState<AlarmListReq>({
     page: 1,
     pageSize: 8,
     status: undefined,
@@ -59,10 +61,10 @@ export default function AlarmPage() {
     },
   });
 
-  const { data: categoryListRes, isLoading: categoryListLoading } = useQuery({
-    queryKey: ['alarmCategory'],
-    queryFn: () => aiService.getAlarmCategory({ page: 1, pageSize: 100 }),
-  });
+  const categoryOptions = useMemo(() => {
+    const enabled = (aiPermissions || []).filter((item) => item.status);
+    return Array.from(new Set(enabled.map((item) => item.alarmTypeName)));
+  }, [aiPermissions]);
 
   const { mutate } = useMutation(aiService.BatchUpdateAlarmStatus, {
     onSuccess: () => {
@@ -89,8 +91,8 @@ export default function AlarmPage() {
   const onSearchFormSubmit = () => {
     setQueryParams((prev) => {
       const { date, ...other } = searchForm.getFieldsValue();
-      prev.startTime = date ? date[0].format('YYYY-MM-DD') : undefined;
-      prev.endTime = date ? date[1].format('YYYY-MM-DD') : undefined;
+      prev.startTime = date ? `${date[0].format('YYYY-MM-DD')} 00:00:00` : undefined;
+      prev.endTime = date ? `${date[1].format('YYYY-MM-DD')} 23:59:59` : undefined;
       return { ...prev, ...other };
     });
   };
@@ -148,11 +150,11 @@ export default function AlarmPage() {
             </Col>
             <Col span={24} lg={4}>
               <Form.Item<AlarmListReq> label="告警类型" name="alarm_type_name" className="!mb-0">
-                <Select allowClear disabled={categoryListLoading}>
-                  {categoryListRes?.list.map((item) => {
+                <Select allowClear disabled={categoryOptions.length === 0}>
+                  {categoryOptions.map((name) => {
                     return (
-                      <Select.Option value={item.alarmTypeName} key={item.alarmCode}>
-                        {item.alarmTypeName}
+                      <Select.Option value={name} key={name}>
+                        {name}
                       </Select.Option>
                     );
                   })}
