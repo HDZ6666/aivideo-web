@@ -34,6 +34,12 @@ function EditDeviceRulePage({ alarmTypeId, selectedRows, setActionType }: EditRu
     device: selectedRows.reduce((pre, cur) => {
       return pre.concat(cur.device);
     }, [] as DeviceItem[]),
+    areaSet: {
+      width: 500,
+      height: 300,
+      canvasType: 'all',
+      list: [],
+    },
   };
 
   const options = [
@@ -83,7 +89,7 @@ function EditDeviceRulePage({ alarmTypeId, selectedRows, setActionType }: EditRu
             </Form.Item>
           </div>
           <div className={type === 'b' ? 'block' : 'hidden'}>
-            <BaseSet selectDeviceable={false} frameSetAble={false} />
+            <BaseSet selectDeviceable={false} frameSetAble={false} alarmTypeId={Number(alarmTypeId)} />
           </div>
           <Space>
             <Button type="default" onClick={handleRouteBack}>

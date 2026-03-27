@@ -9,6 +9,7 @@ import UserSelect from '@/components/user-select';
 export type BaseSetProps = {
   selectDeviceable?: boolean;
   frameSetAble?: boolean;
+  alarmTypeId?: number; // 告警类型ID，由父组件传入
 };
 
 export const engineOptions = [
@@ -23,6 +24,7 @@ export const notificateTypeOptions = [
 export default function BaseSetComponent({
   selectDeviceable = true,
   frameSetAble = true,
+  alarmTypeId,
 }: BaseSetProps) {
   const [showFrameSet, setShowFrameSet] = useState(false);
 
@@ -63,9 +65,6 @@ export default function BaseSetComponent({
   function FrameSet() {
     return (
       <div className={showFrameSet ? 'block' : 'hidden'}>
-        <Form.Item name="splitTime" label="抽帧间隔">
-          <InputNumber min={0} suffix="毫秒" controls={false} />
-        </Form.Item>
         <Form.Item name="isCompare" label="是否启动抽帧比对" initialValue={0}>
           <Radio.Group>
             <Radio value={0}> 不对比 </Radio>
@@ -99,6 +98,9 @@ export default function BaseSetComponent({
       <Form.Item label="检查时间" name="timelines">
         <TimeLine />
       </Form.Item>
+      <Form.Item name="splitTime" label="抽帧间隔" initialValue={1000}>
+        <InputNumber min={0} suffix="毫秒" controls={false} />
+      </Form.Item>
       {frameSetAble && (
         <>
           <Form.Item label="抽帧配置">
@@ -109,36 +111,52 @@ export default function BaseSetComponent({
           <FrameSet />
         </>
       )}
-      <Form.Item name="alarmTime" label="同一告警间隔通知时间">
-        <InputNumber min={0} precision={0} suffix="分钟" controls={false} />
+      <Form.Item shouldUpdate noStyle>
+        {({ getFieldValue }) => {
+          const showTracking = alarmTypeId === 11 || alarmTypeId === 82; // 是否存在目标追踪配置
+          const trackingEnabled = getFieldValue('trackingEnabled'); // 目标追踪是否启用（1 启用，0 禁用）
+          const hideAlarmTime = showTracking && trackingEnabled === 1; // 启用目标追踪时隐藏同一告警间隔通知时间
+
+          // 1. 没有目标追踪时：默认展示 alarmTime
+          // 2. 有目标追踪时：trackingEnabled 启用隐藏，禁用显示
+          if (hideAlarmTime) return null;
+
+          return (
+            <Form.Item name="alarmTime" label="同一告警间隔通知时间">
+              <InputNumber min={0} precision={0} suffix="分钟" controls={false} />
+            </Form.Item>
+          );
+        }}
       </Form.Item>
-      {/* 目标追踪配置 */}
-      <Form.Item label="目标追踪">
-        <Space>
-          <Form.Item name="trackingEnabled" noStyle initialValue={1}>
-            <Radio.Group>
-              <Radio value={0}>禁用</Radio>
-              <Radio value={1}>启用</Radio>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item shouldUpdate noStyle>
-            {({ getFieldValue }) => {
-              return getFieldValue('trackingEnabled') === 1 ? (
-                <Form.Item name="trackingDuration" noStyle>
-                  <InputNumber
-                    style={{ width: 120 }}
-                    min={0}
-                    precision={0}
-                    suffix="分钟"
-                    controls={false}
-                    placeholder="停留时间"
-                  />
-                </Form.Item>
-              ) : null;
-            }}
-          </Form.Item>
-        </Space>
-      </Form.Item>
+      {/* 目标追踪配置：仅在特定告警类型下展示 */}
+      {(alarmTypeId === 11 || alarmTypeId === 82) && (
+        <Form.Item label="目标追踪" tooltip="只有人员和车辆检测才有目标追踪功能">
+          <Space>
+            <Form.Item name="trackingEnabled" noStyle initialValue={1}>
+              <Radio.Group>
+                <Radio value={0}>禁用</Radio>
+                <Radio value={1}>启用</Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item shouldUpdate noStyle>
+              {({ getFieldValue }) => {
+                return getFieldValue('trackingEnabled') === 1 ? (
+                  <Form.Item name="trackingDuration" noStyle>
+                    <InputNumber
+                      style={{ width: 120 }}
+                      min={0}
+                      precision={0}
+                      suffix="分钟"
+                      controls={false}
+                      placeholder="停留时间"
+                    />
+                  </Form.Item>
+                ) : null;
+              }}
+            </Form.Item>
+          </Space>
+        </Form.Item>
+      )}
       <Form.Item name="confidence" label="置信度">
         <Slider style={{ width: 500 }} />
       </Form.Item>

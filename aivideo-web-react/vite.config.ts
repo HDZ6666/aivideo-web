@@ -52,10 +52,11 @@ export default (ConfigEnv: ConfigEnv) => {
       terserOptions: {
         compress: {
           // 生产环境移除console
-          drop_console: true,
-          drop_debugger: true,
+          drop_console: false, //  AURA-X: Modified to debug production issue
+          drop_debugger: false, // AURA-X: Modified to debug production issue
         },
       },
+      sourcemap: true, // AURA-X: Added to debug production issue
       outDir: path.resolve(__dirname, '../dist/react'),
     },
   });
