@@ -180,6 +180,14 @@ export const constantRoutes = [
     name: 'DatavV1',
     meta: { title: '监控驾驶舱', icon: 'monitor' }
   }, 
+  // 数据可视化大屏 v2
+  {
+    path: '/datav2',
+    component: () => import('@/views/datav/v2/index.vue'),
+    hidden: true,
+    name: 'DatavV2',
+    meta: { title: '监控驾驶舱2', icon: 'monitor' }
+  },
   // 地图大屏
   {
     path: '/mapscreen',

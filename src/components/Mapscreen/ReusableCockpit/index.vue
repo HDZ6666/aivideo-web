@@ -186,6 +186,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import AMapComponent from "@/components/AMapComponent/index.vue";
 import DialogComponent from "./components/DialogComponent.vue";
 import AlertDialog from "./components/AlertDialog.vue";
@@ -195,6 +196,7 @@ import { getCameraListAlgorithm } from "@/api/datav/cockpit";
 import timeBg from "@/assets/datav/cockpit/bg/datatime.png";
 import menuBg from "@/assets/datav/cockpit/bg/menu.png";
 import topBoderBg from "@/assets/datav/cockpit/bg/top-boder.png";
+const router = useRouter();
 
 // 实时告警开关
 const realTimeAlert = ref(false);
@@ -483,14 +485,7 @@ const handleImageSwitch = (index) => {
 
 // 返回后台
 const back = () => {
-  try {
-    const targetWindow = window.top || window;
-    const currentHref = targetWindow.location.href;
-    targetWindow.location.href = currentHref.replace(/#.*$/, "") + "#/datav";
-  } catch (error) {
-    const currentHref = window.location.href;
-    window.location.href = currentHref.replace(/#.*$/, "") + "#/datav";
-  }
+  router.push({ name: "DatavV1" });
 };
 
 // 生命周期：挂载

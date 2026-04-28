@@ -45,6 +45,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useDatavStore } from '@/store/modules/datav'
 import autofit from "autofit.js"
@@ -78,6 +79,7 @@ const isFullscreen = ref(false)
 const videoMonitorRef = ref(null)
 const alarmStatsDialogRef = ref(null)
 const cameraGridDialogRef = ref(null)
+const router = useRouter()
 
 // 注入 Pinia Store
 const datavStore = useDatavStore()
@@ -226,9 +228,7 @@ const gotoDashboard = () => {
 }
 
 const handleMapScreen = () => {
-  const currentHref = window.top.location.href
-  const newUrl = currentHref.replace(/#.*$/, '#/mapscreen')
-  window.top.location.href = newUrl
+  router.push({ name: 'DatavMapscreen' })
 }
 
 // 统一刷新告警相关数据（统计+列表+趋势）
