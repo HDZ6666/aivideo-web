@@ -17,6 +17,7 @@ import {
   Modal,
   message,
 } from 'antd';
+import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import { styled } from 'styled-components';
 
@@ -86,14 +87,28 @@ export default function AlarmPage() {
 
   const onSearchFormReset = () => {
     searchForm.resetFields();
+    setQueryParams((prev) => ({
+      page: 1,
+      pageSize: prev.pageSize,
+      status: undefined,
+      deviceName: undefined,
+      alarm_type_name: undefined,
+      startTime: undefined,
+      endTime: undefined,
+    }));
   };
 
   const onSearchFormSubmit = () => {
+    const { date, ...other } = searchForm.getFieldsValue();
+
     setQueryParams((prev) => {
-      const { date, ...other } = searchForm.getFieldsValue();
-      prev.startTime = date ? `${date[0].format('YYYY-MM-DD')} 00:00:00` : undefined;
-      prev.endTime = date ? `${date[1].format('YYYY-MM-DD')} 23:59:59` : undefined;
-      return { ...prev, ...other };
+      return {
+        ...prev,
+        ...other,
+        page: 1,
+        startTime: date ? date[0].format('YYYY-MM-DD HH:mm:ss') : undefined,
+        endTime: date ? date[1].format('YYYY-MM-DD HH:mm:ss') : undefined,
+      };
     });
   };
 
@@ -163,7 +178,13 @@ export default function AlarmPage() {
             </Col>
             <Col span={24} lg={6}>
               <Form.Item name="date" label="日期">
-                <DatePicker.RangePicker format="YYYY-MM-DD" allowClear />
+                <DatePicker.RangePicker
+                  format="YYYY-MM-DD HH:mm:ss"
+                  showTime={{
+                    defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('23:59:59', 'HH:mm:ss')],
+                  }}
+                  allowClear
+                />
               </Form.Item>
             </Col>
             <Col span={24} lg={4}>
@@ -208,8 +229,8 @@ export default function AlarmPage() {
         }
       >
         {data?.list && data.list.length > 0 ? (
-          <Checkbox.Group onChange={onCheckListChange} value={checkedList}>
-            <Row gutter={[16, 16]} className="mb-4 min-h-96">
+          <Checkbox.Group className="w-full" onChange={onCheckListChange} value={checkedList}>
+            <Row gutter={[16, 16]} className="mb-4 min-h-96 w-full">
               {data?.list.map((alarmItem) => {
                 return (
                   <Col lg={6} md={12} span={24} key={alarmItem.id}>
@@ -238,7 +259,7 @@ export default function AlarmPage() {
                             {alarmItem.deviceName || '测试-华为枪机测试-华为枪机'}
                           </div>
                           <p className="mb-1 text-sm">{`告警ID:${alarmItem.id}`}</p>
-                          <p className="mb-1 text-sm text-gray-500">{alarmItem.createTime}</p>
+                          <p className="mb-1 text-sm text-gray-500">{alarmItem.alarmTime}</p>
                           <div>
                             <Tag color="blue">{alarmItem.modelname}</Tag>
                             <ProTag color={['error', 'success', 'warning'][alarmItem.status]}>

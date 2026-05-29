@@ -91,6 +91,11 @@ export default function DeviceModal({
   });
   const onSearchFormReset = () => {
     searchForm.resetFields();
+    setQueryParams((prev) => ({
+      ...prev,
+      page: 1,
+      query: undefined,
+    }));
   };
 
   const onSearchFormSubmit = () => {

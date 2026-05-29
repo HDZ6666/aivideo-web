@@ -89,7 +89,7 @@ function EditDeviceRulePage({ alarmTypeId, selectedRows, setActionType }: EditRu
             </Form.Item>
           </div>
           <div className={type === 'b' ? 'block' : 'hidden'}>
-            <BaseSet selectDeviceable={false} frameSetAble={false} alarmTypeId={Number(alarmTypeId)} />
+            <BaseSet selectDeviceable={false} alarmTypeId={Number(alarmTypeId)} />
           </div>
           <Space>
             <Button type="default" onClick={handleRouteBack}>

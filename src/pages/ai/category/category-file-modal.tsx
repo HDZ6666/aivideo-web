@@ -161,6 +161,11 @@ export default function CategoryFileModal({
 
   const onSearchFormReset = () => {
     searchForm.resetFields();
+    setQueryParams((prev) => ({
+      page: 1,
+      pageSize: prev.pageSize,
+      fileName: undefined,
+    }));
   };
 
   const handleBindCategory = () => {
