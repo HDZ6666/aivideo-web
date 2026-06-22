@@ -1,6 +1,7 @@
 import type { App } from 'vue'
 import { useUserStore } from '@/store'
 import { getLastPage } from '@/utils'
+import { isPublicAlarmDetailEntry, parseUrlPathAndQuery } from '@/utils/alarmPush'
 // import { isLoggedIn } from '@/utils/auth'
 
 // 登录页面路径
@@ -28,9 +29,13 @@ function buildPathWithQuery(path: string, options?: Record<string, unknown>) {
 /**
  * 检查页面是否需要登录验证
  */
-function checkPageAuth(path: string): boolean {
+function checkPageAuth(path: string, options?: Record<string, unknown>): boolean {
   // 检查是否在白名单中
   if (whiteList.includes(path)) {
+    return true
+  }
+
+  if (isPublicAlarmDetailEntry(path, options)) {
     return true
   }
 
@@ -48,7 +53,8 @@ const navigateToInterceptor = {
   // 增加对相对路径的处理，BY 网友 @ideal
   invoke({ url }: { url: string }) {
     console.log('路由拦截', url) // /pages/route-interceptor/index?name=feige&age=30
-    let path = url.split('?')[0]
+    const { path: rawPath, query } = parseUrlPathAndQuery(url)
+    let path = rawPath
 
     // 处理相对路径
     if (!path.startsWith('/')) {
@@ -59,7 +65,7 @@ const navigateToInterceptor = {
     }
 
     // 使用统一的认证检查函数
-    if (checkPageAuth(path)) {
+    if (checkPageAuth(path, query)) {
       return true
     }
 
@@ -79,7 +85,7 @@ function pageAuthCheck(options?: Record<string, unknown>) {
     return
   const getLastPage = pages[pages.length - 1] as any
   const currentRoute = `/${getLastPage.route}`
-  if (!checkPageAuth(currentRoute)) {
+  if (!checkPageAuth(currentRoute, options)) {
     console.log('用户未登录，重定向到登录页:', currentRoute)
     // H5 direct-open may lose query in $page.fullPath, so prefer rebuilding from onLoad options.
     const fullpath = Object.keys(options || {}).length > 0

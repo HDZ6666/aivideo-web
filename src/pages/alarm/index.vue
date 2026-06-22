@@ -20,9 +20,21 @@ defineOptions({
 })
 
 const alarmList = ref<IAlarmListItem[]>([])
-const searchKeyword = ref('')
-const selectedStatus = ref<AlarmStatus | undefined>(undefined)
-const selectedAlarmType = ref('')
+interface AlarmFilterValue {
+  deviceName: string
+  alarm_type_name: string
+  startTime: string
+  endTime: string
+  status: AlarmStatus | undefined
+}
+
+const alarmFilters = reactive<AlarmFilterValue>({
+  deviceName: '',
+  alarm_type_name: '',
+  startTime: '',
+  endTime: '',
+  status: undefined,
+})
 const loading = ref(false)
 const paging = ref()
 
@@ -50,13 +62,13 @@ function checkAlarmDataOutdated(newFirstId: number): boolean {
 
 // 处理搜索条件变化
 function handleSearchChange(keyword: string) {
-  searchKeyword.value = keyword
+  alarmFilters.deviceName = keyword
   paging.value?.reload()
 }
 
-// 处理告警类型筛选变化
-function handleAlarmTypeChange(alarmType: string) {
-  selectedAlarmType.value = alarmType
+// 处理高级检索变化
+function handleFilterChange(filters: AlarmFilterValue) {
+  Object.assign(alarmFilters, filters)
   paging.value?.reload()
 }
 
@@ -65,9 +77,11 @@ async function loadAlarmList(pageNo: number = 1, pageSize: number = 10) {
   const params = {
     page: pageNo,
     pageSize,
-    deviceName: searchKeyword.value || undefined,
-    status: selectedStatus.value,
-    alarm_type_name: selectedAlarmType.value || undefined,
+    status: alarmFilters.status,
+    deviceName: alarmFilters.deviceName || undefined,
+    alarm_type_name: alarmFilters.alarm_type_name || undefined,
+    startTime: alarmFilters.startTime || undefined,
+    endTime: alarmFilters.endTime || undefined,
   }
   try {
     loading.value = true
@@ -113,7 +127,7 @@ onShow(() => {
       >
         <view class="content-wrapper">
           <view class="mb-32rpx">
-            <AlarmSearchFilter @search-change="handleSearchChange" @alarm-type-change="handleAlarmTypeChange" />
+            <AlarmSearchFilter @search-change="handleSearchChange" @filter-change="handleFilterChange" />
           </view>
 
           <view class="alarm-list-container">

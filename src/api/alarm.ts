@@ -1,4 +1,5 @@
 import { http } from '@/http/alova'
+import { encodeAuthorizationForQuery } from '@/utils/alarmPush'
 
 // ==================== 数据类型定义 ====================
 
@@ -55,6 +56,7 @@ export interface IAlarmListRes {
  */
 export interface IAlarmDetailReq {
   alarm_id: number
+  authorization?: string
 }
 
 /**
@@ -88,6 +90,7 @@ export interface IAlarmDetailRes {
 export interface IAlarmStatusReq {
   alarmId: number
   status: AlarmStatus
+  authorization?: string
 }
 
 /**
@@ -168,8 +171,21 @@ export function getAlarmList(params: IAlarmListReq) {
  * @returns 告警详情数据
  */
 export function getAlarmDetailByID(params: IAlarmDetailReq) {
+  const requestParams: IAlarmDetailReq = {
+    alarm_id: params.alarm_id,
+  }
+
+  if (params.authorization) {
+    requestParams.authorization = encodeAuthorizationForQuery(params.authorization)
+  }
+
   return http.Get<IAlarmDetailRes>('/ai/api/alarm/alarmRecordDetail', {
-    params,
+    params: requestParams,
+    meta: params.authorization
+      ? {
+          ignoreAuth: true,
+        }
+      : undefined,
   })
 }
 
@@ -179,8 +195,22 @@ export function getAlarmDetailByID(params: IAlarmDetailReq) {
  * @returns 更新结果
  */
 export function updateAlarmStatusByID(params: IAlarmStatusReq) {
+  const requestParams: IAlarmStatusReq = {
+    alarmId: params.alarmId,
+    status: params.status,
+  }
+
+  if (params.authorization) {
+    requestParams.authorization = encodeAuthorizationForQuery(params.authorization)
+  }
+
   return http.Get<any>('/ai/api/alarm/handle', {
-    params,
+    params: requestParams,
+    meta: params.authorization
+      ? {
+          ignoreAuth: true,
+        }
+      : undefined,
   })
 }
 
