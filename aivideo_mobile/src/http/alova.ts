@@ -24,7 +24,6 @@ const { onAuthRequired, onResponseRefreshToken } = createServerTokenAuthenticati
   refreshTokenOnSuccess: {
     isExpired: (response, method) => {
       return response.statusCode === ResultEnum.Unauthorized
-        && method.config.meta?.ignoreAuth !== true
     },
     handler: async (response, method) => {
       useUserStore().clearUserStore()
