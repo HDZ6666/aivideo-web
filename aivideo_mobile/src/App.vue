@@ -1,0 +1,30 @@
+<script setup lang="ts">
+import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
+
+onLaunch(() => {
+  // console.log('App Launch')
+})
+onShow(() => {
+  // console.log('App Show')
+})
+onHide(() => {
+  // console.log('App Hide')
+})
+</script>
+
+<style lang="scss">
+@import 'sard-uniapp/index.scss';
+swiper,
+scroll-view {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+image {
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+}
+</style>
