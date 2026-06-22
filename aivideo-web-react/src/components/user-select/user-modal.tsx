@@ -75,6 +75,11 @@ export default function UserModal({ show, userList, setShow, setUserList }: User
   });
   const onSearchFormReset = () => {
     searchForm.resetFields();
+    setQueryParams((prev) => ({
+      ...prev,
+      page: 1,
+      username: undefined,
+    }));
   };
 
   const onSearchFormSubmit = () => {

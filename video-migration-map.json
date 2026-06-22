@@ -1,0 +1,214 @@
+{
+  "targetProject": "aivideo-gat1400",
+  "sourceProject": "aivideo-web-v1",
+  "rules": {
+    "pageTarget": "aivideo-gat1400/src/views/video/<page-name>/index.vue",
+    "componentTarget": "aivideo-gat1400/src/components/video/<ComponentName>/index.vue",
+    "apiTarget": "aivideo-gat1400/src/api/video/*.js",
+    "utilsTarget": "aivideo-gat1400/src/utils/video/*.js",
+    "assetsTarget": "aivideo-gat1400/src/assets/video/**"
+  },
+  "verification": {
+    "build": "pnpm run build:prod passed",
+    "sourceMapCount": 0,
+    "zlmrtcSourceMapInDist": false
+  },
+  "pages": [
+    {
+      "oldFile": "aivideo-web-v1/src/components/live.vue",
+      "newFile": "aivideo-gat1400/src/views/video/live/index.vue",
+      "routePath": "/video/live",
+      "status": "verified",
+      "notes": "Realtime video page with three dedicated v1-style tree components."
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/liveNational.vue",
+      "newFile": "aivideo-gat1400/src/views/video/live/index.vue",
+      "routePath": "/video/live",
+      "status": "covered",
+      "notes": "Covered by live page source selector."
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/liveProxy.vue",
+      "newFile": "aivideo-gat1400/src/views/video/live/index.vue",
+      "routePath": "/video/live",
+      "status": "covered",
+      "notes": "Covered by live page source selector."
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/DeviceList.vue",
+      "newFile": "aivideo-gat1400/src/views/video/device-list/index.vue",
+      "routePath": "/video/device-list",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/DeviceGroup.vue",
+      "newFile": "aivideo-gat1400/src/views/video/device-group/index.vue",
+      "routePath": "/video/device-group",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/channelList.vue",
+      "newFile": "aivideo-gat1400/src/views/video/channel-list/index.vue",
+      "routePath": "/video/channel-list",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/CloudRecord.vue",
+      "newFile": "aivideo-gat1400/src/views/video/cloud-record/index.vue",
+      "routePath": "/video/cloud-record",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/CloudRecordDetail.vue",
+      "newFile": "aivideo-gat1400/src/views/video/cloud-record-detail/index.vue",
+      "routePath": "/video/cloud-record-detail",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/GBRecordDetail.vue",
+      "newFile": "aivideo-gat1400/src/views/video/gb-record-detail/index.vue",
+      "routePath": "/video/gb-record-detail",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/PushVideoList.vue",
+      "newFile": "aivideo-gat1400/src/views/video/push-video-list/index.vue",
+      "routePath": "/video/push-video-list",
+      "status": "verified",
+      "notes": "Import-channel dialog is still pending."
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/StreamProxyList.vue",
+      "newFile": "aivideo-gat1400/src/views/video/stream-proxy-list/index.vue",
+      "routePath": "/video/stream-proxy-list",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/MediaServerManger.vue",
+      "newFile": "aivideo-gat1400/src/views/video/media-server-manager/index.vue",
+      "routePath": "/video/media-server-manager",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/ParentPlatformList.vue",
+      "newFile": "aivideo-gat1400/src/views/video/parent-platform-list/index.vue",
+      "routePath": "/video/parent-platform-list",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/map.vue",
+      "newFile": "aivideo-gat1400/src/views/video/map/index.vue",
+      "routePath": "/video/map",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/patrolManager.vue",
+      "newFile": "aivideo-gat1400/src/views/video/patrol-manager/index.vue",
+      "routePath": "/video/patrol-manager",
+      "status": "verified",
+      "notes": "Task add/edit selection UI is simplified."
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/patrolReport.vue",
+      "newFile": "aivideo-gat1400/src/views/video/patrol-report/index.vue",
+      "routePath": "/video/patrol-report",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/DeviceInspection.vue",
+      "newFile": "aivideo-gat1400/src/views/video/device-inspection/index.vue",
+      "routePath": "/video/device-inspection",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/console.vue",
+      "newFile": "aivideo-gat1400/src/views/video/console/index.vue",
+      "routePath": "/video/console",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/alarmList.vue",
+      "newFile": "aivideo-gat1400/src/views/video/alarm-list/index.vue",
+      "routePath": "/video/alarm-list",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/fence.vue",
+      "newFile": "aivideo-gat1400/src/views/video/fence/index.vue",
+      "routePath": "/video/fence",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/aiView.vue",
+      "newFile": "aivideo-gat1400/src/views/video/ai-view/index.vue",
+      "routePath": "/video/ai-view",
+      "status": "verified"
+    }
+  ],
+  "skipped": [
+    {
+      "reason": "Datav/big-screen pages are excluded for now.",
+      "oldFiles": [
+        "aivideo-web-v1/src/components/videoCockpit.vue",
+        "aivideo-web-v1/src/components/dataV.vue",
+        "aivideo-web-v1/src/components/dataV2.vue",
+        "aivideo-web-v1/src/components/v2/datavV2.vue",
+        "aivideo-web-v1/src/components/v2/alarmV2.vue",
+        "aivideo-web-v1/src/components/Settings.vue"
+      ]
+    },
+    {
+      "reason": "Old system admin pages are not migrated because RuoYi has its own system modules.",
+      "oldFiles": [
+        "aivideo-web-v1/src/components/UserManager.vue",
+        "aivideo-web-v1/src/components/RoleManager.vue",
+        "aivideo-web-v1/src/components/roleManager1.vue",
+        "aivideo-web-v1/src/components/menuManager.vue",
+        "aivideo-web-v1/src/components/logManager.vue"
+      ]
+    },
+    {
+      "reason": "Old setting stubs are incomplete and outside this video-page batch.",
+      "oldFiles": [
+        "aivideo-web-v1/src/components/setting/Web.vue",
+        "aivideo-web-v1/src/components/setting/Sip.vue",
+        "aivideo-web-v1/src/components/setting/Media.vue"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "oldFile": "aivideo-web-v1/src/components/common/DeviceTreeNational.vue",
+      "newFile": "aivideo-gat1400/src/components/video/DeviceTreeNational/index.vue",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/common/DeviceTreeProxy.vue",
+      "newFile": "aivideo-gat1400/src/components/video/DeviceTreeProxy/index.vue",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/common/DeviceTreeNationalCockpit.vue",
+      "newFile": "aivideo-gat1400/src/components/video/DeviceTreeNationalCockpit/index.vue",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/common/jessibuca.vue",
+      "newFile": "aivideo-gat1400/src/components/video/StreamPlayer/index.vue",
+      "status": "verified"
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/dialog/devicePlayer.vue",
+      "newFile": "aivideo-gat1400/src/components/video/DevicePlayer/index.vue",
+      "status": "verified",
+      "notes": "Simplified playback dialog; PTZ/preset panel is not fully ported yet."
+    },
+    {
+      "oldFile": "aivideo-web-v1/src/components/dialog/importChannel.vue",
+      "newFile": null,
+      "status": "pending",
+      "notes": "Push page currently shows a placeholder warning."
+    }
+  ]
+}

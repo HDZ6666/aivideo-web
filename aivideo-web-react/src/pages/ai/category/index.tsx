@@ -85,6 +85,11 @@ export default function CaregoryPage() {
 
   const onSearchFormReset = () => {
     searchForm.resetFields();
+    setQueryParams((prev) => ({
+      page: 1,
+      pageSize: prev.pageSize,
+      alarmTypeName: undefined,
+    }));
   };
 
   const pageChange = (page: number, pageSize: number) => {
@@ -187,7 +192,7 @@ export default function CaregoryPage() {
       align: 'center',
       width: 100,
       render: (_, record) => (
-        <div className="flex justify-center w-full text-gray">
+        <div className="flex w-full justify-center text-gray">
           <Button type="link" onClick={() => handleSourceFile(record)}>
             源文件管理
           </Button>

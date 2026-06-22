@@ -158,7 +158,7 @@ export default function BaseSetComponent({
         </Form.Item>
       )}
       <Form.Item name="confidence" label="置信度">
-        <Slider style={{ width: 500 }} />
+        <Slider style={{ width: '100%', maxWidth: 500 }} />
       </Form.Item>
     </>
   );

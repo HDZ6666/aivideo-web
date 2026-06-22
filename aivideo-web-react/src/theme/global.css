@@ -13,3 +13,23 @@
 /* 导入 Tailwind CSS 的实用类，这些类通常用于添加与布局、间距、响应式设计等相关的样式，使得可以快速构建出复杂的页面 */
 @import 'tailwindcss/utilities';
 
+/* Keep long backend error messages from widening the page. */
+.ant-message .ant-message-notice-content {
+  max-width: min(720px, calc(100vw - 32px));
+  white-space: normal;
+  text-align: left;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.ant-message .ant-message-custom-content {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.ant-message .ant-message-custom-content > .anticon {
+  flex: none;
+  margin-top: 3px;
+}
+

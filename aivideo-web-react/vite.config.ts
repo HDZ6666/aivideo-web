@@ -56,7 +56,7 @@ export default (ConfigEnv: ConfigEnv) => {
           drop_debugger: false, // AURA-X: Modified to debug production issue
         },
       },
-      sourcemap: true, // AURA-X: Added to debug production issue
+      sourcemap: false,
       outDir: path.resolve(__dirname, '../dist/react'),
     },
   });

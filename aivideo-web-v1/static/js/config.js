@@ -1,11 +1,7 @@
-window.baseUrl = "https://ai-video.fyict.cn:21443"; //要改成部署地址的后端地址
-// window.baseUrl = "https://fyict.cn:18080"
-window.iframeBaseUrl = "https://ai-video.fyict.cn:21443/react/";
-// window.iframeBaseUrl = "https://fyict.cn:8066"
-// window.iframeBaseUrl = "http://127.0.0.1:3001"
-// window.dataVUrl = "http://183.239.58.24:10687";
-window.dataVUrl = "https://ai-video.fyict.cn:21443/datav/";
-window.dataVUrl2 = "https://ai-video.fyict.cn:21443/datav2/";
+window.baseUrl = ""; //要改成部署地址的后端地址
+window.iframeBaseUrl = "/react/";
+window.dataVUrl = "/datav/#/datav";
+window.dataVUrl2 = "/datav/#/datav2";
 // map组件全局参数, 注释此内容可以关闭地图功能
 window.mapParam = {
   // 开启/关闭地图功能
