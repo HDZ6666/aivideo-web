@@ -16,7 +16,6 @@ import { SmartImage } from '@/components/smart-image'
 import { useAlarmStore } from '@/store/alarm'
 
 import { formatTime } from '@/utils'
-import { getAlarmIdFromOptions, getAuthorizationFromOptions } from '@/utils/alarmPush'
 
 defineOptions({
   name: 'AlarmDetail',
@@ -34,9 +33,7 @@ const paging = ref() // z-paging 引用
 const hlsPlayerRef = ref() // HLS播放器引用
 
 const alarmItem = computed(() => alarmStore.selectedAlarm)
-const alarmId = ref<number>()
-const authorization = ref<string>()
-const isAuthorizationEntry = computed(() => !!authorization.value)
+const alarmId = ref(undefined)
 
 // 计算属性：获取告警图片列表
 const alarmImages = computed(() => {
@@ -80,7 +77,7 @@ function getStatusInfo(status: AlarmStatus) {
 
 // 下拉刷新
 async function onRefresh() {
-  if (alarmId.value === undefined) {
+  if (!alarmId.value) {
     paging.value?.complete()
     return
   }
@@ -98,16 +95,9 @@ async function onRefresh() {
 
 // 加载告警详情
 async function loadAlarmDetail() {
-  if (alarmId.value === undefined) {
-    return
-  }
-
   try {
     loading.value = true
-    const response = await getAlarmDetailByID({
-      alarm_id: alarmId.value,
-      ...(authorization.value ? { authorization: authorization.value } : {}),
-    })
+    const response = await getAlarmDetailByID({ alarm_id: alarmId.value })
     alarmDetail.value = response
   }
   catch (error) {
@@ -120,26 +110,17 @@ async function loadAlarmDetail() {
 
 // 更新告警状态
 async function updateStatus(newStatus: AlarmStatus) {
-  const currentAlarmDetail = alarmDetail.value
-  if (!currentAlarmDetail) {
-    return
-  }
-
   try {
     updatingStatus.value = true
 
     await updateAlarmStatusByID({
-      alarmId: currentAlarmDetail.alarm_id,
+      alarmId: alarmDetail.value.alarm_id,
       status: newStatus,
-      ...(authorization.value ? { authorization: authorization.value } : {}),
     })
     // 更新本地状态
-    alarmDetail.value = {
-      ...currentAlarmDetail,
-      status: newStatus,
-    }
+    alarmDetail.value.status = newStatus
     // 同步更新 store 中的选中告警状态
-    if (alarmStore.selectedAlarm && alarmStore.selectedAlarm.id === currentAlarmDetail.alarm_id) {
+    if (alarmStore.selectedAlarm && alarmStore.selectedAlarm.id === alarmDetail.value.alarm_id) {
       alarmStore.setSelectedAlarm({
         ...alarmStore.selectedAlarm,
         status: newStatus,
@@ -202,15 +183,8 @@ function goBack() {
 }
 
 onLoad((options) => {
-  const optionsAlarmId = getAlarmIdFromOptions(options)
-  authorization.value = getAuthorizationFromOptions(options)
-
-  if (optionsAlarmId !== undefined) {
-    alarmId.value = optionsAlarmId
-    loadAlarmDetail()
-  }
-  else if (alarmItem.value) {
-    alarmId.value = alarmItem.value.id
+  if (alarmItem.value || options.id) {
+    alarmId.value = options.id ? Number.parseInt(options.id) : alarmItem.value.id
     loadAlarmDetail()
   }
 })
@@ -221,7 +195,7 @@ onLoad((options) => {
     <!-- 导航栏 -->
     <sar-navbar title="告警详情" class="navbar-custom">
       <template #left>
-        <view v-if="!isAuthorizationEntry" class="back-button">
+        <view class="back-button">
           <view class="i-carbon-arrow-left h-40rpx w-40rpx text-gray-600" @click="goBack" />
         </view>
       </template>
