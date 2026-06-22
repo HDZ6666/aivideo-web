@@ -43,7 +43,6 @@
 
 ### 开发工具
 - **ESLint** + **@antfu/eslint-config** - 代码质量检查
-- **Husky** + **lint-staged** - Git提交规范
 - **unplugin-auto-import** - API自动导入
 
 ## 📱 平台兼容性
