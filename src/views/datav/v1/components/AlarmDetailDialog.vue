@@ -3,8 +3,8 @@
         <div class="box" v-loading="loading" element-loading-background="rgba(6, 26, 64, 0.7)" @click.stop>
             <div class="detail-title">摄像头告警详情- 【{{ info.alarmTypeName }}】</div>
             <div class="detail-image">
-                <el-image :src="info.alarmImg" :preview-src-list="[info.alarmImg]" fit="contain"
-                    style="width: 384px; height: 211.2px;" alt="告警图片">
+                <el-image :src="info.alarmImg" :preview-src-list="[info.alarmImg]" :z-index="4000" fit="contain"
+                    style="width: 384px; height: 211.2px;" alt="告警图片" preview-teleported>
                     <template #error>
                         <div class="image-slot">
                             <span class="no-img">暂无图片</span>

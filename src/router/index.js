@@ -159,6 +159,237 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/visual-library',
+    component: Layout,
+    redirect: '/visual-library/dashboard',
+    name: 'VisualLibrary',
+    meta: { title: '视图库中台', icon: 'database', alwaysShow: true },
+    children: [
+      {
+        path: 'dashboard',
+        component: () => import('@/views/visual-library/dashboard/index.vue'),
+        name: 'VisualLibraryDashboard',
+        meta: { title: '运行概览', icon: 'dashboard' }
+      },
+      {
+        path: 'setting',
+        component: ParentView,
+        redirect: 'noredirect',
+        name: 'VisualLibrarySetting',
+        meta: { title: '平台配置', icon: 'setting' },
+        children: [
+          {
+            path: 'instance',
+            component: () => import('@/views/visual-library/setting/index.vue'),
+            name: 'VisualLibrarySettingInstance',
+            meta: { title: '当前节点', icon: 'user', settingKey: 'instance' }
+          },
+          {
+            path: 'storage',
+            component: () => import('@/views/visual-library/setting/index.vue'),
+            name: 'VisualLibrarySettingStorage',
+            meta: { title: '存储配置', icon: 'example', settingKey: 'storage' }
+          },
+          {
+            path: 'customizer',
+            component: () => import('@/views/visual-library/setting/index.vue'),
+            name: 'VisualLibrarySettingCustomizer',
+            meta: { title: '行为配置', icon: 'tool', settingKey: 'customizer' }
+          }
+        ]
+      },
+      {
+        path: 'resource',
+        component: ParentView,
+        redirect: 'noredirect',
+        name: 'VisualLibraryResource',
+        meta: { title: '资源管理', icon: 'tree' },
+        children: [
+          {
+            path: 'instance',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryResourceInstance',
+            meta: { title: '视图库', icon: 'monitor', configKey: 'resourceInstance' }
+          },
+          {
+            path: 'device',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryResourceDevice',
+            meta: { title: '设备', icon: 'camera', configKey: 'resourceDevice' }
+          },
+          {
+            path: 'tollgate',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryResourceTollgate',
+            meta: { title: '卡口', icon: 'guide', configKey: 'resourceTollgate' }
+          },
+          {
+            path: 'lane',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryResourceLane',
+            meta: { title: '车道', icon: 'row', configKey: 'resourceLane' }
+          },
+          {
+            path: 'unit',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryResourceUnit',
+            meta: { title: '组织机构', icon: 'peoples', configKey: 'resourceUnit' }
+          }
+        ]
+      },
+      {
+        path: 'subscribe',
+        component: ParentView,
+        redirect: 'noredirect',
+        name: 'VisualLibrarySubscribe',
+        meta: { title: '订阅管理', icon: 'link' },
+        children: [
+          {
+            path: 'down',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibrarySubscribeDown',
+            meta: { title: '下级订阅', icon: 'download', configKey: 'subscribeDown' }
+          },
+          {
+            path: 'notification-down',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibrarySubscribeNotificationDown',
+            meta: { title: '下级订阅通知', icon: 'message', configKey: 'subscribeDownNotification' }
+          },
+          {
+            path: 'up',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibrarySubscribeUp',
+            meta: { title: '上级订阅', icon: 'upload', configKey: 'subscribeUp' }
+          },
+          {
+            path: 'notification-up',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibrarySubscribeNotificationUp',
+            meta: { title: '上级订阅通知', icon: 'message', configKey: 'subscribeUpNotification' }
+          }
+        ]
+      },
+      {
+        path: 'disposition',
+        component: ParentView,
+        redirect: 'noredirect',
+        name: 'VisualLibraryDisposition',
+        meta: { title: '布控管理', icon: 'eye-open' },
+        children: [
+          {
+            path: 'down',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryDispositionDown',
+            meta: { title: '下级布控', icon: 'download', configKey: 'dispositionDown' }
+          },
+          {
+            path: 'notification-down',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryDispositionNotificationDown',
+            meta: { title: '下级布控预警', icon: 'message', configKey: 'dispositionDownNotification' }
+          }
+        ]
+      },
+      {
+        path: 'data',
+        component: ParentView,
+        redirect: 'noredirect',
+        name: 'VisualLibraryData',
+        meta: { title: '采集数据', icon: 'chart' },
+        children: [
+          {
+            path: 'face',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryDataFace',
+            meta: { title: '人脸', icon: 'user', configKey: 'dataFace' }
+          },
+          {
+            path: 'person',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryDataPerson',
+            meta: { title: '人员', icon: 'peoples', configKey: 'dataPerson' }
+          },
+          {
+            path: 'motorvehicle',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryDataMotorVehicle',
+            meta: { title: '车辆', icon: 'truck', configKey: 'dataMotorVehicle' }
+          },
+          {
+            path: 'nonmotorvehicle',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryDataNonMotorVehicle',
+            meta: { title: '非机动车', icon: 'shopping', configKey: 'dataNonMotorVehicle' }
+          },
+          {
+            path: 'scene',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryDataScene',
+            meta: { title: '物品', icon: 'box', configKey: 'dataScene' }
+          },
+          {
+            path: 'thing',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryDataThing',
+            meta: { title: '场景', icon: 'location', configKey: 'dataThing' }
+          },
+          {
+            path: 'image',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryDataImage',
+            meta: { title: '图像', icon: 'image', configKey: 'dataImage' }
+          },
+          {
+            path: 'videoslice',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryDataVideoSlice',
+            meta: { title: '视频片段', icon: 'video', configKey: 'dataVideoSlice' }
+          }
+        ]
+      },
+      {
+        path: 'manual',
+        component: ParentView,
+        redirect: 'noredirect',
+        name: 'VisualLibraryManual',
+        meta: { title: '人工采集', icon: 'edit' },
+        children: [
+          {
+            path: 'face',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryManualFace',
+            meta: { title: '人脸', icon: 'user', configKey: 'manualFace' }
+          },
+          {
+            path: 'person',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryManualPerson',
+            meta: { title: '人员', icon: 'peoples', configKey: 'manualPerson' }
+          },
+          {
+            path: 'motorvehicle',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryManualMotorVehicle',
+            meta: { title: '车辆', icon: 'truck', configKey: 'manualMotorVehicle' }
+          },
+          {
+            path: 'nonmotorvehicle',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryManualNonMotorVehicle',
+            meta: { title: '非机动车', icon: 'shopping', configKey: 'manualNonMotorVehicle' }
+          },
+          {
+            path: 'image',
+            component: () => import('@/views/visual-library/entity/index.vue'),
+            name: 'VisualLibraryManualImage',
+            meta: { title: '图像', icon: 'image', configKey: 'manualImage' }
+          }
+        ]
+      }
+    ]
+  },
+  {
     path: '/user',
     component: Layout,
     hidden: true,
@@ -169,6 +400,202 @@ export const constantRoutes = [
         component: () => import('@/views/system/user/profile/index'),
         name: 'Profile',
         meta: { title: '个人中心', icon: 'user' }
+      }
+    ]
+  },
+  {
+    path: '/video',
+    component: Layout,
+    redirect: '/video/live',
+    name: 'Video',
+    meta: { title: '视频业务', icon: 'monitor' },
+    children: [
+      {
+        path: 'live',
+        component: () => import('@/views/video/live/index.vue'),
+        name: 'VideoLive',
+        meta: { title: '实时视频', icon: 'monitor' }
+      },
+      {
+        path: 'live2',
+        component: () => import('@/views/video/live2/index.vue'),
+        name: 'VideoLive2',
+        meta: { title: '实时视频演示', icon: 'monitor' }
+      },
+      {
+        path: 'device-list',
+        component: () => import('@/views/video/device-list/index.vue'),
+        name: 'VideoDeviceList',
+        meta: { title: '国标列表', icon: 'list' }
+      },
+      {
+        path: 'device-group',
+        component: () => import('@/views/video/device-group/index.vue'),
+        name: 'VideoDeviceGroup',
+        meta: { title: '设备分组', icon: 'tree' }
+      },
+      {
+        path: 'channel-list',
+        component: () => import('@/views/video/channel-list/index.vue'),
+        name: 'VideoChannelList',
+        meta: { title: '通道列表', icon: 'list' }
+      },
+      {
+        path: 'cloud-record',
+        component: () => import('@/views/video/cloud-record/index.vue'),
+        name: 'VideoCloudRecord',
+        meta: { title: '云端录像', icon: 'video' }
+      },
+      {
+        path: 'cloud-record-detail',
+        component: () => import('@/views/video/cloud-record-detail/index.vue'),
+        name: 'VideoCloudRecordDetail',
+        hidden: true,
+        meta: { title: '云端录像详情', activeMenu: '/video/cloud-record' }
+      },
+      {
+        path: 'gb-record-detail',
+        component: () => import('@/views/video/gb-record-detail/index.vue'),
+        name: 'VideoGbRecordDetail',
+        hidden: true,
+        meta: { title: '国标录像', activeMenu: '/video/device-list' }
+      },
+      {
+        path: 'push-video-list',
+        component: () => import('@/views/video/push-video-list/index.vue'),
+        name: 'VideoPushVideoList',
+        meta: { title: '推流列表', icon: 'upload' }
+      },
+      {
+        path: 'stream-proxy-list',
+        component: () => import('@/views/video/stream-proxy-list/index.vue'),
+        name: 'VideoStreamProxyList',
+        meta: { title: '拉流代理', icon: 'link' }
+      },
+      {
+        path: 'media-server-manager',
+        component: () => import('@/views/video/media-server-manager/index.vue'),
+        name: 'VideoMediaServerManager',
+        meta: { title: '媒体节点', icon: 'server' }
+      },
+      {
+        path: 'console',
+        component: () => import('@/views/video/console/index.vue'),
+        name: 'VideoConsole',
+        meta: { title: '控制台', icon: 'monitor' }
+      },
+      {
+        path: 'parent-platform-list',
+        component: () => import('@/views/video/parent-platform-list/index.vue'),
+        name: 'VideoParentPlatformList',
+        meta: { title: '上级平台', icon: 'tree' }
+      },
+      {
+        path: 'map',
+        component: () => import('@/views/video/map/index.vue'),
+        name: 'VideoMap',
+        meta: { title: '电子地图', icon: 'location' }
+      },
+      {
+        path: 'patrol-manager',
+        component: () => import('@/views/video/patrol-manager/index.vue'),
+        name: 'VideoPatrolManager',
+        meta: { title: '巡检管理', icon: 'time' }
+      },
+      {
+        path: 'patrol-report',
+        component: () => import('@/views/video/patrol-report/index.vue'),
+        name: 'VideoPatrolReport',
+        meta: { title: '巡检报告', icon: 'documentation' }
+      },
+      {
+        path: 'device-inspection',
+        component: () => import('@/views/video/device-inspection/index.vue'),
+        name: 'VideoDeviceInspection',
+        meta: { title: '设备巡检', icon: 'view' }
+      },
+      {
+        path: 'alarm-list',
+        component: () => import('@/views/video/alarm-list/index.vue'),
+        name: 'VideoAlarmList',
+        meta: { title: '告警列表', icon: 'message' }
+      }
+    ]
+  },
+  {
+    path: '/ai',
+    component: Layout,
+    redirect: '/ai/detect-center',
+    name: 'Ai',
+    meta: { title: 'AI业务', icon: 'eye-open' },
+    children: [
+      {
+        path: 'detect-center',
+        component: () => import('@/views/ai/detect-center/index.vue'),
+        name: 'AiDetectCenter',
+        meta: { title: 'AI检测中台', icon: 'monitor' }
+      },
+      {
+        path: 'setting',
+        component: () => import('@/views/ai/setting/index.vue'),
+        name: 'AiSetting',
+        meta: { title: '算法配置', icon: 'tool' }
+      },
+      {
+        path: 'category',
+        component: () => import('@/views/ai/category/index.vue'),
+        name: 'AiCategory',
+        meta: { title: '算法库', icon: 'list' }
+      },
+      {
+        path: 'view',
+        component: () => import('@/views/ai/alarm/index.vue'),
+        name: 'AiView',
+        meta: { title: 'AI视界', icon: 'eye-open' }
+      },
+      {
+        path: 'image-search',
+        component: () => import('@/views/ai/image-search/index.vue'),
+        name: 'AiImageSearch',
+        meta: { title: 'AI图片搜索', icon: 'search' }
+      },
+      {
+        path: 'face-track',
+        component: () => import('@/views/ai/face-track/index.vue'),
+        name: 'AiFaceTrack',
+        meta: { title: '人脸轨迹', icon: 'guide' }
+      },
+      {
+        path: 'face-track-map',
+        component: () => import('@/views/ai/face-track-map/index.vue'),
+        name: 'AiFaceTrackMap',
+        meta: { title: '平面轨迹', icon: 'map' }
+      },
+      {
+        path: 'plan-map',
+        component: () => import('@/views/ai/plan-map/index.vue'),
+        name: 'AiPlanMap',
+        meta: { title: '平面图标注', icon: 'location' }
+      },
+      {
+        path: 'plan-map/:id',
+        component: () => import('@/views/ai/plan-map/Detail.vue'),
+        name: 'AiPlanMapDetail',
+        hidden: true,
+        meta: { title: '平面图详情', activeMenu: '/ai/plan-map' }
+      },
+      {
+        path: 'whitelist',
+        component: () => import('@/views/ai/whitelist/index.vue'),
+        name: 'AiWhitelist',
+        meta: { title: '白名单配置', icon: 'peoples' }
+      },
+      {
+        path: 'whitelist/:id',
+        component: () => import('@/views/ai/whitelist/Detail.vue'),
+        name: 'AiWhitelistDetail',
+        hidden: true,
+        meta: { title: '白名单详情', activeMenu: '/ai/whitelist' }
       }
     ]
   },

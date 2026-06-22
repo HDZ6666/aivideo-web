@@ -49,6 +49,11 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    // 是否包含音频流
+    hasAudio: {
+        type: Boolean,
+        default: false
+    },
     // 加载中文本
     loadingText: {
         type: String,
@@ -148,7 +153,7 @@ const createPlayer = () => {
         wasmDecoder: withBase('/jessibuca/decoder.wasm'),
 
         // 是否包含音频流（false 表示纯视频流）
-        hasAudio: false,
+        hasAudio: props.hasAudio,
 
         // 视频旋转角度（0/90/180/270）
         rotate: 0,

@@ -4,6 +4,7 @@
     fit="cover"
     :style="`width:${realWidth};height:${realHeight};`"
     :preview-src-list="realSrcList"
+    :z-index="4000"
     preview-teleported
   >
     <template #error>

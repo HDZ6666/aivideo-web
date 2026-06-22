@@ -75,6 +75,7 @@
                   class="alert-thumbnail"
                   fit="cover"
                   :preview-src-list="[row.thumbnail]"
+                  :z-index="4000"
                   :initial-index="0"
                   preview-teleported
                   hide-on-click-modal
