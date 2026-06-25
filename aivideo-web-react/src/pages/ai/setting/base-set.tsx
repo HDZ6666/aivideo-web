@@ -62,6 +62,15 @@ export default function BaseSetComponent({
     </Form.Item>
   );
 
+  const CountType = (
+    <Form.Item name="countType" label="统计类型" initialValue={0}>
+      <Radio.Group>
+        <Radio value={0}> 区域统计 </Radio>
+        <Radio value={1}> 进出统计 </Radio>
+      </Radio.Group>
+    </Form.Item>
+  );
+
   function FrameSet() {
     return (
       <div className={showFrameSet ? 'block' : 'hidden'}>
@@ -111,6 +120,19 @@ export default function BaseSetComponent({
           <FrameSet />
         </>
       )}
+      <Form.Item name="isCount" label="统计和告警配置" initialValue={0}>
+        <Radio.Group>
+          <Radio value={0}> 只告警 </Radio>
+          <Radio value={1}> 只统计 </Radio>
+          <Radio value={2}> 告警并统计 </Radio>
+        </Radio.Group>
+      </Form.Item>
+      <Form.Item shouldUpdate noStyle>
+        {({ getFieldValue }) => {
+          if (getFieldValue('isCount') === 0) return null;
+          return CountType;
+        }}
+      </Form.Item>
       <Form.Item shouldUpdate noStyle>
         {({ getFieldValue }) => {
           const showTracking = alarmTypeId === 11 || alarmTypeId === 82; // 是否存在目标追踪配置
