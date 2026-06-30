@@ -74,6 +74,7 @@ export const constantRoutes = [
   {
     path: '/viid',
     component: Layout,
+    hidden: true,
     redirect: 'noredirect',
     name: 'Viid',
     meta: { title: '视图库', icon: 'monitor', alwaysShow: true },
@@ -161,6 +162,7 @@ export const constantRoutes = [
   {
     path: '/visual-library',
     component: Layout,
+    hidden: true,
     redirect: '/visual-library/dashboard',
     name: 'VisualLibrary',
     meta: { title: '视图库中台', icon: 'database', alwaysShow: true },
@@ -406,6 +408,7 @@ export const constantRoutes = [
   {
     path: '/video',
     component: Layout,
+    hidden: true,
     redirect: '/video/live',
     name: 'Video',
     meta: { title: '视频业务', icon: 'monitor' },
@@ -532,24 +535,28 @@ export const constantRoutes = [
       {
         path: 'detect-center',
         component: () => import('@/views/ai/detect-center/index.vue'),
+        hidden: true,
         name: 'AiDetectCenter',
         meta: { title: 'AI检测中台', icon: 'monitor' }
       },
       {
         path: 'setting',
         component: () => import('@/views/ai/setting/index.vue'),
+        hidden: true,
         name: 'AiSetting',
         meta: { title: '算法配置', icon: 'tool' }
       },
       {
         path: 'category',
         component: () => import('@/views/ai/category/index.vue'),
+        hidden: true,
         name: 'AiCategory',
         meta: { title: '算法库', icon: 'list' }
       },
       {
         path: 'view',
         component: () => import('@/views/ai/alarm/index.vue'),
+        hidden: true,
         name: 'AiView',
         meta: { title: 'AI视界', icon: 'eye-open' }
       },
@@ -619,6 +626,7 @@ export const constantRoutes = [
   {
     path: '/mapscreen',
     component: () => import('@/views/datav/mapscreen/index.vue'),
+    hidden: true,
     name: 'DatavMapscreen',
     meta: { title: '地图大屏', anonymous: true }
   }
