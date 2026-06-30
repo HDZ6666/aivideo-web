@@ -61,7 +61,7 @@ export const constantRoutes = [
   {
     path: '',
     component: Layout,
-    redirect: '/index',
+    redirect: '/datav',
     children: [
       {
         path: '/index',
